@@ -4,7 +4,7 @@ public class VariableValue extends Value {
     private final Variable variable;
 
     public VariableValue(Variable variable) {
-        this.variable =variable;
+        this.variable = variable;
     }
 
     public Variable getVariable() {
@@ -19,5 +19,10 @@ public class VariableValue extends Value {
     @Override
     public Type getType() {
         return variable.getType();
+    }
+
+    @Override
+    public String toCode() {
+        return (variable.isLocal() ? "" : "*") + "%" + variable.getName();
     }
 }

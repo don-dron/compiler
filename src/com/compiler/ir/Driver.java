@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public final class Driver {
     public static int count = 0;
-    private static final String RET_VAL = "$ret_val";
+    private static final String RET_VAL = "ret_val";
 
     public static Module drive(FunctionsNode functionsNode) {
         return new Module(functionsNode.getFunctionNodes()
@@ -47,22 +47,41 @@ public final class Driver {
                 functionNode.getTypeNode().getType(),
                 functionScope);
 
-        BasicBlock entry = functionBlock.appendBlock("entry");
+        BasicBlock skip = functionBlock.appendBlock("skip");
 
         List<Variable> variables = functionNode.getParameterNode().getMap().entrySet()
                 .stream()
-                .map(e -> functionScope.addVariable(e.getKey().getName(), e.getValue().getType(), entry))
+                .map(e -> functionScope.addVariable(e.getKey().getName(), e.getValue().getType(), skip))
                 .collect(Collectors.toList());
         functionBlock.addDefines(variables);
-        functionScope.addVariable(RET_VAL, functionNode.getTypeNode().getType(), entry);
+        Variable retValue = functionScope.addVariable(RET_VAL, functionNode.getTypeNode().getType(), skip);
+
+        BasicBlock returnBlock = functionBlock.appendBlock("return");
+        returnBlock.setTerminator(new Return(new VariableValue(retValue)));
+
+        BasicBlock entry = functionBlock.appendBlock("entry");
+        skip.setTerminator(new Branch(entry));
+        entry.setTerminator(new Branch(returnBlock));
+
+        functionBlock.setReturnBlock(returnBlock);
 
         CompoundStatementNode compoundStatementNode = (CompoundStatementNode) functionNode.getStatementNode();
         compoundStatementNode.getStatements().forEach(d -> driveStatement(functionBlock, functionScope, d));
 
         System.out.println(functionScope.treeDebug(0));
-        System.out.println(blocksToString(functionBlock.getBlocks()));
+        System.out.println(functionToString(functionBlock));
 
         return functionBlock;
+    }
+
+    private static String functionToString(FunctionBlock functionBlock) {
+        String s = "; ModuleID = 'main'\n" +
+                "source_filename = \"main\"\n" +
+                "define " + functionBlock.getReturnType().toCode() + " @" +
+                functionBlock.getFunctionName() + "() {\n";
+        s += blocksToString(functionBlock.getBlocks());
+        s += "\n}";
+        return s;
     }
 
     private static String blocksToString(List<BasicBlock> blocks) {
@@ -108,6 +127,8 @@ public final class Driver {
             );
 
             functionBlock.getCurrentBlock().addDefine(variable);
+
+            functionBlock.getCurrentBlock().addOperation(new AllocationOperation(variable));
 
             if (declarationStatementNode.getExpressionNode() != null) {
                 driveExpression(functionBlock, scope,
@@ -226,6 +247,8 @@ public final class Driver {
                 driveStatement(functionBlock, scope, ifStatementNode.getThenNode());
             }
 
+            BasicBlock endThen = functionBlock.getCurrentBlock();
+            BasicBlock endElse = null;
             if (ifStatementNode.getElseNode() != null) {
                 elseBlock = functionBlock.appendBlock("if_else");
                 if (ifStatementNode.getElseNode() instanceof CompoundStatementNode) {
@@ -236,15 +259,16 @@ public final class Driver {
                 } else {
                     driveStatement(functionBlock, scope, ifStatementNode.getElseNode());
                 }
+                endElse = functionBlock.getCurrentBlock();
             }
 
             mergeBlock = functionBlock.appendBlock("if_merge");
 
-            thenBlock.setTerminator(new Branch(mergeBlock));
+            endThen.setTerminator(new Branch(mergeBlock));
 
             if (elseBlock != null) {
                 condition.setTerminator(new ConditionalBranch(operation.getResult(), thenBlock, elseBlock));
-                elseBlock.setTerminator(new Branch(mergeBlock));
+                endElse.setTerminator(new Branch(mergeBlock));
             } else {
                 condition.setTerminator(new ConditionalBranch(operation.getResult(), thenBlock, mergeBlock));
             }
@@ -253,11 +277,14 @@ public final class Driver {
             BasicBlock last = functionBlock.getCurrentBlock();
             BasicBlock retBlock = functionBlock.appendBlock("local_return");
             last.setTerminator(new Branch(retBlock));
+
             if (returnStatementNode.getExpressionNode() != null) {
                 driveExpression(functionBlock, scope,
                         new AssigmentExpressionNode(new IdentifierNode(RET_VAL),
                                 ((ReturnStatementNode) statementNode).getExpressionNode()));
             }
+
+            retBlock.setTerminator(new Branch(functionBlock.getReturnBlock()));
         } else {
             throw new IllegalStateException("Unknown statement " + statementNode);
         }
@@ -301,7 +328,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
         }
         LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
         functionBlock.getCurrentBlock().addOperation(first);
 
@@ -312,16 +340,17 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
         }
         LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
 
         functionBlock.getCurrentBlock().addOperation(second);
 
         Operation operation = new BinOperation(BinOpType.OR, first.getTarget(), second.getTarget(),
                 new VariableValue(new Variable(genNext(),
-                        binOperationType(first.getTarget(), second.getTarget()),
+                        Type.BOOL,
                         scope,
-                        functionBlock.getCurrentBlock())));
+                        functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
         return operation;
     }
@@ -335,7 +364,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
         }
         LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(), scope,
+                        functionBlock.getCurrentBlock(), true))
         );
         functionBlock.getCurrentBlock().addOperation(first);
 
@@ -347,16 +377,17 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
         }
         LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
 
         functionBlock.getCurrentBlock().addOperation(second);
 
         Operation operation = new BinOperation(BinOpType.AND, first.getTarget(), second.getTarget(),
                 new VariableValue(new Variable(genNext(),
-                        binOperationType(first.getTarget(), second.getTarget()),
+                        Type.BOOL,
                         scope,
-                        functionBlock.getCurrentBlock())));
+                        functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
         return operation;
     }
@@ -370,7 +401,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
         }
         LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
         functionBlock.getCurrentBlock().addOperation(first);
 
@@ -382,7 +414,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
         }
         LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
 
         functionBlock.getCurrentBlock().addOperation(second);
@@ -400,9 +433,9 @@ public final class Driver {
         }
         Operation operation = new BinOperation(binOpType, first.getTarget(), second.getTarget(),
                 new VariableValue(new Variable(genNext(),
-                        binOperationType(first.getTarget(), second.getTarget()),
+                        Type.BOOL,
                         scope,
-                        functionBlock.getCurrentBlock())));
+                        functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
         return operation;
     }
@@ -416,7 +449,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
         }
         LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
         functionBlock.getCurrentBlock().addOperation(first);
 
@@ -428,7 +462,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
         }
         LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
 
         functionBlock.getCurrentBlock().addOperation(second);
@@ -450,9 +485,9 @@ public final class Driver {
         }
         Operation operation = new BinOperation(binOpType, first.getTarget(), second.getTarget(),
                 new VariableValue(new Variable(genNext(),
-                        binOperationType(first.getTarget(), second.getTarget()),
+                        Type.BOOL,
                         scope,
-                        functionBlock.getCurrentBlock())));
+                        functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
         return operation;
     }
@@ -483,7 +518,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
         }
         LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
         functionBlock.getCurrentBlock().addOperation(first);
 
@@ -495,7 +531,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
         }
         LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
 
         functionBlock.getCurrentBlock().addOperation(second);
@@ -513,7 +550,7 @@ public final class Driver {
                 new VariableValue(new Variable(genNext(),
                         binOperationType(first.getTarget(), second.getTarget()),
                         scope,
-                        functionBlock.getCurrentBlock())));
+                        functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
         return operation;
     }
@@ -527,7 +564,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
         }
         LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
         functionBlock.getCurrentBlock().addOperation(first);
 
@@ -539,7 +577,8 @@ public final class Driver {
             source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
         }
         LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope, functionBlock.getCurrentBlock()))
+                new VariableValue(new Variable(genNext(), source.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
         );
 
         functionBlock.getCurrentBlock().addOperation(second);
@@ -557,13 +596,13 @@ public final class Driver {
                 new VariableValue(new Variable(genNext(),
                         binOperationType(first.getTarget(), second.getTarget()),
                         scope,
-                        functionBlock.getCurrentBlock())));
+                        functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
         return operation;
     }
 
     private static Type binOperationType(Value first, Value second) {
-        return Type.INT;
+        return first.getType() == Type.INT && second.getType() == Type.INT ? Type.INT : Type.FLOAT;
     }
 
     private static VariableValue variableValueByName(FunctionBlock functionBlock, Scope scope, String name) {
@@ -593,7 +632,7 @@ public final class Driver {
     }
 
     private static String genNext() {
-        return "%" + count++;
+        return String.valueOf(count++);
     }
 
     private static String expressionToString(Scope scope, ExpressionNode expressionNode) {

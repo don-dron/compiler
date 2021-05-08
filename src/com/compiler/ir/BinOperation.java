@@ -31,6 +31,7 @@ public class BinOperation extends Operation {
     }
 
     public String toString() {
-        return target.toString() + " = " + type + " " + first.toString() + ", " + second.toString();
+        return target.toCode() + " = " + type.toCode() + " " + getResult().getType().toCode() +
+                " " + first.toCode() + ", " + second.toCode();
     }
 }

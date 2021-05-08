@@ -20,4 +20,9 @@ public class IntValue extends Value {
     public Type getType() {
         return Type.INT;
     }
+
+    @Override
+    public String toCode() {
+        return String.valueOf(value);
+    }
 }

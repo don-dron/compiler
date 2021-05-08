@@ -20,4 +20,9 @@ public class FloatValue extends Value {
     public Type getType() {
         return Type.FLOAT;
     }
+
+    @Override
+    public String toCode() {
+        return String.valueOf(value);
+    }
 }

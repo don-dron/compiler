@@ -20,4 +20,9 @@ public class BoolValue extends Value {
     public Type getType() {
         return Type.BOOL;
     }
+
+    @Override
+    public String toCode() {
+        return String.valueOf(value);
+    }
 }

@@ -23,6 +23,7 @@ public class StoreOperation extends Operation {
     }
 
     public String toString(){
-        return "store " + source.toString() + "  " + target.toString() ;
+        return "store " + source.getType().toCode() + " " + source.toCode() +
+                ", " + target.getType().toCode() + " " + target.toCode();
     }
 }

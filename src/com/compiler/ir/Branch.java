@@ -13,6 +13,6 @@ public class Branch extends Terminator{
 
     @Override
     public String toString() {
-        return "br " + target.getName();
+        return "br label %" + target.getName();
     }
 }

@@ -90,7 +90,11 @@ public class Scope {
 
     public Variable addVariable(String name, Type type, BasicBlock currentBlock) {
         String newName = name + "$" + count++;
-        Variable variable = new Variable(newName, type, this, currentBlock);
+        Variable variable = new Variable(newName, type, this, currentBlock, false);
+        if (scopeRenaming.containsKey(name)) {
+            throw new IllegalArgumentException("Already defined");
+        }
+
         scopeRenaming.put(name, newName);
         variables.add(variable);
         return variable;

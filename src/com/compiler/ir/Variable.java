@@ -7,12 +7,18 @@ public class Variable {
     private final String name;
     private final Type type;
     private final Scope scope;
+    private final boolean local;
 
-    public Variable(String name, Type type, Scope scope, BasicBlock definingBlock) {
+    public Variable(String name, Type type, Scope scope, BasicBlock definingBlock, boolean local) {
         this.name = name;
         this.type = type;
         this.scope = scope;
         this.definingBlock = definingBlock;
+        this.local = local;
+    }
+
+    public boolean isLocal() {
+        return local;
     }
 
     public Scope getScope() {

@@ -13,6 +13,7 @@ public class FunctionBlock {
     private final Scope scope;
     private Type returnType;
     private BasicBlock currentBlock;
+    private BasicBlock returnBlock;
 
     public FunctionBlock(String name, Type returnType, Scope scope) {
         this.functionName = name;
@@ -67,5 +68,13 @@ public class FunctionBlock {
 
     public BasicBlock getCurrentBlock() {
         return currentBlock;
+    }
+
+    public void setReturnBlock(BasicBlock returnBlock) {
+        this.returnBlock = returnBlock;
+    }
+
+    public BasicBlock getReturnBlock() {
+        return returnBlock;
     }
 }

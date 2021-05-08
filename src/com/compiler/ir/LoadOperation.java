@@ -22,7 +22,8 @@ public class LoadOperation extends Operation {
         return target;
     }
 
-    public String toString(){
-        return target.toString() + " = load " + source.toString();
+    public String toString() {
+        return target.toCode() + " = load " + target.getType().toCode() + ", "
+                + source.getType().toCode() + " " + source.toCode();
     }
 }
