@@ -30,17 +30,33 @@ public class Scope {
     public String getNewName(String oldName) {
         String name = scopeRenaming.get(oldName);
 
-        if(name == null) {
+        if (name == null) {
             if (parentScope != null) {
                 name = parentScope.getNewName(oldName);
             }
         }
 
-        if(name == null) {
+        if (name == null) {
             throw new IllegalArgumentException("Not declared variable " + oldName);
         }
 
         return name;
+    }
+
+    public Variable getVariable(String oldName) {
+        Variable variable = variables.stream().filter(v -> v.getName().equals(oldName)).findFirst().orElse(null);
+
+        if (variable == null) {
+            if (parentScope != null) {
+                variable = parentScope.getVariable(oldName);
+            }
+        }
+
+        if (variable == null) {
+            throw new IllegalArgumentException("Not declared variable " + oldName);
+        }
+
+        return variable;
     }
 
     public List<Scope> getChildren() {

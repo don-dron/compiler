@@ -3,19 +3,17 @@ package com.compiler.ir;
 import com.compiler.ast.AstNode;
 import com.compiler.ast.FunctionNode;
 import com.compiler.ast.FunctionsNode;
+import com.compiler.ast.IdentifierNode;
 import com.compiler.ast.expression.*;
 import com.compiler.ast.statement.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public final class Driver {
     public static int count = 0;
+    private static final String RET_VAL = "$ret_val";
 
     public static Module drive(FunctionsNode functionsNode) {
         return new Module(functionsNode.getFunctionNodes()
@@ -56,6 +54,7 @@ public final class Driver {
                 .map(e -> functionScope.addVariable(e.getKey().getName(), e.getValue().getType(), entry))
                 .collect(Collectors.toList());
         functionBlock.addDefines(variables);
+        functionScope.addVariable(RET_VAL, functionNode.getTypeNode().getType(), entry);
 
         CompoundStatementNode compoundStatementNode = (CompoundStatementNode) functionNode.getStatementNode();
         compoundStatementNode.getStatements().forEach(d -> driveStatement(functionBlock, functionScope, d));
@@ -80,7 +79,7 @@ public final class Driver {
     }
 
     private static String operationToString(Operation operation) {
-        return "";
+        return operation.toString();
     }
 
     private static void driveStatement(FunctionBlock functionBlock,
@@ -125,11 +124,11 @@ public final class Driver {
                 driveStatement(functionBlock, innerScope, forStatementNode.getPrev());
             }
 
-            functionBlock.appendBlock("for_previous");
-            functionBlock.appendBlock("for_condition");
-            functionBlock.appendBlock("for_step");
-            functionBlock.appendBlock("for_body");
-            functionBlock.appendBlock("for_merge");
+//            functionBlock.appendBlock("for_previous");
+//            functionBlock.appendBlock("for_condition");
+//            functionBlock.appendBlock("for_step");
+//            functionBlock.appendBlock("for_body");
+//            functionBlock.appendBlock("for_merge");
 
             if (forStatementNode.getBody() instanceof CompoundStatementNode) {
                 CompoundStatementNode compoundStatementNode = (CompoundStatementNode) forStatementNode.getBody();
@@ -149,10 +148,10 @@ public final class Driver {
                 driveStatement(functionBlock, scope, ifStatementNode.getThenNode());
             }
 
-            functionBlock.appendBlock("if_condition");
-            functionBlock.appendBlock("if_then");
-            functionBlock.appendBlock("if_else");
-            functionBlock.appendBlock("if_merge");
+//            functionBlock.appendBlock("if_condition");
+//            functionBlock.appendBlock("if_then");
+//            functionBlock.appendBlock("if_else");
+//            functionBlock.appendBlock("if_merge");
 
             if (ifStatementNode.getElseNode() != null) {
                 if (ifStatementNode.getElseNode() instanceof CompoundStatementNode) {
@@ -166,23 +165,50 @@ public final class Driver {
             }
         } else if (statementNode instanceof ReturnStatementNode) {
             ReturnStatementNode returnStatementNode = (ReturnStatementNode) statementNode;
-            functionBlock.appendBlock("local_return");
+//            functionBlock.appendBlock("local_return");
 
             if (returnStatementNode.getExpressionNode() != null) {
-                driveExpression(functionBlock, scope, ((ReturnStatementNode) statementNode).getExpressionNode());
+                driveExpression(functionBlock, scope,
+                        new AssigmentExpressionNode(new IdentifierNode(RET_VAL),
+                                ((ReturnStatementNode) statementNode).getExpressionNode()));
             }
         } else {
             throw new IllegalStateException("Unknown statement " + statementNode);
         }
     }
 
-    private static void driveExpression(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
+    private static Operation driveExpression(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
         if (expressionNode instanceof ConditionalExpressionNode) {
             ConditionalExpressionNode conditionalExpressionNode = (ConditionalExpressionNode) expressionNode;
+            LoadOperation loadOperation = new LoadOperation(null, null);
+            functionBlock.getCurrentBlock().addOperation(loadOperation);
+            return loadOperation;
         } else if (expressionNode instanceof LogicalOrExpressionNode) {
             LogicalOrExpressionNode logicalOrExpressionNode = (LogicalOrExpressionNode) expressionNode;
+
+            LoadOperation first = new LoadOperation(null,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+
+            LoadOperation second = new LoadOperation(null,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            return first;
         } else if (expressionNode instanceof LogicalAndExpressionNode) {
             LogicalAndExpressionNode logicalAndExpressionNode = (LogicalAndExpressionNode) expressionNode;
+
+            LoadOperation first = new LoadOperation(null,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+
+            LoadOperation second = new LoadOperation(null,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            return first;
         } else if (expressionNode instanceof EqualityExpressionNode) {
             EqualityExpressionNode equalityExpressionNode = (EqualityExpressionNode) expressionNode;
             String type;
@@ -195,6 +221,16 @@ public final class Driver {
                 default:
                     type = " != ";
             }
+            LoadOperation first = new LoadOperation(null,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+
+            LoadOperation second = new LoadOperation(null,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            return first;
         } else if (expressionNode instanceof RelationalExpressionNode) {
             RelationalExpressionNode relationalExpressionNode = (RelationalExpressionNode) expressionNode;
             String type;
@@ -213,39 +249,156 @@ public final class Driver {
                 default:
                     type = " < ";
             }
+            LoadOperation first = new LoadOperation(null,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+
+            LoadOperation second = new LoadOperation(null,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            return first;
         } else if (expressionNode instanceof AdditiveExpressionNode) {
             AdditiveExpressionNode additiveExpressionNode = (AdditiveExpressionNode) expressionNode;
-            String type;
+            Value source = null;
 
+            if (isTerm(additiveExpressionNode.getFirst())) {
+                source = driveValue(functionBlock, scope, additiveExpressionNode.getFirst());
+            } else {
+                source = driveExpression(functionBlock, scope, additiveExpressionNode.getFirst()).getResult();
+            }
+            LoadOperation first = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+
+
+            source = null;
+            if (isTerm(additiveExpressionNode.getSecond())) {
+                source = driveValue(functionBlock, scope, additiveExpressionNode.getSecond());
+            } else {
+                source = driveExpression(functionBlock, scope, additiveExpressionNode.getSecond()).getResult();
+            }
+            LoadOperation second = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+
+            functionBlock.getCurrentBlock().addOperation(second);
+
+            Operation operation = null;
             switch (additiveExpressionNode.getType()) {
                 case ADD:
-                    type = " + ";
+                    operation = new BinOperation(BinOpType.ADD, first.getTarget(), second.getTarget(),
+                            new VariableValue(new Variable(genNext(),
+                                    Type.INT,
+                                    scope,
+                                    functionBlock.getCurrentBlock())));
                     break;
                 case SUB:
                 default:
-                    type = " - ";
+                    operation = new BinOperation(BinOpType.SUB, first.getTarget(), second.getTarget(),
+                            new VariableValue(new Variable(genNext(),
+                                    Type.INT,
+                                    scope,
+                                    functionBlock.getCurrentBlock())));
             }
+            functionBlock.getCurrentBlock().addOperation(operation);
+            return operation;
         } else if (expressionNode instanceof MultiplicativeExpressionNode) {
             MultiplicativeExpressionNode multiplicativeExpressionNode = (MultiplicativeExpressionNode) expressionNode;
-            String type;
+            Value source = null;
 
+            if (isTerm(multiplicativeExpressionNode.getFirst())) {
+                source = driveValue(functionBlock, scope, multiplicativeExpressionNode.getFirst());
+            } else {
+                source = driveExpression(functionBlock, scope, multiplicativeExpressionNode.getFirst()).getResult();
+            }
+            LoadOperation first = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+
+            source = null;
+            if (isTerm(multiplicativeExpressionNode.getSecond())) {
+                source = driveValue(functionBlock, scope, multiplicativeExpressionNode.getSecond());
+            } else {
+                source = driveExpression(functionBlock, scope, multiplicativeExpressionNode.getSecond()).getResult();
+            }
+            LoadOperation second = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), Type.INT, scope, functionBlock.getCurrentBlock()))
+            );
+
+            functionBlock.getCurrentBlock().addOperation(second);
+
+            Operation operation = null;
             switch (multiplicativeExpressionNode.getType()) {
                 case MUL:
-                    type = " * ";
+                    operation = new BinOperation(BinOpType.MUL, first.getTarget(), second.getTarget(),
+                            new VariableValue(new Variable(genNext(),
+                                    Type.INT,
+                                    scope,
+                                    functionBlock.getCurrentBlock())));
                     break;
                 case DIV:
                 default:
-                    type = " / ";
+                    operation = new BinOperation(BinOpType.DIV, first.getTarget(), second.getTarget(),
+                            new VariableValue(new Variable(genNext(),
+                                    Type.INT,
+                                    scope,
+                                    functionBlock.getCurrentBlock())));
             }
-        } else if (expressionNode instanceof VariableExpressionNode) {
-        } else if (expressionNode instanceof IntConstantExpressionNode) {
-        } else if (expressionNode instanceof BoolConstantExpressionNode) {
-        } else if (expressionNode instanceof FloatConstantExpressionNode) {
+            functionBlock.getCurrentBlock().addOperation(operation);
+            return operation;
         } else if (expressionNode instanceof AssigmentExpressionNode) {
             AssigmentExpressionNode assigmentExpressionNode = (AssigmentExpressionNode) expressionNode;
+            Value source = null;
+
+            if (isTerm(assigmentExpressionNode.getExpressionNode())) {
+                source = driveValue(functionBlock, scope, assigmentExpressionNode.getExpressionNode());
+            } else {
+                source = driveExpression(functionBlock, scope, assigmentExpressionNode.getExpressionNode()).getResult();
+            }
+
+            StoreOperation storeOperation = new StoreOperation(
+                    source,
+                    variableValueByName(functionBlock, scope,
+                            (assigmentExpressionNode.getIdentifierNode().getName())));
+            functionBlock.getCurrentBlock().addOperation(storeOperation);
+            return storeOperation;
         } else {
             throw new IllegalStateException("Unknown expression type " + expressionNode);
         }
+    }
+
+    private static VariableValue variableValueByName(FunctionBlock functionBlock, Scope scope, String name) {
+        return new VariableValue(functionBlock.getScope().getVariable(functionBlock.getScope().getNewName(name)));
+    }
+
+    private static boolean isTerm(ExpressionNode expressionNode) {
+        return expressionNode instanceof VariableExpressionNode ||
+                expressionNode instanceof IntConstantExpressionNode ||
+                expressionNode instanceof FloatConstantExpressionNode ||
+                expressionNode instanceof BoolConstantExpressionNode;
+    }
+
+    private static Value driveValue(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
+        if (expressionNode instanceof VariableExpressionNode) {
+            return variableValueByName(functionBlock, scope,
+                    ((VariableExpressionNode) expressionNode).getIdentifierNode().getName());
+        } else if (expressionNode instanceof IntConstantExpressionNode) {
+            return new IntValue(((IntConstantExpressionNode) expressionNode).getValue());
+        } else if (expressionNode instanceof BoolConstantExpressionNode) {
+            return new BoolValue(((BoolConstantExpressionNode) expressionNode).getValue());
+        } else if (expressionNode instanceof FloatConstantExpressionNode) {
+            return new FloatValue(((FloatConstantExpressionNode) expressionNode).getValue());
+        } else {
+            throw new IllegalStateException("Unknown value type " + expressionNode);
+        }
+    }
+
+    private static String genNext() {
+        return "%" + count++;
     }
 
     private static String expressionToString(Scope scope, ExpressionNode expressionNode) {

@@ -1,18 +1,18 @@
 package com.compiler.ir;
 
 public class ConditionalBranch extends Terminator {
-    private final Variable variable;
+    private final Operation operation;
     private final BasicBlock first;
     private final BasicBlock second;
 
-    public ConditionalBranch(Variable variable, BasicBlock first, BasicBlock second) {
-        this.variable = variable;
+    public ConditionalBranch(Operation operation, BasicBlock first, BasicBlock second) {
+        this.operation = operation;
         this.first = first;
         this.second = second;
     }
 
-    public Variable getVariable() {
-        return variable;
+    public Operation getOperation() {
+        return operation;
     }
 
     public BasicBlock getFirst() {

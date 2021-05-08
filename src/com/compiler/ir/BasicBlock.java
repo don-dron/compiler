@@ -58,4 +58,8 @@ public class BasicBlock {
     public Terminator getTerminator() {
         return terminator;
     }
+
+    public void addOperation(Operation operation) {
+        operations.add(operation);
+    }
 }

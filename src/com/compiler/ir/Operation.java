@@ -1,4 +1,5 @@
 package com.compiler.ir;
 
-public class Operation {
+public abstract class Operation {
+    public abstract Value getResult();
 }
