@@ -17,6 +17,11 @@ public class FloatConstantExpressionNode extends PrimaryExpressionNode {
         return SHIFT.repeat(shift) + "Float: " + value;
     }
 
+
+    public float getValue() {
+        return value;
+    }
+
     @Override
     public List<AstNode> getChildren() {
         return List.of();

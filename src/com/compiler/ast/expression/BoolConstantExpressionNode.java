@@ -17,6 +17,10 @@ public class BoolConstantExpressionNode extends PrimaryExpressionNode {
         return SHIFT.repeat(shift) + "Boolean: " + value;
     }
 
+    public boolean getValue() {
+        return value;
+    }
+
     @Override
     public List<AstNode> getChildren() {
         return List.of();

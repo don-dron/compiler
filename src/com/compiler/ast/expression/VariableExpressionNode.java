@@ -22,4 +22,8 @@ public class VariableExpressionNode extends PrimaryExpressionNode {
     public List<AstNode> getChildren() {
         return List.of();
     }
+
+    public IdentifierNode getIdentifierNode() {
+        return identifierNode;
+    }
 }

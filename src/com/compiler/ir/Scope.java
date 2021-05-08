@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import static com.compiler.ast.AstNode.SHIFT;
 
 public class Scope {
+    private static int count = 0;
     private final Scope parentScope;
     private final Set<Variable> variables;
     private final List<Scope> children;
@@ -27,7 +28,19 @@ public class Scope {
     }
 
     public String getNewName(String oldName) {
-        return scopeRenaming.get(oldName);
+        String name = scopeRenaming.get(oldName);
+
+        if(name == null) {
+            if (parentScope != null) {
+                name = parentScope.getNewName(oldName);
+            }
+        }
+
+        if(name == null) {
+            throw new IllegalArgumentException("Not declared variable " + oldName);
+        }
+
+        return name;
     }
 
     public List<Scope> getChildren() {
@@ -60,18 +73,7 @@ public class Scope {
     }
 
     public Variable addVariable(String name, Type type, BasicBlock currentBlock) {
-        String newName = name;
-        if (variables.stream().anyMatch(s -> s.getName().equals(name) && !scopeRenaming.containsValue(s.getName()))
-                   || scopeRenaming.containsKey(name)) {
-            throw new IllegalStateException("Variable already declared");
-        }
-
-        int count = 0;
-        while (isVariableExist(newName)) {
-            newName = name + count;
-            count++;
-        }
-
+        String newName = name + "$" + count++;
         Variable variable = new Variable(newName, type, this, currentBlock);
         scopeRenaming.put(name, newName);
         variables.add(variable);

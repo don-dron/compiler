@@ -19,6 +19,10 @@ public class BasicBlock {
         this.defines = new HashSet<>();
     }
 
+    public List<Operation> getOperations() {
+        return operations;
+    }
+
     public void addDefine(Variable var) {
         if (!defines.add(var)) {
             throw new IllegalStateException("Variable already declared");

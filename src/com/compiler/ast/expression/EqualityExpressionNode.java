@@ -20,6 +20,10 @@ public class EqualityExpressionNode extends BinaryOperationExpressionNode {
         return type;
     }
 
+    public ExpressionNode getSecond() {
+        return second;
+    }
+
     public ExpressionNode getFirst() {
         return first;
     }

@@ -16,6 +16,10 @@ public class RelationalExpressionNode extends BinaryOperationExpressionNode {
         this.second = second;
     }
 
+    public ExpressionNode getSecond() {
+        return second;
+    }
+
     public RelationalType getType() {
         return type;
     }

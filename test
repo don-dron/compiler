@@ -15,7 +15,7 @@ int main(int a, int b) {
         int z = 1;
         int p =1;
         a + 1;
-        b = a ? b : (h ? t : e < e == a && b || t);
+        b = a ? b : (h ? h : a < x == a && b || b);
         ;
         ;
         if ( i == 5.9 ) {

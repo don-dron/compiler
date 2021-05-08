@@ -17,6 +17,10 @@ public class IntConstantExpressionNode extends PrimaryExpressionNode {
         return SHIFT.repeat(shift) + "Int: " + value;
     }
 
+    public int getValue() {
+        return value;
+    }
+
     @Override
     public List<AstNode> getChildren() {
         return List.of();

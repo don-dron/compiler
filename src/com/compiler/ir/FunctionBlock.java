@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Set;
 
 public class FunctionBlock {
+    private static int count = 0;
     private final String functionName;
     private final List<BasicBlock> blocks;
     private final Set<Variable> defines;
     private final Scope scope;
     private Type returnType;
+    private BasicBlock currentBlock;
 
     public FunctionBlock(String name, Type returnType, Scope scope) {
         this.functionName = name;
@@ -45,8 +47,9 @@ public class FunctionBlock {
     }
 
     public BasicBlock appendBlock(String name) {
-        BasicBlock basicBlock = new BasicBlock(scope, name);
+        BasicBlock basicBlock = new BasicBlock(scope, name + "_" + count++);
         blocks.add(basicBlock);
+        currentBlock = basicBlock;
         return basicBlock;
     }
 
@@ -63,6 +66,6 @@ public class FunctionBlock {
     }
 
     public BasicBlock getCurrentBlock() {
-        return null;
+        return currentBlock;
     }
 }
