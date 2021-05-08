@@ -11,4 +11,13 @@ public class IntValue extends Value {
     public String toString() {
         return String.valueOf(value);
     }
+
+    public int getValue() {
+        return value;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.INT;
+    }
 }

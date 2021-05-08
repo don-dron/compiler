@@ -4,5 +4,5 @@ public enum BinOpType {
     ADD,
     SUB,
     DIV,
-    MUL
+    GE, LE, GT, LT, NE, EQ, AND, OR, MUL
 }

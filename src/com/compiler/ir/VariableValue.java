@@ -15,4 +15,9 @@ public class VariableValue extends Value {
     public String toString() {
         return variable.getName();
     }
+
+    @Override
+    public Type getType() {
+        return variable.getType();
+    }
 }

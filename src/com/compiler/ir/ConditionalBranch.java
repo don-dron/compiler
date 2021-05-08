@@ -1,18 +1,18 @@
 package com.compiler.ir;
 
 public class ConditionalBranch extends Terminator {
-    private final Operation operation;
+    private final Value value;
     private final BasicBlock first;
     private final BasicBlock second;
 
-    public ConditionalBranch(Operation operation, BasicBlock first, BasicBlock second) {
-        this.operation = operation;
+    public ConditionalBranch(Value value, BasicBlock first, BasicBlock second) {
+        this.value = value;
         this.first = first;
         this.second = second;
     }
 
-    public Operation getOperation() {
-        return operation;
+    public Value getValue() {
+        return value;
     }
 
     public BasicBlock getFirst() {
@@ -21,6 +21,11 @@ public class ConditionalBranch extends Terminator {
 
     public BasicBlock getSecond() {
         return second;
+    }
+
+    @Override
+    public String toString() {
+        return "br " + value + " " + first.getName() + " " + second.getName();
     }
 }
 

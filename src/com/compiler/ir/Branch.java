@@ -10,4 +10,9 @@ public class Branch extends Terminator{
     public BasicBlock getTarget() {
         return target;
     }
+
+    @Override
+    public String toString() {
+        return "br " + target.getName();
+    }
 }

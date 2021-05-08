@@ -11,4 +11,13 @@ public class BoolValue extends Value {
     public String toString() {
         return String.valueOf(value);
     }
+
+    public boolean getValue() {
+        return value;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.BOOL;
+    }
 }

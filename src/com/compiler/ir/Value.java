@@ -1,4 +1,5 @@
 package com.compiler.ir;
 
-public class Value {
+public abstract class Value {
+    public abstract Type getType();
 }

@@ -11,4 +11,13 @@ public class FloatValue extends Value {
     public String toString() {
         return String.valueOf(value);
     }
+
+    public float getValue() {
+        return value;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.FLOAT;
+    }
 }
