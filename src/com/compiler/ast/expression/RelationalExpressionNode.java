@@ -1,0 +1,32 @@
+package com.compiler.ast.expression;
+
+import com.compiler.ast.expression.ExpressionNode;
+
+public class RelationalExpressionNode extends BinaryOperationExpressionNode {
+    private final RelationalType  type;
+    private final ExpressionNode first;
+    private final ExpressionNode second;
+
+    public RelationalExpressionNode(RelationalType type, ExpressionNode first, ExpressionNode second) {
+        this.type = type;
+        this.first = first;
+        this.second = second;
+    }
+
+    public RelationalType getType() {
+        return type;
+    }
+
+    public ExpressionNode getFirst() {
+        return first;
+    }
+
+    @Override
+    public String astDebug(int shift) {
+        return SHIFT.repeat(shift) + type + ":\n" +
+                first.astDebug(shift + 1) + "\n" +
+                second.astDebug(shift + 1);
+    }
+
+    public enum RelationalType {GE, GT, LE, LT}
+}
