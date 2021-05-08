@@ -1,7 +1,9 @@
 package com.compiler.ast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FunctionsNode extends AstNode {
     private final List<FunctionNode> functionNodes;
@@ -23,5 +25,10 @@ public class FunctionsNode extends AstNode {
         }
 
         return s.toString();
+    }
+
+    @Override
+    public List<AstNode> getChildren() {
+        return functionNodes.stream().map(t -> (AstNode) t).collect(Collectors.toList());
     }
 }

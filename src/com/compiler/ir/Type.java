@@ -1,4 +1,4 @@
-package com.compiler.core;
+package com.compiler.ir;
 
 public enum Type {
     VOID,

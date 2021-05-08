@@ -1,6 +1,9 @@
 package com.compiler.ast.expression;
 
+import com.compiler.ast.AstNode;
 import com.compiler.ast.expression.ExpressionNode;
+
+import java.util.List;
 
 public class LogicalAndExpressionNode extends BinaryOperationExpressionNode {
     private final ExpressionNode first;
@@ -22,5 +25,10 @@ public class LogicalAndExpressionNode extends BinaryOperationExpressionNode {
     @Override
     public String astDebug(int shift) {
         return SHIFT.repeat(shift) + "AND:\n" + first.astDebug(shift + 1) + "\n" + second.astDebug(shift + 1);
+    }
+
+    @Override
+    public List<AstNode> getChildren() {
+        return List.of(first, second);
     }
 }

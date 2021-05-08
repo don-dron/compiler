@@ -1,6 +1,9 @@
 package com.compiler.ast.expression;
 
+import com.compiler.ast.AstNode;
 import com.compiler.ast.expression.ExpressionNode;
+
+import java.util.List;
 
 public class ConditionalExpressionNode extends ExpressionNode {
     private final ExpressionNode conditionNode;
@@ -32,5 +35,10 @@ public class ConditionalExpressionNode extends ExpressionNode {
                 conditionNode.astDebug(shift + 1) + "\n" +
                 thenNode.astDebug(shift + 1) + "\n" +
                 elseNode.astDebug(shift + 1);
+    }
+
+    @Override
+    public List<AstNode> getChildren() {
+        return List.of(conditionNode, thenNode, elseNode);
     }
 }

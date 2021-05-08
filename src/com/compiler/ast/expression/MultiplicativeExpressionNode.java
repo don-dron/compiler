@@ -1,6 +1,9 @@
 package com.compiler.ast.expression;
 
+import com.compiler.ast.AstNode;
 import com.compiler.ast.expression.ExpressionNode;
+
+import java.util.List;
 
 public class MultiplicativeExpressionNode extends BinaryOperationExpressionNode {
     private final MultiplicativeType type;
@@ -29,4 +32,9 @@ public class MultiplicativeExpressionNode extends BinaryOperationExpressionNode 
     }
 
     public enum MultiplicativeType {DIV, MUL}
+
+    @Override
+    public List<AstNode> getChildren() {
+        return List.of(first, second);
+    }
 }

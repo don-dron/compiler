@@ -1,6 +1,7 @@
 package com.compiler;
 
 import com.compiler.ast.FunctionsNode;
+import com.compiler.ir.Driver;
 import com.compiler.lexer.Lexer;
 import com.compiler.lexer.Token;
 import com.compiler.parser.Parser;
@@ -17,7 +18,9 @@ public class Main {
         Lexer lexer = new Lexer(reader);
         Parser parser = new Parser(lexer);
 
-        FunctionsNode functionsNode = parser.parse();
-        System.out.println(functionsNode.astDebug());
+        FunctionsNode functionsNodes = parser.parse();
+        Driver.drive(functionsNodes);
+
+        System.out.println(functionsNodes.astDebug());
     }
 }

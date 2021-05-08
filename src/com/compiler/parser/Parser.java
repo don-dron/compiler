@@ -3,7 +3,7 @@ package com.compiler.parser;
 import com.compiler.ast.*;
 import com.compiler.ast.expression.*;
 import com.compiler.ast.statement.*;
-import com.compiler.core.Type;
+import com.compiler.ir.Type;
 import com.compiler.lexer.Lexer;
 import com.compiler.lexer.Token;
 
@@ -572,6 +572,12 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.INT_CONSTANT) {
             next();
             return new IntConstantExpressionNode(Integer.parseInt(first.getContent()));
+        } else if (first.getTokenType() == Token.TokenType.TRUE) {
+            next();
+            return new BoolConstantExpressionNode(true);
+        } else if (first.getTokenType() == Token.TokenType.FALSE) {
+            next();
+            return new BoolConstantExpressionNode(false);
         } else if (first.getTokenType() == Token.TokenType.L_PAREN) {
             next();
             ExpressionNode expressionNode = parseConditionalExpression();

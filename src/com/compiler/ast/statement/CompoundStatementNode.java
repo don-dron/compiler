@@ -1,5 +1,7 @@
 package com.compiler.ast.statement;
 
+import com.compiler.ast.AstNode;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,5 +20,10 @@ public class CompoundStatementNode extends StatementNode {
     public String astDebug(int shift) {
         return SHIFT.repeat(shift) + "Compound:\n" +
                 statements.stream().map(s -> s.astDebug(shift + 1)).collect(Collectors.joining("\n"));
+    }
+
+    @Override
+    public List<AstNode> getChildren() {
+        return statements.stream().map(c -> (AstNode) c).collect(Collectors.toList());
     }
 }

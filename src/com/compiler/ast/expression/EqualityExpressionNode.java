@@ -1,6 +1,9 @@
 package com.compiler.ast.expression;
 
+import com.compiler.ast.AstNode;
 import com.compiler.ast.expression.ExpressionNode;
+
+import java.util.List;
 
 public class EqualityExpressionNode extends BinaryOperationExpressionNode {
     private final EqualityType type;
@@ -29,4 +32,9 @@ public class EqualityExpressionNode extends BinaryOperationExpressionNode {
     }
 
     public enum EqualityType {EQ, NE}
+
+    @Override
+    public List<AstNode> getChildren() {
+        return List.of(first, second);
+    }
 }

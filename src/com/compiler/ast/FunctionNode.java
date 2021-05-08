@@ -2,6 +2,9 @@ package com.compiler.ast;
 
 import com.compiler.ast.statement.StatementNode;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class FunctionNode extends AstNode {
     private final TypeNode typeNode;
     private final IdentifierNode identifierNode;
@@ -42,5 +45,10 @@ public class FunctionNode extends AstNode {
                 typeNode.astDebug(shift + 2) + "\n" +
                 parameterNode.astDebug(shift + 2) + "\n" +
                 statementNode.astDebug(shift + 2);
+    }
+
+    @Override
+    public List<AstNode> getChildren() {
+        return Arrays.asList(statementNode);
     }
 }

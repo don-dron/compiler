@@ -1,6 +1,10 @@
 package com.compiler.ast.statement;
 
+import com.compiler.ast.AstNode;
 import com.compiler.ast.expression.ExpressionNode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ForStatementNode extends StatementNode {
     private final StatementNode prev;
@@ -52,5 +56,28 @@ public class ForStatementNode extends StatementNode {
         }
 
         return s.stripTrailing();
+    }
+
+    @Override
+    public List<AstNode> getChildren() {
+        List<AstNode> list = new ArrayList<>();
+
+        if (prev != null) {
+            list.add(prev);
+        }
+
+        if (predicate != null) {
+            list.add(predicate);
+        }
+
+        if (step != null) {
+            list.add(step);
+        }
+
+        if (body != null) {
+            list.add(body);
+        }
+
+        return list;
     }
 }

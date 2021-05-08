@@ -1,6 +1,9 @@
 package com.compiler.ast.expression;
 
+import com.compiler.ast.AstNode;
 import com.compiler.ast.expression.ExpressionNode;
+
+import java.util.List;
 
 public class RelationalExpressionNode extends BinaryOperationExpressionNode {
     private final RelationalType  type;
@@ -29,4 +32,9 @@ public class RelationalExpressionNode extends BinaryOperationExpressionNode {
     }
 
     public enum RelationalType {GE, GT, LE, LT}
+
+    @Override
+    public List<AstNode> getChildren() {
+        return List.of(first, second);
+    }
 }

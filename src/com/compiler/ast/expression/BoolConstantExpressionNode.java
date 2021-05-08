@@ -4,17 +4,17 @@ import com.compiler.ast.AstNode;
 
 import java.util.List;
 
-public class FloatConstantExpressionNode extends PrimaryExpressionNode {
+public class BoolConstantExpressionNode extends PrimaryExpressionNode {
 
-    private final float value;
+    private final boolean value;
 
-    public FloatConstantExpressionNode(float value) {
+    public BoolConstantExpressionNode(boolean value) {
         this.value = value;
     }
 
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "Float: " + value;
+        return SHIFT.repeat(shift) + "Boolean: " + value;
     }
 
     @Override

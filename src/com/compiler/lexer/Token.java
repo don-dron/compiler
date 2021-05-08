@@ -77,6 +77,16 @@ public class Token {
         ELSE("else", "else"),
 
         /**
+         * true
+         */
+        TRUE("true", "true"),
+
+        /**
+         * false
+         */
+        FALSE("false", "false"),
+
+        /**
          * continue
          */
         CONTINUE("continue", "continue"),

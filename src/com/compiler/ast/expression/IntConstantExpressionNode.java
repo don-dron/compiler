@@ -1,5 +1,9 @@
 package com.compiler.ast.expression;
 
+import com.compiler.ast.AstNode;
+
+import java.util.List;
+
 public class IntConstantExpressionNode extends PrimaryExpressionNode {
 
     private final int value;
@@ -11,5 +15,10 @@ public class IntConstantExpressionNode extends PrimaryExpressionNode {
     @Override
     public String astDebug(int shift) {
         return SHIFT.repeat(shift) + "Int: " + value;
+    }
+
+    @Override
+    public List<AstNode> getChildren() {
+        return List.of();
     }
 }

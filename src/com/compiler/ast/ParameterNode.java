@@ -1,5 +1,6 @@
 package com.compiler.ast;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -23,5 +24,10 @@ public class ParameterNode extends AstNode {
                                 " -> " + entry.getValue().getType())
                         .collect(Collectors.joining("\n")))
                 .stripTrailing();
+    }
+
+    @Override
+    public List<AstNode> getChildren() {
+        return List.of();
     }
 }
