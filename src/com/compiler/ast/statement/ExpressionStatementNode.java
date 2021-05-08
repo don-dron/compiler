@@ -19,7 +19,7 @@ public class ExpressionStatementNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "Expression:\n" + expressionNode.astDebug(shift + 1);
+        return SHIFT.repeat(shift) + "Expression statement:\n" + expressionNode.astDebug(shift + 1);
     }
 
     @Override

@@ -1,18 +1,26 @@
 package com.compiler.ir;
 
-public class Variable {
-    private String name;
-    private Type type;
-    private Scope scope;
+import java.util.Objects;
 
-    public Variable(String name, Type type, Scope scope) {
+public class Variable {
+    private final BasicBlock definingBlock;
+    private final String name;
+    private final Type type;
+    private final Scope scope;
+
+    public Variable(String name, Type type, Scope scope, BasicBlock definingBlock) {
         this.name = name;
         this.type = type;
         this.scope = scope;
+        this.definingBlock = definingBlock;
     }
 
     public Scope getScope() {
         return scope;
+    }
+
+    public BasicBlock getDefiningBlock() {
+        return definingBlock;
     }
 
     public String getName() {
@@ -21,5 +29,10 @@ public class Variable {
 
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return name + " : " + type;
     }
 }

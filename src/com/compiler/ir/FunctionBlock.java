@@ -1,22 +1,22 @@
 package com.compiler.ir;
 
-import com.compiler.ast.ParameterNode;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class FunctionBlock implements Scope {
+public class FunctionBlock {
     private final String functionName;
     private final List<BasicBlock> blocks;
-    private final Set<Variable> variables;
+    private final Set<Variable> defines;
+    private final Scope scope;
     private Type returnType;
 
-    public FunctionBlock(String name, Type returnType) {
+    public FunctionBlock(String name, Type returnType, Scope scope) {
         this.functionName = name;
+        this.scope = scope;
         this.returnType = returnType;
-        this.variables = new HashSet<>();
+        this.defines = new HashSet<>();
         this.blocks = new ArrayList<>();
     }
 
@@ -24,25 +24,30 @@ public class FunctionBlock implements Scope {
         this.returnType = returnType;
     }
 
-    @Override
-    public Set<Variable> getVariables() {
-        return variables;
-    }
-
-    public void addVariable(Variable var) {
-        if (!variables.add(var)) {
+    public void addDefine(Variable var) {
+        if (!defines.add(var)) {
             throw new IllegalStateException("Variable already declared");
         }
     }
 
-    public void addVariables(List<Variable> var) {
-        if (!variables.addAll(var)) {
+    public void addDefines(List<Variable> var) {
+        if (!defines.addAll(var)) {
             throw new IllegalStateException("Variable already declared");
         }
     }
 
-    public void appendBlock(BasicBlock basicBlock) {
+    public Scope getScope() {
+        return scope;
+    }
+
+    public Set<Variable> getDefines() {
+        return defines;
+    }
+
+    public BasicBlock appendBlock(String name) {
+        BasicBlock basicBlock = new BasicBlock(scope, name);
         blocks.add(basicBlock);
+        return basicBlock;
     }
 
     public List<BasicBlock> getBlocks() {
@@ -55,5 +60,9 @@ public class FunctionBlock implements Scope {
 
     public Type getReturnType() {
         return returnType;
+    }
+
+    public BasicBlock getCurrentBlock() {
+        return null;
     }
 }

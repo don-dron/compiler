@@ -19,8 +19,8 @@ public class Main {
         Parser parser = new Parser(lexer);
 
         FunctionsNode functionsNodes = parser.parse();
-        Driver.drive(functionsNodes);
 
         System.out.println(functionsNodes.astDebug());
+        Driver.drive(functionsNodes);
     }
 }

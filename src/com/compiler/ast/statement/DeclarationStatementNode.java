@@ -8,9 +8,9 @@ import com.compiler.ast.expression.ExpressionNode;
 import java.util.List;
 
 public class DeclarationStatementNode extends StatementNode {
-    private TypeNode typeNode;
-    private IdentifierNode identifierNode;
-    private ExpressionNode expressionNode;
+    private final TypeNode typeNode;
+    private final IdentifierNode identifierNode;
+    private final ExpressionNode expressionNode;
 
     public DeclarationStatementNode(TypeNode typeNode, IdentifierNode identifierNode, ExpressionNode expressionNode) {
         super();
@@ -25,6 +25,18 @@ public class DeclarationStatementNode extends StatementNode {
                 typeNode.astDebug(shift + 1) + "\n" +
                 identifierNode.astDebug(shift + 1) + "\n" +
                 (expressionNode == null ? "" : expressionNode.astDebug(shift + 1))).stripTrailing();
+    }
+
+    public ExpressionNode getExpressionNode() {
+        return expressionNode;
+    }
+
+    public IdentifierNode getIdentifierNode() {
+        return identifierNode;
+    }
+
+    public TypeNode getTypeNode() {
+        return typeNode;
     }
 
     @Override
