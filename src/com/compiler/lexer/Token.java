@@ -77,6 +77,11 @@ public class Token {
         ELSE("else", "else"),
 
         /**
+         * continue
+         */
+        CONTINUE("continue", "continue"),
+
+        /**
          * break
          */
         BREAK("break", "break"),

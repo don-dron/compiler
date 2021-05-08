@@ -9,7 +9,12 @@ int main(int a, int b) {
         ;
         ;
         if ( i == 5.9 ) {
-            break;
+            if(a == 1) {
+                break;
+            } else {
+                return 4;
+            }
+            continue;
         } else if ( i != 5.9 ) {
             return 1;
         } else if ( i <= 5.9 ) {

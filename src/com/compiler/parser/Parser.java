@@ -57,6 +57,8 @@ public class Parser {
 
         Token lParen = peek();
 
+        need(Token.TokenType.L_PAREN, lParen);
+
         if (lParen.getTokenType() != Token.TokenType.L_PAREN) {
             throwExpected(List.of(Token.TokenType.L_PAREN), lParen);
         }
@@ -64,6 +66,7 @@ public class Parser {
         ParameterNode parameterNode = parseParameterList();
 
         Token rParen = peek();
+        need(Token.TokenType.R_PAREN, rParen);
 
         if (rParen.getTokenType() != Token.TokenType.R_PAREN) {
             throwExpected(List.of(Token.TokenType.R_PAREN), rParen);
@@ -87,7 +90,7 @@ public class Parser {
         if (type.getTokenType() != Token.TokenType.VOID &&
                 type.getTokenType() != Token.TokenType.INT &&
                 type.getTokenType() != Token.TokenType.FLOAT) {
-            return null;
+            throwExpected(List.of(Token.TokenType.VOID, Token.TokenType.INT, Token.TokenType.FLOAT), type);
         }
         next();
 
@@ -164,6 +167,8 @@ public class Parser {
             return parseReturnStatement();
         } else if (first.getTokenType() == Token.TokenType.BREAK) {
             return parseBreakStatement();
+        } else if (first.getTokenType() == Token.TokenType.CONTINUE) {
+            return parseContinueStatement();
         } else if (first.getTokenType() == Token.TokenType.INT || first.getTokenType() == Token.TokenType.FLOAT) {
             return parseDeclarationStatement();
         } else {
@@ -175,6 +180,7 @@ public class Parser {
     private StatementNode parseCompoundStatement() {
         List<StatementNode> statementNodes = new ArrayList<>();
         Token lfParen = peek();
+        need(Token.TokenType.LF_PAREN, lfParen);
         next();
 
         while (true) {
@@ -187,6 +193,7 @@ public class Parser {
         }
 
         Token rfParen = peek();
+        need(Token.TokenType.RF_PAREN, rfParen);
         next();
         return new CompoundStatementNode(statementNodes);
     }
@@ -239,11 +246,14 @@ public class Parser {
     private StatementNode parseIfStatement() {
         Token ifToken = peek();
         Token lParen = next();
+        need(Token.TokenType.L_PAREN, lParen);
         next();
 
         ExpressionNode expressionNode = parseConditionalExpression();
 
-        Token rParen = next();
+        Token rParen = peek();
+        need(Token.TokenType.R_PAREN, rParen);
+        rParen = next();
 
         StatementNode thenNode = parseStatement();
 
@@ -264,10 +274,13 @@ public class Parser {
         StatementNode body = null;
         Token forToken = peek();
         Token lParen = next();
+        need(Token.TokenType.L_PAREN, lParen);
         next();
         Token semicolon = peek();
         if (semicolon.getTokenType() != Token.TokenType.SEMICOLON) {
             prev = parseDeclarationStatement();
+        } else {
+            next();
         }
 
         semicolon = peek();
@@ -282,7 +295,7 @@ public class Parser {
             step = parseAssigmentExpression();
         }
 
-        rParen = next();
+        next();
 
         body = parseStatement();
         return new ForStatementNode(prev, predicate, step, body);
@@ -311,6 +324,15 @@ public class Parser {
         next();
 
         return new ReturnStatementNode(expressionNode);
+    }
+
+    // JUMP_STATEMENT ::= BREAK SEMICOLON | RETURN SEMICOLON | RETURN CONDITIONAL_EXPRESSION SEMICOLON
+    private StatementNode parseContinueStatement() {
+        Token continueToken = peek();
+        next();
+        Token semicolon = peek();
+        next();
+        return new ContinueStatementNode();
     }
 
     // ASSIGMENT_EXPRESSION ::= IDENTIFIER = CONDITIONAL_EXPRESSION
@@ -558,6 +580,10 @@ public class Parser {
         }
 
         throw new IllegalStateException("Unknown primary expression");
+    }
+
+    private void need(Token.TokenType tokenType, Token current) {
+        throwExpected(List.of(tokenType), current);
     }
 
     private void throwExpected(List<Token.TokenType> expected, Token result) {
