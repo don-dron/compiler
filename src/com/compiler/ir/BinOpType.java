@@ -3,15 +3,15 @@ package com.compiler.ir;
 public enum BinOpType {
     ADD("add"),
     SUB("sub"),
-    DIV("div"),
-    GE("ge"),
-    LE("le"),
-    GT("gt"),
-    LT("lt"),
-    NE("ne"),
-    EQ("eq"),
-    AND(""),
-    OR(""),
+    DIV("sdiv"),
+    GE("icmp sge"),
+    LE("icmp sle"),
+    GT("icmp sgt"),
+    LT("icmp slt"),
+    NE("icmp ne"),
+    EQ("icmp eq"),
+    AND("and"),
+    OR("or"),
     MUL("mul");
 
     BinOpType(String code) {

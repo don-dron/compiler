@@ -25,7 +25,7 @@ public class ConditionalBranch extends Terminator {
 
     @Override
     public String toString() {
-        return "br " + value + " label %" + first.getName() + ", label %" + second.getName();
+        return "br " + value.getType().toCode() + " " + value.toCode() + ", label %" + first.getName() + ", label %" + second.getName();
     }
 }
 

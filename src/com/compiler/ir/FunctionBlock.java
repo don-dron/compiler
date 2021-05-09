@@ -14,6 +14,7 @@ public class FunctionBlock {
     private Type returnType;
     private BasicBlock currentBlock;
     private BasicBlock returnBlock;
+    private Variable retValue;
 
     public FunctionBlock(String name, Type returnType, Scope scope) {
         this.functionName = name;
@@ -21,6 +22,10 @@ public class FunctionBlock {
         this.returnType = returnType;
         this.defines = new HashSet<>();
         this.blocks = new ArrayList<>();
+    }
+
+    public Variable getRetValue() {
+        return retValue;
     }
 
     public void setReturnType(Type returnType) {
@@ -76,5 +81,9 @@ public class FunctionBlock {
 
     public BasicBlock getReturnBlock() {
         return returnBlock;
+    }
+
+    public void setRetValue(Variable retValue) {
+        this.retValue = retValue;
     }
 }

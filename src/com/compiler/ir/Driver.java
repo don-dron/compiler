@@ -3,7 +3,6 @@ package com.compiler.ir;
 import com.compiler.ast.AstNode;
 import com.compiler.ast.FunctionNode;
 import com.compiler.ast.FunctionsNode;
-import com.compiler.ast.IdentifierNode;
 import com.compiler.ast.expression.*;
 import com.compiler.ast.statement.*;
 
@@ -55,7 +54,7 @@ public final class Driver {
                 .collect(Collectors.toList());
         functionBlock.addDefines(variables);
         Variable retValue = functionScope.addVariable(RET_VAL, functionNode.getTypeNode().getType(), skip);
-
+        functionBlock.setRetValue(retValue);
         skip.addOperation(new AllocationOperation(retValue));
 
         BasicBlock returnBlock = functionBlock.appendBlock("return");
@@ -76,6 +75,8 @@ public final class Driver {
 
         CompoundStatementNode compoundStatementNode = (CompoundStatementNode) functionNode.getStatementNode();
         compoundStatementNode.getStatements().forEach(d -> driveStatement(functionBlock, functionScope, d));
+
+        functionBlock.getCurrentBlock().setTerminator(new Branch(functionBlock.getReturnBlock()));
 
         System.out.println(functionScope.treeDebug(0));
         System.out.println(functionToString(functionBlock));
@@ -288,12 +289,31 @@ public final class Driver {
             last.setTerminator(new Branch(retBlock));
 
             if (returnStatementNode.getExpressionNode() != null) {
-                driveExpression(functionBlock, scope,
-                        new AssigmentExpressionNode(new IdentifierNode(RET_VAL),
-                                ((ReturnStatementNode) statementNode).getExpressionNode()));
+                ExpressionNode expressionNode = returnStatementNode.getExpressionNode();
+                if (isTerm(expressionNode)) {
+                    retBlock.addOperation(new StoreOperation(
+                            driveValue(functionBlock, scope, expressionNode),
+                            new VariableValue(functionBlock.getRetValue())));
+                } else {
+                    Value source = null;
+                    if (isVariable(expressionNode)) {
+                        source = driveValue(functionBlock, scope, expressionNode);
+                    } else {
+                        source = driveExpression(functionBlock, scope, expressionNode).getResult();
+                    }
+                    LoadOperation first = new LoadOperation(source,
+                            new VariableValue(new Variable(genNext(), source.getType(),
+                                    scope, functionBlock.getCurrentBlock(), true))
+                    );
+                    functionBlock.getCurrentBlock().addOperation(first);
+                    retBlock.addOperation(new StoreOperation(
+                            first.getTarget(), new VariableValue(functionBlock.getRetValue())));
+                }
             }
 
             retBlock.setTerminator(new Branch(functionBlock.getReturnBlock()));
+
+            functionBlock.appendBlock("dummy_block");
         } else {
             throw new IllegalStateException("Unknown statement " + statementNode);
         }
@@ -329,33 +349,43 @@ public final class Driver {
     }
 
     private static Operation handleOr(FunctionBlock functionBlock, Scope scope, LogicalOrExpressionNode expressionNode) {
-        Value source = null;
+        Value firstArg = null;
+        Value secondArg = null;
 
         if (isTerm(expressionNode.getFirst())) {
-            source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getFirst())) {
+                source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            }
+            LoadOperation first = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+            firstArg = first.getTarget();
         }
-        LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-        functionBlock.getCurrentBlock().addOperation(first);
 
-        source = null;
         if (isTerm(expressionNode.getSecond())) {
-            source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getSecond())) {
+                source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            }
+            LoadOperation second = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            secondArg = second.getTarget();
         }
-        LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-
-        functionBlock.getCurrentBlock().addOperation(second);
-
-        Operation operation = new BinOperation(BinOpType.OR, first.getTarget(), second.getTarget(),
+        Operation operation = new BinOperation(BinOpType.OR, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
                         Type.BOOL,
                         scope,
@@ -365,34 +395,43 @@ public final class Driver {
     }
 
     private static Operation handleAnd(FunctionBlock functionBlock, Scope scope, LogicalAndExpressionNode expressionNode) {
-        Value source = null;
+        Value firstArg = null;
+        Value secondArg = null;
 
         if (isTerm(expressionNode.getFirst())) {
-            source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getFirst())) {
+                source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            }
+            LoadOperation first = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+            firstArg = first.getTarget();
         }
-        LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(), scope,
-                        functionBlock.getCurrentBlock(), true))
-        );
-        functionBlock.getCurrentBlock().addOperation(first);
 
-
-        source = null;
         if (isTerm(expressionNode.getSecond())) {
-            source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getSecond())) {
+                source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            }
+            LoadOperation second = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            secondArg = second.getTarget();
         }
-        LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-
-        functionBlock.getCurrentBlock().addOperation(second);
-
-        Operation operation = new BinOperation(BinOpType.AND, first.getTarget(), second.getTarget(),
+        Operation operation = new BinOperation(BinOpType.AND, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
                         Type.BOOL,
                         scope,
@@ -402,33 +441,42 @@ public final class Driver {
     }
 
     private static Operation handleEquality(FunctionBlock functionBlock, Scope scope, EqualityExpressionNode expressionNode) {
-        Value source = null;
+        Value firstArg = null;
+        Value secondArg = null;
 
         if (isTerm(expressionNode.getFirst())) {
-            source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getFirst())) {
+                source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            }
+            LoadOperation first = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+            firstArg = first.getTarget();
         }
-        LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-        functionBlock.getCurrentBlock().addOperation(first);
 
-
-        source = null;
         if (isTerm(expressionNode.getSecond())) {
-            source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getSecond())) {
+                source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            }
+            LoadOperation second = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            secondArg = second.getTarget();
         }
-        LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-
-        functionBlock.getCurrentBlock().addOperation(second);
-
         BinOpType binOpType = null;
         switch (expressionNode.getType()) {
             case EQ:
@@ -440,7 +488,7 @@ public final class Driver {
                 break;
 
         }
-        Operation operation = new BinOperation(binOpType, first.getTarget(), second.getTarget(),
+        Operation operation = new BinOperation(binOpType, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
                         Type.BOOL,
                         scope,
@@ -450,32 +498,42 @@ public final class Driver {
     }
 
     private static Operation handleRelational(FunctionBlock functionBlock, Scope scope, RelationalExpressionNode expressionNode) {
-        Value source = null;
+        Value firstArg = null;
+        Value secondArg = null;
 
         if (isTerm(expressionNode.getFirst())) {
-            source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getFirst())) {
+                source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            }
+            LoadOperation first = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+            firstArg = first.getTarget();
         }
-        LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-        functionBlock.getCurrentBlock().addOperation(first);
 
-
-        source = null;
         if (isTerm(expressionNode.getSecond())) {
-            source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getSecond())) {
+                source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            }
+            LoadOperation second = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            secondArg = second.getTarget();
         }
-        LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-
-        functionBlock.getCurrentBlock().addOperation(second);
 
         BinOpType binOpType = null;
         switch (expressionNode.getType()) {
@@ -492,7 +550,7 @@ public final class Driver {
             default:
                 binOpType = BinOpType.GE;
         }
-        Operation operation = new BinOperation(binOpType, first.getTarget(), second.getTarget(),
+        Operation operation = new BinOperation(binOpType, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
                         Type.BOOL,
                         scope,
@@ -575,33 +633,42 @@ public final class Driver {
     }
 
     private static Operation handleMultiplicative(FunctionBlock functionBlock, Scope scope, MultiplicativeExpressionNode expressionNode) {
-        Value source = null;
+        Value firstArg = null;
+        Value secondArg = null;
 
         if (isTerm(expressionNode.getFirst())) {
-            source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getFirst())) {
+                source = driveValue(functionBlock, scope, expressionNode.getFirst());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
+            }
+            LoadOperation first = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(first);
+            firstArg = first.getTarget();
         }
-        LoadOperation first = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-        functionBlock.getCurrentBlock().addOperation(first);
 
-
-        source = null;
         if (isTerm(expressionNode.getSecond())) {
-            source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            Value source = null;
+            if (isVariable(expressionNode.getSecond())) {
+                source = driveValue(functionBlock, scope, expressionNode.getSecond());
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
+            }
+            LoadOperation second = new LoadOperation(source,
+                    new VariableValue(new Variable(genNext(), source.getType(),
+                            scope, functionBlock.getCurrentBlock(), true))
+            );
+            functionBlock.getCurrentBlock().addOperation(second);
+            secondArg = second.getTarget();
         }
-        LoadOperation second = new LoadOperation(source,
-                new VariableValue(new Variable(genNext(), source.getType(),
-                        scope, functionBlock.getCurrentBlock(), true))
-        );
-
-        functionBlock.getCurrentBlock().addOperation(second);
-
         BinOpType binOpType;
         switch (expressionNode.getType()) {
             case MUL:
@@ -611,9 +678,9 @@ public final class Driver {
             default:
                 binOpType = BinOpType.DIV;
         }
-        Operation operation = new BinOperation(binOpType, first.getTarget(), second.getTarget(),
+        Operation operation = new BinOperation(binOpType, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
-                        binOperationType(first.getTarget(), second.getTarget()),
+                        binOperationType(firstArg, secondArg),
                         scope,
                         functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
