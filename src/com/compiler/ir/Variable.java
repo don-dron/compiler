@@ -1,7 +1,5 @@
 package com.compiler.ir;
 
-import java.util.Objects;
-
 public class Variable {
     private final BasicBlock definingBlock;
     private final String name;

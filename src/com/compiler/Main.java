@@ -3,13 +3,11 @@ package com.compiler;
 import com.compiler.ast.FunctionsNode;
 import com.compiler.ir.Driver;
 import com.compiler.lexer.Lexer;
-import com.compiler.lexer.Token;
 import com.compiler.parser.Parser;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
-import java.io.StringReader;
 
 public class Main {
 

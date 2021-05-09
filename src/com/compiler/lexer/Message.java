@@ -1,7 +1,5 @@
 package com.compiler.lexer;
 
-import com.compiler.lexer.Position;
-
 public class Message {
     private final String content;
     private final Position position;
