@@ -11,6 +11,7 @@ public class BasicBlock {
     private final Set<Variable> defines;
     private final List<Operation> operations;
     private Terminator terminator;
+    private boolean dummy;
 
     public BasicBlock(Scope scope, String name) {
         this.name = name;
@@ -27,6 +28,10 @@ public class BasicBlock {
         if (!defines.add(var)) {
             throw new IllegalStateException("Variable already declared");
         }
+    }
+
+    public boolean isDummy() {
+        return dummy;
     }
 
     public void addDefines(List<Variable> var) {
@@ -61,5 +66,9 @@ public class BasicBlock {
 
     public void addOperation(Operation operation) {
         operations.add(operation);
+    }
+
+    public void setDummy() {
+        this.dummy = true;
     }
 }

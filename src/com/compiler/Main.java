@@ -5,20 +5,76 @@ import com.compiler.ir.Driver;
 import com.compiler.lexer.Lexer;
 import com.compiler.parser.Parser;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         Reader reader = new FileReader("test");
         Lexer lexer = new Lexer(reader);
         Parser parser = new Parser(lexer);
 
+        File file = new File("out.ll");
+        file.deleteOnExit();
+        file.createNewFile();
+
         FunctionsNode functionsNodes = parser.parse();
 
         System.out.println(functionsNodes.astDebug());
-        Driver.drive(functionsNodes);
+        String dump = Driver.moduleToString(Driver.drive(functionsNodes));
+
+        System.out.println(dump);
+
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(dump);
+        fileWriter.flush();
+
+        File bf = new File("out.o");
+        bf.deleteOnExit();
+        bf.createNewFile();
+        runLLVM(file);
+
+        File prog = new File("prog");
+        prog.deleteOnExit();
+        prog.createNewFile();
+
+        runClang(bf, prog);
+
+        runProgram(prog);
+    }
+
+    private static void runClang(File bf, File prog) throws IOException, InterruptedException {
+        ProcessBuilder procBuilder = new ProcessBuilder("clang", bf.getName(), "-o", prog.getName());
+        runProcesss(procBuilder);
+    }
+
+    private static void runLLVM(File file) throws IOException, InterruptedException {
+        ProcessBuilder procBuilder = new ProcessBuilder("llc", "-filetype=obj", file.getName());
+        runProcesss(procBuilder);
+    }
+
+    private static void runProgram(File prog) throws IOException, InterruptedException {
+        ProcessBuilder procBuilder = new ProcessBuilder("./" + prog.getName());
+        runProcesss(procBuilder);
+    }
+
+    private static void runProcesss(ProcessBuilder procBuilder) throws IOException, InterruptedException {
+        procBuilder.redirectErrorStream(true);
+
+        Process process = procBuilder.start();
+
+        InputStream stdout = process.getInputStream();
+        InputStreamReader isrStdout = new InputStreamReader(stdout);
+        BufferedReader brStdout = new BufferedReader(isrStdout);
+
+        String line = null;
+        while ((line = brStdout.readLine()) != null) {
+            System.out.println(line);
+        }
+
+        int exitVal = process.waitFor();
+
+        System.out.println("Exit code = " + exitVal + " for " +
+                String.join(" ", procBuilder.command()));
     }
 }

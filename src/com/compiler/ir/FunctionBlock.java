@@ -86,4 +86,9 @@ public class FunctionBlock {
     public void setRetValue(Variable retValue) {
         this.retValue = retValue;
     }
+
+    public void appendDummyBlock(String dummy_block) {
+        BasicBlock basicBlock = appendBlock(dummy_block);
+        basicBlock.setDummy();
+    }
 }

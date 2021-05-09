@@ -9,6 +9,7 @@ import com.compiler.ast.statement.*;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public final class Driver {
@@ -80,15 +81,21 @@ public final class Driver {
         functionBlock.getCurrentBlock().setTerminator(new Branch(functionBlock.getReturnBlock()));
 
         System.out.println(functionScope.treeDebug(0));
-        System.out.println(functionToString(functionBlock));
 
         return functionBlock;
     }
 
-    private static String functionToString(FunctionBlock functionBlock) {
+    public static String moduleToString(Module module) {
         String s = "; ModuleID = 'main'\n" +
-                "source_filename = \"main\"\n" +
-                "define " + functionBlock.getReturnType().toCode() + " @" +
+                "source_filename = \"main\"\n   ";
+        return s += module.getFunctionBlocks()
+                .stream()
+                .map(Driver::functionToString)
+                .collect(Collectors.joining("\n"));
+    }
+
+    private static String functionToString(FunctionBlock functionBlock) {
+        String s = "define " + functionBlock.getReturnType().toCode() + " @" +
                 functionBlock.getFunctionName() + "() {\n";
         s += blocksToString(functionBlock.getBlocks());
         s += "\n}";
@@ -96,7 +103,10 @@ public final class Driver {
     }
 
     private static String blocksToString(List<BasicBlock> blocks) {
-        return blocks.stream().map(Driver::blockToString).collect(Collectors.joining("\n"));
+        return blocks.stream()
+                .filter(Predicate.not(BasicBlock::isDummy))
+                .map(Driver::blockToString)
+                .collect(Collectors.joining("\n"));
     }
 
     private static String blockToString(BasicBlock basicBlock) {
@@ -191,56 +201,36 @@ public final class Driver {
 
             merge = functionBlock.appendBlock("for_merge");
 
-            if (previous == null) {
-                if (condition == null) {
-                    if (step == null) {
-                        last.setTerminator(new Branch(body));
-                        endBody.setTerminator(new Branch(body));
-                    } else {
-                        last.setTerminator(new Branch(body));
-                        endBody.setTerminator(new Branch(step));
-                        step.setTerminator(new Branch(body));
-                    }
+            if (previous != null) {
+                last.setTerminator(new Branch(previous));
+                last = previous;
+            }
+
+            if (condition == null) {
+                if (step == null) {
+                    last.setTerminator(new Branch(body));
+                    endBody.setTerminator(new Branch(body));
                 } else {
-                    if (step == null) {
-                        last.setTerminator(new Branch(body));
-                        endBody.setTerminator(new Branch(condition));
-                        condition.setTerminator(new ConditionalBranch(operation.getResult(), body, merge));
-                    } else {
-                        last.setTerminator(new Branch(body));
-                        endBody.setTerminator(new Branch(step));
-                        condition.setTerminator(new ConditionalBranch(operation.getResult(), body, merge));
-                        step.setTerminator(new Branch(condition));
-                    }
+                    last.setTerminator(new Branch(body));
+                    endBody.setTerminator(new Branch(step));
+                    step.setTerminator(new Branch(body));
                 }
             } else {
-                last.setTerminator(new Branch(previous));
-
-                if (condition == null) {
-                    if (step == null) {
-                        previous.setTerminator(new Branch(body));
-                        endBody.setTerminator(new Branch(body));
-                    } else {
-                        previous.setTerminator(new Branch(body));
-                        endBody.setTerminator(new Branch(step));
-                        step.setTerminator(new Branch(body));
-                    }
+                if (step == null) {
+                    last.setTerminator(new Branch(condition));
+                    endBody.setTerminator(new Branch(condition));
+                    condition.setTerminator(new ConditionalBranch(operation.getResult(), body, merge));
                 } else {
-                    if (step == null) {
-                        previous.setTerminator(new Branch(body));
-                        endBody.setTerminator(new Branch(condition));
-                        condition.setTerminator(new ConditionalBranch(operation.getResult(), body, merge));
-                    } else {
-                        previous.setTerminator(new Branch(body));
-                        endBody.setTerminator(new Branch(step));
-                        condition.setTerminator(new ConditionalBranch(operation.getResult(), body, merge));
-                        step.setTerminator(new Branch(condition));
-                    }
+                    last.setTerminator(new Branch(condition));
+                    endBody.setTerminator(new Branch(step));
+                    condition.setTerminator(new ConditionalBranch(operation.getResult(), body, merge));
+                    step.setTerminator(new Branch(condition));
                 }
             }
         } else if (statementNode instanceof IfStatementNode) {
             IfStatementNode ifStatementNode = (IfStatementNode) statementNode;
 
+            BasicBlock last = functionBlock.getCurrentBlock();
             BasicBlock condition = functionBlock.appendBlock("if_condition");
             BasicBlock thenBlock = null;
             BasicBlock elseBlock = null;
@@ -275,6 +265,7 @@ public final class Driver {
 
             mergeBlock = functionBlock.appendBlock("if_merge");
 
+            last.setTerminator(new Branch(condition));
             endThen.setTerminator(new Branch(mergeBlock));
 
             if (elseBlock != null) {
@@ -297,7 +288,7 @@ public final class Driver {
 
             retBlock.setTerminator(new Branch(functionBlock.getReturnBlock()));
 
-            functionBlock.appendBlock("dummy_block");
+            functionBlock.appendDummyBlock("dummy_block");
         } else {
             throw new IllegalStateException("Unknown statement " + statementNode);
         }
