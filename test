@@ -3,7 +3,7 @@ int main(int a, int b) {
     c = c + 2;
     c = 3 + c;
     c = c/2 + c/2;
-    c = 1 + 1;
+    //c = 1 + 1;
 
     return c + 1;
 }

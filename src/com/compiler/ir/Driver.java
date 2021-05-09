@@ -3,6 +3,7 @@ package com.compiler.ir;
 import com.compiler.ast.AstNode;
 import com.compiler.ast.FunctionNode;
 import com.compiler.ast.FunctionsNode;
+import com.compiler.ast.IdentifierNode;
 import com.compiler.ast.expression.*;
 import com.compiler.ast.statement.*;
 
@@ -289,26 +290,9 @@ public final class Driver {
             last.setTerminator(new Branch(retBlock));
 
             if (returnStatementNode.getExpressionNode() != null) {
-                ExpressionNode expressionNode = returnStatementNode.getExpressionNode();
-                if (isTerm(expressionNode)) {
-                    retBlock.addOperation(new StoreOperation(
-                            driveValue(functionBlock, scope, expressionNode),
-                            new VariableValue(functionBlock.getRetValue())));
-                } else {
-                    Value source = null;
-                    if (isVariable(expressionNode)) {
-                        source = driveValue(functionBlock, scope, expressionNode);
-                    } else {
-                        source = driveExpression(functionBlock, scope, expressionNode).getResult();
-                    }
-                    LoadOperation first = new LoadOperation(source,
-                            new VariableValue(new Variable(genNext(), source.getType(),
-                                    scope, functionBlock.getCurrentBlock(), true))
-                    );
-                    functionBlock.getCurrentBlock().addOperation(first);
-                    retBlock.addOperation(new StoreOperation(
-                            first.getTarget(), new VariableValue(functionBlock.getRetValue())));
-                }
+                driveExpression(functionBlock, scope, new AssigmentExpressionNode(
+                        new IdentifierNode(RET_VAL),
+                        returnStatementNode.getExpressionNode()));
             }
 
             retBlock.setTerminator(new Branch(functionBlock.getReturnBlock()));
@@ -361,12 +345,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
             }
-            LoadOperation first = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(first);
-            firstArg = first.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                firstArg = source;
+            } else {
+                LoadOperation first = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(first);
+                firstArg = first.getTarget();
+            }
         }
 
         if (isTerm(expressionNode.getSecond())) {
@@ -378,12 +367,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
             }
-            LoadOperation second = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(second);
-            secondArg = second.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                firstArg = source;
+            } else {
+                LoadOperation second = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(second);
+                secondArg = second.getTarget();
+            }
         }
         Operation operation = new BinOperation(BinOpType.OR, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
@@ -407,12 +401,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
             }
-            LoadOperation first = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(first);
-            firstArg = first.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                firstArg = source;
+            } else {
+                LoadOperation first = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(first);
+                firstArg = first.getTarget();
+            }
         }
 
         if (isTerm(expressionNode.getSecond())) {
@@ -424,12 +423,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
             }
-            LoadOperation second = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(second);
-            secondArg = second.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                secondArg = source;
+            } else {
+                LoadOperation second = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(second);
+                secondArg = second.getTarget();
+            }
         }
         Operation operation = new BinOperation(BinOpType.AND, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
@@ -453,12 +457,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
             }
-            LoadOperation first = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(first);
-            firstArg = first.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                firstArg = source;
+            } else {
+                LoadOperation first = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(first);
+                firstArg = first.getTarget();
+            }
         }
 
         if (isTerm(expressionNode.getSecond())) {
@@ -470,12 +479,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
             }
-            LoadOperation second = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(second);
-            secondArg = second.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                secondArg = source;
+            } else {
+                LoadOperation second = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(second);
+                secondArg = second.getTarget();
+            }
         }
         BinOpType binOpType = null;
         switch (expressionNode.getType()) {
@@ -510,12 +524,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
             }
-            LoadOperation first = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(first);
-            firstArg = first.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                firstArg = source;
+            } else {
+                LoadOperation first = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(first);
+                firstArg = first.getTarget();
+            }
         }
 
         if (isTerm(expressionNode.getSecond())) {
@@ -527,12 +546,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
             }
-            LoadOperation second = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(second);
-            secondArg = second.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                secondArg = source;
+            } else {
+                LoadOperation second = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(second);
+                secondArg = second.getTarget();
+            }
         }
 
         BinOpType binOpType = null;
@@ -559,19 +583,37 @@ public final class Driver {
         return operation;
     }
 
-    private static StoreOperation handleAssigment(FunctionBlock functionBlock, Scope scope, AssigmentExpressionNode expressionNode) {
+    private static StoreOperation handleAssigment(FunctionBlock functionBlock, Scope scope, AssigmentExpressionNode assigmentExpressionNode) {
         Value source = null;
+        Value arg = null;
 
-        if (isTerm(expressionNode.getExpressionNode())) {
-            source = driveValue(functionBlock, scope, expressionNode.getExpressionNode());
+        ExpressionNode expressionNode = ((AssigmentExpressionNode) assigmentExpressionNode).getExpressionNode();
+
+        if (isTerm(expressionNode)) {
+            arg = driveValue(functionBlock, scope, expressionNode);
         } else {
-            source = driveExpression(functionBlock, scope, expressionNode.getExpressionNode()).getResult();
+            if (isVariable(expressionNode)) {
+                source = driveValue(functionBlock, scope, expressionNode);
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode).getResult();
+            }
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                arg = source;
+            } else {
+                LoadOperation second = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(second);
+                arg = second.getTarget();
+            }
         }
 
         StoreOperation storeOperation = new StoreOperation(
-                source,
+                arg,
                 variableValueByName(functionBlock, scope,
-                        (expressionNode.getIdentifierNode().getName())));
+                        (assigmentExpressionNode.getIdentifierNode().getName())));
         functionBlock.getCurrentBlock().addOperation(storeOperation);
         return storeOperation;
     }
@@ -589,12 +631,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
             }
-            LoadOperation first = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(first);
-            firstArg = first.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                firstArg = source;
+            } else {
+                LoadOperation first = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(first);
+                firstArg = first.getTarget();
+            }
         }
 
         if (isTerm(expressionNode.getSecond())) {
@@ -606,12 +653,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
             }
-            LoadOperation second = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(second);
-            secondArg = second.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                secondArg = source;
+            } else {
+                LoadOperation second = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(second);
+                secondArg = second.getTarget();
+            }
         }
 
         BinOpType binOpType;
@@ -645,12 +697,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
             }
-            LoadOperation first = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(first);
-            firstArg = first.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                firstArg = source;
+            } else {
+                LoadOperation first = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(first);
+                firstArg = first.getTarget();
+            }
         }
 
         if (isTerm(expressionNode.getSecond())) {
@@ -662,12 +719,17 @@ public final class Driver {
             } else {
                 source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
             }
-            LoadOperation second = new LoadOperation(source,
-                    new VariableValue(new Variable(genNext(), source.getType(),
-                            scope, functionBlock.getCurrentBlock(), true))
-            );
-            functionBlock.getCurrentBlock().addOperation(second);
-            secondArg = second.getTarget();
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                secondArg = source;
+            } else {
+                LoadOperation second = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(second);
+                secondArg = second.getTarget();
+            }
         }
         BinOpType binOpType;
         switch (expressionNode.getType()) {
