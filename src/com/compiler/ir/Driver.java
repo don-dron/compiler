@@ -18,6 +18,12 @@ public final class Driver {
     public static int condCount = 0;
     private static final String RET_VAL = "ret$val";
     private static boolean allDoms = false;
+    private static Stack<BasicBlock> forStack = new Stack<>();
+
+    private static Map<BasicBlock, BasicBlock> forToNext = new HashMap<>();
+    private static Map<BasicBlock, BasicBlock> forToMerge = new HashMap<>();
+    private static Map<BasicBlock, BasicBlock> breakToFor = new HashMap<>();
+    private static Map<BasicBlock, BasicBlock> continueToFor = new HashMap<>();
 
     public static Module drive(FunctionsNode functionsNode) {
         return new Module(functionsNode.getFunctionNodes()
@@ -82,6 +88,9 @@ public final class Driver {
         compoundStatementNode.getStatements().forEach(d -> driveStatement(functionBlock, functionScope, d));
 
         functionBlock.getCurrentBlock().setTerminator(new Branch(functionBlock.getReturnBlock()));
+
+        breakToFor.forEach((key1, value1) -> key1.setTerminator(new Branch(forToMerge.get(value1))));
+        continueToFor.forEach((key, value) -> key.setTerminator(new Branch(forToNext.get(value))));
 
         removeEmptyBlocks(functionBlock);
 
@@ -575,7 +584,16 @@ public final class Driver {
                                        Scope scope,
                                        StatementNode statementNode) {
         if (statementNode instanceof BreakStatementNode) {
-            // add break
+            BasicBlock last = functionBlock.getCurrentBlock();
+
+            BasicBlock forBlock = forStack.peek();
+
+            BasicBlock breakBlock = functionBlock.appendBlock("break");
+            last.setTerminator(new Branch(breakBlock));
+
+            breakToFor.put(breakBlock, forBlock);
+
+            functionBlock.appendDummyBlock("dummy_block");
         } else if (statementNode instanceof CompoundStatementNode) {
             Scope innerScope = new Scope(scope);
             scope.addScope(innerScope);
@@ -583,7 +601,16 @@ public final class Driver {
             CompoundStatementNode node = (CompoundStatementNode) statementNode;
             node.getStatements().forEach(n -> driveStatement(functionBlock, innerScope, n));
         } else if (statementNode instanceof ContinueStatementNode) {
-            // add continue
+            BasicBlock last = functionBlock.getCurrentBlock();
+
+            BasicBlock forBlock = forStack.peek();
+
+            BasicBlock continueBlock = functionBlock.appendBlock("continue");
+            last.setTerminator(new Branch(continueBlock));
+
+            continueToFor.put(continueBlock, forBlock);
+
+            functionBlock.appendDummyBlock("dummy_block");
         } else if (statementNode instanceof DeclarationStatementNode) {
             DeclarationStatementNode declarationStatementNode = (DeclarationStatementNode) statementNode;
             Variable variable = scope.addVariable(
@@ -635,6 +662,8 @@ public final class Driver {
             }
 
             body = functionBlock.appendBlock("for_body");
+            forStack.push(body);
+
             if (forStatementNode.getBody() instanceof CompoundStatementNode) {
                 CompoundStatementNode compoundStatementNode = (CompoundStatementNode) forStatementNode.getBody();
                 compoundStatementNode.getStatements().forEach(d -> driveStatement(functionBlock, innerScope, d));
@@ -643,7 +672,7 @@ public final class Driver {
             }
 
             BasicBlock endBody = functionBlock.getCurrentBlock();
-
+            forStack.pop();
             merge = functionBlock.appendBlock("for_merge");
 
             if (previous != null) {
@@ -655,23 +684,28 @@ public final class Driver {
                 if (step == null) {
                     last.setTerminator(new Branch(body));
                     endBody.setTerminator(new Branch(body));
+                    forToNext.put(body, body);
                 } else {
                     last.setTerminator(new Branch(body));
                     endBody.setTerminator(new Branch(step));
                     step.setTerminator(new Branch(body));
+                    forToNext.put(body, step);
                 }
             } else {
                 if (step == null) {
                     last.setTerminator(new Branch(condition));
                     endBody.setTerminator(new Branch(condition));
                     condition.setTerminator(new ConditionalBranch(operation.getResult(), body, merge));
+                    forToNext.put(body, condition);
                 } else {
                     last.setTerminator(new Branch(condition));
                     endBody.setTerminator(new Branch(step));
                     condition.setTerminator(new ConditionalBranch(operation.getResult(), body, merge));
                     step.setTerminator(new Branch(condition));
+                    forToNext.put(body, step);
                 }
             }
+            forToMerge.put(body, merge);
         } else if (statementNode instanceof IfStatementNode) {
             IfStatementNode ifStatementNode = (IfStatementNode) statementNode;
 
@@ -741,7 +775,7 @@ public final class Driver {
 
     private static Operation driveExpression(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
         if (expressionNode instanceof ConditionalExpressionNode) {
-            return handleConditional(functionBlock, scope, (ConditionalExpressionNode) expressionNode);
+            throw new IllegalStateException("Not implemented");
         } else if (expressionNode instanceof LogicalOrExpressionNode) {
             return handleOr(functionBlock, scope, (LogicalOrExpressionNode) expressionNode);
         } else if (expressionNode instanceof LogicalAndExpressionNode) {
@@ -763,97 +797,96 @@ public final class Driver {
 
     private static LoadOperation handleConditional(FunctionBlock functionBlock, Scope scope,
                                                    ConditionalExpressionNode expressionNode) {
-        throw new IllegalStateException("Not implemented");
-//        ConditionalExpressionNode conditionalExpressionNode = expressionNode;
-//        BasicBlock last = functionBlock.getCurrentBlock();
-//        BasicBlock condition = functionBlock.appendBlock("conditional");
-//        BasicBlock thenBlock = null;
-//        BasicBlock elseBlock = null;
-//        BasicBlock mergeBlock = null;
-//
-//        Variable variable = new Variable("cond$"+ condCount++, Type.INT, scope, condition, false);
-//        VariableValue value = new VariableValue(variable);
-//        AllocationOperation allocationOperation = new AllocationOperation(variable);
-//        condition.addOperation(allocationOperation);
-//        last.setTerminator(new Branch(condition));
-//
-//        Operation operation = driveExpression(functionBlock, scope, conditionalExpressionNode.getConditionNode());
-//
-//        BasicBlock endCondition = functionBlock.getCurrentBlock();
-//        thenBlock = functionBlock.appendBlock("conditional_then");
-//        Value firstArg = null;
-//        Value secondArg = null;
-//
-//        ExpressionNode thenExpression = conditionalExpressionNode.getThenNode();
-//        if (isTerm(thenExpression)) {
-//            firstArg = driveValue(functionBlock, scope, thenExpression);
-//        } else {
-//            Value source = null;
-//            if (isVariable(thenExpression)) {
-//                source = driveValue(functionBlock, scope, thenExpression);
-//            } else {
-//                source = driveExpression(functionBlock, scope, thenExpression).getResult();
-//            }
-//
-//            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-//                firstArg = source;
-//            } else {
-//                LoadOperation first = new LoadOperation(source,
-//                        new VariableValue(new Variable(genNext(), source.getType(),
-//                                scope, functionBlock.getCurrentBlock(), true))
-//                );
-//                functionBlock.getCurrentBlock().addOperation(first);
-//                firstArg = first.getTarget();
-//            }
-//        }
-//        StoreOperation firstStore = new StoreOperation(
-//                firstArg, value
-//        );
-//        thenBlock.addOperation(firstStore);
-//        BasicBlock endThen = functionBlock.getCurrentBlock();
-//
-//        elseBlock = functionBlock.appendBlock("conditional_else");
-//        ExpressionNode elseExpression = conditionalExpressionNode.getElseNode();
-//        if (isTerm(elseExpression)) {
-//            secondArg = driveValue(functionBlock, scope, elseExpression);
-//        } else {
-//            Value source = null;
-//            if (isVariable(elseExpression)) {
-//                source = driveValue(functionBlock, scope, elseExpression);
-//            } else {
-//                source = driveExpression(functionBlock, scope, elseExpression).getResult();
-//            }
-//
-//            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-//                secondArg = source;
-//            } else {
-//                LoadOperation second = new LoadOperation(source,
-//                        new VariableValue(new Variable(genNext(), source.getType(),
-//                                scope, functionBlock.getCurrentBlock(), true))
-//                );
-//                functionBlock.getCurrentBlock().addOperation(second);
-//                secondArg = second.getTarget();
-//            }
-//        }
-//
-//        StoreOperation secondStore = new StoreOperation(
-//                secondArg, value
-//        );
-//        elseBlock.addOperation(secondStore);
-//        BasicBlock endElse = functionBlock.getCurrentBlock();
-//
-//        mergeBlock = functionBlock.appendBlock("conditional_result");
-//
-//        endElse.setTerminator(new Branch(mergeBlock));
-//        endThen.setTerminator(new Branch(mergeBlock));
-//        endCondition.setTerminator(new ConditionalBranch(operation.getResult(), thenBlock, elseBlock));
-//
-//        LoadOperation loadOperation = new LoadOperation(value,
-//                new VariableValue(new Variable(genNext(), variable.getType(),
-//                        scope, functionBlock.getCurrentBlock(), true))
-//        );
-//        mergeBlock.addOperation(loadOperation);
-//        return loadOperation;
+        ConditionalExpressionNode conditionalExpressionNode = expressionNode;
+        BasicBlock last = functionBlock.getCurrentBlock();
+        BasicBlock condition = functionBlock.appendBlock("conditional");
+        BasicBlock thenBlock = null;
+        BasicBlock elseBlock = null;
+        BasicBlock mergeBlock = null;
+
+        Variable variable = new Variable("cond$"+ condCount++, Type.INT, scope, condition, false);
+        VariableValue value = new VariableValue(variable);
+        AllocationOperation allocationOperation = new AllocationOperation(variable);
+        condition.addOperation(allocationOperation);
+        last.setTerminator(new Branch(condition));
+
+        Operation operation = driveExpression(functionBlock, scope, conditionalExpressionNode.getConditionNode());
+
+        BasicBlock endCondition = functionBlock.getCurrentBlock();
+        thenBlock = functionBlock.appendBlock("conditional_then");
+        Value firstArg = null;
+        Value secondArg = null;
+
+        ExpressionNode thenExpression = conditionalExpressionNode.getThenNode();
+        if (isTerm(thenExpression)) {
+            firstArg = driveValue(functionBlock, scope, thenExpression);
+        } else {
+            Value source = null;
+            if (isVariable(thenExpression)) {
+                source = driveValue(functionBlock, scope, thenExpression);
+            } else {
+                source = driveExpression(functionBlock, scope, thenExpression).getResult();
+            }
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                firstArg = source;
+            } else {
+                LoadOperation first = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(first);
+                firstArg = first.getTarget();
+            }
+        }
+        StoreOperation firstStore = new StoreOperation(
+                firstArg, value
+        );
+        thenBlock.addOperation(firstStore);
+        BasicBlock endThen = functionBlock.getCurrentBlock();
+
+        elseBlock = functionBlock.appendBlock("conditional_else");
+        ExpressionNode elseExpression = conditionalExpressionNode.getElseNode();
+        if (isTerm(elseExpression)) {
+            secondArg = driveValue(functionBlock, scope, elseExpression);
+        } else {
+            Value source = null;
+            if (isVariable(elseExpression)) {
+                source = driveValue(functionBlock, scope, elseExpression);
+            } else {
+                source = driveExpression(functionBlock, scope, elseExpression).getResult();
+            }
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                secondArg = source;
+            } else {
+                LoadOperation second = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(second);
+                secondArg = second.getTarget();
+            }
+        }
+
+        StoreOperation secondStore = new StoreOperation(
+                secondArg, value
+        );
+        elseBlock.addOperation(secondStore);
+        BasicBlock endElse = functionBlock.getCurrentBlock();
+
+        mergeBlock = functionBlock.appendBlock("conditional_result");
+
+        endElse.setTerminator(new Branch(mergeBlock));
+        endThen.setTerminator(new Branch(mergeBlock));
+        endCondition.setTerminator(new ConditionalBranch(operation.getResult(), thenBlock, elseBlock));
+
+        LoadOperation loadOperation = new LoadOperation(value,
+                new VariableValue(new Variable(genNext(), variable.getType(),
+                        scope, functionBlock.getCurrentBlock(), true))
+        );
+        mergeBlock.addOperation(loadOperation);
+        return loadOperation;
     }
 
     private static Operation handleOr(FunctionBlock functionBlock, Scope scope, LogicalOrExpressionNode expressionNode) {
