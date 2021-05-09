@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 public final class Driver {
     public static int count = 0;
+    public static int condCount = 0;
     private static final String RET_VAL = "ret$val";
 
     public static Module drive(FunctionsNode functionsNode) {
@@ -80,9 +81,138 @@ public final class Driver {
 
         functionBlock.getCurrentBlock().setTerminator(new Branch(functionBlock.getReturnBlock()));
 
+        removeEmptyBlocks(functionBlock);
+
+        BasicBlock root = buildCfgGraph(functionBlock);
+
+        paintDeadCode(functionBlock.getBlocks(), root);
+
         System.out.println(functionScope.treeDebug(0));
 
         return functionBlock;
+    }
+
+    public static void blockWalk(BasicBlock block, Consumer<BasicBlock> consumer) {
+        block.setMarked(true);
+
+        if (consumer != null) {
+            consumer.accept(block);
+        }
+
+        for (BasicBlock b : block.getOutput()) {
+            if (!b.isMarked()) {
+                blockWalk(b, consumer);
+            }
+        }
+    }
+
+    public static void paintDeadCode(List<BasicBlock> list, BasicBlock root) {
+        list.forEach(BasicBlock::unmark);
+
+        blockWalk(root, null);
+
+        list.stream().filter(b -> !b.isMarked()).forEach(b -> b.setDead(true));
+    }
+
+    public static String graphVizDebug(FunctionBlock functionBlock) {
+        StringBuilder s = new StringBuilder("digraph G {\n");
+
+        for (BasicBlock basicBlock : functionBlock.getBlocks()) {
+            String body = blockToString(basicBlock);
+            s
+                    .append("\"")
+                    .append(basicBlock.getName())
+                    .append("\"")
+                    .append(" ")
+                    .append("[fillcolor=" + (basicBlock.isDead() ? "grey" : "white") +
+                            ", style=filled, shape=box, label=\"")
+                    .append(body)
+                    .append("\"];\n");
+        }
+
+        for (BasicBlock basicBlock : functionBlock.getBlocks()) {
+            for (BasicBlock other : basicBlock.getOutput()) {
+                s
+                        .append("\"")
+                        .append(basicBlock.getName())
+                        .append("\"")
+                        .append(" -> ")
+                        .append("\"")
+                        .append(other.getName())
+                        .append("\";\n");
+            }
+        }
+
+        s.append("}");
+        return s.toString();
+    }
+
+    private static BasicBlock buildCfgGraph(FunctionBlock functionBlock) {
+        BasicBlock root = functionBlock.getBlocks().get(0);
+
+        for (BasicBlock basicBlock : functionBlock.getBlocks()) {
+            if (basicBlock.getTerminator() instanceof Branch) {
+                Branch branch = (Branch) basicBlock.getTerminator();
+
+                basicBlock.addOutput(branch.getTarget());
+
+                branch.getTarget().addInput(basicBlock);
+            } else if (basicBlock.getTerminator() instanceof ConditionalBranch) {
+                ConditionalBranch conditionalBranch = (ConditionalBranch) basicBlock.getTerminator();
+
+                basicBlock.addOutput(conditionalBranch.getFirst());
+                basicBlock.addOutput(conditionalBranch.getSecond());
+
+                conditionalBranch.getFirst().addInput(basicBlock);
+                conditionalBranch.getSecond().addInput(basicBlock);
+            }
+        }
+
+        return root;
+    }
+
+    private static void removeEmptyBlocks(FunctionBlock functionBlock) {
+        List<BasicBlock> emptyBlocks =
+                functionBlock.getBlocks().stream()
+                        .filter(b -> b.getOperations().isEmpty())
+                        .filter(b -> {
+                            return !(b.getTerminator() instanceof Branch &&
+                                    ((Branch) b.getTerminator()).getTarget().equals(b));
+                        })
+                        .collect(Collectors.toList());
+
+        functionBlock.getBlocks().forEach(
+                b -> {
+
+                    Terminator terminator = b.getTerminator();
+
+                    if (terminator instanceof Branch) {
+                        Branch branch = (Branch) terminator;
+
+                        if (emptyBlocks.contains(branch.getTarget()) && !b.equals(branch.getTarget())) {
+                            b.setTerminator(branch.getTarget().getTerminator());
+                        }
+                    } else if (terminator instanceof ConditionalBranch) {
+                        ConditionalBranch conditionalBranch = (ConditionalBranch) terminator;
+
+                        if (emptyBlocks.contains(conditionalBranch.getFirst())) {
+                            if (conditionalBranch.getFirst().getTerminator() instanceof Branch) {
+                                conditionalBranch.setFirst(((Branch)
+                                        conditionalBranch.getFirst().getTerminator()).getTarget());
+                            }
+                        }
+
+                        if (emptyBlocks.contains(conditionalBranch.getSecond())) {
+                            if (conditionalBranch.getSecond().getTerminator() instanceof Branch) {
+                                conditionalBranch.setSecond(((Branch)
+                                        conditionalBranch.getSecond().getTerminator()).getTarget());
+                            }
+                        }
+                    }
+                }
+        );
+
+        functionBlock.getBlocks().removeAll(emptyBlocks);
     }
 
     public static String moduleToString(Module module) {
@@ -296,7 +426,7 @@ public final class Driver {
 
     private static Operation driveExpression(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
         if (expressionNode instanceof ConditionalExpressionNode) {
-            return handleConditional(functionBlock, (ConditionalExpressionNode) expressionNode);
+            return handleConditional(functionBlock, scope, (ConditionalExpressionNode) expressionNode);
         } else if (expressionNode instanceof LogicalOrExpressionNode) {
             return handleOr(functionBlock, scope, (LogicalOrExpressionNode) expressionNode);
         } else if (expressionNode instanceof LogicalAndExpressionNode) {
@@ -316,11 +446,99 @@ public final class Driver {
         }
     }
 
-    private static LoadOperation handleConditional(FunctionBlock functionBlock, ConditionalExpressionNode expressionNode) {
-        ConditionalExpressionNode conditionalExpressionNode = expressionNode;
-        LoadOperation loadOperation = new LoadOperation(null, null);
-        functionBlock.getCurrentBlock().addOperation(loadOperation);
-        return loadOperation;
+    private static LoadOperation handleConditional(FunctionBlock functionBlock, Scope scope,
+                                                   ConditionalExpressionNode expressionNode) {
+        throw new IllegalStateException("Not implemented");
+//        ConditionalExpressionNode conditionalExpressionNode = expressionNode;
+//        BasicBlock last = functionBlock.getCurrentBlock();
+//        BasicBlock condition = functionBlock.appendBlock("conditional");
+//        BasicBlock thenBlock = null;
+//        BasicBlock elseBlock = null;
+//        BasicBlock mergeBlock = null;
+//
+//        Variable variable = new Variable("cond$"+ condCount++, Type.INT, scope, condition, false);
+//        VariableValue value = new VariableValue(variable);
+//        AllocationOperation allocationOperation = new AllocationOperation(variable);
+//        condition.addOperation(allocationOperation);
+//        last.setTerminator(new Branch(condition));
+//
+//        Operation operation = driveExpression(functionBlock, scope, conditionalExpressionNode.getConditionNode());
+//
+//        BasicBlock endCondition = functionBlock.getCurrentBlock();
+//        thenBlock = functionBlock.appendBlock("conditional_then");
+//        Value firstArg = null;
+//        Value secondArg = null;
+//
+//        ExpressionNode thenExpression = conditionalExpressionNode.getThenNode();
+//        if (isTerm(thenExpression)) {
+//            firstArg = driveValue(functionBlock, scope, thenExpression);
+//        } else {
+//            Value source = null;
+//            if (isVariable(thenExpression)) {
+//                source = driveValue(functionBlock, scope, thenExpression);
+//            } else {
+//                source = driveExpression(functionBlock, scope, thenExpression).getResult();
+//            }
+//
+//            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+//                firstArg = source;
+//            } else {
+//                LoadOperation first = new LoadOperation(source,
+//                        new VariableValue(new Variable(genNext(), source.getType(),
+//                                scope, functionBlock.getCurrentBlock(), true))
+//                );
+//                functionBlock.getCurrentBlock().addOperation(first);
+//                firstArg = first.getTarget();
+//            }
+//        }
+//        StoreOperation firstStore = new StoreOperation(
+//                firstArg, value
+//        );
+//        thenBlock.addOperation(firstStore);
+//        BasicBlock endThen = functionBlock.getCurrentBlock();
+//
+//        elseBlock = functionBlock.appendBlock("conditional_else");
+//        ExpressionNode elseExpression = conditionalExpressionNode.getElseNode();
+//        if (isTerm(elseExpression)) {
+//            secondArg = driveValue(functionBlock, scope, elseExpression);
+//        } else {
+//            Value source = null;
+//            if (isVariable(elseExpression)) {
+//                source = driveValue(functionBlock, scope, elseExpression);
+//            } else {
+//                source = driveExpression(functionBlock, scope, elseExpression).getResult();
+//            }
+//
+//            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+//                secondArg = source;
+//            } else {
+//                LoadOperation second = new LoadOperation(source,
+//                        new VariableValue(new Variable(genNext(), source.getType(),
+//                                scope, functionBlock.getCurrentBlock(), true))
+//                );
+//                functionBlock.getCurrentBlock().addOperation(second);
+//                secondArg = second.getTarget();
+//            }
+//        }
+//
+//        StoreOperation secondStore = new StoreOperation(
+//                secondArg, value
+//        );
+//        elseBlock.addOperation(secondStore);
+//        BasicBlock endElse = functionBlock.getCurrentBlock();
+//
+//        mergeBlock = functionBlock.appendBlock("conditional_result");
+//
+//        endElse.setTerminator(new Branch(mergeBlock));
+//        endThen.setTerminator(new Branch(mergeBlock));
+//        endCondition.setTerminator(new ConditionalBranch(operation.getResult(), thenBlock, elseBlock));
+//
+//        LoadOperation loadOperation = new LoadOperation(value,
+//                new VariableValue(new Variable(genNext(), variable.getType(),
+//                        scope, functionBlock.getCurrentBlock(), true))
+//        );
+//        mergeBlock.addOperation(loadOperation);
+//        return loadOperation;
     }
 
     private static Operation handleOr(FunctionBlock functionBlock, Scope scope, LogicalOrExpressionNode expressionNode) {

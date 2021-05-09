@@ -2,12 +2,20 @@ package com.compiler.ir;
 
 public class ConditionalBranch extends Terminator {
     private final Value value;
-    private final BasicBlock first;
-    private final BasicBlock second;
+    private BasicBlock first;
+    private BasicBlock second;
 
     public ConditionalBranch(Value value, BasicBlock first, BasicBlock second) {
         this.value = value;
         this.first = first;
+        this.second = second;
+    }
+
+    public void setFirst(BasicBlock first) {
+        this.first = first;
+    }
+
+    public void setSecond(BasicBlock second) {
         this.second = second;
     }
 

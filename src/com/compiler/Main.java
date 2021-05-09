@@ -2,6 +2,7 @@ package com.compiler;
 
 import com.compiler.ast.FunctionsNode;
 import com.compiler.ir.Driver;
+import com.compiler.ir.Module;
 import com.compiler.lexer.Lexer;
 import com.compiler.parser.Parser;
 
@@ -21,9 +22,21 @@ public class Main {
         FunctionsNode functionsNodes = parser.parse();
 
         System.out.println(functionsNodes.astDebug());
-        String dump = Driver.moduleToString(Driver.drive(functionsNodes));
+        Module module = Driver.drive(functionsNodes);
+        String dump = Driver.moduleToString(module);
 
         System.out.println(dump);
+
+        String graphViz = Driver.graphVizDebug(module.getFunctionBlocks().get(0));
+        System.out.println(graphViz);
+        File graphVizFile = new File("gv.gv");
+        graphVizFile.deleteOnExit();
+        graphVizFile.createNewFile();
+        FileWriter gvWriter = new FileWriter(graphVizFile);
+        gvWriter.write(graphViz);
+        gvWriter.flush();
+
+        runGraphViz(graphVizFile);
 
         FileWriter fileWriter = new FileWriter(file);
         fileWriter.write(dump);
@@ -41,6 +54,11 @@ public class Main {
         runClang(bf, prog);
 
         runProgram(prog);
+    }
+
+    private static void runGraphViz(File file) throws IOException, InterruptedException {
+        ProcessBuilder procBuilder = new ProcessBuilder("dot",  "-Tpng", file.getName(), "-o", "graph.png");
+        runProcesss(procBuilder);
     }
 
     private static void runClang(File bf, File prog) throws IOException, InterruptedException {

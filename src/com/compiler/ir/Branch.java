@@ -1,9 +1,13 @@
 package com.compiler.ir;
 
 public class Branch extends Terminator{
-    private final BasicBlock target;
+    private BasicBlock target;
 
     public Branch(BasicBlock target) {
+        this.target = target;
+    }
+
+    public void setTarget(BasicBlock target) {
         this.target = target;
     }
 

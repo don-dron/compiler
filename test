@@ -8,12 +8,22 @@ int main(int a, int b) {
         }
     }
 
+    int k = 100;
+    int z = 0;
+
+    for(;k > 10;) {
+        k = k - 1;
+        z = z + 5;
+    }
+
     st = (n * n  * (n * n -1))/ 2;
 
-    if(st == s) {
-        return 0;
-    } else {
-        return 255;
+    if(z == 450) {
+        if(st == s) {
+            return 0;
+        } else {
+            return 255;
+        }
     }
 
     return 255;
