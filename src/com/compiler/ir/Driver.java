@@ -16,6 +16,7 @@ public final class Driver {
     public static int count = 0;
     public static int condCount = 0;
     private static final String RET_VAL = "ret$val";
+    private static boolean allDoms = false;
 
     public static Module drive(FunctionsNode functionsNode) {
         return new Module(functionsNode.getFunctionNodes()
@@ -86,10 +87,46 @@ public final class Driver {
         BasicBlock root = buildCfgGraph(functionBlock);
 
         paintDeadCode(functionBlock.getBlocks(), root);
+        setDominators(functionBlock.getBlocks(), root);
+        setImmediateDominators(functionBlock.getBlocks(), root);
+        setDominanceFrontier(functionBlock.getBlocks(), root);
 
         System.out.println(functionScope.treeDebug(0));
 
         return functionBlock;
+    }
+
+    private static void setDominanceFrontier(List<BasicBlock> blocks, BasicBlock root) {
+        for (BasicBlock n : blocks) {
+            if (n.getInput().size() >= 2) {
+                for (BasicBlock p : n.getInput()) {
+                    BasicBlock r = p;
+
+                    while (r != n.getDominator()) {
+                        r.addDominanceFrontier(n);
+                        r = r.getDominator();
+                    }
+                }
+            }
+        }
+    }
+
+    private static void setImmediateDominators(List<BasicBlock> blocks, BasicBlock root) {
+        for (BasicBlock i : blocks) {
+            for (BasicBlock n : i.getDominants()) {
+                boolean flag = false;
+                for (BasicBlock m : i.getDominants()) {
+                    if (m != n && m != i
+                            && i.getDominants().contains(m) && m.getDominants().contains(n)) {
+                        flag = true;
+                    }
+                }
+
+                if (!flag) {
+                    n.setDominator(i);
+                }
+            }
+        }
     }
 
     public static void blockWalk(BasicBlock block, Consumer<BasicBlock> consumer) {
@@ -106,6 +143,26 @@ public final class Driver {
         }
     }
 
+    public static void setDominators(List<BasicBlock> list, BasicBlock root) {
+        for (BasicBlock first : list) {
+            List<BasicBlock> dominants = calculateDominants(list, root, first);
+            first.addDominants(dominants);
+        }
+    }
+
+    private static List<BasicBlock> calculateDominants(List<BasicBlock> list, BasicBlock root, BasicBlock node) {
+        list.forEach(BasicBlock::unmark);
+
+        node.mark();
+
+        blockWalk(root, null);
+
+        return list.stream()
+                .filter(Predicate.not(BasicBlock::isDead))
+                .filter(Predicate.not(BasicBlock::isMarked))
+                .collect(Collectors.toList());
+    }
+
     public static void paintDeadCode(List<BasicBlock> list, BasicBlock root) {
         list.forEach(BasicBlock::unmark);
 
@@ -119,6 +176,11 @@ public final class Driver {
 
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
             String body = blockToString(basicBlock);
+
+            String dominanceFrontier = basicBlock.getDominanceFrontier().stream()
+                    .map(BasicBlock::getName)
+                    .collect(Collectors.joining("\n"));
+
             s
                     .append("\"")
                     .append(basicBlock.getName())
@@ -127,6 +189,9 @@ public final class Driver {
                     .append("[fillcolor=" + (basicBlock.isDead() ? "grey" : "white") +
                             ", style=filled, shape=box, label=\"")
                     .append(body)
+                    .append("\n\n")
+                    .append("DF:\n")
+                    .append(dominanceFrontier)
                     .append("\"];\n");
         }
 
@@ -140,6 +205,40 @@ public final class Driver {
                         .append("\"")
                         .append(other.getName())
                         .append("\";\n");
+            }
+        }
+
+        if (allDoms) {
+            for (BasicBlock basicBlock : functionBlock.getBlocks()) {
+                for (BasicBlock other : basicBlock.getDominants()) {
+                    s
+                            .append("\"")
+                            .append(basicBlock.getName())
+                            .append("\"")
+                            .append(" -> ")
+                            .append("\"")
+                            .append(other.getName())
+                            .append("\"")
+                            .append("[color=blue,penwidth=3.0]")
+                            .append(";\n");
+                }
+            }
+        }
+
+        for (BasicBlock basicBlock : functionBlock.getBlocks()) {
+            for (BasicBlock other : basicBlock.getDominants()) {
+                if (other.getDominator() == basicBlock) {
+                    s
+                            .append("\"")
+                            .append(basicBlock.getName())
+                            .append("\"")
+                            .append(" -> ")
+                            .append("\"")
+                            .append(other.getName())
+                            .append("\"")
+                            .append("[color=red,penwidth=3.0]")
+                            .append(";\n");
+                }
             }
         }
 

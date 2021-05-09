@@ -19,6 +19,7 @@ public class BasicBlock {
     private final List<BasicBlock> dominants;
     private final List<BasicBlock> input;
     private final List<BasicBlock> output;
+    private final List<BasicBlock> dominanceFrontier;
 
     public BasicBlock(Scope scope, String name) {
         this.name = name;
@@ -30,6 +31,7 @@ public class BasicBlock {
         this.dominants = new ArrayList<>();
         this.input = new ArrayList<>();
         this.output = new ArrayList<>();
+        this.dominanceFrontier = new ArrayList<>();
     }
 
     public void setDead(boolean dead) {
@@ -38,6 +40,14 @@ public class BasicBlock {
 
     public boolean isDead() {
         return dead;
+    }
+
+    public List<BasicBlock> getDominanceFrontier() {
+        return dominanceFrontier;
+    }
+
+    public void addDominanceFrontier(BasicBlock block) {
+        dominanceFrontier.add(block);
     }
 
     public void addInput(BasicBlock basicBlock) {
@@ -58,6 +68,14 @@ public class BasicBlock {
 
     public boolean isMarked() {
         return marked;
+    }
+
+    public void addDominant(BasicBlock block) {
+        dominants.add(block);
+    }
+
+    public void addDominants(List<BasicBlock> dominants) {
+        this.dominants.addAll(dominants);
     }
 
     public List<BasicBlock> getDominants() {
