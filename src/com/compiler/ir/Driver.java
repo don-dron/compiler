@@ -83,7 +83,7 @@ public final class Driver {
 
         functionBlock.getCurrentBlock().setTerminator(new Branch(functionBlock.getReturnBlock()));
 
-//        removeEmptyBlocks(functionBlock);
+        removeEmptyBlocks(functionBlock);
 
         BasicBlock root = buildCfgGraph(functionBlock);
 
@@ -485,45 +485,37 @@ public final class Driver {
     private static void removeEmptyBlocks(FunctionBlock functionBlock) {
         List<BasicBlock> emptyBlocks =
                 functionBlock.getBlocks().stream()
-                        .filter(b -> b.getOperations().isEmpty())
-                        .filter(b -> {
-                            return !(b.getTerminator() instanceof Branch &&
-                                    ((Branch) b.getTerminator()).getTarget().equals(b));
-                        })
+                        .filter(b -> b.getOperations().isEmpty() && b.getTerminator() instanceof Branch)
                         .collect(Collectors.toList());
 
-        functionBlock.getBlocks().forEach(
-                b -> {
+        for (BasicBlock e : emptyBlocks) {
+            for (BasicBlock b : functionBlock.getBlocks()) {
+                Terminator terminator = b.getTerminator();
+                if (terminator instanceof Branch) {
+                    Branch branch = (Branch) terminator;
+                    if (branch.getTarget().equals(e)) {
+                        Branch emptyBranch = ((Branch) branch.getTarget().getTerminator());
+                        b.setTerminator(emptyBranch);
+                    }
+                } else if (terminator instanceof ConditionalBranch) {
+                    ConditionalBranch conditionalBranch = (ConditionalBranch) terminator;
 
-                    Terminator terminator = b.getTerminator();
-
-                    if (terminator instanceof Branch) {
-                        Branch branch = (Branch) terminator;
-
-                        if (emptyBlocks.contains(branch.getTarget()) && !b.equals(branch.getTarget())) {
-                            b.setTerminator(branch.getTarget().getTerminator());
+                    if (conditionalBranch.getFirst().equals(e)) {
+                        Branch emptyBranch = ((Branch) conditionalBranch.getFirst().getTerminator());
+                        if (conditionalBranch.getFirst().getTerminator() instanceof Branch) {
+                            conditionalBranch.setFirst(emptyBranch.getTarget());
                         }
-                    } else if (terminator instanceof ConditionalBranch) {
-                        ConditionalBranch conditionalBranch = (ConditionalBranch) terminator;
+                    }
 
-                        if (emptyBlocks.contains(conditionalBranch.getFirst())) {
-                            if (conditionalBranch.getFirst().getTerminator() instanceof Branch) {
-                                conditionalBranch.setFirst(((Branch)
-                                        conditionalBranch.getFirst().getTerminator()).getTarget());
-                            }
-                        }
-
-                        if (emptyBlocks.contains(conditionalBranch.getSecond())) {
-                            if (conditionalBranch.getSecond().getTerminator() instanceof Branch) {
-                                conditionalBranch.setSecond(((Branch)
-                                        conditionalBranch.getSecond().getTerminator()).getTarget());
-                            }
+                    if (conditionalBranch.getSecond().equals(e)) {
+                        Branch emptyBranch = ((Branch) conditionalBranch.getSecond().getTerminator());
+                        if (conditionalBranch.getSecond().getTerminator() instanceof Branch) {
+                            conditionalBranch.setSecond(emptyBranch.getTarget());
                         }
                     }
                 }
-        );
-
-        functionBlock.getBlocks().removeAll(emptyBlocks);
+            }
+        }
     }
 
     public static String moduleToString(Module module) {
