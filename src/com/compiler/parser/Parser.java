@@ -126,6 +126,9 @@ public class Parser {
         Map<IdentifierNode, TypeNode> map = new HashMap<>();
 
         while (true) {
+            if (peek().getTokenType() == Token.TokenType.R_PAREN) {
+                break;
+            }
             TypeNode typeNode = parseType();
 
             if (typeNode == null) {

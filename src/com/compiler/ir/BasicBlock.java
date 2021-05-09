@@ -1,15 +1,13 @@
 package com.compiler.ir;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class BasicBlock {
     private final String name;
     private final Scope scope;
     private final Set<Variable> defines;
     private final List<Operation> operations;
+    private final List<Variable> ssaDefines;
     private Terminator terminator;
     private boolean dummy;
     private boolean dead;
@@ -20,6 +18,8 @@ public class BasicBlock {
     private final List<BasicBlock> input;
     private final List<BasicBlock> output;
     private final List<BasicBlock> dominanceFrontier;
+    private final Map<Variable, PhiFunction> phiFunctions;
+    private final Map<Variable, String> ssaNames;
 
     public BasicBlock(Scope scope, String name) {
         this.name = name;
@@ -31,7 +31,31 @@ public class BasicBlock {
         this.dominants = new ArrayList<>();
         this.input = new ArrayList<>();
         this.output = new ArrayList<>();
+        this.ssaDefines = new ArrayList<>();
+        this.phiFunctions = new HashMap<>();
+        this.ssaNames = new HashMap<>();
         this.dominanceFrontier = new ArrayList<>();
+    }
+
+    @Override
+    public String toString() {
+        return "BasicBlock: " + name;
+    }
+
+    public Map<Variable, String> getSsaNames() {
+        return ssaNames;
+    }
+
+    public List<Variable> getSsaDefines() {
+        return ssaDefines;
+    }
+
+    public Map<Variable, PhiFunction> getPhiFunctions() {
+        return phiFunctions;
+    }
+
+    public boolean addVariable(Variable variable) {
+        return ssaDefines.add(variable);
     }
 
     public void setDead(boolean dead) {

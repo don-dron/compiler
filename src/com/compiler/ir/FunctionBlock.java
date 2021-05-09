@@ -39,7 +39,7 @@ public class FunctionBlock {
     }
 
     public void addDefines(List<Variable> var) {
-        if (!defines.addAll(var)) {
+        if (!var.isEmpty() && !defines.addAll(var)) {
             throw new IllegalStateException("Variable already declared");
         }
     }

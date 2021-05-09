@@ -21,14 +21,14 @@ public class Main {
 
         FunctionsNode functionsNodes = parser.parse();
 
-        System.out.println(functionsNodes.astDebug());
+//        System.out.println(functionsNodes.astDebug());
         Module module = Driver.drive(functionsNodes);
         String dump = Driver.moduleToString(module);
 
-        System.out.println(dump);
+//        System.out.println(dump);
 
         String graphViz = Driver.graphVizDebug(module.getFunctionBlocks().get(0));
-        System.out.println(graphViz);
+//        System.out.println(graphViz);
         File graphVizFile = new File("gv.gv");
         graphVizFile.deleteOnExit();
         graphVizFile.createNewFile();

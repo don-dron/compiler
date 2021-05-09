@@ -3,6 +3,7 @@ package com.compiler.ir;
 public class StoreOperation extends Operation {
     private final Value source;
     private final Value target;
+    private StoreOperation ssaVariant;
 
     public StoreOperation(Value source, Value target) {
         this.source = source;
@@ -11,6 +12,20 @@ public class StoreOperation extends Operation {
 
     public Value getSource() {
         return source;
+    }
+
+    public void setSsaVariant(StoreOperation ssaVariant) {
+        this.ssaVariant = ssaVariant;
+    }
+
+    @Override
+    public boolean hasSsaForm() {
+        return ssaVariant != null;
+    }
+
+    @Override
+    public Operation getSsa() {
+        return ssaVariant;
     }
 
     public Value getTarget() {
@@ -22,7 +37,7 @@ public class StoreOperation extends Operation {
         return target;
     }
 
-    public String toString(){
+    public String toString() {
         return "store " + source.getType().toCode() + " " + source.toCode() +
                 ", " + target.getType().toCode() + " " + target.toCode();
     }
