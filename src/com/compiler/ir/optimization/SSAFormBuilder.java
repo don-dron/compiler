@@ -49,7 +49,7 @@ public class SSAFormBuilder {
         }
 
         for (Variable variable : globals) {
-            List<BasicBlock> workList = new ArrayList<>(vars.get(variable));
+            List<BasicBlock> workList = new ArrayList<>(vars.getOrDefault(variable, List.of()));
             List<BasicBlock> garbage = new ArrayList<>();
 
             while (!workList.isEmpty()) {

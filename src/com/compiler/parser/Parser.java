@@ -165,7 +165,9 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.LF_PAREN) {
             return parseCompoundStatement();
         } else if (first.getTokenType() == Token.TokenType.FOR) {
-            return parseIterationStatement();
+            return parseForStatement();
+        } else if (first.getTokenType() == Token.TokenType.WHILE) {
+            return parseWhileStatement();
         } else if (first.getTokenType() == Token.TokenType.RETURN) {
             return parseReturnStatement();
         } else if (first.getTokenType() == Token.TokenType.BREAK) {
@@ -270,7 +272,7 @@ public class Parser {
     }
 
     // ITERATION_STATEMENT ::= FOR L_PAREN (DECLARATION_STATEMENT | SEMICOLON) CONDITIONAL_EXPRESSION SEMICOLON ASSIGMENT_EXPRESSION R_PAREN STATEMENT
-    private StatementNode parseIterationStatement() {
+    private StatementNode parseForStatement() {
         StatementNode prev = null;
         ExpressionNode predicate = null;
         ExpressionNode step = null;
@@ -298,6 +300,27 @@ public class Parser {
             step = parseAssigmentExpression();
         }
 
+        next();
+
+        body = parseStatement();
+        return new ForStatementNode(prev, predicate, step, body);
+    }
+
+    // ITERATION_STATEMENT ::= WHILE L_PAREN CONDITIONAL_EXPRESSION SEMICOLON R_PAREN STATEMENT
+    private StatementNode parseWhileStatement() {
+        StatementNode prev = null;
+        ExpressionNode predicate = null;
+        ExpressionNode step = null;
+        StatementNode body = null;
+        Token forToken = peek();
+        Token lParen = next();
+        need(Token.TokenType.L_PAREN, lParen);
+        next();
+
+        predicate = parseConditionalExpression();
+
+        Token rParen = peek();
+        need(Token.TokenType.R_PAREN, rParen);
         next();
 
         body = parseStatement();
@@ -348,14 +371,15 @@ public class Parser {
         return new AssigmentExpressionNode(identifierNode, expressionNode);
     }
 
-    // CONDITIONAL_EXPRESSION ::= LOGICAL_OR_EXPRESSION | LOGICAL_OR_EXPRESSION ? CONDITIONAL_EXPRESSION : CONDITIONAL_EXPRESSION
+    // CONDITIONAL_EXPRESSION ::= LOGICAL_OR_EXPRESSION
+    //                            | LOGICAL_OR_EXPRESSION ? CONDITIONAL_EXPRESSION : CONDITIONAL_EXPRESSION
     private ExpressionNode parseConditionalExpression() {
         ExpressionNode first = parseLogicalOrExpression();
 
         Token token = peek();
 
         if (token.getTokenType() == Token.TokenType.QUESTION) {
-            next();
+            token = next();
             ExpressionNode thenNode = parseConditionalExpression();
             ExpressionNode elseNode = parseConditionalExpression();
             return new ConditionalExpressionNode(first, thenNode, elseNode);
@@ -535,7 +559,8 @@ public class Parser {
         while (true) {
             Token token = peek();
 
-            if (token.getTokenType() == Token.TokenType.ASTERISK || token.getTokenType() == Token.TokenType.SLASH) {
+            if (token.getTokenType() == Token.TokenType.ASTERISK || token.getTokenType() == Token.TokenType.SLASH
+                    || token.getTokenType() == Token.TokenType.PERCENT) {
                 next();
 
                 MultiplicativeExpressionNode.MultiplicativeType type = null;
@@ -545,8 +570,11 @@ public class Parser {
                         type = MultiplicativeExpressionNode.MultiplicativeType.MUL;
                         break;
                     case SLASH:
-                    default:
                         type = MultiplicativeExpressionNode.MultiplicativeType.DIV;
+                        break;
+                    case PERCENT:
+                    default:
+                        type = MultiplicativeExpressionNode.MultiplicativeType.MOD;
                 }
 
                 if (current == null) {
@@ -562,12 +590,46 @@ public class Parser {
         return current == null ? first : current;
     }
 
+    private ExpressionListNode parseExpressionListNode() {
+        List<ExpressionNode> list = new ArrayList<>();
+
+        while (true) {
+            if (peek().getTokenType() == Token.TokenType.R_PAREN) {
+                break;
+            }
+            ExpressionNode expressionNode = parseConditionalExpression();
+
+            if (expressionNode == null) {
+                throw new IllegalStateException("Need expression");
+            }
+
+            list.add(expressionNode);
+
+            if (peek().getTokenType() != Token.TokenType.COMMA) {
+                break;
+            } else {
+                next();
+            }
+        }
+
+        return new ExpressionListNode(list);
+    }
+
     // PRIMARY_EXPRESSION ::= IDENTIFIER | CONSTANT | L_PAREN CONDITIONAL_EXPRESSION R_PAREN
     private ExpressionNode parsePrimaryExpression() {
         Token first = peek();
 
         if (first.getTokenType() == Token.TokenType.IDENTIFIER) {
-            next();
+            Token second = next();
+            second = peek();
+
+            if(second.getTokenType() == Token.TokenType.L_PAREN) {
+                second = next();
+                ExpressionListNode expressionListNode = parseExpressionListNode();
+                second = next();
+                return new FunctionCallExpressionNode(new IdentifierNode(first.getContent()), expressionListNode);
+            }
+
             return new VariableExpressionNode(new IdentifierNode(first.getContent()));
         } else if (first.getTokenType() == Token.TokenType.FLOAT_CONSTANT) {
             next();
@@ -588,7 +650,7 @@ public class Parser {
             return expressionNode;
         }
 
-        throw new IllegalStateException("Unknown primary expression");
+        throw new IllegalStateException("Unknown primary expression " + first);
     }
 
     private void need(Token.TokenType tokenType, Token current) {

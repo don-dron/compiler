@@ -34,7 +34,7 @@ public class MultiplicativeExpressionNode extends BinaryOperationExpressionNode 
                 second.astDebug(shift + 1);
     }
 
-    public enum MultiplicativeType {DIV, MUL}
+    public enum MultiplicativeType {DIV, MUL, MOD}
 
     @Override
     public List<AstNode> getChildren() {

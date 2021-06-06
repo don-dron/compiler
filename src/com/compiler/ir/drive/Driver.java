@@ -1,8 +1,6 @@
 package com.compiler.ir.drive;
 
 import com.compiler.ast.FunctionNode;
-import com.compiler.ast.FunctionsNode;
-import com.compiler.ast.IdentifierNode;
 import com.compiler.ast.expression.*;
 import com.compiler.ast.statement.*;
 import com.compiler.ir.BasicBlock;
@@ -30,6 +28,8 @@ public final class Driver {
     private static final boolean ALL_DOMS = false;
     private final String RET_VAL = "ret$val";
     private int count = 0;
+    private static Map<String, Type> functionsToType = new HashMap<>();
+
     private int condCount = 0;
     private final Stack<BasicBlock> forStack = new Stack<>();
 
@@ -38,45 +38,60 @@ public final class Driver {
     private final Map<BasicBlock, BasicBlock> breakToFor = new HashMap<>();
     private final Map<BasicBlock, BasicBlock> continueToFor = new HashMap<>();
 
-    public Module drive(FunctionsNode functionsNode) {
-        return new Module(functionsNode.getFunctionNodes()
-                .stream()
-                .map(this::driveFunction)
-                .collect(Collectors.toList()));
-    }
-
-    private FunctionBlock driveFunction(FunctionNode functionNode) {
+    public FunctionBlock driveFunction(FunctionNode functionNode) {
         Scope functionScope = new Scope(null);
         FunctionBlock functionBlock = new FunctionBlock(
                 functionNode.getIdentifierNode().getName(),
                 functionNode.getTypeNode().getType(),
                 functionScope);
 
+        functionsToType.put(functionBlock.getFunctionName(), functionBlock.getReturnType());
+
         BasicBlock skip = functionBlock.appendBlock("skip");
 
         List<Variable> variables = functionNode.getParameterNode().getMap().entrySet()
                 .stream()
-                .map(e -> functionScope.addVariable(e.getKey().getName(), e.getValue().getType(), skip))
-                .collect(Collectors.toList());
-        functionBlock.addDefines(variables);
-        Variable retValue = functionScope.addVariable(RET_VAL, functionNode.getTypeNode().getType(), skip);
-        functionBlock.setRetValue(retValue);
-        skip.addOperation(new AllocationOperation(retValue));
+                .map(e -> {
+                    Variable v = functionScope.addVariable(e.getKey().getName(), e.getValue().getType(), skip);
+                    skip.addOperation(new AllocationOperation(v));
+                    skip.addOperation(new StoreOperation(
+                            new VariableValue(new Variable(genNext(),
+                                    v.getType(),
+                                    functionScope,
+                                    functionBlock.getCurrentBlock(), true)),
+                            new VariableValue(v)
+                    ));
+                    return v;
+                }).collect(Collectors.toList());
 
-        BasicBlock returnBlock = functionBlock.appendBlock("return");
-        Variable variable = new Variable(genNext(), functionNode.getTypeNode().getType(), functionScope,
-                returnBlock, true);
-        VariableValue variableValue = new VariableValue(variable);
-        returnBlock.addOperation(new LoadOperation(
-                new VariableValue(retValue),
-                variableValue
-        ));
-        returnBlock.setTerminator(new Return(variableValue));
+        functionBlock.setParameters(variables);
+        BasicBlock returnBlock = null;
+        if (functionNode.getTypeNode().getType() != Type.VOID) {
+            Variable retValue = functionScope.addVariable(RET_VAL,
+                    functionNode.getTypeNode().getType(),
+                    skip);
+            functionBlock.setRetValue(retValue);
+            skip.addOperation(new AllocationOperation(retValue));
+
+            returnBlock = functionBlock.appendBlock("return");
+            Variable variable = new Variable(genNext(), functionNode.getTypeNode().getType(), functionScope,
+                    returnBlock, true);
+
+            VariableValue variableValue = new VariableValue(variable);
+            returnBlock.addOperation(new LoadOperation(
+                    new VariableValue(retValue),
+                    variableValue
+            ));
+
+            returnBlock.setTerminator(new Return(variableValue));
+        } else {
+            returnBlock = functionBlock.appendBlock("return");
+            returnBlock.setTerminator(new Return(null));
+        }
 
         BasicBlock entry = functionBlock.appendBlock("entry");
         skip.setTerminator(new Branch(entry));
         entry.setTerminator(new Branch(returnBlock));
-
         functionBlock.setReturnBlock(returnBlock);
 
         CompoundStatementNode compoundStatementNode = (CompoundStatementNode) functionNode.getStatementNode();
@@ -88,6 +103,7 @@ public final class Driver {
         continueToFor.forEach((key, value) -> key.setTerminator(new Branch(forToNext.get(value))));
 
         removeEmptyBlocks(functionBlock);
+        removeOneDirectBranches(functionBlock);
 
         BasicBlock root = buildCfgGraph(functionBlock);
 
@@ -103,8 +119,8 @@ public final class Driver {
         return functionBlock;
     }
 
-    public String graphVizDebug(FunctionBlock functionBlock) {
-        StringBuilder s = new StringBuilder("digraph G {\n");
+    public static String graphVizDebug(FunctionBlock functionBlock) {
+        StringBuilder s = new StringBuilder("");
 
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
             String body = basicBlock.getName() + ":\n";
@@ -176,7 +192,6 @@ public final class Driver {
             }
         }
 
-        s.append("}");
         return s.toString();
     }
 
@@ -204,39 +219,44 @@ public final class Driver {
         return root;
     }
 
-    public String moduleToString(Module module) {
+    public static String moduleToString(Module module) {
         String s = "; ModuleID = 'main'\n" +
-                "source_filename = \"main\"\n   ";
-        return s += module.getFunctionBlocks()
+                "source_filename = \"main\"\n" +
+                "declare i32 @putchar(i32)\n" +
+                "declare i32 @getchar()\n";
+        return s + module.getFunctionBlocks()
                 .stream()
-                .map(this::functionToString)
+                .map(Driver::functionToString)
                 .collect(Collectors.joining("\n"));
     }
 
-    private String functionToString(FunctionBlock functionBlock) {
+    private static String functionToString(FunctionBlock functionBlock) {
         String s = "define " + functionBlock.getReturnType().toCode() + " @" +
-                functionBlock.getFunctionName() + "() {\n";
+                functionBlock.getFunctionName() + "("
+                + functionBlock.getParameters().stream()
+                .map(v -> v.getType().toCode()).collect(Collectors.joining(","))
+                + ") {\n";
         s += blocksToString(functionBlock.getBlocks());
         s += "\n}";
         return s;
     }
 
-    private String blocksToString(List<BasicBlock> blocks) {
+    private static String blocksToString(List<BasicBlock> blocks) {
         return blocks.stream()
                 .filter(Predicate.not(BasicBlock::isDummy))
                 .map(b -> b.getName() + ":\n" + blockToIRBody(b))
                 .collect(Collectors.joining("\n"));
     }
 
-    private String blockToIRBody(BasicBlock basicBlock) {
-        return blockToString(basicBlock, this::operationToString);
+    private static String blockToIRBody(BasicBlock basicBlock) {
+        return blockToString(basicBlock, Driver::operationToString);
     }
 
-    private String blockToSsaBody(BasicBlock basicBlock) {
-        return blockToString(basicBlock, this::operationSsaToString);
+    private static String blockToSsaBody(BasicBlock basicBlock) {
+        return blockToString(basicBlock, Driver::operationSsaToString);
     }
 
-    private String blockToString(BasicBlock basicBlock, Function<Operation, String> operationStringFunction) {
+    private static String blockToString(BasicBlock basicBlock, Function<Operation, String> operationStringFunction) {
         String s = "";
         s += basicBlock.getOperations().stream()
                 .map(operationStringFunction)
@@ -249,11 +269,11 @@ public final class Driver {
         return s;
     }
 
-    private String operationSsaToString(Operation operation) {
+    private static String operationSsaToString(Operation operation) {
         return operation.hasSsaForm() ? operation.getSsa().toString() : operation.toString();
     }
 
-    private String operationToString(Operation operation) {
+    private static String operationToString(Operation operation) {
         return operation.toString();
     }
 
@@ -434,14 +454,25 @@ public final class Driver {
         } else if (statementNode instanceof ReturnStatementNode) {
             ReturnStatementNode returnStatementNode = (ReturnStatementNode) statementNode;
             BasicBlock last = functionBlock.getCurrentBlock();
-            BasicBlock retBlock = functionBlock.appendBlock("local_return");
-            last.setTerminator(new Branch(retBlock));
+            StoreOperation retStore = null;
 
             if (returnStatementNode.getExpressionNode() != null) {
-                driveExpression(functionBlock, scope, new AssigmentExpressionNode(
-                        new IdentifierNode(RET_VAL),
-                        returnStatementNode.getExpressionNode()));
+                Value arg = driveArgument(functionBlock, scope, returnStatementNode.getExpressionNode());
+
+                last = functionBlock.getCurrentBlock();
+                retStore = new StoreOperation(
+                        arg,
+                        variableValueByName(functionBlock, scope, RET_VAL));
             }
+
+            BasicBlock retBlock = functionBlock.appendBlock("local_return");
+
+            if (retStore != null) {
+                retBlock.addOperation(retStore);
+            }
+
+
+            last.setTerminator(new Branch(retBlock));
 
             retBlock.setTerminator(new Branch(functionBlock.getReturnBlock()));
 
@@ -468,6 +499,8 @@ public final class Driver {
             return handleMultiplicative(functionBlock, scope, (MultiplicativeExpressionNode) expressionNode);
         } else if (expressionNode instanceof AssigmentExpressionNode) {
             return handleAssigment(functionBlock, scope, (AssigmentExpressionNode) expressionNode);
+        } else if (expressionNode instanceof FunctionCallExpressionNode) {
+            return handleFunctionCall(functionBlock, scope, (FunctionCallExpressionNode) expressionNode);
         } else {
             return null;
         }
@@ -596,32 +629,7 @@ public final class Driver {
     }
 
     private StoreOperation handleAssigment(FunctionBlock functionBlock, Scope scope, AssigmentExpressionNode assigmentExpressionNode) {
-        Value source = null;
-        Value arg = null;
-
-        ExpressionNode expressionNode = ((AssigmentExpressionNode) assigmentExpressionNode).getExpressionNode();
-
-        if (isTerm(expressionNode)) {
-            arg = driveValue(functionBlock, scope, expressionNode);
-        } else {
-            if (isVariable(expressionNode)) {
-                source = driveValue(functionBlock, scope, expressionNode);
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                arg = source;
-            } else {
-                LoadOperation second = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(second);
-                arg = second.getTarget();
-            }
-        }
-
+        Value arg = driveArgument(functionBlock, scope, assigmentExpressionNode.getExpressionNode());
         StoreOperation storeOperation = new StoreOperation(
                 arg,
                 variableValueByName(functionBlock, scope,
@@ -662,8 +670,11 @@ public final class Driver {
                 binOpType = BinOpType.MUL;
                 break;
             case DIV:
-            default:
                 binOpType = BinOpType.DIV;
+                break;
+            case MOD:
+            default:
+                binOpType = BinOpType.MOD;
         }
         Operation operation = new BinOperation(binOpType, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
@@ -672,6 +683,26 @@ public final class Driver {
                         functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
         return operation;
+    }
+
+    private Operation handleFunctionCall(FunctionBlock functionBlock, Scope scope, FunctionCallExpressionNode expressionNode) {
+        List<Value> values = expressionNode.getParameters().getList().stream()
+                .map(p -> driveArgument(functionBlock, scope, p))
+                .collect(Collectors.toList());
+
+        Type type = getFunctionType(expressionNode.getIdentifierNode().getName());
+        Operation operation = new FunctionCallOperation(expressionNode.getIdentifierNode(), values,
+                type == Type.VOID ? null :
+                new VariableValue(new Variable(genNext(),
+                        type,
+                        scope,
+                        functionBlock.getCurrentBlock(), true)));
+        functionBlock.getCurrentBlock().addOperation(operation);
+        return operation;
+    }
+
+    private Type getFunctionType(String name) {
+        return functionsToType.getOrDefault(name, Type.INT);
     }
 
     private Value driveArgument(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
@@ -729,6 +760,8 @@ public final class Driver {
             return new BoolValue(((BoolConstantExpressionNode) expressionNode).getValue());
         } else if (expressionNode instanceof FloatConstantExpressionNode) {
             return new FloatValue(((FloatConstantExpressionNode) expressionNode).getValue());
+//        } else if(expressionNode instanceof  FunctionCallExpressionNode) {
+//            return new
         } else {
             throw new IllegalStateException("Unknown value type " + expressionNode);
         }

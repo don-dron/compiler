@@ -22,6 +22,19 @@ public class DeadCodeElimination {
         blocks.removeIf(BasicBlock::isDead);
     }
 
+    public static void removeOneDirectBranches(FunctionBlock functionBlock) {
+        for(BasicBlock block : functionBlock.getBlocks()) {
+            Terminator terminator = block.getTerminator();
+
+            if(terminator instanceof ConditionalBranch) {
+                ConditionalBranch conditionalBranch = (ConditionalBranch) terminator;
+
+                if(conditionalBranch.getFirst().equals(conditionalBranch.getSecond())) {
+                    block.setTerminator(new Branch(conditionalBranch.getFirst()));
+                }
+            }
+        }
+    }
 
     public static void removeEmptyBlocks(FunctionBlock functionBlock) {
         List<BasicBlock> emptyBlocks =

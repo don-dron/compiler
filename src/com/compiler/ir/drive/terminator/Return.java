@@ -12,9 +12,9 @@ public class Return extends Terminator {
 
     @Override
     public String toString() {
-        if(value instanceof VariableValue) {
-            return "ret " + value.getType().toCode() + " %" + ((VariableValue)value).getVariable().getName();
+        if (value instanceof VariableValue) {
+            return "ret " + value.getType().toCode() + " %" + ((VariableValue) value).getVariable().getName();
         }
-        return "ret " + value.getType().toCode() + " " + value.toCode();
+        return "ret " + (value != null ? (value.getType().toCode() + " " + value.toCode()) : " void ");
     }
 }

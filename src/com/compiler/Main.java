@@ -3,10 +3,12 @@ package com.compiler;
 import com.compiler.ast.FunctionsNode;
 import com.compiler.ir.drive.Driver;
 import com.compiler.ir.Module;
+import com.compiler.ir.drive.Translator;
 import com.compiler.lexer.Lexer;
 import com.compiler.parser.Parser;
 
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -22,14 +24,18 @@ public class Main {
         FunctionsNode functionsNodes = parser.parse();
 
         System.out.println(functionsNodes.astDebug());
-        Driver driver = new Driver();
-        Module module = driver.drive(functionsNodes);
-        String dump = driver.moduleToString(module);
+        Translator translator = new Translator();
+        Module module = translator.drive(functionsNodes);
+        String dump = Driver.moduleToString(module);
 
         System.out.println(dump);
+        String graphViz = "digraph G {\n";
+        graphViz += module.getFunctionBlocks().stream()
+                .map(Driver::graphVizDebug).collect(Collectors.joining("\n"));
 
-        String graphViz = driver.graphVizDebug(module.getFunctionBlocks().get(0));
+        graphViz += "}";
         System.out.println(graphViz);
+
         File graphVizFile = new File("gv.gv");
         graphVizFile.deleteOnExit();
         graphVizFile.createNewFile();
@@ -58,7 +64,7 @@ public class Main {
     }
 
     private static void runGraphViz(File file) throws IOException, InterruptedException {
-        ProcessBuilder procBuilder = new ProcessBuilder("dot",  "-Tpng", file.getName(), "-o", "graph.png");
+        ProcessBuilder procBuilder = new ProcessBuilder("dot", "-Tpng", file.getName(), "-o", "graph.png");
         runProcesss(procBuilder);
     }
 
