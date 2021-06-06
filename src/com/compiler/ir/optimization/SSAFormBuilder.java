@@ -1,6 +1,6 @@
 package com.compiler.ir.optimization;
 
-import com.compiler.ir.*;
+import com.compiler.ir.BasicBlock;
 import com.compiler.ir.drive.operation.AllocationOperation;
 import com.compiler.ir.drive.operation.LoadOperation;
 import com.compiler.ir.drive.operation.Operation;
@@ -13,14 +13,15 @@ import java.util.*;
 public class SSAFormBuilder {
     private final Map<Variable, Stack<String>> names = new HashMap<>();
     private final Map<Variable, Integer> counter = new HashMap<>();
-    private final List<Variable> globals = new ArrayList<>();
+    private final Set<Variable> globals = new HashSet<>();
     private final Map<Variable, List<BasicBlock>> vars = new HashMap<>();
+    private final Map<Variable, BasicBlock> allocations = new HashMap<>();
 
     public void buildSsaForm(List<BasicBlock> blocks, BasicBlock root) {
         prepareNames(blocks);
 
         blocks.forEach(BasicBlock::unmark);
-        
+
         renamingInBlock(root);
     }
 
@@ -39,15 +40,16 @@ public class SSAFormBuilder {
                     VariableValue variableValue = (VariableValue) ((StoreOperation) operation).getTarget();
                     block.getSsaDefines().add(variableValue.getVariable());
 
-                    List<BasicBlock> blockList = vars.
-                            computeIfAbsent(variableValue.getVariable(), k -> new ArrayList<>());
-                    vars.get(variableValue.getVariable()).add(block);
+                    vars.computeIfAbsent(variableValue.getVariable(), k -> new ArrayList<>()).add(block);
+                } else if (operation instanceof AllocationOperation) {
+                    Variable variable = (Variable) ((AllocationOperation) operation).getVariable();
+                    allocations.put(variable, block);
                 }
             }
         }
 
         for (Variable variable : globals) {
-            List<BasicBlock> workList = vars.get(variable);
+            List<BasicBlock> workList = new ArrayList<>(vars.get(variable));
             List<BasicBlock> garbage = new ArrayList<>();
 
             while (!workList.isEmpty()) {
@@ -55,9 +57,25 @@ public class SSAFormBuilder {
                 garbage.add(current);
 
                 for (BasicBlock dfNode : current.getDominanceFrontier()) {
-                    insertPhiFunction(variable, dfNode);
+                    BasicBlock bottom = dfNode;
+                    boolean found = false;
+                    while (bottom != null) {
+                        if (allocations.get(variable).equals(bottom)) {
+                            found = true;
+                            break;
+                        }
+                        bottom = bottom.getDominator();
+                    }
+
+                    // Проверка на аллокации - добавлять phi-функцию только если аллокация
+                    // есть выше по дереву доминаторов
+                    if (found) {
+                        insertPhiFunction(variable, dfNode);
+                    }
 
                     if (!garbage.contains(dfNode) && !workList.contains(dfNode)) {
+
+
                         workList.add(dfNode);
                     }
                 }

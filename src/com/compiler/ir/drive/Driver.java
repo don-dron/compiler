@@ -127,6 +127,8 @@ public final class Driver {
                     .append(", style=filled, shape=box, label=\"")
                     .append(body);
             s.append(ssaForm)
+                    .append("\n\n")
+                    .append(dominanceFrontier)
                     .append("\"];\n");
         }
 
