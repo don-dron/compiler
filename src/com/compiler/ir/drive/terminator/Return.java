@@ -1,4 +1,7 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.terminator;
+
+import com.compiler.ir.drive.value.Value;
+import com.compiler.ir.drive.value.VariableValue;
 
 public class Return extends Terminator {
     private final Value value;

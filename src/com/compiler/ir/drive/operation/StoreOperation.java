@@ -1,17 +1,23 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.operation;
 
-public class LoadOperation extends Operation {
+import com.compiler.ir.drive.value.Value;
+
+public class StoreOperation extends Operation {
     private final Value source;
     private final Value target;
-    private LoadOperation ssaVariant;
+    private StoreOperation ssaVariant;
 
-    public LoadOperation(Value source, Value target) {
+    public StoreOperation(Value source, Value target) {
         this.source = source;
         this.target = target;
     }
 
     public Value getSource() {
         return source;
+    }
+
+    public void setSsaVariant(StoreOperation ssaVariant) {
+        this.ssaVariant = ssaVariant;
     }
 
     @Override
@@ -24,10 +30,6 @@ public class LoadOperation extends Operation {
         return ssaVariant;
     }
 
-    public void setSsaVariant(LoadOperation ssaVariant) {
-        this.ssaVariant = ssaVariant;
-    }
-
     public Value getTarget() {
         return target;
     }
@@ -38,7 +40,7 @@ public class LoadOperation extends Operation {
     }
 
     public String toString() {
-        return target.toCode() + " = load " + target.getType().toCode() + ", "
-                + source.getType().toCode() + " " + source.toCode();
+        return "store " + source.getType().toCode() + " " + source.toCode() +
+                ", " + target.getType().toCode() + " " + target.toCode();
     }
 }

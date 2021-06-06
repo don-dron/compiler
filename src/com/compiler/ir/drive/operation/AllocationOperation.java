@@ -1,4 +1,7 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.operation;
+
+import com.compiler.ir.drive.value.Value;
+import com.compiler.ir.drive.value.Variable;
 
 public class AllocationOperation extends Operation {
     private final Variable variable;

@@ -1,4 +1,4 @@
-package com.compiler.ir;
+package com.compiler.ir.optimization;
 
 import java.util.HashSet;
 import java.util.Set;

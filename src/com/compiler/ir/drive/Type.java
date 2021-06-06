@@ -1,4 +1,4 @@
-package com.compiler.ir;
+package com.compiler.ir.drive;
 
 public enum Type {
     VOID(""),

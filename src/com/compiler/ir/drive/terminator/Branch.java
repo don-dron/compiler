@@ -1,6 +1,8 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.terminator;
 
-public class Branch extends Terminator{
+import com.compiler.ir.BasicBlock;
+
+public class Branch extends Terminator {
     private BasicBlock target;
 
     public Branch(BasicBlock target) {

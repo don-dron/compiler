@@ -1,4 +1,8 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.value;
+
+import com.compiler.ir.BasicBlock;
+import com.compiler.ir.Scope;
+import com.compiler.ir.drive.Type;
 
 public class Variable {
     private final BasicBlock definingBlock;

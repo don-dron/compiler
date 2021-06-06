@@ -3,7 +3,7 @@ package com.compiler.parser;
 import com.compiler.ast.*;
 import com.compiler.ast.expression.*;
 import com.compiler.ast.statement.*;
-import com.compiler.ir.Type;
+import com.compiler.ir.drive.Type;
 import com.compiler.lexer.Lexer;
 import com.compiler.lexer.Token;
 

@@ -1,5 +1,8 @@
 package com.compiler.ir;
 
+import com.compiler.ir.drive.Type;
+import com.compiler.ir.drive.value.Variable;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

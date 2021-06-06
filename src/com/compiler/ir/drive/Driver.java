@@ -1,56 +1,51 @@
-package com.compiler.ir;
+package com.compiler.ir.drive;
 
-import com.compiler.ast.AstNode;
 import com.compiler.ast.FunctionNode;
 import com.compiler.ast.FunctionsNode;
 import com.compiler.ast.IdentifierNode;
 import com.compiler.ast.expression.*;
 import com.compiler.ast.statement.*;
+import com.compiler.ir.BasicBlock;
+import com.compiler.ir.FunctionBlock;
+import com.compiler.ir.Module;
+import com.compiler.ir.Scope;
+import com.compiler.ir.drive.operation.*;
+import com.compiler.ir.drive.terminator.Branch;
+import com.compiler.ir.drive.terminator.ConditionalBranch;
+import com.compiler.ir.drive.terminator.Return;
+import com.compiler.ir.drive.value.*;
+import com.compiler.ir.optimization.SSAFormBuilder;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.compiler.ir.cfg.DeadCodeElimination.*;
+import static com.compiler.ir.cfg.DominanceFrontierFinder.setDominanceFrontier;
+import static com.compiler.ir.cfg.DominatorsFinder.setDominators;
+import static com.compiler.ir.cfg.ImmediateDominatorsFinder.setImmediateDominators;
+
 public final class Driver {
-    public static int count = 0;
-    public static int condCount = 0;
-    private static final String RET_VAL = "ret$val";
-    private static boolean allDoms = false;
-    private static Stack<BasicBlock> forStack = new Stack<>();
+    private static final boolean ALL_DOMS = false;
+    private final String RET_VAL = "ret$val";
+    private int count = 0;
+    private int condCount = 0;
+    private final Stack<BasicBlock> forStack = new Stack<>();
 
-    private static Map<BasicBlock, BasicBlock> forToNext = new HashMap<>();
-    private static Map<BasicBlock, BasicBlock> forToMerge = new HashMap<>();
-    private static Map<BasicBlock, BasicBlock> breakToFor = new HashMap<>();
-    private static Map<BasicBlock, BasicBlock> continueToFor = new HashMap<>();
+    private final Map<BasicBlock, BasicBlock> forToNext = new HashMap<>();
+    private final Map<BasicBlock, BasicBlock> forToMerge = new HashMap<>();
+    private final Map<BasicBlock, BasicBlock> breakToFor = new HashMap<>();
+    private final Map<BasicBlock, BasicBlock> continueToFor = new HashMap<>();
 
-    public static Module drive(FunctionsNode functionsNode) {
+    public Module drive(FunctionsNode functionsNode) {
         return new Module(functionsNode.getFunctionNodes()
                 .stream()
-                .map(Driver::driveFunction)
+                .map(this::driveFunction)
                 .collect(Collectors.toList()));
     }
 
-    private static void walk(AstNode node, Consumer<AstNode> handler) {
-        if (handler != null) {
-            handler.accept(node);
-        }
-        node.getChildren().forEach(n -> walk(n, handler));
-    }
-
-    private static void scopeWalk(Scope node, Consumer<Scope> handler) {
-        if (handler != null) {
-            handler.accept(node);
-        }
-        node.getChildren().forEach(n -> scopeWalk(n, handler));
-    }
-
-    private static Type calculateType(ExpressionNode expressionNode) {
-        return null;
-    }
-
-    private static FunctionBlock driveFunction(FunctionNode functionNode) {
+    private FunctionBlock driveFunction(FunctionNode functionNode) {
         Scope functionScope = new Scope(null);
         FunctionBlock functionBlock = new FunctionBlock(
                 functionNode.getIdentifierNode().getName(),
@@ -102,298 +97,17 @@ public final class Driver {
         setImmediateDominators(functionBlock.getBlocks(), root);
         setDominanceFrontier(functionBlock.getBlocks(), root);
 
-        buildSsaForm(functionBlock.getBlocks(), root);
+        SSAFormBuilder ssaFormBuilder = new SSAFormBuilder();
+        ssaFormBuilder.buildSsaForm(functionBlock.getBlocks(), root);
 
         return functionBlock;
     }
 
-    private static Set<Variable> getStores(BasicBlock block) {
-        return block.getOperations()
-                .stream()
-                .filter(s -> s instanceof StoreOperation)
-                .map(s -> (StoreOperation) s)
-                .filter(s -> s.getTarget() instanceof VariableValue)
-                .map(s -> (VariableValue) s.getTarget())
-                .map(VariableValue::getVariable)
-                .filter(variable -> !variable.isLocal())
-                .collect(Collectors.toSet());
-    }
-
-    private static Set<Variable> getLoads(BasicBlock block) {
-        return block.getOperations()
-                .stream()
-                .filter(s -> s instanceof LoadOperation)
-                .map(s -> (LoadOperation) s)
-                .filter(s -> s.getSource() instanceof VariableValue)
-                .map(s -> (VariableValue) s.getSource())
-                .map(VariableValue::getVariable)
-                .filter(variable -> !variable.isLocal())
-                .collect(Collectors.toSet());
-    }
-
-    private static void buildSsaForm(List<BasicBlock> blocks, BasicBlock root) {
-        List<Variable> globals = new ArrayList<>();
-        Map<Variable, List<BasicBlock>> vars = new HashMap<>();
-
-        for (BasicBlock block : blocks) {
-            for (Operation operation : block.getOperations()) {
-                if (operation instanceof LoadOperation &&
-                        ((LoadOperation) operation).getSource() instanceof VariableValue) {
-                    VariableValue variableValue = (VariableValue) ((LoadOperation) operation).getSource();
-
-                    if (!block.getSsaDefines().contains(variableValue.getVariable())) {
-                        globals.add(variableValue.getVariable());
-                    }
-                } else if (operation instanceof StoreOperation &&
-                        ((StoreOperation) operation).getTarget() instanceof VariableValue) {
-                    VariableValue variableValue = (VariableValue) ((StoreOperation) operation).getTarget();
-                    block.getSsaDefines().add(variableValue.getVariable());
-
-                    List<BasicBlock> blockList = vars.
-                            computeIfAbsent(variableValue.getVariable(), k -> new ArrayList<>());
-                    vars.get(variableValue.getVariable()).add(block);
-                }
-            }
-        }
-
-        for (Variable variable : globals) {
-            List<BasicBlock> workList = vars.get(variable);
-            List<BasicBlock> garbage = new ArrayList<>();
-
-            while (!workList.isEmpty()) {
-                BasicBlock current = workList.remove(0);
-                garbage.add(current);
-
-                for (BasicBlock dfNode : current.getDominanceFrontier()) {
-                    insertPhiFunction(variable, dfNode);
-
-                    if (!garbage.contains(dfNode) && !workList.contains(dfNode)) {
-                        workList.add(dfNode);
-                    }
-                }
-            }
-        }
-
-        Map<Variable, Stack<String>> names = new HashMap<>();
-        Map<Variable, Integer> counter = new HashMap<>();
-        Function<Variable, String> topName = (v) -> {
-            if (!names.containsKey(v)) {
-                return v.getName();
-            } else {
-                return names.get(v).peek();
-            }
-        };
-
-        Function<Variable, String> removeName = (v) -> {
-            if (!names.containsKey(v)) {
-                return v.getName();
-            } else {
-                return names.get(v).pop();
-            }
-        };
-
-        Function<Variable, String> newNameFunction = (v) -> {
-            if (!counter.containsKey(v)) {
-                return v.getName();
-            }
-            int i = counter.get(v);
-
-            String name = v.getName() + "_v." + i;
-            i++;
-            counter.replace(v, i);
-            names.get(v).push(name);
-            return name;
-        };
-
-        for (Variable variable : globals) {
-            names.put(variable, new Stack<>());
-            counter.put(variable, 0);
-            newNameFunction.apply(variable);
-        }
-
-        blocks.forEach(BasicBlock::unmark);
-
-        Consumer<BasicBlock> renameFunction = new Consumer<BasicBlock>() {
-            @Override
-            public void accept(BasicBlock b) {
-                b.mark();
-
-                for (Map.Entry<Variable, PhiFunction> entry : b.getPhiFunctions().entrySet()) {
-                    entry.getValue().setSource(newNameFunction.apply(entry.getKey()));
-                }
-
-                for (Operation operation : b.getOperations()) {
-                    if (operation instanceof LoadOperation &&
-                            ((LoadOperation) operation).getSource() instanceof VariableValue) {
-                        LoadOperation loadOperation = (LoadOperation) operation;
-                        VariableValue variableValue = (VariableValue) ((LoadOperation) operation).getSource();
-
-                        loadOperation.setSsaVariant(new LoadOperation(
-                                new VariableValue(new Variable(
-                                        topName.apply(variableValue.getVariable()),
-                                        variableValue.getType(),
-                                        variableValue.getVariable().getScope(),
-                                        variableValue.getVariable().getDefiningBlock(),
-                                        false)),
-                                loadOperation.getTarget()
-                        ));
-                    } else if (operation instanceof StoreOperation &&
-                            ((StoreOperation) operation).getTarget() instanceof VariableValue) {
-                        StoreOperation storeOperation = (StoreOperation) operation;
-
-                        VariableValue variableValue = (VariableValue) ((StoreOperation) operation).getTarget();
-
-                        storeOperation.setSsaVariant(new StoreOperation(
-                                storeOperation.getSource(),
-                                new VariableValue(new Variable(
-                                        newNameFunction.apply(variableValue.getVariable()),
-                                        variableValue.getType(),
-                                        variableValue.getVariable().getScope(),
-                                        variableValue.getVariable().getDefiningBlock(),
-                                        false))
-                        ));
-                    } else if (operation instanceof AllocationOperation) {
-                        AllocationOperation allocationOperation = (AllocationOperation) operation;
-
-                        allocationOperation.setSsaForm(new AllocationOperation(
-                                new Variable(
-                                        topName.apply(allocationOperation.getVariable()),
-                                        allocationOperation.getVariable().getType(),
-                                        allocationOperation.getVariable().getScope(),
-                                        allocationOperation.getVariable().getDefiningBlock(),
-                                        false)
-                        ));
-                    }
-                }
-
-                for (BasicBlock block : b.getOutput()) {
-                    for (Map.Entry<Variable, PhiFunction> entry : block.getPhiFunctions().entrySet()) {
-                        entry.getValue().addName(topName.apply(entry.getKey()));
-                    }
-                }
-
-                for (BasicBlock block : b.getDominants()) {
-                    if (block.isMarked() || block.isDead() || block.getDominator() != b) {
-                        continue;
-                    }
-                    this.accept(block);
-                }
-
-                for (Map.Entry<Variable, PhiFunction> entry : b.getPhiFunctions().entrySet()) {
-                    names.get(entry.getKey()).pop();
-                }
-
-                for (Operation operation : b.getOperations()) {
-                    if (operation instanceof StoreOperation &&
-                            ((StoreOperation) operation).getTarget() instanceof VariableValue) {
-                        StoreOperation storeOperation = (StoreOperation) operation;
-
-                        VariableValue variableValue = (VariableValue) ((StoreOperation) operation).getTarget();
-                        if (globals.contains(variableValue.getVariable())) {
-                            removeName.apply(variableValue.getVariable());
-                        }
-                    }
-                }
-            }
-        };
-
-        renameFunction.accept(root);
-    }
-
-    private static void insertPhiFunction(Variable variable, BasicBlock basicBlock) {
-        if (!basicBlock.getPhiFunctions().containsKey(variable)) {
-            basicBlock.getPhiFunctions().put(variable, new PhiFunction());
-        }
-    }
-
-    private static void setDominanceFrontier(List<BasicBlock> blocks, BasicBlock root) {
-        for (BasicBlock n : blocks) {
-            if (n.getInput().size() >= 2) {
-                for (BasicBlock p : n.getInput()) {
-                    BasicBlock r = p;
-
-                    while (r != null && r != n.getDominator()) {
-                        r.addDominanceFrontier(n);
-                        r = r.getDominator();
-                    }
-                }
-            }
-        }
-    }
-
-    private static void setImmediateDominators(List<BasicBlock> blocks, BasicBlock root) {
-        for (BasicBlock i : blocks) {
-            for (BasicBlock n : i.getDominants()) {
-                boolean flag = false;
-                for (BasicBlock m : i.getDominants()) {
-                    if (m != n && m != i
-                            && i.getDominants().contains(m) && m.getDominants().contains(n)) {
-                        flag = true;
-                    }
-                }
-
-                if (!flag) {
-                    n.setDominator(i);
-                }
-            }
-        }
-    }
-
-    public static void blockWalk(BasicBlock block, Consumer<BasicBlock> consumer) {
-        block.setMarked(true);
-
-        if (consumer != null) {
-            consumer.accept(block);
-        }
-
-        for (BasicBlock b : block.getOutput()) {
-            if (!b.isMarked()) {
-                blockWalk(b, consumer);
-            }
-        }
-    }
-
-    public static void setDominators(List<BasicBlock> list, BasicBlock root) {
-        for (BasicBlock first : list) {
-            List<BasicBlock> dominants = calculateDominants(list, root, first);
-            first.addDominants(dominants);
-        }
-    }
-
-    private static List<BasicBlock> calculateDominants(List<BasicBlock> list, BasicBlock root, BasicBlock node) {
-        if (root == node) {
-            return list.stream().filter(r -> r != root).collect(Collectors.toList());
-        }
-
-        list.forEach(BasicBlock::unmark);
-
-        node.mark();
-
-        blockWalk(root, null);
-
-        return list.stream()
-                .filter(Predicate.not(BasicBlock::isDead))
-                .filter(Predicate.not(BasicBlock::isMarked))
-                .collect(Collectors.toList());
-    }
-
-    public static void paintDeadCode(List<BasicBlock> list, BasicBlock root) {
-        list.forEach(BasicBlock::unmark);
-
-        blockWalk(root, null);
-
-        list.stream().filter(b -> !b.isMarked()).forEach(b -> b.setDead(true));
-    }
-
-    private static void removeDeadCode(List<BasicBlock> blocks, BasicBlock root) {
-        blocks.removeIf(BasicBlock::isDead);
-    }
-
-    public static String graphVizDebug(FunctionBlock functionBlock) {
+    public String graphVizDebug(FunctionBlock functionBlock) {
         StringBuilder s = new StringBuilder("digraph G {\n");
 
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
-            String body = basicBlock.getName() + ":\n";// + blockToString(basicBlock, Driver::operationToString);
+            String body = basicBlock.getName() + ":\n";
 
             String dominanceFrontier = basicBlock.getDominanceFrontier().stream()
                     .map(BasicBlock::getName)
@@ -401,7 +115,7 @@ public final class Driver {
 
             String ssaForm = basicBlock.getPhiFunctions().entrySet()
                     .stream()
-                    .sorted((a, b) -> a.getKey().getName().compareTo(b.getKey().getName()))
+                    .sorted(Comparator.comparing(a -> a.getKey().getName()))
                     .map(e -> e.getValue().toString())
                     .collect(Collectors.joining("\n")) + "\n" + blockToSsaBody(basicBlock);
             s.append("\"")
@@ -412,10 +126,7 @@ public final class Driver {
                     .append(basicBlock.isDead() ? "grey" : "white")
                     .append(", style=filled, shape=box, label=\"")
                     .append(body);
-
-            s
-                    //.append("\n\nSSA:\n")
-                    .append(ssaForm)
+            s.append(ssaForm)
                     .append("\"];\n");
         }
 
@@ -431,7 +142,7 @@ public final class Driver {
             }
         }
 
-        if (allDoms) {
+        if (ALL_DOMS) {
             for (BasicBlock basicBlock : functionBlock.getBlocks()) {
                 for (BasicBlock other : basicBlock.getDominants()) {
                     s.append("\"")
@@ -467,7 +178,7 @@ public final class Driver {
         return s.toString();
     }
 
-    private static BasicBlock buildCfgGraph(FunctionBlock functionBlock) {
+    private BasicBlock buildCfgGraph(FunctionBlock functionBlock) {
         BasicBlock root = functionBlock.getBlocks().get(0);
 
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
@@ -491,52 +202,16 @@ public final class Driver {
         return root;
     }
 
-    private static void removeEmptyBlocks(FunctionBlock functionBlock) {
-        List<BasicBlock> emptyBlocks =
-                functionBlock.getBlocks().stream()
-                        .filter(b -> b.getOperations().isEmpty() && b.getTerminator() instanceof Branch)
-                        .collect(Collectors.toList());
-
-        for (BasicBlock e : emptyBlocks) {
-            for (BasicBlock b : functionBlock.getBlocks()) {
-                Terminator terminator = b.getTerminator();
-                if (terminator instanceof Branch) {
-                    Branch branch = (Branch) terminator;
-                    if (branch.getTarget().equals(e)) {
-                        Branch emptyBranch = ((Branch) branch.getTarget().getTerminator());
-                        b.setTerminator(emptyBranch);
-                    }
-                } else if (terminator instanceof ConditionalBranch) {
-                    ConditionalBranch conditionalBranch = (ConditionalBranch) terminator;
-
-                    if (conditionalBranch.getFirst().equals(e)) {
-                        Branch emptyBranch = ((Branch) conditionalBranch.getFirst().getTerminator());
-                        if (conditionalBranch.getFirst().getTerminator() instanceof Branch) {
-                            conditionalBranch.setFirst(emptyBranch.getTarget());
-                        }
-                    }
-
-                    if (conditionalBranch.getSecond().equals(e)) {
-                        Branch emptyBranch = ((Branch) conditionalBranch.getSecond().getTerminator());
-                        if (conditionalBranch.getSecond().getTerminator() instanceof Branch) {
-                            conditionalBranch.setSecond(emptyBranch.getTarget());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static String moduleToString(Module module) {
+    public String moduleToString(Module module) {
         String s = "; ModuleID = 'main'\n" +
                 "source_filename = \"main\"\n   ";
         return s += module.getFunctionBlocks()
                 .stream()
-                .map(Driver::functionToString)
+                .map(this::functionToString)
                 .collect(Collectors.joining("\n"));
     }
 
-    private static String functionToString(FunctionBlock functionBlock) {
+    private String functionToString(FunctionBlock functionBlock) {
         String s = "define " + functionBlock.getReturnType().toCode() + " @" +
                 functionBlock.getFunctionName() + "() {\n";
         s += blocksToString(functionBlock.getBlocks());
@@ -544,22 +219,22 @@ public final class Driver {
         return s;
     }
 
-    private static String blocksToString(List<BasicBlock> blocks) {
+    private String blocksToString(List<BasicBlock> blocks) {
         return blocks.stream()
                 .filter(Predicate.not(BasicBlock::isDummy))
                 .map(b -> b.getName() + ":\n" + blockToIRBody(b))
                 .collect(Collectors.joining("\n"));
     }
 
-    private static String blockToIRBody(BasicBlock basicBlock) {
-        return blockToString(basicBlock, Driver::operationToString);
+    private String blockToIRBody(BasicBlock basicBlock) {
+        return blockToString(basicBlock, this::operationToString);
     }
 
-    private static String blockToSsaBody(BasicBlock basicBlock) {
-        return blockToString(basicBlock, Driver::operationSsaToString);
+    private String blockToSsaBody(BasicBlock basicBlock) {
+        return blockToString(basicBlock, this::operationSsaToString);
     }
 
-    private static String blockToString(BasicBlock basicBlock, Function<Operation, String> operationStringFunction) {
+    private String blockToString(BasicBlock basicBlock, Function<Operation, String> operationStringFunction) {
         String s = "";
         s += basicBlock.getOperations().stream()
                 .map(operationStringFunction)
@@ -572,17 +247,17 @@ public final class Driver {
         return s;
     }
 
-    private static String operationSsaToString(Operation operation) {
+    private String operationSsaToString(Operation operation) {
         return operation.hasSsaForm() ? operation.getSsa().toString() : operation.toString();
     }
 
-    private static String operationToString(Operation operation) {
+    private String operationToString(Operation operation) {
         return operation.toString();
     }
 
-    private static void driveStatement(FunctionBlock functionBlock,
-                                       Scope scope,
-                                       StatementNode statementNode) {
+    private void driveStatement(FunctionBlock functionBlock,
+                                Scope scope,
+                                StatementNode statementNode) {
         if (statementNode instanceof BreakStatementNode) {
             BasicBlock last = functionBlock.getCurrentBlock();
 
@@ -632,6 +307,7 @@ public final class Driver {
             ExpressionStatementNode expressionStatementNode = (ExpressionStatementNode) statementNode;
             driveExpression(functionBlock, scope, expressionStatementNode.getExpressionNode());
         } else if (statementNode instanceof EmptyStatementNode) {
+            // Nothing
         } else if (statementNode instanceof ForStatementNode) {
             ForStatementNode forStatementNode = (ForStatementNode) statementNode;
 
@@ -773,9 +449,9 @@ public final class Driver {
         }
     }
 
-    private static Operation driveExpression(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
+    private Operation driveExpression(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
         if (expressionNode instanceof ConditionalExpressionNode) {
-            throw new IllegalStateException("Not implemented");
+            return handleConditional(functionBlock, scope, ((ConditionalExpressionNode) expressionNode));
         } else if (expressionNode instanceof LogicalOrExpressionNode) {
             return handleOr(functionBlock, scope, (LogicalOrExpressionNode) expressionNode);
         } else if (expressionNode instanceof LogicalAndExpressionNode) {
@@ -795,29 +471,28 @@ public final class Driver {
         }
     }
 
-    private static LoadOperation handleConditional(FunctionBlock functionBlock, Scope scope,
-                                                   ConditionalExpressionNode expressionNode) {
-        ConditionalExpressionNode conditionalExpressionNode = expressionNode;
+    private LoadOperation handleConditional(FunctionBlock functionBlock, Scope scope,
+                                            ConditionalExpressionNode expressionNode) {
         BasicBlock last = functionBlock.getCurrentBlock();
         BasicBlock condition = functionBlock.appendBlock("conditional");
         BasicBlock thenBlock = null;
         BasicBlock elseBlock = null;
         BasicBlock mergeBlock = null;
 
-        Variable variable = new Variable("cond$"+ condCount++, Type.INT, scope, condition, false);
+        Variable variable = new Variable("cond$" + condCount++, Type.INT, scope, condition, false);
         VariableValue value = new VariableValue(variable);
         AllocationOperation allocationOperation = new AllocationOperation(variable);
         condition.addOperation(allocationOperation);
         last.setTerminator(new Branch(condition));
 
-        Operation operation = driveExpression(functionBlock, scope, conditionalExpressionNode.getConditionNode());
+        Operation operation = driveExpression(functionBlock, scope, expressionNode.getConditionNode());
 
         BasicBlock endCondition = functionBlock.getCurrentBlock();
         thenBlock = functionBlock.appendBlock("conditional_then");
         Value firstArg = null;
         Value secondArg = null;
 
-        ExpressionNode thenExpression = conditionalExpressionNode.getThenNode();
+        ExpressionNode thenExpression = expressionNode.getThenNode();
         if (isTerm(thenExpression)) {
             firstArg = driveValue(functionBlock, scope, thenExpression);
         } else {
@@ -846,7 +521,7 @@ public final class Driver {
         BasicBlock endThen = functionBlock.getCurrentBlock();
 
         elseBlock = functionBlock.appendBlock("conditional_else");
-        ExpressionNode elseExpression = conditionalExpressionNode.getElseNode();
+        ExpressionNode elseExpression = expressionNode.getElseNode();
         if (isTerm(elseExpression)) {
             secondArg = driveValue(functionBlock, scope, elseExpression);
         } else {
@@ -889,7 +564,7 @@ public final class Driver {
         return loadOperation;
     }
 
-    private static Operation handleOr(FunctionBlock functionBlock, Scope scope, LogicalOrExpressionNode expressionNode) {
+    private Operation handleOr(FunctionBlock functionBlock, Scope scope, LogicalOrExpressionNode expressionNode) {
         Value firstArg = null;
         Value secondArg = null;
 
@@ -945,7 +620,7 @@ public final class Driver {
         return operation;
     }
 
-    private static Operation handleAnd(FunctionBlock functionBlock, Scope scope, LogicalAndExpressionNode expressionNode) {
+    private Operation handleAnd(FunctionBlock functionBlock, Scope scope, LogicalAndExpressionNode expressionNode) {
         Value firstArg = null;
         Value secondArg = null;
 
@@ -1001,7 +676,7 @@ public final class Driver {
         return operation;
     }
 
-    private static Operation handleEquality(FunctionBlock functionBlock, Scope scope, EqualityExpressionNode expressionNode) {
+    private Operation handleEquality(FunctionBlock functionBlock, Scope scope, EqualityExpressionNode expressionNode) {
         Value firstArg = null;
         Value secondArg = null;
 
@@ -1068,7 +743,7 @@ public final class Driver {
         return operation;
     }
 
-    private static Operation handleRelational(FunctionBlock functionBlock, Scope scope, RelationalExpressionNode expressionNode) {
+    private Operation handleRelational(FunctionBlock functionBlock, Scope scope, RelationalExpressionNode expressionNode) {
         Value firstArg = null;
         Value secondArg = null;
 
@@ -1140,7 +815,7 @@ public final class Driver {
         return operation;
     }
 
-    private static StoreOperation handleAssigment(FunctionBlock functionBlock, Scope scope, AssigmentExpressionNode assigmentExpressionNode) {
+    private StoreOperation handleAssigment(FunctionBlock functionBlock, Scope scope, AssigmentExpressionNode assigmentExpressionNode) {
         Value source = null;
         Value arg = null;
 
@@ -1175,7 +850,7 @@ public final class Driver {
         return storeOperation;
     }
 
-    private static Operation handleAdditive(FunctionBlock functionBlock, Scope scope, AdditiveExpressionNode expressionNode) {
+    private Operation handleAdditive(FunctionBlock functionBlock, Scope scope, AdditiveExpressionNode expressionNode) {
         Value firstArg = null;
         Value secondArg = null;
 
@@ -1241,7 +916,7 @@ public final class Driver {
         return operation;
     }
 
-    private static Operation handleMultiplicative(FunctionBlock functionBlock, Scope scope, MultiplicativeExpressionNode expressionNode) {
+    private Operation handleMultiplicative(FunctionBlock functionBlock, Scope scope, MultiplicativeExpressionNode expressionNode) {
         Value firstArg = null;
         Value secondArg = null;
 
@@ -1306,25 +981,25 @@ public final class Driver {
         return operation;
     }
 
-    private static Type binOperationType(Value first, Value second) {
+    private Type binOperationType(Value first, Value second) {
         return first.getType() == Type.INT && second.getType() == Type.INT ? Type.INT : Type.FLOAT;
     }
 
-    private static VariableValue variableValueByName(FunctionBlock functionBlock, Scope scope, String name) {
+    private VariableValue variableValueByName(FunctionBlock functionBlock, Scope scope, String name) {
         return new VariableValue(scope.getVariable(scope.getNewName(name)));
     }
 
-    private static boolean isVariable(ExpressionNode expressionNode) {
+    private boolean isVariable(ExpressionNode expressionNode) {
         return expressionNode instanceof VariableExpressionNode;
     }
 
-    private static boolean isTerm(ExpressionNode expressionNode) {
+    private boolean isTerm(ExpressionNode expressionNode) {
         return expressionNode instanceof IntConstantExpressionNode ||
                 expressionNode instanceof FloatConstantExpressionNode ||
                 expressionNode instanceof BoolConstantExpressionNode;
     }
 
-    private static Value driveValue(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
+    private Value driveValue(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
         if (expressionNode instanceof VariableExpressionNode) {
             return variableValueByName(functionBlock, scope,
                     ((VariableExpressionNode) expressionNode).getIdentifierNode().getName());
@@ -1339,11 +1014,11 @@ public final class Driver {
         }
     }
 
-    private static String genNext() {
+    private String genNext() {
         return String.valueOf(count++);
     }
 
-    private static String expressionToString(Scope scope, ExpressionNode expressionNode) {
+    private String expressionToString(Scope scope, ExpressionNode expressionNode) {
         if (expressionNode instanceof ConditionalExpressionNode) {
             ConditionalExpressionNode conditionalExpressionNode = (ConditionalExpressionNode) expressionNode;
             return "(" + expressionToString(scope, conditionalExpressionNode.getConditionNode()) + " ? " +

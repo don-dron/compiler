@@ -1,4 +1,7 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.terminator;
+
+import com.compiler.ir.BasicBlock;
+import com.compiler.ir.drive.value.Value;
 
 public class ConditionalBranch extends Terminator {
     private final Value value;

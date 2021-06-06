@@ -1,7 +1,7 @@
 package com.compiler;
 
 import com.compiler.ast.FunctionsNode;
-import com.compiler.ir.Driver;
+import com.compiler.ir.drive.Driver;
 import com.compiler.ir.Module;
 import com.compiler.lexer.Lexer;
 import com.compiler.parser.Parser;
@@ -22,12 +22,13 @@ public class Main {
         FunctionsNode functionsNodes = parser.parse();
 
         System.out.println(functionsNodes.astDebug());
-        Module module = Driver.drive(functionsNodes);
-        String dump = Driver.moduleToString(module);
+        Driver driver = new Driver();
+        Module module = driver.drive(functionsNodes);
+        String dump = driver.moduleToString(module);
 
         System.out.println(dump);
 
-        String graphViz = Driver.graphVizDebug(module.getFunctionBlocks().get(0));
+        String graphViz = driver.graphVizDebug(module.getFunctionBlocks().get(0));
         System.out.println(graphViz);
         File graphVizFile = new File("gv.gv");
         graphVizFile.deleteOnExit();
