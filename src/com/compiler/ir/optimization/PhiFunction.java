@@ -5,8 +5,7 @@ import java.util.Set;
 
 public class PhiFunction {
     private String source = null;
-    private Set<String> names = new HashSet<>();
-
+    private final Set<String> names = new HashSet<>();
 
     public String getSource() {
         return source;

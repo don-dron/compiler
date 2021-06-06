@@ -467,7 +467,7 @@ public final class Driver {
         } else if (expressionNode instanceof AssigmentExpressionNode) {
             return handleAssigment(functionBlock, scope, (AssigmentExpressionNode) expressionNode);
         } else {
-            throw new IllegalStateException("Unknown expression type " + expressionNode);
+            return null;
         }
     }
 
@@ -488,72 +488,25 @@ public final class Driver {
         Operation operation = driveExpression(functionBlock, scope, expressionNode.getConditionNode());
 
         BasicBlock endCondition = functionBlock.getCurrentBlock();
+
         thenBlock = functionBlock.appendBlock("conditional_then");
-        Value firstArg = null;
-        Value secondArg = null;
-
-        ExpressionNode thenExpression = expressionNode.getThenNode();
-        if (isTerm(thenExpression)) {
-            firstArg = driveValue(functionBlock, scope, thenExpression);
-        } else {
-            Value source = null;
-            if (isVariable(thenExpression)) {
-                source = driveValue(functionBlock, scope, thenExpression);
-            } else {
-                source = driveExpression(functionBlock, scope, thenExpression).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                firstArg = source;
-            } else {
-                LoadOperation first = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(first);
-                firstArg = first.getTarget();
-            }
-        }
-        StoreOperation firstStore = new StoreOperation(
-                firstArg, value
-        );
-        thenBlock.addOperation(firstStore);
+        Value firstArg = driveArgument(functionBlock, scope, expressionNode.getThenNode());
         BasicBlock endThen = functionBlock.getCurrentBlock();
 
+        StoreOperation firstStore = new StoreOperation(firstArg, value);
+        endThen.addOperation(firstStore);
+
         elseBlock = functionBlock.appendBlock("conditional_else");
-        ExpressionNode elseExpression = expressionNode.getElseNode();
-        if (isTerm(elseExpression)) {
-            secondArg = driveValue(functionBlock, scope, elseExpression);
-        } else {
-            Value source = null;
-            if (isVariable(elseExpression)) {
-                source = driveValue(functionBlock, scope, elseExpression);
-            } else {
-                source = driveExpression(functionBlock, scope, elseExpression).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                secondArg = source;
-            } else {
-                LoadOperation second = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(second);
-                secondArg = second.getTarget();
-            }
-        }
-
-        StoreOperation secondStore = new StoreOperation(
-                secondArg, value
-        );
-        elseBlock.addOperation(secondStore);
+        Value secondArg = driveArgument(functionBlock, scope, expressionNode.getElseNode());
         BasicBlock endElse = functionBlock.getCurrentBlock();
+
+        StoreOperation secondStore = new StoreOperation(secondArg, value);
+        endElse.addOperation(secondStore);
 
         mergeBlock = functionBlock.appendBlock("conditional_result");
 
-        endElse.setTerminator(new Branch(mergeBlock));
         endThen.setTerminator(new Branch(mergeBlock));
+        endElse.setTerminator(new Branch(mergeBlock));
         endCondition.setTerminator(new ConditionalBranch(operation.getResult(), thenBlock, elseBlock));
 
         LoadOperation loadOperation = new LoadOperation(value,
@@ -565,52 +518,8 @@ public final class Driver {
     }
 
     private Operation handleOr(FunctionBlock functionBlock, Scope scope, LogicalOrExpressionNode expressionNode) {
-        Value firstArg = null;
-        Value secondArg = null;
-
-        if (isTerm(expressionNode.getFirst())) {
-            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getFirst())) {
-                source = driveValue(functionBlock, scope, expressionNode.getFirst());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                firstArg = source;
-            } else {
-                LoadOperation first = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(first);
-                firstArg = first.getTarget();
-            }
-        }
-
-        if (isTerm(expressionNode.getSecond())) {
-            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getSecond())) {
-                source = driveValue(functionBlock, scope, expressionNode.getSecond());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                firstArg = source;
-            } else {
-                LoadOperation second = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(second);
-                secondArg = second.getTarget();
-            }
-        }
+        Value firstArg = driveArgument(functionBlock, scope, expressionNode.getFirst());
+        Value secondArg = driveArgument(functionBlock, scope, expressionNode.getSecond());
         Operation operation = new BinOperation(BinOpType.OR, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
                         Type.BOOL,
@@ -621,52 +530,8 @@ public final class Driver {
     }
 
     private Operation handleAnd(FunctionBlock functionBlock, Scope scope, LogicalAndExpressionNode expressionNode) {
-        Value firstArg = null;
-        Value secondArg = null;
-
-        if (isTerm(expressionNode.getFirst())) {
-            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getFirst())) {
-                source = driveValue(functionBlock, scope, expressionNode.getFirst());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                firstArg = source;
-            } else {
-                LoadOperation first = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(first);
-                firstArg = first.getTarget();
-            }
-        }
-
-        if (isTerm(expressionNode.getSecond())) {
-            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getSecond())) {
-                source = driveValue(functionBlock, scope, expressionNode.getSecond());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                secondArg = source;
-            } else {
-                LoadOperation second = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(second);
-                secondArg = second.getTarget();
-            }
-        }
+        Value firstArg = driveArgument(functionBlock, scope, expressionNode.getFirst());
+        Value secondArg = driveArgument(functionBlock, scope, expressionNode.getSecond());
         Operation operation = new BinOperation(BinOpType.AND, firstArg, secondArg,
                 new VariableValue(new Variable(genNext(),
                         Type.BOOL,
@@ -677,52 +542,9 @@ public final class Driver {
     }
 
     private Operation handleEquality(FunctionBlock functionBlock, Scope scope, EqualityExpressionNode expressionNode) {
-        Value firstArg = null;
-        Value secondArg = null;
+        Value firstArg = driveArgument(functionBlock, scope, expressionNode.getFirst());
+        Value secondArg = driveArgument(functionBlock, scope, expressionNode.getSecond());
 
-        if (isTerm(expressionNode.getFirst())) {
-            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getFirst())) {
-                source = driveValue(functionBlock, scope, expressionNode.getFirst());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                firstArg = source;
-            } else {
-                LoadOperation first = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(first);
-                firstArg = first.getTarget();
-            }
-        }
-
-        if (isTerm(expressionNode.getSecond())) {
-            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getSecond())) {
-                source = driveValue(functionBlock, scope, expressionNode.getSecond());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                secondArg = source;
-            } else {
-                LoadOperation second = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(second);
-                secondArg = second.getTarget();
-            }
-        }
         BinOpType binOpType = null;
         switch (expressionNode.getType()) {
             case EQ:
@@ -744,52 +566,8 @@ public final class Driver {
     }
 
     private Operation handleRelational(FunctionBlock functionBlock, Scope scope, RelationalExpressionNode expressionNode) {
-        Value firstArg = null;
-        Value secondArg = null;
-
-        if (isTerm(expressionNode.getFirst())) {
-            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getFirst())) {
-                source = driveValue(functionBlock, scope, expressionNode.getFirst());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                firstArg = source;
-            } else {
-                LoadOperation first = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(first);
-                firstArg = first.getTarget();
-            }
-        }
-
-        if (isTerm(expressionNode.getSecond())) {
-            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getSecond())) {
-                source = driveValue(functionBlock, scope, expressionNode.getSecond());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                secondArg = source;
-            } else {
-                LoadOperation second = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(second);
-                secondArg = second.getTarget();
-            }
-        }
+        Value firstArg = driveArgument(functionBlock, scope, expressionNode.getFirst());
+        Value secondArg = driveArgument(functionBlock, scope, expressionNode.getSecond());
 
         BinOpType binOpType = null;
         switch (expressionNode.getType()) {
@@ -851,52 +629,8 @@ public final class Driver {
     }
 
     private Operation handleAdditive(FunctionBlock functionBlock, Scope scope, AdditiveExpressionNode expressionNode) {
-        Value firstArg = null;
-        Value secondArg = null;
-
-        if (isTerm(expressionNode.getFirst())) {
-            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getFirst())) {
-                source = driveValue(functionBlock, scope, expressionNode.getFirst());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                firstArg = source;
-            } else {
-                LoadOperation first = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(first);
-                firstArg = first.getTarget();
-            }
-        }
-
-        if (isTerm(expressionNode.getSecond())) {
-            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getSecond())) {
-                source = driveValue(functionBlock, scope, expressionNode.getSecond());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                secondArg = source;
-            } else {
-                LoadOperation second = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(second);
-                secondArg = second.getTarget();
-            }
-        }
+        Value firstArg = driveArgument(functionBlock, scope, expressionNode.getFirst());
+        Value secondArg = driveArgument(functionBlock, scope, expressionNode.getSecond());
 
         BinOpType binOpType;
         switch (expressionNode.getType()) {
@@ -917,52 +651,9 @@ public final class Driver {
     }
 
     private Operation handleMultiplicative(FunctionBlock functionBlock, Scope scope, MultiplicativeExpressionNode expressionNode) {
-        Value firstArg = null;
-        Value secondArg = null;
+        Value firstArg = driveArgument(functionBlock, scope, expressionNode.getFirst());
+        Value secondArg = driveArgument(functionBlock, scope, expressionNode.getSecond());
 
-        if (isTerm(expressionNode.getFirst())) {
-            firstArg = driveValue(functionBlock, scope, expressionNode.getFirst());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getFirst())) {
-                source = driveValue(functionBlock, scope, expressionNode.getFirst());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getFirst()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                firstArg = source;
-            } else {
-                LoadOperation first = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(first);
-                firstArg = first.getTarget();
-            }
-        }
-
-        if (isTerm(expressionNode.getSecond())) {
-            secondArg = driveValue(functionBlock, scope, expressionNode.getSecond());
-        } else {
-            Value source = null;
-            if (isVariable(expressionNode.getSecond())) {
-                source = driveValue(functionBlock, scope, expressionNode.getSecond());
-            } else {
-                source = driveExpression(functionBlock, scope, expressionNode.getSecond()).getResult();
-            }
-
-            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
-                secondArg = source;
-            } else {
-                LoadOperation second = new LoadOperation(source,
-                        new VariableValue(new Variable(genNext(), source.getType(),
-                                scope, functionBlock.getCurrentBlock(), true))
-                );
-                functionBlock.getCurrentBlock().addOperation(second);
-                secondArg = second.getTarget();
-            }
-        }
         BinOpType binOpType;
         switch (expressionNode.getType()) {
             case MUL:
@@ -979,6 +670,33 @@ public final class Driver {
                         functionBlock.getCurrentBlock(), true)));
         functionBlock.getCurrentBlock().addOperation(operation);
         return operation;
+    }
+
+    private Value driveArgument(FunctionBlock functionBlock, Scope scope, ExpressionNode expressionNode) {
+        Value value = null;
+        if (isTerm(expressionNode)) {
+            value = driveValue(functionBlock, scope, expressionNode);
+        } else {
+            Value source = null;
+            if (isVariable(expressionNode)) {
+                source = driveValue(functionBlock, scope, expressionNode);
+            } else {
+                source = driveExpression(functionBlock, scope, expressionNode).getResult();
+            }
+
+            if (source instanceof VariableValue && ((VariableValue) source).getVariable().isLocal()) {
+                value = source;
+            } else {
+                LoadOperation first = new LoadOperation(source,
+                        new VariableValue(new Variable(genNext(), source.getType(),
+                                scope, functionBlock.getCurrentBlock(), true))
+                );
+                functionBlock.getCurrentBlock().addOperation(first);
+                value = first.getTarget();
+            }
+        }
+
+        return value;
     }
 
     private Type binOperationType(Value first, Value second) {
