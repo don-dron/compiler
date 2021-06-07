@@ -1,7 +1,7 @@
-package com.compiler.ir;
+package com.compiler.ir.drive;
 
 public enum Type {
-    VOID(""),
+    VOID("void"),
     INT("i32"),
     BOOL("i1"),
     FLOAT("f32");

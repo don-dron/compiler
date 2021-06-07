@@ -1,4 +1,6 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.value;
+
+import com.compiler.ir.drive.Type;
 
 public class VariableValue extends Value {
     private final Variable variable;

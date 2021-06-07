@@ -1,4 +1,6 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.operation;
+
+import com.compiler.ir.drive.value.Value;
 
 public class BinOperation extends Operation {
     private final BinOpType type;

@@ -1,5 +1,10 @@
 package com.compiler.ir;
 
+import com.compiler.ir.drive.operation.Operation;
+import com.compiler.ir.drive.terminator.Terminator;
+import com.compiler.ir.drive.value.Variable;
+import com.compiler.ir.optimization.PhiFunction;
+
 import java.util.*;
 
 public class BasicBlock {

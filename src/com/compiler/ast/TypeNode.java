@@ -1,6 +1,6 @@
 package com.compiler.ast;
 
-import com.compiler.ir.Type;
+import com.compiler.ir.drive.Type;
 
 import java.util.List;
 

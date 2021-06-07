@@ -66,6 +66,12 @@ public class Token {
          */
         FOR("for", "for"),
 
+
+        /**
+         * While
+         */
+        WHILE("while", "while"),
+
         /**
          * if
          */
@@ -190,6 +196,11 @@ public class Token {
          * -
          */
         MINUS("minus", "\\-"),
+
+        /**
+         * %
+         */
+        PERCENT("percent", "\\%"),
 
         /**
          * ,

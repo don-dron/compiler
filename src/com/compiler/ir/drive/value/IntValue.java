@@ -1,9 +1,11 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.value;
 
-public class FloatValue extends Value {
-    private final float value;
+import com.compiler.ir.drive.Type;
 
-    public FloatValue(float value) {
+public class IntValue extends Value {
+    private final int value;
+
+    public IntValue(int value) {
         this.value = value;
     }
 
@@ -12,13 +14,13 @@ public class FloatValue extends Value {
         return String.valueOf(value);
     }
 
-    public float getValue() {
+    public int getValue() {
         return value;
     }
 
     @Override
     public Type getType() {
-        return Type.FLOAT;
+        return Type.INT;
     }
 
     @Override

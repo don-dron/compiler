@@ -1,9 +1,11 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.value;
 
-public class IntValue extends Value {
-    private final int value;
+import com.compiler.ir.drive.Type;
 
-    public IntValue(int value) {
+public class BoolValue extends Value {
+    private final boolean value;
+
+    public BoolValue(boolean value) {
         this.value = value;
     }
 
@@ -12,13 +14,13 @@ public class IntValue extends Value {
         return String.valueOf(value);
     }
 
-    public int getValue() {
+    public boolean getValue() {
         return value;
     }
 
     @Override
     public Type getType() {
-        return Type.INT;
+        return Type.BOOL;
     }
 
     @Override

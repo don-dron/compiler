@@ -1,12 +1,11 @@
-package com.compiler.ir;
+package com.compiler.ir.optimization;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class PhiFunction {
     private String source = null;
-    private Set<String> names = new HashSet<>();
-
+    private final Set<String> names = new HashSet<>();
 
     public String getSource() {
         return source;

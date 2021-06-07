@@ -1,8 +1,9 @@
-package com.compiler.ir;
+package com.compiler.ir.drive.operation;
 
 public enum BinOpType {
     ADD("add"),
     SUB("sub"),
+    MOD("srem"),
     DIV("sdiv"),
     GE("icmp sge"),
     LE("icmp sle"),

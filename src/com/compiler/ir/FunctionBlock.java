@@ -1,5 +1,8 @@
 package com.compiler.ir;
 
+import com.compiler.ir.drive.Type;
+import com.compiler.ir.drive.value.Variable;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +18,7 @@ public class FunctionBlock {
     private BasicBlock currentBlock;
     private BasicBlock returnBlock;
     private Variable retValue;
+    private List<Variable> parameters;
 
     public FunctionBlock(String name, Type returnType, Scope scope) {
         this.functionName = name;
@@ -90,5 +94,13 @@ public class FunctionBlock {
     public void appendDummyBlock(String dummy_block) {
         BasicBlock basicBlock = appendBlock(dummy_block);
         basicBlock.setDummy();
+    }
+
+    public void setParameters(List<Variable> variables) {
+        this.parameters = variables;
+    }
+
+    public List<Variable> getParameters() {
+        return parameters;
     }
 }
