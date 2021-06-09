@@ -1,22 +1,18 @@
+int a = 1
 
-int func(int n) {
-   return n == 0 ? 0 : n==1 ? 1 : func(n-2) + func(n-1);
-}
+(int p, int h) int func -> a + b
 
-void print_num(int n) {
-    while(n != 0) {
-        putchar(48 + n % 10);
-        n = n/10;
-    }
-}
+(int p, int h) int func ->
+    return t
 
-int main(int a, int b) {
-    for(int i = 0; i < 40; i = i + 1) {
-        int n = func(i);
-        print_num(i);
-        putchar(32);
-        print_num(n);
-        putchar(13);
-    }
-    return 0;
-}
+(int p, int h) int main ->
+    int i = 0
+
+    while i < 40
+        if(i > 1)
+            break
+        i = i + 1
+
+    (int a, int b) int sum -> a + b
+
+    return t

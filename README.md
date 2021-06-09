@@ -295,7 +295,7 @@ main(int a, string[] b) i8
     t.join()
     t.stop()
 
-    0
+    return 0
 
 ```
 
