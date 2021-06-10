@@ -1,11 +1,15 @@
 package lang.parser;
 
+import lang.ast.ArrayConstructorExpressionNode;
 import lang.ast.ArrayTypeNode;
 import lang.ast.BasicTypeNode;
+import lang.ast.ConstructorDefinitionNode;
 import lang.ast.ExpressionListNode;
 import lang.ast.FunctionDefinitionNode;
 import lang.ast.FunctionNode;
 import lang.ast.IdentifierNode;
+import lang.ast.ObjectConstructorExpressionNode;
+import lang.ast.ObjectTypeNode;
 import lang.ast.ParameterNode;
 import lang.ast.TranslationNode;
 import lang.ast.TypeNode;
@@ -22,6 +26,7 @@ import lang.ast.expression.binary.RelationalExpressionNode;
 import lang.ast.expression.consts.BoolConstantExpressionNode;
 import lang.ast.expression.consts.FloatConstantExpressionNode;
 import lang.ast.expression.consts.IntConstantExpressionNode;
+import lang.ast.expression.consts.NullConstantExpressionNode;
 import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
@@ -140,7 +145,8 @@ public class Parser {
             return parseInterfaceStatement();
         } else if (first.getTokenType() == Token.TokenType.INT
                 || first.getTokenType() == Token.TokenType.FLOAT
-                || first.getTokenType() == Token.TokenType.L_PAREN) {
+                || first.getTokenType() == Token.TokenType.L_PAREN
+                || first.getTokenType() == Token.TokenType.IDENTIFIER) {
             return parseDeclarationStatement();
         } else {
             throw new IllegalArgumentException("Error");
@@ -176,7 +182,8 @@ public class Parser {
             return parseContinueStatement();
         } else if (first.getTokenType() == Token.TokenType.INT
                 || first.getTokenType() == Token.TokenType.FLOAT
-                || first.getTokenType() == Token.TokenType.L_PAREN) {
+                || first.getTokenType() == Token.TokenType.L_PAREN
+                || first.getTokenType() == Token.TokenType.IDENTIFIER) {
             return parseDeclarationStatement();
         } else {
             return parseExpressionStatement();
@@ -282,6 +289,17 @@ public class Parser {
 
     private StatementNode parseDeclarationStatement() {
         TypeNode typeNode = parseType();
+
+        if (typeNode instanceof FunctionNode && peek().getTokenType() == Token.TokenType.ARROW) {
+            Token token = next();
+            next();
+            currentTab++;
+            StatementNode statement = parseStatement();
+            currentTab--;
+//            Token semicolon = next();
+            return new ConstructorDefinitionNode((FunctionNode) typeNode, statement);
+        }
+
         IdentifierNode identifierNode = parseIdentifier();
 
         ExpressionNode expressionNode = null;
@@ -444,13 +462,20 @@ public class Parser {
             next();
             ParameterNode parameterNode = parseParameterList();
             next();
-            typeNode = parseType();
+            if (peek().getTokenType() != Token.TokenType.ARROW) {
+                typeNode = parseType();
+            } else {
+//                next();
+            }
             typeNode = new FunctionNode(parameterNode, typeNode);
+        } else if (type.getTokenType() == Token.TokenType.IDENTIFIER) {
+            typeNode = new ObjectTypeNode(parseIdentifier());
         } else {
             if (type.getTokenType() != Token.TokenType.VOID &&
                     type.getTokenType() != Token.TokenType.INT &&
                     type.getTokenType() != Token.TokenType.FLOAT) {
-                throwExpected(List.of(Token.TokenType.VOID, Token.TokenType.INT, Token.TokenType.FLOAT), type);
+                next();
+                return null;
             }
             next();
 
@@ -773,6 +798,59 @@ public class Parser {
         return expressionNode;
     }
 
+    private ExpressionNode parseConstructor() {
+        Token type = peek();
+
+        if (type.getTokenType() == Token.TokenType.EOF) {
+            return null;
+        }
+        ExpressionNode constructorExpression = null;
+        TypeNode typeNode = null;
+        if (type.getTokenType() == Token.TokenType.IDENTIFIER) {
+            typeNode = new ObjectTypeNode(parseIdentifier());
+        } else {
+            if (type.getTokenType() != Token.TokenType.VOID &&
+                    type.getTokenType() != Token.TokenType.INT &&
+                    type.getTokenType() != Token.TokenType.FLOAT) {
+                throwExpected(List.of(Token.TokenType.VOID, Token.TokenType.INT, Token.TokenType.FLOAT), type);
+            }
+            next();
+
+            TypeNode.Type t = null;
+
+            switch (type.getTokenType()) {
+                case VOID:
+                    t = TypeNode.Type.VOID;
+                    break;
+                case INT:
+                    t = TypeNode.Type.INT;
+                    break;
+                case FLOAT:
+                default:
+                    t = TypeNode.Type.FLOAT;
+            }
+
+            typeNode = new BasicTypeNode(t);
+        }
+
+        if (peek().getTokenType() == Token.TokenType.LB_PAREN) {
+            while (true) {
+                if (peek().getTokenType() == Token.TokenType.LB_PAREN) {
+                    next();
+                    ExpressionNode expressionNode = parseConditionalExpression();
+                    next();
+                    constructorExpression = new ArrayConstructorExpressionNode(typeNode, expressionNode);
+                } else {
+                    break;
+                }
+            }
+
+            return constructorExpression;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
     private ExpressionNode parsePostExpression() {
         ExpressionNode expressionNode = parsePrimaryExpression();
 
@@ -826,6 +904,9 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.INT_CONSTANT) {
             next();
             return new IntConstantExpressionNode(Integer.parseInt(first.getContent()));
+        } else if (first.getTokenType() == Token.TokenType.NULL) {
+            next();
+            return new NullConstantExpressionNode();
         } else if (first.getTokenType() == Token.TokenType.TRUE) {
             next();
             return new BoolConstantExpressionNode(true);
@@ -837,9 +918,9 @@ public class Parser {
             ExpressionNode expressionNode = parseConditionalExpression();
             next();
             return expressionNode;
+        } else {
+            return parseConstructor();
         }
-
-        throw new IllegalStateException("Unknown primary expression " + first);
     }
 
     private void need(Token.TokenType tokenType, Token current) {

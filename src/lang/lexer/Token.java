@@ -139,6 +139,11 @@ public class Token {
         ELSE("else", "else"),
 
         /**
+         * null
+         */
+        NULL("null", "null"),
+
+        /**
          * true
          */
         TRUE("true", "true"),

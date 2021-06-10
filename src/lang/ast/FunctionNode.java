@@ -25,7 +25,7 @@ public class FunctionNode extends TypeNode {
     public String astDebug(int shift) {
 
         return SHIFT.repeat(shift) + "Function:\n" +
-                typeNode.astDebug(shift + 1) + "\n" +
+                (typeNode != null ? typeNode.astDebug(shift + 1) : "") +
                 parameterNode.astDebug(shift + 1);
     }
 
