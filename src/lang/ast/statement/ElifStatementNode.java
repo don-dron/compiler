@@ -25,7 +25,7 @@ public class ElifStatementNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-        String s = SHIFT.repeat(shift) + "Elif:\n";
+        String s = SHIFT.repeat(shift) + "ElifStatement:\n";
 
         if (conditionNode != null) {
             s += conditionNode.astDebug(shift + 1) + "\n";
@@ -39,7 +39,7 @@ public class ElifStatementNode extends StatementNode {
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         List<AstNode> list = new ArrayList<>();
 
         if (conditionNode != null) {

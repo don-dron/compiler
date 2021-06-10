@@ -6,17 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Класс описывающий файл программы
- *
- * содержит только объявления, определения и импорты
- */
 public class TranslationNode extends AstNode {
-    private final String modulePath;
     private final List<StatementNode> statements;
 
-    public TranslationNode(String modulePath, List<StatementNode> statements) {
-        this.modulePath = modulePath;
+    public TranslationNode( List<StatementNode> statements) {
         this.statements = statements;
     }
 
@@ -26,13 +19,13 @@ public class TranslationNode extends AstNode {
 
     @Override
     public String astDebug(int shift) {
-        return "Module " + modulePath + ":\n" + statements.stream()
+        return SHIFT.repeat(shift) + "TranslationNode:\n" + statements.stream()
                 .map(statementNode -> statementNode.astDebug(shift + 1))
                 .collect(Collectors.joining("\n"));
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return new ArrayList<>(statements);
     }
 }

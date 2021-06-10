@@ -15,16 +15,15 @@ public class BasicTypeNode extends TypeNode {
 
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "Type: " + type;
+        return SHIFT.repeat(shift) + "BasicType: " + type;
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of();
     }
 
     public enum Type {
         INT, FLOAT, VOID
-
     }
 }

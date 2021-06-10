@@ -13,5 +13,5 @@ public abstract class AstNode {
 
     public abstract String astDebug(int shift);
 
-    public abstract List<AstNode> getChildren();
+    public abstract List<? extends AstNode> getChildren();
 }

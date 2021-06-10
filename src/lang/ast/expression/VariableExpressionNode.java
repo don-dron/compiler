@@ -15,11 +15,11 @@ public class VariableExpressionNode extends PrimaryExpressionNode {
 
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "Variable: " + identifierNode.getName();
+        return SHIFT.repeat(shift) + "VariableExpression: " + identifierNode.getName();
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of();
     }
 

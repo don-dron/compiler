@@ -19,12 +19,12 @@ public class ReturnStatementNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-        return (SHIFT.repeat(shift) + "Return:\n" +
+        return (SHIFT.repeat(shift) + "ReturnStatement:\n" +
                 (expressionNode == null ? "" : expressionNode.astDebug(shift + 1))).stripTrailing();
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return expressionNode == null ? List.of() : List.of(expressionNode);
     }
 }

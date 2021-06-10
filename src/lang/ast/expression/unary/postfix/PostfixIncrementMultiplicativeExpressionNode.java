@@ -1,14 +1,14 @@
-package lang.ast.statement;
+package lang.ast.expression.unary.postfix;
 
 import lang.ast.AstNode;
 import lang.ast.expression.ExpressionNode;
 
 import java.util.List;
 
-public class ExpressionStatementNode extends StatementNode {
+public class PostfixIncrementMultiplicativeExpressionNode extends ExpressionNode {
     private final ExpressionNode expressionNode;
 
-    public ExpressionStatementNode(ExpressionNode expressionNode) {
+    public PostfixIncrementMultiplicativeExpressionNode(ExpressionNode expressionNode) {
         this.expressionNode = expressionNode;
     }
 
@@ -18,7 +18,8 @@ public class ExpressionStatementNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "ExpressionStatement:\n" + expressionNode.astDebug(shift + 1);
+        return SHIFT.repeat(shift) + "PostfixIncrementMultiplicativeExpression:\n" +
+                expressionNode.astDebug(shift + 1);
     }
 
     @Override

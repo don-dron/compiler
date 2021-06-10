@@ -19,7 +19,7 @@ public class ExpressionListNode extends AstNode {
 
     @Override
     public String astDebug(int shift) {
-        return (SHIFT.repeat(shift) + "Parameters:\n" +
+        return (SHIFT.repeat(shift) + "ExpressionList:\n" +
                 list.stream()
                         .map(entry -> entry.astDebug(shift + 1))
                         .collect(Collectors.joining("\n")))
@@ -27,7 +27,7 @@ public class ExpressionListNode extends AstNode {
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return new ArrayList<>(list);
     }
 }

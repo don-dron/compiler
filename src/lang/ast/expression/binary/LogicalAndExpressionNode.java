@@ -1,6 +1,7 @@
-package lang.ast.expression;
+package lang.ast.expression.binary;
 
 import lang.ast.AstNode;
+import lang.ast.expression.ExpressionNode;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class LogicalAndExpressionNode extends BinaryOperationExpressionNode {
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of(first, second);
     }
 }

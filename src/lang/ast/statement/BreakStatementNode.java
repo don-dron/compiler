@@ -7,11 +7,11 @@ import java.util.List;
 public class BreakStatementNode extends StatementNode {
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "Break";
+        return SHIFT.repeat(shift) + "BreakStatement";
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of();
     }
 }

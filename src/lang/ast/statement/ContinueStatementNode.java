@@ -7,11 +7,11 @@ import java.util.List;
 public class ContinueStatementNode extends StatementNode {
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "Continue";
+        return SHIFT.repeat(shift) + "ContinueStatement";
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of();
     }
 }

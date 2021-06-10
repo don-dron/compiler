@@ -83,6 +83,26 @@ public class Token {
         ARROW("arrow", "->"),
 
         /**
+         * inc_add
+         */
+        INC_ADD("incadd", "\\+\\+"),
+
+        /**
+         * inc_mul
+         */
+        INC_MUL("incmul", "\\*\\*"),
+
+        /**
+         * dec
+         */
+        DEC("dec", "\\-\\-"),
+
+        /**
+         * point
+         */
+        POINT("point", "\\."),
+
+        /**
          * int
          */
         INT("int", "int"),
@@ -182,6 +202,16 @@ public class Token {
          * =
          */
         DEFINE("define", "="),
+
+        /**
+         * [
+         */
+        LB_PAREN("lbparen", "\\["),
+
+        /**
+         * ]
+         */
+        RB_PAREN("rbparen", "\\]"),
 
         /**
          * (

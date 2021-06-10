@@ -21,7 +21,7 @@ public class DeclarationStatementNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-        return (SHIFT.repeat(shift) + "Declaration:\n" +
+        return (SHIFT.repeat(shift) + "DeclarationStatement:\n" +
                 typeNode.astDebug(shift + 1) + "\n" +
                 identifierNode.astDebug(shift + 1) + "\n" +
                 (expressionNode == null ? "" : expressionNode.astDebug(shift + 1))).stripTrailing();
@@ -40,7 +40,7 @@ public class DeclarationStatementNode extends StatementNode {
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of(expressionNode);
     }
 }

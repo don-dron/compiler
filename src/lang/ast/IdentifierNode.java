@@ -19,7 +19,7 @@ public class IdentifierNode  extends AstNode {
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of();
     }
 }

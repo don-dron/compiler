@@ -24,13 +24,13 @@ public class FunctionNode extends TypeNode {
     @Override
     public String astDebug(int shift) {
 
-        return SHIFT.repeat(shift) + "Function: \n" +
+        return SHIFT.repeat(shift) + "Function:\n" +
                 typeNode.astDebug(shift + 1) + "\n" +
                 parameterNode.astDebug(shift + 1);
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return Collections.emptyList();
     }
 }

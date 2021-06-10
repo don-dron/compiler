@@ -1,15 +1,17 @@
-package lang.ast.statement;
+package lang.ast.expression.unary.postfix;
 
 import lang.ast.AstNode;
 import lang.ast.expression.ExpressionNode;
 
 import java.util.List;
 
-public class ExpressionStatementNode extends StatementNode {
+public class FieldAccessExpressionNode extends ExpressionNode{
     private final ExpressionNode expressionNode;
+    private final ExpressionNode next;
 
-    public ExpressionStatementNode(ExpressionNode expressionNode) {
+    public FieldAccessExpressionNode(ExpressionNode expressionNode, ExpressionNode next) {
         this.expressionNode = expressionNode;
+        this.next = next;
     }
 
     public ExpressionNode getExpressionNode() {
@@ -18,7 +20,9 @@ public class ExpressionStatementNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "ExpressionStatement:\n" + expressionNode.astDebug(shift + 1);
+        return SHIFT.repeat(shift) + "FieldAccessExpression:\n" +
+                expressionNode.astDebug(shift + 1) + "\n" +
+                next.astDebug(shift + 1);
     }
 
     @Override

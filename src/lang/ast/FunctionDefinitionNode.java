@@ -31,15 +31,14 @@ public class FunctionDefinitionNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-
-        return SHIFT.repeat(shift) + "FunctionDefinition: \n" +
+        return SHIFT.repeat(shift) + "FunctionDefinition:\n" +
                 functionNode.astDebug(shift + 1) + "\n" +
-                identifierNode.astDebug(shift + 1) + "\n" +
-                (statementNode == null ? "" : statementNode.astDebug(shift + 1));
+                identifierNode.astDebug(shift + 1) +
+                (statementNode == null ? "" : ("\n" +statementNode.astDebug(shift + 1)));
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of(statementNode);
     }
 }

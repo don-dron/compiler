@@ -1,24 +1,66 @@
 package lang.parser;
 
-import lang.ast.*;
-import lang.ast.expression.*;
+import lang.ast.BasicTypeNode;
+import lang.ast.ExpressionListNode;
+import lang.ast.FunctionDefinitionNode;
+import lang.ast.FunctionNode;
+import lang.ast.IdentifierNode;
+import lang.ast.ParameterNode;
+import lang.ast.TranslationNode;
+import lang.ast.TypeNode;
+import lang.ast.expression.ConditionalExpressionNode;
+import lang.ast.expression.ExpressionNode;
+import lang.ast.expression.VariableExpressionNode;
+import lang.ast.expression.binary.AdditiveExpressionNode;
+import lang.ast.expression.binary.AssigmentExpressionNode;
+import lang.ast.expression.binary.EqualityExpressionNode;
+import lang.ast.expression.binary.LogicalAndExpressionNode;
+import lang.ast.expression.binary.LogicalOrExpressionNode;
+import lang.ast.expression.binary.MultiplicativeExpressionNode;
+import lang.ast.expression.binary.RelationalExpressionNode;
 import lang.ast.expression.consts.BoolConstantExpressionNode;
 import lang.ast.expression.consts.FloatConstantExpressionNode;
 import lang.ast.expression.consts.IntConstantExpressionNode;
-import lang.ast.statement.*;
+import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
+import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
+import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixDecrementSubtractionExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixIncrementAdditiveExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixIncrementMultiplicativeExpressionNode;
+import lang.ast.expression.unary.prefix.CastExpressionNode;
+import lang.ast.expression.unary.prefix.PrefixDecrementSubtractionExpressionNode;
+import lang.ast.expression.unary.prefix.PrefixIncrementAdditiveExpressionNode;
+import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionNode;
+import lang.ast.statement.BreakStatementNode;
+import lang.ast.statement.ClassStatementNode;
+import lang.ast.statement.CompoundStatementNode;
+import lang.ast.statement.ContinueStatementNode;
+import lang.ast.statement.DeclarationStatementNode;
+import lang.ast.statement.ElifStatementNode;
+import lang.ast.statement.ElseStatementNode;
+import lang.ast.statement.EmptyStatementNode;
+import lang.ast.statement.ExpressionStatementNode;
+import lang.ast.statement.IfStatementNode;
+import lang.ast.statement.InterfaceStatementNode;
+import lang.ast.statement.ReturnStatementNode;
+import lang.ast.statement.StatementNode;
+import lang.ast.statement.WhileStatementNode;
 import lang.lexer.Lexer;
 import lang.lexer.Token;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 public class Parser {
     private final Lexer lexer;
-    private final String moduleName;
-    private Stack<Token> stack = new Stack<>();
+    private final Stack<Token> stack = new Stack<>();
 
     public Parser(Lexer lexer, String moduleName) {
-        this.moduleName = moduleName;
         this.lexer = lexer;
+        next();
     }
 
     private Token next() {
@@ -45,30 +87,57 @@ public class Parser {
 
     // TRANSLATION ::= (STATEMENT | IMPORT)
     public TranslationNode parse() {
-        List<StatementNode> nodes = new ArrayList<>();
-        next();
-        while (peek().getTokenType() != Token.TokenType.EOF) {
-            nodes.add(parseStatement());
+        List<StatementNode> statementNodes = new ArrayList<>();
+
+        while (true) {
+            int count = currentTab;
+            Stack<Token> tokens = new Stack<>();
+
+            if (peek().getTokenType() == Token.TokenType.NEWLINE) {
+                next();
+                statementNodes.add(new EmptyStatementNode());
+            } else {
+                while (count > 0) {
+                    Token token = peek();
+
+                    if (token.getTokenType() != Token.TokenType.TAB) {
+                        break;
+                    }
+                    tokens.push(token);
+                    token = next();
+                    count--;
+                }
+
+                if (count > 0) {
+                    while (!tokens.isEmpty()) {
+                        ret(tokens.pop());
+                    }
+                    break;
+                } else {
+                    tokens.clear();
+                }
+
+                if (peek().getTokenType() == Token.TokenType.EOF) {
+                    break;
+                }
+
+                statementNodes.add(parseGlobalStatement());
+            }
         }
-        return new TranslationNode(moduleName, nodes);
+
+        return new TranslationNode(statementNodes);
     }
 
     // ST ::= (STATEMENT | IMPORT)
     public StatementNode parseGlobalStatement() {
         Token first = peek();
-
-        if (first.getTokenType() == Token.TokenType.IF) {
-            throw new IllegalArgumentException("Error");
-        } else if (first.getTokenType() == Token.TokenType.TAB) {
-            throw new IllegalArgumentException("Error");
-        } else if (first.getTokenType() == Token.TokenType.WHILE) {
-            throw new IllegalArgumentException("Error");
-        } else if (first.getTokenType() == Token.TokenType.RETURN) {
-            throw new IllegalArgumentException("Error");
-        } else if (first.getTokenType() == Token.TokenType.BREAK) {
-            throw new IllegalArgumentException("Error");
-        } else if (first.getTokenType() == Token.TokenType.CONTINUE) {
-            throw new IllegalArgumentException("Error");
+        if (first.getTokenType() == Token.TokenType.NEWLINE) {
+            next();
+            return new EmptyStatementNode();
+        } else if (first.getTokenType() == Token.TokenType.CLASS) {
+            return parseClassStatement();
+        } else if (first.getTokenType() == Token.TokenType.INTERFACE) {
+            return parseInterfaceStatement();
         } else if (first.getTokenType() == Token.TokenType.INT
                 || first.getTokenType() == Token.TokenType.FLOAT
                 || first.getTokenType() == Token.TokenType.L_PAREN) {
@@ -100,13 +169,14 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.BREAK) {
             return parseBreakStatement();
         } else if (first.getTokenType() == Token.TokenType.CLASS) {
-            return null;
+            return parseClassStatement();
         } else if (first.getTokenType() == Token.TokenType.INTERFACE) {
-            return null;
+            return parseInterfaceStatement();
         } else if (first.getTokenType() == Token.TokenType.CONTINUE) {
             return parseContinueStatement();
-        } else if (first.getTokenType() == Token.TokenType.INT ||
-                first.getTokenType() == Token.TokenType.FLOAT || first.getTokenType() == Token.TokenType.L_PAREN) {
+        } else if (first.getTokenType() == Token.TokenType.INT
+                || first.getTokenType() == Token.TokenType.FLOAT
+                || first.getTokenType() == Token.TokenType.L_PAREN) {
             return parseDeclarationStatement();
         } else {
             return parseExpressionStatement();
@@ -118,8 +188,6 @@ public class Parser {
     // COMPOUND_STATEMENT ::= LF_PAREN STATEMENT* RF_PAREN
     private StatementNode parseCompoundStatement() {
         List<StatementNode> statementNodes = new ArrayList<>();
-        currentTab++;
-
         while (true) {
             int count = currentTab;
             Stack<Token> tokens = new Stack<>();
@@ -147,20 +215,16 @@ public class Parser {
                 } else {
                     tokens.clear();
                 }
+
+                if (peek().getTokenType() == Token.TokenType.EOF) {
+                    break;
+                }
+
                 statementNodes.add(parseStatement());
             }
         }
 
-        currentTab--;
-
         return new CompoundStatementNode(statementNodes);
-    }
-
-    private StatementNode parseElseStatement() {
-        next();
-        Token rParen = next();
-        StatementNode elseNode = parseStatement();
-        return new ElseStatementNode(elseNode);
     }
 
     // EXPRESSION_STATEMENT ::= CONDITIONAL_EXPRESSION SEMICOLON | ASSIGMENT_EXPRESSION SEMICOLON
@@ -192,6 +256,26 @@ public class Parser {
         return new AssigmentExpressionNode(identifierNode, expressionNode);
     }
 
+    private StatementNode parseInterfaceStatement() {
+        next();
+        IdentifierNode identifierNode = parseIdentifier();
+        next();
+        currentTab++;
+        TranslationNode translationNode = parse();
+        currentTab--;
+        return new InterfaceStatementNode(identifierNode, translationNode);
+    }
+
+    private StatementNode parseClassStatement() {
+        next();
+        IdentifierNode identifierNode = parseIdentifier();
+        next();
+        currentTab++;
+        TranslationNode translationNode = parse();
+        currentTab--;
+        return new ClassStatementNode(identifierNode, translationNode);
+    }
+
     private StatementNode parseDeclarationStatement() {
         TypeNode typeNode = parseType();
         IdentifierNode identifierNode = parseIdentifier();
@@ -202,9 +286,14 @@ public class Parser {
                 Token token = next();
                 if (token.getTokenType() == Token.TokenType.NEWLINE) {
                     next();
+                    currentTab++;
+                    StatementNode statement = parseStatement();
+                    currentTab--;
+                    return new FunctionDefinitionNode((FunctionNode) typeNode, identifierNode, statement);
+                } else {
+                    StatementNode statement = parseStatement();
+                    return new FunctionDefinitionNode((FunctionNode) typeNode, identifierNode, statement);
                 }
-                StatementNode statement = parseStatement();
-                return new FunctionDefinitionNode((FunctionNode) typeNode, identifierNode, statement);
             } else {
                 next();
                 return new FunctionDefinitionNode((FunctionNode) typeNode, identifierNode, null);
@@ -228,7 +317,9 @@ public class Parser {
         Token rParen = peek();
         rParen = next();
 
+        currentTab++;
         StatementNode thenNode = parseStatement();
+        currentTab--;
 
         return new IfStatementNode(expressionNode, thenNode);
     }
@@ -242,9 +333,20 @@ public class Parser {
         Token rParen = peek();
         rParen = next();
 
+        currentTab++;
         StatementNode thenNode = parseStatement();
+        currentTab--;
 
         return new ElifStatementNode(expressionNode, thenNode);
+    }
+
+    private StatementNode parseElseStatement() {
+        next();
+        Token rParen = next();
+        currentTab++;
+        StatementNode elseNode = parseStatement();
+        currentTab--;
+        return new ElseStatementNode(elseNode);
     }
 
     private StatementNode parseWhileStatement() {
@@ -258,7 +360,9 @@ public class Parser {
         Token rParen = peek();
         next();
 
+        currentTab++;
         body = parseStatement();
+        currentTab--;
         return new WhileStatementNode(predicate, body);
     }
 
@@ -557,7 +661,7 @@ public class Parser {
 
     // MULTIPLICATIVE_EXPRESSION ::= PRIMARY_EXPRESSION | MULTIPLICATIVE_EXPRESSION * PRIMARY_EXPRESSION | MULTIPLICATIVE_EXPRESSION / PRIMARY_EXPRESSION
     private ExpressionNode parseMultiplicativeExpression() {
-        ExpressionNode first = parsePrimaryExpression();
+        ExpressionNode first = parseCastExpression();
         MultiplicativeExpressionNode current = null;
 
         while (true) {
@@ -582,9 +686,9 @@ public class Parser {
                 }
 
                 if (current == null) {
-                    current = new MultiplicativeExpressionNode(type, first, parsePrimaryExpression());
+                    current = new MultiplicativeExpressionNode(type, first, parseCastExpression());
                 } else {
-                    current = new MultiplicativeExpressionNode(type, current, parsePrimaryExpression());
+                    current = new MultiplicativeExpressionNode(type, current, parseCastExpression());
                 }
             } else {
                 break;
@@ -619,26 +723,87 @@ public class Parser {
         return new ExpressionListNode(list);
     }
 
+    private ExpressionNode parseCastExpression() {
+        if (peek().getTokenType() == Token.TokenType.L_PAREN) {
+            next();
+            TypeNode typeNode = parseType();
+            next();
+            ExpressionNode expressionNode = parseCastExpression();
+            return new CastExpressionNode(typeNode, expressionNode);
+        } else {
+            return parseUnaryExpression();
+        }
+    }
+
+    private ExpressionNode parseUnaryExpression() {
+        Token first = peek();
+        if (first.getTokenType() == Token.TokenType.NEWLINE) {
+            Token second = next();
+            return parseUnaryExpression();
+        }
+        ExpressionNode expressionNode = null;
+
+        if (first.getTokenType() == Token.TokenType.INC_ADD) {
+            next();
+            expressionNode = new PrefixIncrementAdditiveExpressionNode(parseUnaryExpression());
+        } else if (first.getTokenType() == Token.TokenType.INC_MUL) {
+            next();
+            expressionNode = new PrefixIncrementMultiplicativeExpressionNode(parseUnaryExpression());
+        } else if (first.getTokenType() == Token.TokenType.DEC) {
+            next();
+            expressionNode = new PrefixDecrementSubtractionExpressionNode(parseUnaryExpression());
+        } else {
+            expressionNode = parsePostExpression();
+        }
+        return expressionNode;
+    }
+
+    private ExpressionNode parsePostExpression() {
+        ExpressionNode expressionNode = parsePrimaryExpression();
+
+        while (true) {
+            if (peek().getTokenType() == Token.TokenType.INC_ADD) {
+                next();
+                expressionNode = new PostfixIncrementAdditiveExpressionNode(expressionNode);
+            } else if (peek().getTokenType() == Token.TokenType.INC_MUL) {
+                next();
+                expressionNode = new PostfixIncrementMultiplicativeExpressionNode(expressionNode);
+            } else if (peek().getTokenType() == Token.TokenType.DEC) {
+                next();
+                expressionNode = new PostfixDecrementSubtractionExpressionNode(expressionNode);
+            } else if (peek().getTokenType() == Token.TokenType.POINT) {
+                next();
+                ExpressionNode nextNode = new VariableExpressionNode(parseIdentifier());
+                expressionNode = new FieldAccessExpressionNode(expressionNode, nextNode);
+            } else if (peek().getTokenType() == Token.TokenType.L_PAREN) {
+                next();
+                if (peek().getTokenType() != Token.TokenType.R_PAREN) {
+                    ExpressionListNode expressionListNode = parseExpressionListNode();
+                    next();
+                    expressionNode = new FunctionCallExpressionNode(expressionNode, expressionListNode);
+                } else {
+                    next();
+                    expressionNode = new FunctionCallExpressionNode(expressionNode, new ExpressionListNode(List.of()));
+                }
+            } else if (peek().getTokenType() == Token.TokenType.LB_PAREN) {
+                next();
+                ExpressionNode argument = parseConditionalExpression();
+                next();
+                expressionNode = new ArrayAccessExpressionNode(expressionNode, argument);
+            } else {
+                break;
+            }
+        }
+
+        return expressionNode;
+    }
+
     // PRIMARY_EXPRESSION ::= IDENTIFIER | CONSTANT | L_PAREN CONDITIONAL_EXPRESSION R_PAREN
     private ExpressionNode parsePrimaryExpression() {
         Token first = peek();
 
-        if (first.getTokenType() == Token.TokenType.NEWLINE) {
-            Token second = next();
-            return parsePrimaryExpression();
-        }
-
         if (first.getTokenType() == Token.TokenType.IDENTIFIER) {
-            Token second = next();
-            second = peek();
-
-            if (second.getTokenType() == Token.TokenType.L_PAREN) {
-                second = next();
-                ExpressionListNode expressionListNode = parseExpressionListNode();
-                second = next();
-                return new FunctionCallExpressionNode(new IdentifierNode(first.getContent()), expressionListNode);
-            }
-
+            next();
             return new VariableExpressionNode(new IdentifierNode(first.getContent()));
         } else if (first.getTokenType() == Token.TokenType.FLOAT_CONSTANT) {
             next();

@@ -30,14 +30,14 @@ public class ConditionalExpressionNode extends ExpressionNode {
 
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "Conditional:\n" +
+        return SHIFT.repeat(shift) + "ConditionalExpression:\n" +
                 conditionNode.astDebug(shift + 1) + "\n" +
                 thenNode.astDebug(shift + 1) + "\n" +
                 elseNode.astDebug(shift + 1);
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of(conditionNode, thenNode, elseNode);
     }
 }

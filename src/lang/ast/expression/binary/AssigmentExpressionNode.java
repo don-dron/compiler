@@ -1,7 +1,8 @@
-package lang.ast.expression;
+package lang.ast.expression.binary;
 
 import lang.ast.AstNode;
 import lang.ast.IdentifierNode;
+import lang.ast.expression.ExpressionNode;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class AssigmentExpressionNode extends ExpressionNode {
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         return List.of(expressionNode);
     }
 }

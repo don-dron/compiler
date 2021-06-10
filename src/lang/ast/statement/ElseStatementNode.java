@@ -18,7 +18,7 @@ public class ElseStatementNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-        String s = SHIFT.repeat(shift) + "Else:\n";
+        String s = SHIFT.repeat(shift) + "ElseStatement:\n";
         if (elseNode != null) {
             s += elseNode.astDebug(shift + 1) + "\n";
         }
@@ -27,7 +27,7 @@ public class ElseStatementNode extends StatementNode {
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         List<AstNode> list = new ArrayList<>();
 
         if (elseNode != null) {

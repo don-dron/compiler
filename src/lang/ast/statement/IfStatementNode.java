@@ -25,7 +25,7 @@ public class IfStatementNode extends StatementNode {
 
     @Override
     public String astDebug(int shift) {
-        String s = SHIFT.repeat(shift) + "If:\n";
+        String s = SHIFT.repeat(shift) + "IfStatement:\n";
 
         if (conditionNode != null) {
             s += conditionNode.astDebug(shift + 1) + "\n";
@@ -39,7 +39,7 @@ public class IfStatementNode extends StatementNode {
     }
 
     @Override
-    public List<AstNode> getChildren() {
+    public List<? extends AstNode> getChildren() {
         List<AstNode> list = new ArrayList<>();
 
         if (conditionNode != null) {
