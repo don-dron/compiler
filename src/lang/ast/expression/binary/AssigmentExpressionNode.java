@@ -1,38 +1,38 @@
 package lang.ast.expression.binary;
 
 import lang.ast.AstNode;
-import lang.ast.IdentifierNode;
 import lang.ast.expression.ExpressionNode;
 
 import java.util.List;
 
 public class AssigmentExpressionNode extends ExpressionNode {
-    private final IdentifierNode identifierNode;
-    private final ExpressionNode expressionNode;
 
-    public AssigmentExpressionNode(IdentifierNode identifierNode, ExpressionNode expressionNode) {
+    private final ExpressionNode left;
+    private final ExpressionNode right;
+
+    public AssigmentExpressionNode(ExpressionNode left, ExpressionNode right) {
         super();
-        this.expressionNode = expressionNode;
-        this.identifierNode = identifierNode;
+        this.left = left;
+        this.right = right;
     }
 
-    public ExpressionNode getExpressionNode() {
-        return expressionNode;
+    public ExpressionNode getLeft() {
+        return left;
     }
 
-    public IdentifierNode getIdentifierNode() {
-        return identifierNode;
+    public ExpressionNode getRight() {
+        return right;
     }
 
     @Override
     public String astDebug(int shift) {
-        return SHIFT.repeat(shift) + "Assigment:\n" +
-                identifierNode.astDebug(shift + 1) + "\n" +
-                expressionNode.astDebug(shift + 1);
+        return SHIFT.repeat(shift) + "AssigmentExpression:\n" +
+                left.astDebug(shift + 1) + "\n" +
+                right.astDebug(shift + 1);
     }
 
     @Override
     public List<? extends AstNode> getChildren() {
-        return List.of(expressionNode);
+        return List.of(left, right);
     }
 }

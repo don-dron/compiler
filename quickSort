@@ -35,7 +35,7 @@
         quickSort(numbers, pivot, right)
 
 () int main ->
-    int[] a
+    int a[size]
     int i = 0
 
     while i < size

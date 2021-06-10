@@ -1,5 +1,6 @@
 package lang.parser;
 
+import lang.ast.ArrayTypeNode;
 import lang.ast.BasicTypeNode;
 import lang.ast.ExpressionListNode;
 import lang.ast.FunctionDefinitionNode;
@@ -47,11 +48,10 @@ import lang.ast.statement.StatementNode;
 import lang.ast.statement.WhileStatementNode;
 import lang.lexer.Lexer;
 import lang.lexer.Token;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 public class Parser {
@@ -66,7 +66,7 @@ public class Parser {
     private Token next() {
         if (stack.isEmpty()) {
             Token token = lexer.nextToken();
-            System.out.println(token.getTokenType());
+            System.out.println(token);
             return token;
         } else {
             return stack.pop();
@@ -229,31 +229,35 @@ public class Parser {
 
     // EXPRESSION_STATEMENT ::= CONDITIONAL_EXPRESSION SEMICOLON | ASSIGMENT_EXPRESSION SEMICOLON
     private StatementNode parseExpressionStatement() {
-        Token ident = peek();
+        ExpressionNode first = parseConditionalExpression();
+        AssigmentExpressionNode current = null;
 
-        if (ident.getTokenType() == Token.TokenType.IDENTIFIER) {
-            if (next().getTokenType() == Token.TokenType.DEFINE) {
-                ret(ident);
-                ExpressionNode expressionNode = parseAssigmentExpression();
+        while (true) {
+            Token token = peek();
+
+            if (token.getTokenType() == Token.TokenType.DEFINE) {
                 next();
-                return new ExpressionStatementNode(expressionNode);
+                if (current == null) {
+                    current = new AssigmentExpressionNode(first, parseConditionalExpression());
+                } else {
+                    current = new AssigmentExpressionNode(current, parseConditionalExpression());
+                }
             } else {
-                ret(ident);
+                break;
             }
         }
-        ExpressionNode expressionNode = parseConditionalExpression();
-
         next();
-        return new ExpressionStatementNode(expressionNode);
+
+        return new ExpressionStatementNode(current == null ? first : current);
     }
 
     private ExpressionNode parseAssigmentExpression() {
-        IdentifierNode identifierNode = parseIdentifier();
+        ExpressionNode left = parseConditionalExpression();
         Token def = peek();
         next();
-        ExpressionNode expressionNode = parseConditionalExpression();
+        ExpressionNode right = parseConditionalExpression();
 
-        return new AssigmentExpressionNode(identifierNode, expressionNode);
+        return new AssigmentExpressionNode(left, right);
     }
 
     private StatementNode parseInterfaceStatement() {
@@ -361,7 +365,7 @@ public class Parser {
         next();
 
         currentTab++;
-        body = parseStatement();
+        body = parseCompoundStatement();
         currentTab--;
         return new WhileStatementNode(predicate, body);
     }
@@ -398,7 +402,7 @@ public class Parser {
     }
 
     private ParameterNode parseParameterList() {
-        Map<IdentifierNode, TypeNode> map = new HashMap<>();
+        List<Pair<IdentifierNode, TypeNode>> parameters = new ArrayList<>();
 
         while (true) {
             if (peek().getTokenType() == Token.TokenType.R_PAREN) {
@@ -416,7 +420,7 @@ public class Parser {
                 throw new IllegalStateException("Need identifier");
             }
 
-            map.put(identifierNode, typeNode);
+            parameters.add(Pair.of(identifierNode, typeNode));
 
             if (peek().getTokenType() != Token.TokenType.COMMA) {
                 break;
@@ -425,7 +429,7 @@ public class Parser {
             }
         }
 
-        return new ParameterNode(map);
+        return new ParameterNode(parameters);
     }
 
     // TYPE ::= INT | FLOAT | VOID
@@ -435,38 +439,49 @@ public class Parser {
         if (type.getTokenType() == Token.TokenType.EOF) {
             return null;
         }
-
+        TypeNode typeNode = null;
         if (type.getTokenType() == Token.TokenType.L_PAREN) {
             next();
             ParameterNode parameterNode = parseParameterList();
             next();
-            TypeNode typeNode = parseType();
+            typeNode = parseType();
+            typeNode = new FunctionNode(parameterNode, typeNode);
+        } else {
+            if (type.getTokenType() != Token.TokenType.VOID &&
+                    type.getTokenType() != Token.TokenType.INT &&
+                    type.getTokenType() != Token.TokenType.FLOAT) {
+                throwExpected(List.of(Token.TokenType.VOID, Token.TokenType.INT, Token.TokenType.FLOAT), type);
+            }
+            next();
 
-            return new FunctionNode(parameterNode, typeNode);
+            TypeNode.Type t = null;
+
+            switch (type.getTokenType()) {
+                case VOID:
+                    t = TypeNode.Type.VOID;
+                    break;
+                case INT:
+                    t = TypeNode.Type.INT;
+                    break;
+                case FLOAT:
+                default:
+                    t = TypeNode.Type.FLOAT;
+            }
+
+            typeNode = new BasicTypeNode(t);
         }
 
-        if (type.getTokenType() != Token.TokenType.VOID &&
-                type.getTokenType() != Token.TokenType.INT &&
-                type.getTokenType() != Token.TokenType.FLOAT) {
-            throwExpected(List.of(Token.TokenType.VOID, Token.TokenType.INT, Token.TokenType.FLOAT), type);
-        }
-        next();
-
-        TypeNode.Type t = null;
-
-        switch (type.getTokenType()) {
-            case VOID:
-                t = TypeNode.Type.VOID;
+        while (true) {
+            if (peek().getTokenType() == Token.TokenType.LB_PAREN) {
+                next();
+                next();
+                typeNode = new ArrayTypeNode(typeNode);
+            } else {
                 break;
-            case INT:
-                t = TypeNode.Type.INT;
-                break;
-            case FLOAT:
-            default:
-                t = TypeNode.Type.FLOAT;
+            }
         }
 
-        return new BasicTypeNode(t);
+        return typeNode;
     }
 
     private IdentifierNode parseIdentifier() {
