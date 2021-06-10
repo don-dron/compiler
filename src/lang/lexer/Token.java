@@ -63,6 +63,16 @@ public class Token {
         INT_CONSTANT("iconst", "[0-9]+"),
 
         /**
+         * interface
+         */
+        INTERFACE("interface", "interface"),
+
+        /**
+         * class
+         */
+        CLASS("class", "class"),
+
+        /**
          * void
          */
         VOID("void", "void"),

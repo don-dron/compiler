@@ -1,54 +1,20 @@
 package lang.parser;
 
-import lang.ast.BasicTypeNode;
-import lang.ast.ExpressionListNode;
-import lang.ast.FunctionDefinitionNode;
-import lang.ast.FunctionNode;
-import lang.ast.IdentifierNode;
-import lang.ast.ParameterNode;
-import lang.ast.TranslationNode;
-import lang.ast.TypeNode;
-import lang.ast.expression.AdditiveExpressionNode;
-import lang.ast.expression.AssigmentExpressionNode;
-import lang.ast.expression.ConditionalExpressionNode;
-import lang.ast.expression.EqualityExpressionNode;
-import lang.ast.expression.ExpressionNode;
-import lang.ast.expression.FunctionCallExpressionNode;
-import lang.ast.expression.LogicalAndExpressionNode;
-import lang.ast.expression.LogicalOrExpressionNode;
-import lang.ast.expression.MultiplicativeExpressionNode;
-import lang.ast.expression.RelationalExpressionNode;
-import lang.ast.expression.VariableExpressionNode;
+import lang.ast.*;
+import lang.ast.expression.*;
 import lang.ast.expression.consts.BoolConstantExpressionNode;
 import lang.ast.expression.consts.FloatConstantExpressionNode;
 import lang.ast.expression.consts.IntConstantExpressionNode;
-import lang.ast.statement.BreakStatementNode;
-import lang.ast.statement.CompoundStatementNode;
-import lang.ast.statement.ContinueStatementNode;
-import lang.ast.statement.DeclarationStatementNode;
-import lang.ast.statement.ElifStatementNode;
-import lang.ast.statement.ElseStatementNode;
-import lang.ast.statement.EmptyStatementNode;
-import lang.ast.statement.ExpressionStatementNode;
-import lang.ast.statement.IfStatementNode;
-import lang.ast.statement.ReturnStatementNode;
-import lang.ast.statement.StatementNode;
-import lang.ast.statement.WhileStatementNode;
+import lang.ast.statement.*;
 import lang.lexer.Lexer;
 import lang.lexer.Token;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 public class Parser {
     private final Lexer lexer;
     private final String moduleName;
-    private Token current;
     private Stack<Token> stack = new Stack<>();
-    private Token peekToken;
 
     public Parser(Lexer lexer, String moduleName) {
         this.moduleName = moduleName;
@@ -57,7 +23,6 @@ public class Parser {
 
     private Token next() {
         if (stack.isEmpty()) {
-            peekToken = null;
             Token token = lexer.nextToken();
             System.out.println(token.getTokenType());
             return token;
@@ -134,6 +99,10 @@ public class Parser {
             return parseReturnStatement();
         } else if (first.getTokenType() == Token.TokenType.BREAK) {
             return parseBreakStatement();
+        } else if (first.getTokenType() == Token.TokenType.CLASS) {
+            return null;
+        } else if (first.getTokenType() == Token.TokenType.INTERFACE) {
+            return null;
         } else if (first.getTokenType() == Token.TokenType.CONTINUE) {
             return parseContinueStatement();
         } else if (first.getTokenType() == Token.TokenType.INT ||
@@ -202,11 +171,7 @@ public class Parser {
             if (next().getTokenType() == Token.TokenType.DEFINE) {
                 ret(ident);
                 ExpressionNode expressionNode = parseAssigmentExpression();
-//                if (peek().getTokenType() != Token.TokenType.SEMICOLON) {
-//                    throw new IllegalStateException("Expected ;");
-//                } else {
                 next();
-//                }
                 return new ExpressionStatementNode(expressionNode);
             } else {
                 ret(ident);
@@ -214,12 +179,7 @@ public class Parser {
         }
         ExpressionNode expressionNode = parseConditionalExpression();
 
-//        if (peek().getTokenType() != Token.TokenType.SEMICOLON) {
-//            throw new IllegalStateException("Expected ;");
-//        } else {
         next();
-//        }
-
         return new ExpressionStatementNode(expressionNode);
     }
 
@@ -262,13 +222,10 @@ public class Parser {
     private StatementNode parseIfStatement() {
         Token ifToken = peek();
         Token lParen = next();
-//        need(Token.TokenType.L_PAREN, lParen);
-//        next();
 
         ExpressionNode expressionNode = parseConditionalExpression();
 
         Token rParen = peek();
-//        need(Token.TokenType.R_PAREN, rParen);
         rParen = next();
 
         StatementNode thenNode = parseStatement();
@@ -279,13 +236,10 @@ public class Parser {
     private StatementNode parseElifStatement() {
         Token ifToken = peek();
         Token lParen = next();
-//        need(Token.TokenType.L_PAREN, lParen);
-//        next();
 
         ExpressionNode expressionNode = parseConditionalExpression();
 
         Token rParen = peek();
-//        need(Token.TokenType.R_PAREN, rParen);
         rParen = next();
 
         StatementNode thenNode = parseStatement();
@@ -298,13 +252,10 @@ public class Parser {
         StatementNode body = null;
         Token forToken = peek();
         Token lParen = next();
-//        need(Token.TokenType.L_PAREN, lParen);
-//        next();
 
         predicate = parseConditionalExpression();
 
         Token rParen = peek();
-//        need(Token.TokenType.R_PAREN, rParen);
         next();
 
         body = parseStatement();

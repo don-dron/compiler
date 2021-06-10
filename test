@@ -1,18 +1,5 @@
-int a = 1
 
-(int p, int h) int func -> a + b
+class a
+    int a = 1
+    (int p, int h) int func -> a + b
 
-(int p, int h) int func ->
-    return t
-
-(int p, int h) int main ->
-    int i = 0
-
-    while i < 40
-        if(i > 1)
-            break
-        i = i + 1
-
-    (int a, int b) int sum -> a + b
-
-    return t
