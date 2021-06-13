@@ -1,10 +1,9 @@
 package lang;
 
+import lang.ast.FileNode;
 import lang.ast.TranslationNode;
 import lang.lexer.Lexer;
-import lang.lexer.Token;
 import lang.parser.Parser;
-import org.checkerframework.checker.units.qual.UnitsMultiple;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,7 +15,7 @@ public class Main {
         Lexer lexer = new Lexer(reader);
 
         Parser parser = new Parser(lexer, "name");
-        TranslationNode translationNode = parser.parse();
+        FileNode translationNode = parser.parse();
 
         System.out.println(translationNode.astDebug(0));
     }

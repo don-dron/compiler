@@ -1,3 +1,6 @@
+
+import ru.t.er
+
 class Main
     (int h, int b) ->
         this.h = h

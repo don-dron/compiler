@@ -68,6 +68,11 @@ public class Token {
         INTERFACE("interface", "interface"),
 
         /**
+         * import
+         */
+        IMPORT("import", "import"),
+
+        /**
          * class
          */
         CLASS("class", "class"),

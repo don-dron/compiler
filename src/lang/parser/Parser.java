@@ -5,9 +5,11 @@ import lang.ast.ArrayTypeNode;
 import lang.ast.BasicTypeNode;
 import lang.ast.ConstructorDefinitionNode;
 import lang.ast.ExpressionListNode;
+import lang.ast.FileNode;
 import lang.ast.FunctionDefinitionNode;
 import lang.ast.FunctionNode;
 import lang.ast.IdentifierNode;
+import lang.ast.ImportNode;
 import lang.ast.ObjectTypeNode;
 import lang.ast.ParameterNode;
 import lang.ast.ParametersNode;
@@ -53,7 +55,6 @@ import lang.ast.statement.StatementNode;
 import lang.ast.statement.WhileStatementNode;
 import lang.lexer.Lexer;
 import lang.lexer.Token;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -61,6 +62,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
+
+import static lang.lexer.Token.TokenType.EOF;
+import static lang.lexer.Token.TokenType.IMPORT;
 
 public class Parser {
     private final Lexer lexer;
@@ -100,8 +104,37 @@ public class Parser {
         tokens.push(token);
     }
 
+    public FileNode parse() {
+        List<ImportNode> importNodes = new ArrayList<>();
+        List<StatementNode> statementNodes = new ArrayList<>();
+
+        while (true) {
+            if(peek().getTokenType() == EOF) {
+                break;
+            }
+
+            if (peek().getTokenType() == IMPORT) {
+                importNodes.add(parseImportNode());
+            } else {
+                statementNodes.add(parseGlobalStatement());
+            }
+        }
+
+        return new FileNode(importNodes, statementNodes);
+    }
+
+    private ImportNode parseImportNode() {
+        next();
+
+        ExpressionNode expressionNode = parseExpression();
+
+        next();
+
+        return new ImportNode(expressionNode);
+    }
+
     // TRANSLATION ::= (STATEMENT | IMPORT)
-    public TranslationNode parse() {
+    private TranslationNode parseTranslationNode() {
         List<StatementNode> statementNodes = new ArrayList<>();
 
         while (true) {
@@ -295,7 +328,7 @@ public class Parser {
         need(Token.TokenType.NEWLINE, peek());
         next();
         currentTab++;
-        TranslationNode translationNode = parse();
+        TranslationNode translationNode = parseTranslationNode();
         currentTab--;
         return new InterfaceStatementNode(identifierNode, translationNode);
     }
@@ -306,7 +339,7 @@ public class Parser {
         need(Token.TokenType.NEWLINE, peek());
         next();
         currentTab++;
-        TranslationNode translationNode = parse();
+        TranslationNode translationNode = parseTranslationNode();
         currentTab--;
         return new ClassStatementNode(identifierNode, translationNode);
     }
