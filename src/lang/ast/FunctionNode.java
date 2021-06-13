@@ -5,16 +5,16 @@ import java.util.List;
 
 public class FunctionNode extends TypeNode {
     private final TypeNode typeNode;
-    private final ParameterNode parameterNode;
+    private final ParametersNode parametersNode;
 
-    public FunctionNode(ParameterNode parameterNode,
+    public FunctionNode(ParametersNode parametersNode,
                         TypeNode typeNode) {
         this.typeNode = typeNode;
-        this.parameterNode = parameterNode;
+        this.parametersNode = parametersNode;
     }
 
-    public ParameterNode getParameterNode() {
-        return parameterNode;
+    public ParametersNode getParametersNode() {
+        return parametersNode;
     }
 
     public TypeNode getTypeNode() {
@@ -23,10 +23,9 @@ public class FunctionNode extends TypeNode {
 
     @Override
     public String astDebug(int shift) {
-
         return SHIFT.repeat(shift) + "Function:\n" +
-                (typeNode != null ? typeNode.astDebug(shift + 1) : "") +
-                parameterNode.astDebug(shift + 1);
+                (typeNode != null ? (typeNode.astDebug(shift + 1) + "\n") : "") +
+                parametersNode.astDebug(shift + 1);
     }
 
     @Override
