@@ -92,7 +92,6 @@ public class Parser {
 
     private Token next() {
         lastToken = tokens.pop();
-        System.out.println(lastToken);
         return lastToken;
     }
 
