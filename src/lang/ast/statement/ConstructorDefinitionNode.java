@@ -1,5 +1,7 @@
-package lang.ast;
+package lang.ast.statement;
 
+import lang.ast.AstNode;
+import lang.ast.FunctionNode;
 import lang.ast.statement.StatementNode;
 
 import java.util.List;
@@ -32,5 +34,10 @@ public class ConstructorDefinitionNode extends StatementNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return List.of(statementNode);
+    }
+
+    @Override
+    public String toString() {
+        return functionNode.getParametersNode().toString() + " " + statementNode.toString();
     }
 }

@@ -32,6 +32,12 @@ public class ArrayAccessExpressionNode extends ExpressionNode {
     }
 
     @Override
+    public String toString() {
+        return array.toString() + "[" + argument.toString() + "]";
+    }
+
+
+    @Override
     public List<? extends AstNode> getChildren() {
         return List.of(argument, array);
     }

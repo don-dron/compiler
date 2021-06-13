@@ -3,6 +3,7 @@ package lang.ast.statement;
 import lang.ast.AstNode;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class CompoundStatementNode extends StatementNode {
@@ -25,5 +26,10 @@ public class CompoundStatementNode extends StatementNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return statements.stream().map(c -> (AstNode) c).collect(Collectors.toList());
+    }
+
+    @Override
+    public String toString() {
+        return statements.stream().map(Objects::toString).collect(Collectors.joining("\n"));
     }
 }

@@ -25,4 +25,9 @@ public class ArrayTypeNode extends TypeNode {
     public List<? extends AstNode> getChildren() {
         return Collections.emptyList();
     }
+
+    @Override
+    public String toString() {
+        return typeNode.toString() + "[]";
+    }
 }

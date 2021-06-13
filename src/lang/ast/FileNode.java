@@ -9,10 +9,18 @@ import java.util.stream.Collectors;
 public class FileNode extends AstNode {
     private final List<ImportNode> importNodes;
     private final List<StatementNode> statementNodes;
+    private final String path;
 
-    public FileNode(List<ImportNode> importNodes, List<StatementNode> statementNodes) {
+    public FileNode(String path,
+                    List<ImportNode> importNodes,
+                    List<StatementNode> statementNodes) {
+        this.path = path;
         this.importNodes = importNodes;
         this.statementNodes = statementNodes;
+    }
+
+    public String getPath() {
+        return path;
     }
 
     public List<StatementNode> getStatementNodes() {

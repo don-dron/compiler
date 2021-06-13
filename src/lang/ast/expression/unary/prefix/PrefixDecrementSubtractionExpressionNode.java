@@ -23,6 +23,11 @@ public class PrefixDecrementSubtractionExpressionNode extends ExpressionNode {
     }
 
     @Override
+    public String toString() {
+        return "--" + expressionNode.toString();
+    }
+
+    @Override
     public List<? extends AstNode> getChildren() {
         return List.of(expressionNode);
     }

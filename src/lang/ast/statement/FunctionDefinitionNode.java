@@ -1,6 +1,8 @@
-package lang.ast;
+package lang.ast.statement;
 
-import lang.ast.statement.StatementNode;
+import lang.ast.AstNode;
+import lang.ast.FunctionNode;
+import lang.ast.IdentifierNode;
 
 import java.util.List;
 
@@ -34,7 +36,13 @@ public class FunctionDefinitionNode extends StatementNode {
         return SHIFT.repeat(shift) + "FunctionDefinition:\n" +
                 functionNode.astDebug(shift + 1) + "\n" +
                 identifierNode.astDebug(shift + 1) +
-                (statementNode == null ? "" : ("\n" +statementNode.astDebug(shift + 1)));
+                (statementNode == null ? "" : ("\n" + statementNode.astDebug(shift + 1)));
+    }
+
+    @Override
+    public String toString() {
+        return functionNode.toString() + " " + identifierNode.toString() + " " +
+                (statementNode == null ? "" : ("\n" + statementNode.toString()));
     }
 
     @Override

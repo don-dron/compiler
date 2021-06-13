@@ -26,4 +26,9 @@ public class PostfixDecrementSubtractionExpressionNode extends ExpressionNode {
     public List<? extends AstNode> getChildren() {
         return List.of(expressionNode);
     }
+
+    @Override
+    public String toString() {
+        return expressionNode.toString() + "--";
+    }
 }

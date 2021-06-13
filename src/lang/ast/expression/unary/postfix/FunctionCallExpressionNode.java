@@ -39,4 +39,9 @@ public class FunctionCallExpressionNode extends PrimaryExpressionNode {
         expressionNodes.addAll(parameters.getList());
         return expressionNodes;
     }
+
+    @Override
+    public String toString() {
+        return function.toString() + "(" + parameters.toString() + ")";
+    }
 }

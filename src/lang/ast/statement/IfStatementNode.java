@@ -52,4 +52,9 @@ public class IfStatementNode extends StatementNode {
 
         return list;
     }
+
+    @Override
+    public String toString() {
+        return "if " + conditionNode.toString() + "\n" + thenNode.toString();
+    }
 }

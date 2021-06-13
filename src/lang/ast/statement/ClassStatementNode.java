@@ -3,20 +3,27 @@ package lang.ast.statement;
 import lang.ast.AstNode;
 import lang.ast.IdentifierNode;
 import lang.ast.TranslationNode;
-import lang.ast.statement.StatementNode;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ClassStatementNode extends StatementNode {
     private final IdentifierNode identifierNode;
+    private final List<IdentifierNode> extend;
     private final TranslationNode translationNode;
 
     public ClassStatementNode(IdentifierNode identifierNode,
-                                  TranslationNode translationNode) {
+                              List<IdentifierNode> extend,
+                              TranslationNode translationNode) {
         this.identifierNode = identifierNode;
+        this.extend = extend;
         this.translationNode = translationNode;
     }
 
+    public List<IdentifierNode> getExtend() {
+        return extend;
+    }
 
     public IdentifierNode getIdentifierNode() {
         return identifierNode;
@@ -31,11 +38,19 @@ public class ClassStatementNode extends StatementNode {
 
         return SHIFT.repeat(shift) + "ClassStatement: \n" +
                 identifierNode.astDebug(shift + 1) + "\n" +
+                extend.stream().map(e -> e.astDebug(shift + 1) + "\n").collect(Collectors.joining()) +
                 translationNode.astDebug(shift + 1);
     }
 
     @Override
     public List<? extends AstNode> getChildren() {
         return List.of(translationNode);
+    }
+
+    @Override
+    public String toString() {
+        return "class " + identifierNode.toString() + " : " +
+                extend.stream().map(Objects::toString).collect(Collectors.joining(",")) + "\n" +
+                translationNode.toString();
     }
 }

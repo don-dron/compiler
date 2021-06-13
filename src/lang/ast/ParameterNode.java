@@ -31,4 +31,9 @@ public class ParameterNode extends AstNode {
     public List<? extends AstNode> getChildren() {
         return List.of();
     }
+
+    @Override
+    public String toString() {
+        return typeNode.toString() + " " + identifierNode.toString();
+    }
 }

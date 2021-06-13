@@ -34,4 +34,9 @@ public class CastExpressionNode extends ExpressionNode {
     public List<? extends AstNode> getChildren() {
         return List.of(expressionNode);
     }
+
+    @Override
+    public String toString() {
+        return "(" + typeNode + ")" + expressionNode.toString();
+    }
 }

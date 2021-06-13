@@ -15,4 +15,9 @@ public class EmptyStatementNode extends StatementNode {
     public List<? extends AstNode> getChildren() {
         return List.of();
     }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }

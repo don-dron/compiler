@@ -17,7 +17,7 @@ public class RelationalExpressionNode extends BinaryOperationExpressionNode {
         this.second = second;
     }
 
-    public ExpressionNode getSecond() {
+    public ExpressionNode getRight() {
         return second;
     }
 
@@ -25,7 +25,7 @@ public class RelationalExpressionNode extends BinaryOperationExpressionNode {
         return type;
     }
 
-    public ExpressionNode getFirst() {
+    public ExpressionNode getLeft() {
         return first;
     }
 
@@ -34,6 +34,11 @@ public class RelationalExpressionNode extends BinaryOperationExpressionNode {
         return SHIFT.repeat(shift) + type + ":\n" +
                 first.astDebug(shift + 1) + "\n" +
                 second.astDebug(shift + 1);
+    }
+
+    @Override
+    public String toString() {
+        return first.toString() + " " + type + " " + second.toString();
     }
 
     public enum RelationalType {GE, GT, LE, LT}

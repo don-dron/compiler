@@ -40,4 +40,9 @@ public class ConditionalExpressionNode extends ExpressionNode {
     public List<? extends AstNode> getChildren() {
         return List.of(conditionNode, thenNode, elseNode);
     }
+
+    @Override
+    public String toString() {
+        return "(" + conditionNode.toString() + ") ? (" + thenNode.toString() + ") : (" + elseNode.toString() + ")";
+    }
 }

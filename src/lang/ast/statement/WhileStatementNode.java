@@ -52,4 +52,9 @@ public class WhileStatementNode extends StatementNode {
 
         return list;
     }
+
+    @Override
+    public String toString() {
+        return "while " + conditionNode.toString() + "\n" + bodyNode.toString();
+    }
 }

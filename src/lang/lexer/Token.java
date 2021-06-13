@@ -48,6 +48,11 @@ public class Token {
         TAB("tab", "\t"),
 
         /**
+         * colon
+         */
+        COLON("colon", "\\:"),
+
+        /**
          * space
          */
         SPACE("space", " "),

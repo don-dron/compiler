@@ -14,17 +14,22 @@ public class LogicalOrExpressionNode extends BinaryOperationExpressionNode {
         this.second = second;
     }
 
-    public ExpressionNode getSecond() {
+    public ExpressionNode getRight() {
         return second;
     }
 
-    public ExpressionNode getFirst() {
+    public ExpressionNode getLeft() {
         return first;
     }
 
     @Override
     public String astDebug(int shift) {
         return SHIFT.repeat(shift) + "OR:\n" + first.astDebug(shift + 1) + "\n" + second.astDebug(shift + 1);
+    }
+
+    @Override
+    public String toString() {
+        return first.toString() + " || " + second.toString();
     }
 
     @Override

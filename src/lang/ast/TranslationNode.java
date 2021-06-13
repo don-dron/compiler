@@ -4,6 +4,7 @@ import lang.ast.statement.StatementNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TranslationNode extends AstNode {
@@ -27,5 +28,10 @@ public class TranslationNode extends AstNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return new ArrayList<>(statements);
+    }
+
+    @Override
+    public String toString() {
+        return statements.stream().map(Objects::toString).collect(Collectors.joining("\n"));
     }
 }

@@ -21,11 +21,11 @@ public class AdditiveExpressionNode extends BinaryOperationExpressionNode {
         return type;
     }
 
-    public ExpressionNode getFirst() {
+    public ExpressionNode getLeft() {
         return first;
     }
 
-    public ExpressionNode getSecond() {
+    public ExpressionNode getRight() {
         return second;
     }
 
@@ -39,6 +39,11 @@ public class AdditiveExpressionNode extends BinaryOperationExpressionNode {
     public enum AdditiveType {
         ADD,
         SUB
+    }
+
+    @Override
+    public String toString() {
+        return first.toString() + " " + type + " " + second.toString();
     }
 
     @Override

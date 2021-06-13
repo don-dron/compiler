@@ -23,7 +23,8 @@ public class BasicTypeNode extends TypeNode {
         return List.of();
     }
 
-    public enum Type {
-        INT, FLOAT, VOID
+    @Override
+    public String toString() {
+        return type.toString();
     }
 }

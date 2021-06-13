@@ -4,6 +4,7 @@ import lang.ast.expression.ExpressionNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ExpressionListNode extends AstNode {
@@ -29,5 +30,10 @@ public class ExpressionListNode extends AstNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return new ArrayList<>(list);
+    }
+
+    @Override
+    public String toString() {
+        return list.stream().map(Objects::toString).collect(Collectors.joining(","));
     }
 }

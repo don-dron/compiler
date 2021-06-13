@@ -43,4 +43,11 @@ public class DeclarationStatementNode extends StatementNode {
     public List<? extends AstNode> getChildren() {
         return List.of(expressionNode);
     }
+
+    @Override
+    public String toString() {
+        return typeNode + " "
+                + identifierNode.getName() + " "
+                + (expressionNode == null ? "" : ( "= " + expressionNode.toString()));
+    }
 }

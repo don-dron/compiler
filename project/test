@@ -1,18 +1,10 @@
-import quickSort
-
-Sort m = Sort()
+import sort.quick.quickSort
 
 () int main ->
+    int a = 1 + 1
+    int size = 100
     int[] a = int[size]
-    int i = 0 = a = 1
-
-    if a
-    elif b
-    elif true
-    elif false
-    else
-
-    Main m = null
+    int i = 0
 
     while i < size
         a[i] = size - i

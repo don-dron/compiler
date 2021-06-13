@@ -5,7 +5,7 @@ import lang.ast.expression.ExpressionNode;
 
 import java.util.List;
 
-public class AssigmentExpressionNode extends ExpressionNode {
+public class AssigmentExpressionNode extends BinaryOperationExpressionNode {
 
     private final ExpressionNode left;
     private final ExpressionNode right;
@@ -29,6 +29,11 @@ public class AssigmentExpressionNode extends ExpressionNode {
         return SHIFT.repeat(shift) + "AssigmentExpression:\n" +
                 left.astDebug(shift + 1) + "\n" +
                 right.astDebug(shift + 1);
+    }
+
+    @Override
+    public String toString() {
+        return left.toString() + " = " + right.toString();
     }
 
     @Override

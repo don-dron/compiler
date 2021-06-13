@@ -27,4 +27,9 @@ public class ReturnStatementNode extends StatementNode {
     public List<? extends AstNode> getChildren() {
         return expressionNode == null ? List.of() : List.of(expressionNode);
     }
+
+    @Override
+    public String toString() {
+        return "return";
+    }
 }

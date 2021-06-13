@@ -1,5 +1,7 @@
-package lang.ast;
+package lang.ast.expression;
 
+import lang.ast.AstNode;
+import lang.ast.TypeNode;
 import lang.ast.expression.ExpressionNode;
 
 import java.util.List;
@@ -31,5 +33,10 @@ public class ArrayConstructorExpressionNode extends ExpressionNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return List.of(sizeExpression);
+    }
+
+    @Override
+    public String toString() {
+        return typeNode.toString() + "[" + sizeExpression.toString() + "]";
     }
 }

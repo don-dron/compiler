@@ -1,12 +1,10 @@
 package lang.parser;
 
-import lang.ast.ArrayConstructorExpressionNode;
+import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.ArrayTypeNode;
 import lang.ast.BasicTypeNode;
-import lang.ast.ConstructorDefinitionNode;
 import lang.ast.ExpressionListNode;
 import lang.ast.FileNode;
-import lang.ast.FunctionDefinitionNode;
 import lang.ast.FunctionNode;
 import lang.ast.IdentifierNode;
 import lang.ast.ImportNode;
@@ -42,12 +40,14 @@ import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionN
 import lang.ast.statement.BreakStatementNode;
 import lang.ast.statement.ClassStatementNode;
 import lang.ast.statement.CompoundStatementNode;
+import lang.ast.statement.ConstructorDefinitionNode;
 import lang.ast.statement.ContinueStatementNode;
 import lang.ast.statement.DeclarationStatementNode;
 import lang.ast.statement.ElifStatementNode;
 import lang.ast.statement.ElseStatementNode;
 import lang.ast.statement.EmptyStatementNode;
 import lang.ast.statement.ExpressionStatementNode;
+import lang.ast.statement.FunctionDefinitionNode;
 import lang.ast.statement.IfStatementNode;
 import lang.ast.statement.InterfaceStatementNode;
 import lang.ast.statement.ReturnStatementNode;
@@ -63,6 +63,8 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
+import static lang.lexer.Token.TokenType.COLON;
+import static lang.lexer.Token.TokenType.COMMA;
 import static lang.lexer.Token.TokenType.EOF;
 import static lang.lexer.Token.TokenType.IMPORT;
 
@@ -70,11 +72,13 @@ public class Parser {
     private final Lexer lexer;
     private final Queue<Token> stack = new ArrayDeque<>();
     private final Stack<Token> tokens;
+    private final String path;
     private Token lastToken = null;
 
-    public Parser(Lexer lexer, String moduleName) {
+    public Parser(Lexer lexer, String path) {
         this.lexer = lexer;
         this.tokens = new Stack<>();
+        this.path = path;
 
         while (true) {
             Token token = lexer.nextToken();
@@ -108,7 +112,7 @@ public class Parser {
         List<StatementNode> statementNodes = new ArrayList<>();
 
         while (true) {
-            if(peek().getTokenType() == EOF) {
+            if (peek().getTokenType() == EOF) {
                 break;
             }
 
@@ -119,7 +123,7 @@ public class Parser {
             }
         }
 
-        return new FileNode(importNodes, statementNodes);
+        return new FileNode(path, importNodes, statementNodes);
     }
 
     private ImportNode parseImportNode() {
@@ -324,23 +328,59 @@ public class Parser {
     private StatementNode parseInterfaceStatement() {
         next();
         IdentifierNode identifierNode = parseIdentifier();
+
+        List<IdentifierNode> identifierNodes = new ArrayList<>();
+        if (peek().getTokenType() == COLON) {
+            next();
+
+            IdentifierNode node = parseIdentifier();
+            identifierNodes.add(node);
+            while (true) {
+                if (peek().getTokenType() == COMMA) {
+                    next();
+                    node = parseIdentifier();
+                    identifierNodes.add(node);
+                } else {
+                    break;
+                }
+            }
+        }
+
         need(Token.TokenType.NEWLINE, peek());
         next();
         currentTab++;
         TranslationNode translationNode = parseTranslationNode();
         currentTab--;
-        return new InterfaceStatementNode(identifierNode, translationNode);
+        return new InterfaceStatementNode(identifierNode, identifierNodes, translationNode);
     }
 
     private StatementNode parseClassStatement() {
         next();
         IdentifierNode identifierNode = parseIdentifier();
+
+        List<IdentifierNode> identifierNodes = new ArrayList<>();
+        if (peek().getTokenType() == COLON) {
+            next();
+
+            IdentifierNode node = parseIdentifier();
+            identifierNodes.add(node);
+            while (true) {
+                if (peek().getTokenType() == COMMA) {
+                    next();
+                    node = parseIdentifier();
+                    identifierNodes.add(node);
+                } else {
+                    break;
+                }
+            }
+        }
+
         need(Token.TokenType.NEWLINE, peek());
         next();
         currentTab++;
         TranslationNode translationNode = parseTranslationNode();
         currentTab--;
-        return new ClassStatementNode(identifierNode, translationNode);
+        return new ClassStatementNode(identifierNode, identifierNodes, translationNode);
     }
 
     private StatementNode parseDeclarationStatement() {
@@ -590,7 +630,7 @@ public class Parser {
             return null;
         }
         next();
-        return new IdentifierNode(identifier.getContent());
+        return new IdentifierNode(identifier.getContent(), identifier);
     }
 
     // CONDITIONAL_EXPRESSION ::= LOGICAL_OR_EXPRESSION
@@ -603,6 +643,7 @@ public class Parser {
         if (token.getTokenType() == Token.TokenType.QUESTION) {
             next();
             ExpressionNode thenNode = parseConditionalExpression();
+            next();
             ExpressionNode elseNode = parseConditionalExpression();
             return new ConditionalExpressionNode(first, thenNode, elseNode);
         }
@@ -887,8 +928,8 @@ public class Parser {
                 expressionNode = new PostfixDecrementSubtractionExpressionNode(expressionNode);
             } else if (peek().getTokenType() == Token.TokenType.POINT) {
                 next();
-                ExpressionNode nextNode = new VariableExpressionNode(parseIdentifier());
-                expressionNode = new FieldAccessExpressionNode(expressionNode, nextNode);
+                VariableExpressionNode right = new VariableExpressionNode(parseIdentifier());
+                expressionNode = new FieldAccessExpressionNode(expressionNode, right);
             } else if (peek().getTokenType() == Token.TokenType.L_PAREN) {
                 next();
                 if (peek().getTokenType() != Token.TokenType.R_PAREN) {
@@ -917,8 +958,8 @@ public class Parser {
         Token first = peek();
 
         if (first.getTokenType() == Token.TokenType.IDENTIFIER) {
-            next();
-            return new VariableExpressionNode(new IdentifierNode(first.getContent()));
+            IdentifierNode identifierNode = parseIdentifier();
+            return new VariableExpressionNode(identifierNode);
         } else if (first.getTokenType() == Token.TokenType.FLOAT_CONSTANT) {
             next();
             return new FloatConstantExpressionNode(Float.parseFloat(first.getContent()));

@@ -1,6 +1,7 @@
 package lang.ast;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ParametersNode extends AstNode {
@@ -27,5 +28,10 @@ public class ParametersNode extends AstNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return List.of();
+    }
+
+    @Override
+    public String toString() {
+        return parameters.stream().map(Objects::toString).collect(Collectors.joining(","));
     }
 }

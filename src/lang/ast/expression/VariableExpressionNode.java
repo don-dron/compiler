@@ -26,4 +26,9 @@ public class VariableExpressionNode extends PrimaryExpressionNode {
     public IdentifierNode getIdentifierNode() {
         return identifierNode;
     }
+
+    @Override
+    public String toString() {
+        return identifierNode.getName();
+    }
 }

@@ -32,4 +32,9 @@ public class FunctionNode extends TypeNode {
     public List<? extends AstNode> getChildren() {
         return Collections.emptyList();
     }
+
+    @Override
+    public String toString() {
+        return "(" + parametersNode.toString() + ") " + typeNode.toString();
+    }
 }

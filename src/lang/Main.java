@@ -13,22 +13,43 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         List<FileNode> files = new ArrayList<>();
-        for(File file : Objects.requireNonNull(new File("project").listFiles())) {
+        File root = new File("project1");
+        for(File file : getFiles(root)) {
             Reader reader = new FileReader(file);
             Lexer lexer = new Lexer(reader);
 
-            Parser parser = new Parser(lexer, file.getPath());
+            Parser parser = new Parser(lexer, file.getAbsolutePath());
             FileNode fileNode = parser.parse();
 
             files.add(fileNode);
         }
 
-        SemanticAnalysis semanticAnalysis = new SemanticAnalysis(files);
+        SemanticAnalysis semanticAnalysis = new SemanticAnalysis(
+                root.getAbsolutePath(),
+                files);
         semanticAnalysis.analyse();
+        System.out.println("End");
+    }
+
+    private static List<File> getFiles(File root) {
+        List<File> files = new ArrayList<>();
+
+        if(!root.isDirectory()) {
+            return List.of(root);
+        } else {
+            for (File file : Stream.ofNullable(root.listFiles())
+                    .flatMap(Stream::of)
+                    .collect(Collectors.toList())) {
+                files.addAll(getFiles(file));
+            }
+        }
+        return files;
     }
 }
 

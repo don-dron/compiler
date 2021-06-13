@@ -52,4 +52,9 @@ public class ElifStatementNode extends StatementNode {
 
         return list;
     }
+
+    @Override
+    public String toString() {
+        return "elif " + conditionNode.toString() + "\n" + elseNode.toString();
+    }
 }

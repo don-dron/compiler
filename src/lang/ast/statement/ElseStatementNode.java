@@ -36,4 +36,9 @@ public class ElseStatementNode extends StatementNode {
 
         return list;
     }
+
+    @Override
+    public String toString() {
+        return "else\n" + elseNode.toString();
+    }
 }
