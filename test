@@ -2,18 +2,23 @@ class Main
     (int h, int b) ->
         this.h = h
 
+    (type t, type k) void t
+
     (int[] numbers, int left, int right) void quickSort ->
         int pivot
-        int l_hold = left
-        int r_hold = right
+        int l_hold = left + 1
+        int r_hold = right**
 
         pivot = numbers[left]
 
         while left < right
-            while numbers[right] >= pivot && left < right
+            while numbers[right] >= pivot && left < right == 1 == 1
                 right--
+                continue
+                break
+                return
 
-            (int t) int k -> t * t
+            (int t) int k -> t * t ? 1 : 0 && 1 && 2  || 1 || 1
 
             if left != right
                 numbers[left] = numbers[right]
@@ -41,8 +46,8 @@ class Main
         numbers[left] = pivot
         pivot = left
 
-        left = l_hold
-        right = r_hold
+        left = (int)l_hold
+        right = (Main)r_hold
 
         if left < pivot
             quickSort(numbers, left, pivot - 1)
@@ -50,11 +55,22 @@ class Main
         if right > pivot
             quickSort(numbers, pivot, right)
 
+interface local
+    (int a , int b) Main main
+
 Main m = Main(4,5)
 
 () int main ->
     int[] a = int[size]
-    int i = 0
+    int i = 0 = a = 1
+
+    if a
+    elif b
+    elif true
+    elif false
+    else
+
+    Main m = null
 
     while i < size
         a[i] = size - i

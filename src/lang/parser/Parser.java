@@ -346,7 +346,7 @@ public class Parser {
             }
         } else if (peek().getTokenType() == Token.TokenType.DEFINE) {
             next();
-            expressionNode = parseConditionalExpression();
+            expressionNode = parseExpression();
         }
 
         need(Token.TokenType.NEWLINE, peek());
