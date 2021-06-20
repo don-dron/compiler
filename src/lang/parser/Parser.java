@@ -1,6 +1,5 @@
 package lang.parser;
 
-import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.ArrayTypeNode;
 import lang.ast.BasicTypeNode;
 import lang.ast.ExpressionListNode;
@@ -13,6 +12,7 @@ import lang.ast.ParameterNode;
 import lang.ast.ParametersNode;
 import lang.ast.TranslationNode;
 import lang.ast.TypeNode;
+import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.expression.ConditionalExpressionNode;
 import lang.ast.expression.ExpressionNode;
 import lang.ast.expression.VariableExpressionNode;
@@ -599,27 +599,20 @@ public class Parser {
         TypeNode typeNode;
         next();
 
-        TypeNode.Type t = null;
-
         switch (type.getTokenType()) {
             case VOID:
-                t = TypeNode.Type.VOID;
+                typeNode = new BasicTypeNode(TypeNode.Type.VOID);
                 break;
             case INT:
-                t = TypeNode.Type.INT;
+                typeNode = IntConstantExpressionNode.intType;
                 break;
             case FLOAT:
-                t = TypeNode.Type.FLOAT;
+                typeNode = FloatConstantExpressionNode.floatType;
                 break;
             default:
-                t = null;
+                typeNode = null;
         }
 
-        if (t == null) {
-            return null;
-        }
-
-        typeNode = new BasicTypeNode(t);
         return typeNode;
     }
 

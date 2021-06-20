@@ -22,4 +22,9 @@ public class ObjectTypeNode extends TypeNode {
     public List<? extends AstNode> getChildren() {
         return List.of();
     }
+
+    @Override
+    public String toString() {
+        return identifierNode.toString();
+    }
 }

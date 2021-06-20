@@ -14,10 +14,20 @@ public class Scope {
     private final List<AstNode> declarations;
     private final int number = index++;
 
+    private AstNode owner;
+
     public Scope(Scope scope) {
         this.parentScope = scope;
         this.declarations = new ArrayList<>();
         this.nodes = new ArrayList<>();
+    }
+
+    public void setOwner(AstNode owner) {
+        this.owner = owner;
+    }
+
+    public AstNode getOwner() {
+        return owner;
     }
 
     public void addDeclaration(AstNode node) {

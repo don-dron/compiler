@@ -1,12 +1,12 @@
 (int[] numbers, int left, int right) void quickSort ->
     int pivot
-    int l_hold = left + 1
-    int r_hold = right**
+    int l_hold = left
+    int r_hold = right
 
     pivot = numbers[left]
 
     while left < right
-        while numbers[right] >= pivot && left < right == 1 == 1
+        while numbers[right] >= pivot && left < right
             right--
 
         if left != right
@@ -23,8 +23,8 @@
     numbers[left] = pivot
     pivot = left
 
-    left = (int)l_hold
-    right = (Main)r_hold
+    left = l_hold
+    right = r_hold
 
     if left < pivot
         quickSort(numbers, left, pivot - 1)

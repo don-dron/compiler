@@ -1,8 +1,11 @@
 package lang.semantic;
 
+import lang.ast.ArrayTypeNode;
+import lang.ast.AstNode;
 import lang.ast.BasicTypeNode;
 import lang.ast.FileNode;
 import lang.ast.ImportNode;
+import lang.ast.ParameterNode;
 import lang.ast.TypeNode;
 import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.expression.ConditionalExpressionNode;
@@ -78,22 +81,23 @@ public class SemanticAnalysis {
     }
 
     public void analyse() {
-        for (FileNode fileNode : fileNodes) {
-            analyseDefinitions(fileNode);
-        }
 
         for (FileNode fileNode : fileNodes) {
             analyseImports(fileNode);
         }
 
-        System.out.println(Stream.of(externClassStatementsNodes,
-                externDeclarationStatementNodes,
-                externFunctionDefinitionNodes,
-                externIntefaceStatementsNodes)
-                .flatMap(mp -> mp.values().stream())
-                .flatMap(Collection::stream)
-                .map(st -> st.astDebug(0))
-                .collect(Collectors.joining("\n")));
+        for (FileNode fileNode : fileNodes) {
+            analyseDefinitions(fileNode);
+        }
+
+//        System.out.println(Stream.of(externClassStatementsNodes,
+//                externDeclarationStatementNodes,
+//                externFunctionDefinitionNodes,
+//                externIntefaceStatementsNodes)
+//                .flatMap(mp -> mp.values().stream())
+//                .flatMap(Collection::stream)
+//                .map(st -> st.astDebug(0))
+//                .collect(Collectors.joining("\n")));
 
         findMainFunction();
 
@@ -158,6 +162,19 @@ public class SemanticAnalysis {
     private void analyseDefinitions(FileNode fileNode) {
         fileNode.getStatementNodes().removeIf(s -> s instanceof EmptyStatementNode);
 
+        Scope scope = new Scope(null);
+        fileNode.setScope(scope);
+        scope.setOwner(fileNode);
+
+        List<StatementNode> imports = importedFiles.getOrDefault(fileNode, List.of())
+                .stream()
+                .flatMap(f -> f.getStatementNodes().stream())
+                .collect(Collectors.toList());
+
+        for (StatementNode statementNode : imports) {
+            scope.addDeclaration(statementNode);
+        }
+
         for (StatementNode statementNode : fileNode.getStatementNodes()) {
             if (statementNode instanceof ClassStatementNode) {
                 externClassStatementsNodes
@@ -182,15 +199,12 @@ public class SemanticAnalysis {
     }
 
     private void runAnalysis(FileNode fileNode) {
-        Scope scope = new Scope(null);
-        fileNode.setScope(scope);
-
         for (StatementNode node : fileNode.getStatementNodes()) {
             if (node instanceof ClassStatementNode ||
                     node instanceof InterfaceStatementNode ||
                     node instanceof FunctionDefinitionNode ||
                     node instanceof DeclarationStatementNode) {
-                analyseStatement(node, scope);
+                analyseStatement(node, fileNode.getScope());
             } else {
                 throw new IllegalStateException("Wrong statement");
             }
@@ -240,6 +254,7 @@ public class SemanticAnalysis {
         parentScope.addDeclaration(classNode);
 
         Scope scope = new Scope(parentScope);
+        scope.setOwner(classNode);
         classNode.getTranslationNode().getStatements().removeIf(s -> s instanceof EmptyStatementNode);
 
         for (StatementNode node : classNode.getTranslationNode().getStatements()) {
@@ -305,6 +320,7 @@ public class SemanticAnalysis {
         node.setScope(scope);
 
         Scope constructorScope = new Scope(scope);
+        scope.setOwner(node);
         analyseStatement(node.getStatementNode(), constructorScope);
     }
 
@@ -331,6 +347,7 @@ public class SemanticAnalysis {
 
         if (function.getStatementNode() != null) {
             Scope scope = new Scope(parentScope);
+            scope.setOwner(function);
             function.getFunctionNode().getParametersNode().getParameters()
                     .forEach(scope::addDeclaration);
             analyseStatement(function.getStatementNode(), scope);
@@ -340,15 +357,20 @@ public class SemanticAnalysis {
     private void analyseIfElse(IfElseStatementNode statementNode, Scope scope) {
         statementNode.setScope(scope);
 
+        statementNode.getIfStatementNode().getConditionNode().setScope(scope);
+
         Scope ifScope = new Scope(scope);
 
-        statementNode.getIfStatementNode().getConditionNode().setScope(scope);
+        ifScope.setOwner(statementNode.getIfStatementNode());
+
         analyseExpression(statementNode.getIfStatementNode().getConditionNode(), scope);
         analyseStatement(statementNode.getIfStatementNode().getThenNode(), ifScope);
 
         if (statementNode.getElifStatementNodes() != null) {
             for (ElifStatementNode node : statementNode.getElifStatementNodes()) {
                 Scope elifScope = new Scope(scope);
+                elifScope.setOwner(node);
+
                 node.getConditionNode().setScope(scope);
                 analyseExpression(node.getConditionNode(), scope);
                 analyseStatement(node.getElseNode(), elifScope);
@@ -357,6 +379,7 @@ public class SemanticAnalysis {
 
         if (statementNode.getElseStatementNode() != null) {
             Scope elseScope = new Scope(scope);
+            elseScope.setOwner(statementNode.getElseStatementNode());
             analyseStatement(statementNode.getElseStatementNode().getElseNode(), elseScope);
         }
     }
@@ -366,6 +389,7 @@ public class SemanticAnalysis {
         parentScope.addDeclaration(node);
 
         Scope scope = new Scope(parentScope);
+        scope.setOwner(node);
 
         node.getTranslationNode().getStatements().removeIf(s -> s instanceof EmptyStatementNode);
 
@@ -394,6 +418,7 @@ public class SemanticAnalysis {
         analyseExpression(node.getConditionNode(), scope);
 
         Scope whileScope = new Scope(scope);
+        scope.setOwner(node);
         analyseStatement(node.getBodyNode(), whileScope);
     }
 
@@ -414,7 +439,8 @@ public class SemanticAnalysis {
             }
 
             if (typeNode == null) {
-                throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
+                throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString() + " : " +
+                        left.getResultType().toString() + " and " + right.getResultType().toString());
             }
         } else if (expressionNode instanceof ConditionalExpressionNode) {
             ConditionalExpressionNode conditionalExpressionNode = (ConditionalExpressionNode) expressionNode;
@@ -427,11 +453,11 @@ public class SemanticAnalysis {
             analyseExpression(then, parentScope);
             analyseExpression(els, parentScope);
 
-            if(!cond.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!cond.getResultType().equals(BoolConstantExpressionNode.boolType)) {
                 throw new IllegalArgumentException("Wrong types " + cond.toString());
             }
 
-            if(!then.getResultType().equals(els.getResultType())) {
+            if (!then.getResultType().equals(els.getResultType())) {
                 throw new IllegalArgumentException("Wrong types " + then.toString() + " " + els.toString());
             }
 
@@ -481,11 +507,11 @@ public class SemanticAnalysis {
             analyseExpression(left, parentScope);
             analyseExpression(right, parentScope);
 
-            if(!left.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!left.getResultType().equals(BoolConstantExpressionNode.boolType)) {
                 throw new IllegalArgumentException("Wrong types " + left.toString());
             }
 
-            if(!right.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!right.getResultType().equals(BoolConstantExpressionNode.boolType)) {
                 throw new IllegalArgumentException("Wrong types " + right.toString());
             }
 
@@ -499,11 +525,11 @@ public class SemanticAnalysis {
             analyseExpression(left, parentScope);
             analyseExpression(right, parentScope);
 
-            if(!left.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!left.getResultType().equals(BoolConstantExpressionNode.boolType)) {
                 throw new IllegalArgumentException("Wrong types " + left.toString());
             }
 
-            if(!right.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!right.getResultType().equals(BoolConstantExpressionNode.boolType)) {
                 throw new IllegalArgumentException("Wrong types " + right.toString());
             }
 
@@ -517,7 +543,7 @@ public class SemanticAnalysis {
             analyseExpression(left, parentScope);
             analyseExpression(right, parentScope);
 
-            if(!left.getResultType().equals(right.getResultType())) {
+            if (!left.getResultType().equals(right.getResultType())) {
                 throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
             }
 
@@ -531,13 +557,29 @@ public class SemanticAnalysis {
             analyseExpression(left, parentScope);
             analyseExpression(right, parentScope);
 
-            if(!left.getResultType().equals(right.getResultType())) {
+            if (!left.getResultType().equals(right.getResultType())) {
                 throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
             }
 
             equalityExpressionNode.setResultType(BoolConstantExpressionNode.boolType);
         } else if (expressionNode instanceof VariableExpressionNode) {
             VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode;
+
+            AstNode variableNode = findVariableByExpression(variableExpressionNode, parentScope);
+
+            if (variableNode == null) {
+                throw new IllegalArgumentException("Undefined variable " +
+                        variableExpressionNode.getIdentifierNode().toString());
+            }
+
+            if (variableNode instanceof DeclarationStatementNode) {
+                DeclarationStatementNode statementNode = (DeclarationStatementNode) variableNode;
+                variableExpressionNode.setResultType(statementNode.getTypeNode());
+            } else if (variableNode instanceof ParameterNode) {
+                ParameterNode parameterNode = (ParameterNode) variableNode;
+                variableExpressionNode.setResultType(parameterNode.getTypeNode());
+            }
+
 
         } else if (expressionNode instanceof BoolConstantExpressionNode) {
             BoolConstantExpressionNode boolConstantExpressionNode = (BoolConstantExpressionNode) expressionNode;
@@ -574,11 +616,11 @@ public class SemanticAnalysis {
             analyseExpression(array, parentScope);
             analyseExpression(argument, parentScope);
 
-            if(!argument.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!argument.getResultType().equals(IntConstantExpressionNode.intType)) {
                 throw new IllegalArgumentException("Wrong types " + argument.toString());
             }
 
-//            expressionNode.setResultType(array.getResultType());
+            expressionNode.setResultType(((ArrayTypeNode) array.getResultType()).getTypeNode());
         } else if (expressionNode instanceof FieldAccessExpressionNode) {
             FieldAccessExpressionNode fieldAccessExpressionNode = (FieldAccessExpressionNode) expressionNode;
 
@@ -594,7 +636,7 @@ public class SemanticAnalysis {
             ExpressionNode node = postfixDecrementSubtractionExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if(!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PostfixIncrementAdditiveExpressionNode) {
@@ -604,7 +646,7 @@ public class SemanticAnalysis {
             ExpressionNode node = postfixIncrementAdditiveExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if(!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PostfixIncrementMultiplicativeExpressionNode) {
@@ -614,7 +656,7 @@ public class SemanticAnalysis {
             ExpressionNode node = postfixIncrementMultiplicativeExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if(!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PrefixDecrementSubtractionExpressionNode) {
@@ -624,7 +666,7 @@ public class SemanticAnalysis {
             ExpressionNode node = prefixDecrementSubtractionExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if(!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PrefixIncrementAdditiveExpressionNode) {
@@ -634,7 +676,7 @@ public class SemanticAnalysis {
             ExpressionNode node = prefixIncrementAdditiveExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if(!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PrefixIncrementMultiplicativeExpressionNode) {
@@ -644,7 +686,7 @@ public class SemanticAnalysis {
             ExpressionNode node = prefixIncrementMultiplicativeExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if(!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof CastExpressionNode) {
@@ -655,6 +697,55 @@ public class SemanticAnalysis {
 
             castExpressionNode.setResultType(castExpressionNode.getTypeNode());
         }
+    }
+
+    private AstNode findVariableByExpression(ExpressionNode expressionNode,
+                                             Scope scope) {
+        if (scope == null) {
+            return null;
+        }
+
+        String currentName = "null";
+
+        if (expressionNode instanceof VariableExpressionNode) {
+            currentName = ((VariableExpressionNode) expressionNode).getIdentifierNode().getName();
+        }
+
+        if(currentName == null) {
+            throw new IllegalArgumentException("");
+        }
+
+        String finalCurrentName = currentName;
+        AstNode node = scope.getDeclarations()
+                .stream()
+                .filter(n -> {
+                    if (n instanceof DeclarationStatementNode) {
+                        return ((DeclarationStatementNode) n).getIdentifierNode().getName()
+                                .equals(finalCurrentName);
+                    } else if (n instanceof ParameterNode) {
+                        return ((ParameterNode) n).getIdentifierNode().getName()
+                                .equals(finalCurrentName);
+                    } else if (n instanceof InterfaceStatementNode) {
+                        return ((InterfaceStatementNode) n).getIdentifierNode().getName()
+                                .equals(finalCurrentName);
+                    } else if (n instanceof ClassStatementNode) {
+                        return ((ClassStatementNode) n).getIdentifierNode().getName()
+                                .equals(finalCurrentName);
+                    } else if (n instanceof FunctionDefinitionNode) {
+                        return ((FunctionDefinitionNode) n).getIdentifierNode().getName()
+                                .equals(finalCurrentName);
+                    }
+
+                    return false;
+                })
+                .findFirst()
+                .orElse(null);
+
+        if (node == null) {
+            return findVariableByExpression(expressionNode, scope.getParentScope());
+        }
+
+        return node;
     }
 
     private TypeNode defineBinaryOperationType(ExpressionNode expressionNode, ExpressionNode left, ExpressionNode right) {
