@@ -4,6 +4,7 @@ import lang.ast.ArrayTypeNode;
 import lang.ast.AstNode;
 import lang.ast.BasicTypeNode;
 import lang.ast.FileNode;
+import lang.ast.FunctionNode;
 import lang.ast.ImportNode;
 import lang.ast.ParameterNode;
 import lang.ast.TypeNode;
@@ -52,13 +53,11 @@ import lang.ast.statement.WhileStatementNode;
 import lang.scope.Scope;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SemanticAnalysis {
     private final String rootPath;
@@ -81,7 +80,6 @@ public class SemanticAnalysis {
     }
 
     public void analyse() {
-
         for (FileNode fileNode : fileNodes) {
             analyseImports(fileNode);
         }
@@ -177,21 +175,25 @@ public class SemanticAnalysis {
 
         for (StatementNode statementNode : fileNode.getStatementNodes()) {
             if (statementNode instanceof ClassStatementNode) {
+                ClassStatementNode classStatementNode = (ClassStatementNode) statementNode;
                 externClassStatementsNodes
                         .computeIfAbsent(fileNode, (k) -> new ArrayList<>())
-                        .add((ClassStatementNode) statementNode);
+                        .add(classStatementNode);
             } else if (statementNode instanceof InterfaceStatementNode) {
+                InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) statementNode;
                 externIntefaceStatementsNodes
                         .computeIfAbsent(fileNode, (k) -> new ArrayList<>())
-                        .add((InterfaceStatementNode) statementNode);
+                        .add(interfaceStatementNode);
             } else if (statementNode instanceof FunctionDefinitionNode) {
+                FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) statementNode;
                 externFunctionDefinitionNodes
                         .computeIfAbsent(fileNode, (k) -> new ArrayList<>())
-                        .add((FunctionDefinitionNode) statementNode);
+                        .add(functionDefinitionNode);
             } else if (statementNode instanceof DeclarationStatementNode) {
+                DeclarationStatementNode declarationStatementNode = (DeclarationStatementNode) statementNode;
                 externDeclarationStatementNodes
                         .computeIfAbsent(fileNode, (k) -> new ArrayList<>())
-                        .add((DeclarationStatementNode) statementNode);
+                        .add(declarationStatementNode);
             } else {
                 throw new IllegalStateException("Wrong statement");
             }
@@ -578,9 +580,12 @@ public class SemanticAnalysis {
             } else if (variableNode instanceof ParameterNode) {
                 ParameterNode parameterNode = (ParameterNode) variableNode;
                 variableExpressionNode.setResultType(parameterNode.getTypeNode());
+            } else if (variableNode instanceof FunctionDefinitionNode) {
+                FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) variableNode;
+                variableExpressionNode.setResultType(functionDefinitionNode.getFunctionNode());
+            } else {
+                throw new IllegalArgumentException("Unknown");
             }
-
-
         } else if (expressionNode instanceof BoolConstantExpressionNode) {
             BoolConstantExpressionNode boolConstantExpressionNode = (BoolConstantExpressionNode) expressionNode;
         } else if (expressionNode instanceof IntConstantExpressionNode) {
@@ -602,11 +607,27 @@ public class SemanticAnalysis {
             ExpressionNode function = functionCallExpressionNode.getFunction();
             analyseExpression(function, parentScope);
 
-            for (ExpressionNode node : functionCallExpressionNode.getParameters().getList()) {
-                analyseExpression(node, parentScope);
+            FunctionNode functionNode = (FunctionNode) function.getResultType();
+
+            List<ExpressionNode> expressions = functionCallExpressionNode.getParameters().getList();
+            List<ParameterNode> parameterNodes = functionNode.getParametersNode().getParameters();
+            if (expressions.size() != parameterNodes.size()) {
+                throw new IllegalArgumentException("Wrong parameter's size");
             }
 
+            for(int i = 0 ; i < expressions.size(); i++) {
+                ExpressionNode node = expressions.get(i);
+                ParameterNode parameterNode = parameterNodes.get(i);
 
+                analyseExpression(node, parentScope);
+
+                if(!parameterNode.getTypeNode().equals(node.getResultType())) {
+                    throw new IllegalArgumentException("Wrong parameter type " +
+                            parameterNode.getTypeNode() + " " + node.getResultType());
+                }
+            }
+
+            functionCallExpressionNode.setResultType(functionNode.getTypeNode());
         } else if (expressionNode instanceof ArrayAccessExpressionNode) {
             ArrayAccessExpressionNode arrayAccessExpressionNode = (ArrayAccessExpressionNode) expressionNode;
 
@@ -711,7 +732,7 @@ public class SemanticAnalysis {
             currentName = ((VariableExpressionNode) expressionNode).getIdentifierNode().getName();
         }
 
-        if(currentName == null) {
+        if (currentName == null) {
             throw new IllegalArgumentException("");
         }
 

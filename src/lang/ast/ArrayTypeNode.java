@@ -2,6 +2,7 @@ package lang.ast;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class ArrayTypeNode extends TypeNode {
     private final TypeNode typeNode;
@@ -29,5 +30,18 @@ public class ArrayTypeNode extends TypeNode {
     @Override
     public String toString() {
         return typeNode.toString() + "[]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArrayTypeNode that = (ArrayTypeNode) o;
+        return Objects.equals(typeNode, that.typeNode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(typeNode);
     }
 }

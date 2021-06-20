@@ -24,7 +24,7 @@ public class Main {
             Reader reader = new FileReader(file);
             Lexer lexer = new Lexer(reader);
 
-            Parser parser = new Parser(lexer, file.getAbsolutePath());
+            Parser parser = new Parser(lexer, file.getAbsolutePath(), file.getPath());
             FileNode fileNode = parser.parse();
 
             files.add(fileNode);

@@ -73,12 +73,14 @@ public class Parser {
     private final Queue<Token> stack = new ArrayDeque<>();
     private final Stack<Token> tokens;
     private final String path;
+    private final String pack;
     private Token lastToken = null;
 
-    public Parser(Lexer lexer, String path) {
+    public Parser(Lexer lexer, String path, String pack) {
         this.lexer = lexer;
         this.tokens = new Stack<>();
         this.path = path;
+        this.pack = pack;
 
         while (true) {
             Token token = lexer.nextToken();
@@ -123,7 +125,7 @@ public class Parser {
             }
         }
 
-        return new FileNode(path, importNodes, statementNodes);
+        return new FileNode(path, pack, importNodes, statementNodes);
     }
 
     private ImportNode parseImportNode() {

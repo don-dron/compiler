@@ -12,6 +12,7 @@ public class FileNode extends AstNode {
     private final String path;
 
     public FileNode(String path,
+                    String pack,
                     List<ImportNode> importNodes,
                     List<StatementNode> statementNodes) {
         this.path = path;
