@@ -7,7 +7,8 @@ import java.util.List;
 
 public class VariableExpressionNode extends PrimaryExpressionNode {
 
-    private final IdentifierNode identifierNode;
+    private IdentifierNode identifierNode;
+    private AstNode expressionNode;
 
     public VariableExpressionNode(IdentifierNode identifierNode) {
         this.identifierNode = identifierNode;
@@ -30,5 +31,13 @@ public class VariableExpressionNode extends PrimaryExpressionNode {
     @Override
     public String toString() {
         return identifierNode.getName();
+    }
+
+    public void setExpression(AstNode expressionNode) {
+        this.expressionNode = expressionNode;
+    }
+
+    public void setIdentifier(IdentifierNode identifierNode) {
+        this.identifierNode = identifierNode;
     }
 }

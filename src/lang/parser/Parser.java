@@ -186,7 +186,7 @@ public class Parser {
         Token first = peek();
         if (first.getTokenType() == Token.TokenType.NEWLINE) {
             next();
-            return new EmptyStatementNode();
+            return parseGlobalStatement();
         } else if (first.getTokenType() == Token.TokenType.CLASS) {
             return parseClassStatement();
         } else if (first.getTokenType() == Token.TokenType.INTERFACE) {
@@ -215,7 +215,7 @@ public class Parser {
 
         if (first.getTokenType() == Token.TokenType.NEWLINE) {
             next();
-            return new EmptyStatementNode();
+            return parseStatement();
         } else if (first.getTokenType() == Token.TokenType.IF) {
             return parseIfStatement();
         } else if (first.getTokenType() == Token.TokenType.ELSE) {
@@ -423,7 +423,8 @@ public class Parser {
             expressionNode = parseExpression();
         }
 
-        need(Token.TokenType.NEWLINE, peek());
+//        need(Token.TokenType.NEWLINE, peek());
+
         next();
 
         return new DeclarationStatementNode(typeNode, identifierNode, expressionNode);

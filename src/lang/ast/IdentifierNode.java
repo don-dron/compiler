@@ -5,7 +5,7 @@ import lang.lexer.Token;
 import java.util.List;
 
 public class IdentifierNode  extends AstNode {
-    private final String name;
+    private String name;
     private final Token token;
 
     public IdentifierNode(String name, Token token) {
@@ -15,6 +15,10 @@ public class IdentifierNode  extends AstNode {
 
     public Token getToken() {
         return token;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getName() {

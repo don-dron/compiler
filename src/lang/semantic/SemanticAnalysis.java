@@ -6,6 +6,7 @@ import lang.ast.BasicTypeNode;
 import lang.ast.FileNode;
 import lang.ast.FunctionNode;
 import lang.ast.ImportNode;
+import lang.ast.ObjectTypeNode;
 import lang.ast.ParameterNode;
 import lang.ast.TypeNode;
 import lang.ast.expression.ArrayConstructorExpressionNode;
@@ -53,13 +54,16 @@ import lang.ast.statement.WhileStatementNode;
 import lang.scope.Scope;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SemanticAnalysis {
+
     private final String rootPath;
     private final List<FileNode> fileNodes;
     private final Map<FileNode, List<DeclarationStatementNode>> externDeclarationStatementNodes;
@@ -88,20 +92,20 @@ public class SemanticAnalysis {
             analyseDefinitions(fileNode);
         }
 
-//        System.out.println(Stream.of(externClassStatementsNodes,
-//                externDeclarationStatementNodes,
-//                externFunctionDefinitionNodes,
-//                externIntefaceStatementsNodes)
-//                .flatMap(mp -> mp.values().stream())
-//                .flatMap(Collection::stream)
-//                .map(st -> st.astDebug(0))
-//                .collect(Collectors.joining("\n")));
-
         findMainFunction();
 
         for (FileNode fileNode : fileNodes) {
             runAnalysis(fileNode);
         }
+
+        System.out.println(Stream.of(externClassStatementsNodes,
+                externDeclarationStatementNodes,
+                externFunctionDefinitionNodes,
+                externIntefaceStatementsNodes)
+                .flatMap(mp -> mp.values().stream())
+                .flatMap(Collection::stream)
+                .map(st -> st.astDebug(0))
+                .collect(Collectors.joining("\n")));
     }
 
     private void findMainFunction() {
@@ -149,12 +153,11 @@ public class SemanticAnalysis {
 
         Collections.reverse(path);
         String absolutePath = rootPath + "\\" + String.join("\\", path);
-        FileNode fileNode = fileNodes.stream()
+
+        return fileNodes.stream()
                 .filter(f -> f.getPath().equals(absolutePath))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find file"));
-
-        return fileNode;
     }
 
     private void analyseDefinitions(FileNode fileNode) {
@@ -170,7 +173,7 @@ public class SemanticAnalysis {
                 .collect(Collectors.toList());
 
         for (StatementNode statementNode : imports) {
-            scope.addDeclaration(statementNode);
+            scope.addWeakDeclaration(statementNode);
         }
 
         for (StatementNode statementNode : fileNode.getStatementNodes()) {
@@ -566,8 +569,9 @@ public class SemanticAnalysis {
             equalityExpressionNode.setResultType(BoolConstantExpressionNode.boolType);
         } else if (expressionNode instanceof VariableExpressionNode) {
             VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode;
-
-            AstNode variableNode = findVariableByExpression(variableExpressionNode, parentScope);
+            String name = ((VariableExpressionNode) expressionNode).getIdentifierNode().getName();
+            AstNode variableNode = parentScope.findDefinitionByVariable(name);
+            variableExpressionNode.setExpression(variableNode);
 
             if (variableNode == null) {
                 throw new IllegalArgumentException("Undefined variable " +
@@ -577,12 +581,25 @@ public class SemanticAnalysis {
             if (variableNode instanceof DeclarationStatementNode) {
                 DeclarationStatementNode statementNode = (DeclarationStatementNode) variableNode;
                 variableExpressionNode.setResultType(statementNode.getTypeNode());
+                variableExpressionNode.setIdentifier(statementNode.getIdentifierNode());
             } else if (variableNode instanceof ParameterNode) {
                 ParameterNode parameterNode = (ParameterNode) variableNode;
                 variableExpressionNode.setResultType(parameterNode.getTypeNode());
+                variableExpressionNode.setIdentifier(parameterNode.getIdentifierNode());
             } else if (variableNode instanceof FunctionDefinitionNode) {
                 FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) variableNode;
                 variableExpressionNode.setResultType(functionDefinitionNode.getFunctionNode());
+                variableExpressionNode.setIdentifier(functionDefinitionNode.getIdentifierNode());
+            } else if (variableNode instanceof ClassStatementNode) {
+                ClassStatementNode classStatementNode = (ClassStatementNode)variableNode;
+                variableExpressionNode.setResultType(new ObjectTypeNode(
+                        classStatementNode.getIdentifierNode()));
+                variableExpressionNode.setIdentifier(classStatementNode.getIdentifierNode());
+            } else if (variableNode instanceof InterfaceStatementNode) {
+                InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode)variableNode;
+                variableExpressionNode.setResultType(new ObjectTypeNode(
+                        interfaceStatementNode.getIdentifierNode()));
+                variableExpressionNode.setIdentifier(interfaceStatementNode.getIdentifierNode());
             } else {
                 throw new IllegalArgumentException("Unknown");
             }
@@ -615,13 +632,13 @@ public class SemanticAnalysis {
                 throw new IllegalArgumentException("Wrong parameter's size");
             }
 
-            for(int i = 0 ; i < expressions.size(); i++) {
+            for (int i = 0; i < expressions.size(); i++) {
                 ExpressionNode node = expressions.get(i);
                 ParameterNode parameterNode = parameterNodes.get(i);
 
                 analyseExpression(node, parentScope);
 
-                if(!parameterNode.getTypeNode().equals(node.getResultType())) {
+                if (!parameterNode.getTypeNode().equals(node.getResultType())) {
                     throw new IllegalArgumentException("Wrong parameter type " +
                             parameterNode.getTypeNode() + " " + node.getResultType());
                 }
@@ -718,55 +735,6 @@ public class SemanticAnalysis {
 
             castExpressionNode.setResultType(castExpressionNode.getTypeNode());
         }
-    }
-
-    private AstNode findVariableByExpression(ExpressionNode expressionNode,
-                                             Scope scope) {
-        if (scope == null) {
-            return null;
-        }
-
-        String currentName = "null";
-
-        if (expressionNode instanceof VariableExpressionNode) {
-            currentName = ((VariableExpressionNode) expressionNode).getIdentifierNode().getName();
-        }
-
-        if (currentName == null) {
-            throw new IllegalArgumentException("");
-        }
-
-        String finalCurrentName = currentName;
-        AstNode node = scope.getDeclarations()
-                .stream()
-                .filter(n -> {
-                    if (n instanceof DeclarationStatementNode) {
-                        return ((DeclarationStatementNode) n).getIdentifierNode().getName()
-                                .equals(finalCurrentName);
-                    } else if (n instanceof ParameterNode) {
-                        return ((ParameterNode) n).getIdentifierNode().getName()
-                                .equals(finalCurrentName);
-                    } else if (n instanceof InterfaceStatementNode) {
-                        return ((InterfaceStatementNode) n).getIdentifierNode().getName()
-                                .equals(finalCurrentName);
-                    } else if (n instanceof ClassStatementNode) {
-                        return ((ClassStatementNode) n).getIdentifierNode().getName()
-                                .equals(finalCurrentName);
-                    } else if (n instanceof FunctionDefinitionNode) {
-                        return ((FunctionDefinitionNode) n).getIdentifierNode().getName()
-                                .equals(finalCurrentName);
-                    }
-
-                    return false;
-                })
-                .findFirst()
-                .orElse(null);
-
-        if (node == null) {
-            return findVariableByExpression(expressionNode, scope.getParentScope());
-        }
-
-        return node;
     }
 
     private TypeNode defineBinaryOperationType(ExpressionNode expressionNode, ExpressionNode left, ExpressionNode right) {
