@@ -345,6 +345,8 @@ public class SemanticAnalysis {
                     i++;
                 }
 
+                i--;
+
                 refactor.add(new IfElseStatementNode(ifStatementNode, elifStatementNodes, elseStatementNode));
             } else if (node instanceof ConstructorDefinitionNode) {
                 throw new IllegalArgumentException("Wrong constructor");
