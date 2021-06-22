@@ -204,12 +204,30 @@ public class SemanticAnalysis {
     }
 
     private void runAnalysis(FileNode fileNode) {
+        Scope scope = fileNode.getScope();
         for (StatementNode node : fileNode.getStatementNodes()) {
-            if (node instanceof ClassStatementNode ||
-                    node instanceof InterfaceStatementNode ||
-                    node instanceof FunctionDefinitionNode ||
-                    node instanceof DeclarationStatementNode) {
-                analyseStatement(node, fileNode.getScope());
+            if (node instanceof ClassStatementNode) {
+                analyseClassInGlobalStart((ClassStatementNode) node, scope);
+            } else if (node instanceof InterfaceStatementNode) {
+                analyseInterfaceInGlobalStart((InterfaceStatementNode) node, scope);
+            } else if (node instanceof FunctionDefinitionNode) {
+                analyseFunctionInGlobalStart((FunctionDefinitionNode) node, scope);
+            } else if (node instanceof DeclarationStatementNode) {
+                analyseDeclarationInGlobalStart((DeclarationStatementNode) node, scope);
+            } else {
+                throw new IllegalStateException("Wrong statement");
+            }
+        }
+
+        for (StatementNode node : fileNode.getStatementNodes()) {
+            if (node instanceof ClassStatementNode) {
+                analyseClassInGlobalEnd((ClassStatementNode) node, scope);
+            } else if (node instanceof InterfaceStatementNode) {
+                analyseInterfaceInGlobalEnd((InterfaceStatementNode) node, scope);
+            } else if (node instanceof FunctionDefinitionNode) {
+                analyseFunctionInGlobalEnd((FunctionDefinitionNode) node, scope);
+            } else if (node instanceof DeclarationStatementNode) {
+                analyseDeclarationInGlobalEnd((DeclarationStatementNode) node, scope);
             } else {
                 throw new IllegalStateException("Wrong statement");
             }
@@ -220,7 +238,8 @@ public class SemanticAnalysis {
         if (node instanceof BreakStatementNode) {
             analyseBreak((BreakStatementNode) node, scope);
         } else if (node instanceof ClassStatementNode) {
-            analyseClass((ClassStatementNode) node, scope);
+            analyseClassInGlobalStart((ClassStatementNode) node, scope);
+            analyseClassInGlobalEnd((ClassStatementNode) node, scope);
         } else if (node instanceof CompoundStatementNode) {
             analyseCompound((CompoundStatementNode) node, scope);
         } else if (node instanceof ContinueStatementNode) {
@@ -230,7 +249,8 @@ public class SemanticAnalysis {
         } else if (node instanceof IfElseStatementNode) {
             analyseIfElse((IfElseStatementNode) node, scope);
         } else if (node instanceof InterfaceStatementNode) {
-            analyseInterface((InterfaceStatementNode) node, scope);
+            analyseInterfaceInGlobalStart((InterfaceStatementNode) node, scope);
+            analyseInterfaceInGlobalEnd((InterfaceStatementNode) node, scope);
         } else if (node instanceof ReturnStatementNode) {
             analyseReturn((ReturnStatementNode) node, scope);
         } else if (node instanceof WhileStatementNode) {
@@ -254,7 +274,7 @@ public class SemanticAnalysis {
         node.setScope(scope);
     }
 
-    private void analyseClass(ClassStatementNode classNode, Scope parentScope) {
+    private void analyseClassInGlobalStart(ClassStatementNode classNode, Scope parentScope) {
         classNode.setScope(parentScope);
         parentScope.addDeclaration(classNode);
 
@@ -263,13 +283,34 @@ public class SemanticAnalysis {
         classNode.getTranslationNode().getStatements().removeIf(s -> s instanceof EmptyStatementNode);
 
         for (StatementNode node : classNode.getTranslationNode().getStatements()) {
-            if (node instanceof ClassStatementNode ||
-                    node instanceof InterfaceStatementNode ||
-                    node instanceof FunctionDefinitionNode ||
-                    node instanceof DeclarationStatementNode) {
-                analyseStatement(node, scope);
+            if (node instanceof ClassStatementNode) {
+                analyseClassInGlobalStart((ClassStatementNode) node, scope);
+            } else if (node instanceof InterfaceStatementNode) {
+                analyseInterfaceInGlobalStart((InterfaceStatementNode) node, scope);
+            } else if (node instanceof FunctionDefinitionNode) {
+                analyseFunctionInGlobalStart((FunctionDefinitionNode) node, scope);
+            } else if (node instanceof DeclarationStatementNode) {
+                analyseDeclarationInGlobalStart((DeclarationStatementNode) node, scope);
             } else if (node instanceof ConstructorDefinitionNode) {
-                analyseConstructorDefinitionNode((ConstructorDefinitionNode) node, scope);
+                analyseConstructorDefinitionNodeStart((ConstructorDefinitionNode) node, scope);
+            } else {
+                throw new IllegalStateException("Wrong statement");
+            }
+        }
+    }
+
+    private void analyseClassInGlobalEnd(ClassStatementNode classNode, Scope parentScope) {
+        for (StatementNode node : classNode.getTranslationNode().getStatements()) {
+            if (node instanceof ClassStatementNode) {
+                analyseClassInGlobalEnd((ClassStatementNode) node, node.getScope());
+            } else if (node instanceof InterfaceStatementNode) {
+                analyseInterfaceInGlobalEnd((InterfaceStatementNode) node, node.getScope());
+            } else if (node instanceof FunctionDefinitionNode) {
+                analyseFunctionInGlobalEnd((FunctionDefinitionNode) node, node.getScope());
+            } else if (node instanceof DeclarationStatementNode) {
+                analyseDeclarationInGlobalEnd((DeclarationStatementNode) node, node.getScope());
+            } else if (node instanceof ConstructorDefinitionNode) {
+                analyseConstructorDefinitionNodeEnd((ConstructorDefinitionNode) node, node.getScope());
             } else {
                 throw new IllegalStateException("Wrong statement");
             }
@@ -321,9 +362,11 @@ public class SemanticAnalysis {
         }
     }
 
-    private void analyseConstructorDefinitionNode(ConstructorDefinitionNode node, Scope scope) {
+    private void analyseConstructorDefinitionNodeStart(ConstructorDefinitionNode node, Scope scope) {
         node.setScope(scope);
+    }
 
+    private void analyseConstructorDefinitionNodeEnd(ConstructorDefinitionNode node, Scope scope) {
         Scope constructorScope = new Scope(scope);
         scope.setOwner(node);
         analyseStatement(node.getStatementNode(), constructorScope);
@@ -346,10 +389,40 @@ public class SemanticAnalysis {
         }
     }
 
+    private void analyseDeclarationInGlobalStart(DeclarationStatementNode node, Scope parentScope) {
+        node.setScope(parentScope);
+        parentScope.addDeclaration(node);
+
+        node.getTypeNode().setScope(parentScope);
+        node.getIdentifierNode().setScope(parentScope);
+    }
+
+    private void analyseDeclarationInGlobalEnd(DeclarationStatementNode node, Scope parentScope) {
+        if (node.getExpressionNode() != null) {
+            node.getExpressionNode().setScope(parentScope);
+            analyseExpression(node.getExpressionNode(), parentScope);
+        }
+    }
+
     private void analyseFunction(FunctionDefinitionNode function, Scope parentScope) {
         function.setScope(parentScope);
         parentScope.addDeclaration(function);
 
+        if (function.getStatementNode() != null) {
+            Scope scope = new Scope(parentScope);
+            scope.setOwner(function);
+            function.getFunctionNode().getParametersNode().getParameters()
+                    .forEach(scope::addDeclaration);
+            analyseStatement(function.getStatementNode(), scope);
+        }
+    }
+
+    private void analyseFunctionInGlobalStart(FunctionDefinitionNode function, Scope parentScope) {
+        function.setScope(parentScope);
+        parentScope.addDeclaration(function);
+    }
+
+    private void analyseFunctionInGlobalEnd(FunctionDefinitionNode function, Scope parentScope) {
         if (function.getStatementNode() != null) {
             Scope scope = new Scope(parentScope);
             scope.setOwner(function);
@@ -389,20 +462,36 @@ public class SemanticAnalysis {
         }
     }
 
-    private void analyseInterface(InterfaceStatementNode node, Scope parentScope) {
-        node.setScope(parentScope);
-        parentScope.addDeclaration(node);
+    private void analyseInterfaceInGlobalStart(InterfaceStatementNode interfaceStatementNode, Scope parentScope) {
+        interfaceStatementNode.setScope(parentScope);
+        parentScope.addDeclaration(interfaceStatementNode);
 
         Scope scope = new Scope(parentScope);
-        scope.setOwner(node);
+        scope.setOwner(interfaceStatementNode);
 
-        node.getTranslationNode().getStatements().removeIf(s -> s instanceof EmptyStatementNode);
+        interfaceStatementNode.getTranslationNode().getStatements().removeIf(s -> s instanceof EmptyStatementNode);
 
-        for (StatementNode inner : node.getTranslationNode().getStatements()) {
-            if (inner instanceof ClassStatementNode ||
-                    inner instanceof InterfaceStatementNode ||
-                    inner instanceof FunctionDefinitionNode) {
-                analyseStatement(inner, scope);
+        for (StatementNode node : interfaceStatementNode.getTranslationNode().getStatements()) {
+            if (node instanceof ClassStatementNode) {
+                analyseClassInGlobalStart((ClassStatementNode) node, scope);
+            } else if (node instanceof InterfaceStatementNode) {
+                analyseInterfaceInGlobalStart((InterfaceStatementNode) node, scope);
+            } else if (node instanceof FunctionDefinitionNode) {
+                analyseFunctionInGlobalStart((FunctionDefinitionNode) node, scope);
+            } else {
+                throw new IllegalStateException("Wrong statement");
+            }
+        }
+    }
+
+    private void analyseInterfaceInGlobalEnd(InterfaceStatementNode interfaceStatementNode, Scope parentScope) {
+        for (StatementNode node : interfaceStatementNode.getTranslationNode().getStatements()) {
+            if (node instanceof ClassStatementNode) {
+                analyseClassInGlobalStart((ClassStatementNode) node, node.getScope());
+            } else if (node instanceof InterfaceStatementNode) {
+                analyseInterfaceInGlobalStart((InterfaceStatementNode) node, node.getScope());
+            } else if (node instanceof FunctionDefinitionNode) {
+                analyseFunctionInGlobalStart((FunctionDefinitionNode) node, node.getScope());
             } else {
                 throw new IllegalStateException("Wrong statement");
             }
@@ -591,12 +680,12 @@ public class SemanticAnalysis {
                 variableExpressionNode.setResultType(functionDefinitionNode.getFunctionNode());
                 variableExpressionNode.setIdentifier(functionDefinitionNode.getIdentifierNode());
             } else if (variableNode instanceof ClassStatementNode) {
-                ClassStatementNode classStatementNode = (ClassStatementNode)variableNode;
+                ClassStatementNode classStatementNode = (ClassStatementNode) variableNode;
                 variableExpressionNode.setResultType(new ObjectTypeNode(
                         classStatementNode.getIdentifierNode()));
                 variableExpressionNode.setIdentifier(classStatementNode.getIdentifierNode());
             } else if (variableNode instanceof InterfaceStatementNode) {
-                InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode)variableNode;
+                InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) variableNode;
                 variableExpressionNode.setResultType(new ObjectTypeNode(
                         interfaceStatementNode.getIdentifierNode()));
                 variableExpressionNode.setIdentifier(interfaceStatementNode.getIdentifierNode());
