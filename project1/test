@@ -1,13 +1,11 @@
-(int a) int main ->
-    int b
 
-    if a == 0
-        int a
+class T
+    A a
 
-        if a == 3
-            int a = 4
-            a++
-        a++
-    a++
-    return a
+class A
+    T t
+
+() void main ->
+    return 0
+
 

@@ -307,6 +307,8 @@ public class SemanticAnalysis {
         node.getTypeNode().setScope(parentScope);
         node.getIdentifierNode().setScope(parentScope);
 
+        analyseType(node.getTypeNode(), parentScope);
+
         if (node.getExpressionNode() != null) {
             node.getExpressionNode().setScope(parentScope);
             analyseExpression(node.getExpressionNode(), parentScope);
@@ -322,6 +324,8 @@ public class SemanticAnalysis {
     }
 
     private void analyseDeclarationInGlobalEnd(DeclarationStatementNode node, Scope parentScope) {
+        analyseType(node.getTypeNode(), parentScope);
+
         if (node.getExpressionNode() != null) {
             node.getExpressionNode().setScope(parentScope);
             analyseExpression(node.getExpressionNode(), parentScope);
@@ -747,6 +751,31 @@ public class SemanticAnalysis {
             analyseExpression(node, parentScope);
 
             castExpressionNode.setResultType(castExpressionNode.getTypeNode());
+        }
+    }
+
+    private void analyseType(TypeNode typeNode, Scope parentScope) {
+        if (typeNode instanceof ArrayTypeNode) {
+            ArrayTypeNode arrayTypeNode = (ArrayTypeNode) typeNode;
+            analyseType(arrayTypeNode.getTypeNode(), parentScope);
+        } else if (typeNode instanceof ObjectTypeNode) {
+            ObjectTypeNode objectTypeNode = (ObjectTypeNode) typeNode;
+            String name = objectTypeNode.getIdentifierNode().getName();
+            AstNode variableNode = parentScope.findDefinitionByVariable(name);
+
+            if (variableNode == null) {
+                throw new IllegalArgumentException("Undefined type " + name);
+            }
+
+            if (variableNode instanceof ClassStatementNode) {
+                ClassStatementNode classStatementNode = (ClassStatementNode) variableNode;
+                objectTypeNode.setDefinition(classStatementNode);
+            } else if (variableNode instanceof InterfaceStatementNode) {
+                InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) variableNode;
+                objectTypeNode.setDefinition(interfaceStatementNode);
+            } else {
+                throw new IllegalArgumentException("Unknown");
+            }
         }
     }
 
