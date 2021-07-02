@@ -1,5 +1,8 @@
 package lang.lexer;
 
+import lang.Message;
+import lang.Position;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;

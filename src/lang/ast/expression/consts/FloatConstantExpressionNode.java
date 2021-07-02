@@ -1,17 +1,14 @@
 package lang.ast.expression.consts;
 
 import lang.ast.AstNode;
-import lang.ast.BasicTypeNode;
 import lang.ast.TypeNode;
 import lang.ast.expression.PrimaryExpressionNode;
 
 import java.util.List;
 
-import static lang.ast.TypeNode.Type.FLOAT;
+import static lang.ast.GlobalBasicType.FLOAT_TYPE;
 
 public class FloatConstantExpressionNode extends PrimaryExpressionNode {
-    public static final BasicTypeNode floatType = new BasicTypeNode(FLOAT);
-
     private final float value;
 
     public FloatConstantExpressionNode(float value) {
@@ -25,7 +22,7 @@ public class FloatConstantExpressionNode extends PrimaryExpressionNode {
 
     @Override
     public TypeNode getResultType() {
-        return floatType;
+        return FLOAT_TYPE;
     }
 
     public float getValue() {

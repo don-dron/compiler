@@ -1,12 +1,33 @@
 package lang.ast;
 
+import lang.Position;
+import lang.lexer.Token;
+
 import java.util.List;
+import java.util.Objects;
 
 public class BasicTypeNode extends TypeNode {
     private final TypeNode.Type type;
+    private final Token token;
 
-    public BasicTypeNode(TypeNode.Type type) {
+    public BasicTypeNode(TypeNode.Type type, Token token) {
         this.type = type;
+        this.token = token;
+    }
+
+    @Override
+    public Position getStart() {
+        return token.getStart();
+    }
+
+    @Override
+    public Position getEnd() {
+        return token.getEnd();
+    }
+
+    @Override
+    public String getFormattedText() {
+        return token.getContent();
     }
 
     public TypeNode.Type getType() {
@@ -26,5 +47,18 @@ public class BasicTypeNode extends TypeNode {
     @Override
     public String toString() {
         return type.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BasicTypeNode)) return false;
+        BasicTypeNode that = (BasicTypeNode) o;
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

@@ -1,4 +1,4 @@
-package lang.lexer;
+package lang;
 
 public class Position {
     private final int column;

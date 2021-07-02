@@ -2,11 +2,7 @@ package lang.scope;
 
 import lang.ast.AstNode;
 import lang.ast.ParameterNode;
-import lang.ast.statement.ClassStatementNode;
-import lang.ast.statement.DeclarationStatementNode;
-import lang.ast.statement.FunctionDefinitionNode;
-import lang.ast.statement.InterfaceStatementNode;
-import lang.ast.statement.StatementNode;
+import lang.ast.statement.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,26 +35,37 @@ public class Scope {
     }
 
     public void addDeclaration(AstNode node) {
+        String originalName;
         if (node instanceof ParameterNode) {
-            ParameterNode parameterNode = (ParameterNode)node;
-            parameterNode.getIdentifierNode().setName(nextName(parameterNode.getIdentifierNode().getName()));
+            ParameterNode parameterNode = (ParameterNode) node;
+            originalName = parameterNode.getIdentifierNode().getName();
+            parameterNode.getIdentifierNode()
+                    .setName(nextName(parameterNode.getIdentifierNode().getName()));
         } else if (node instanceof DeclarationStatementNode) {
-            DeclarationStatementNode declarationStatementNode = (DeclarationStatementNode)node;
+            DeclarationStatementNode declarationStatementNode = (DeclarationStatementNode) node;
+            originalName = declarationStatementNode.getIdentifierNode().getName();
             declarationStatementNode.getIdentifierNode()
                     .setName(nextName(declarationStatementNode.getIdentifierNode().getName()));
         } else if (node instanceof FunctionDefinitionNode) {
-            FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode)node;
+            FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) node;
+            originalName = functionDefinitionNode.getIdentifierNode().getName();
             functionDefinitionNode.getIdentifierNode()
                     .setName(nextName(functionDefinitionNode.getIdentifierNode().getName()));
         } else if (node instanceof ClassStatementNode) {
-            ClassStatementNode classStatementNode = (ClassStatementNode)node;
+            ClassStatementNode classStatementNode = (ClassStatementNode) node;
+            originalName = classStatementNode.getIdentifierNode().getName();
             classStatementNode.getIdentifierNode().setName(nextName(classStatementNode.getIdentifierNode().getName()));
         } else if (node instanceof InterfaceStatementNode) {
-            InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode)node;
+            InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) node;
+            originalName = interfaceStatementNode.getIdentifierNode().getName();
             interfaceStatementNode.getIdentifierNode()
                     .setName(nextName(interfaceStatementNode.getIdentifierNode().getName()));
         } else {
             throw new IllegalArgumentException("((((");
+        }
+
+        if (matchDeclaration(originalName) != null) {
+            throw new IllegalArgumentException("Already defined");
         }
 
         declarations.add(node);
@@ -100,37 +107,39 @@ public class Scope {
             throw new IllegalArgumentException("");
         }
 
-        Pattern pattern = Pattern.compile("\\$\\d+_" + currentName);
-
-        AstNode node = this.getDeclarations()
-                .stream()
-                .filter(n -> {
-                    if (n instanceof DeclarationStatementNode) {
-                        Matcher matcher = pattern.matcher(((DeclarationStatementNode) n).getIdentifierNode().getName());
-                        return matcher.find();
-                    } else if (n instanceof ParameterNode) {
-                        Matcher matcher = pattern.matcher(((ParameterNode) n).getIdentifierNode().getName());
-                        return matcher.find();
-                    } else if (n instanceof InterfaceStatementNode) {
-                        Matcher matcher = pattern.matcher(((InterfaceStatementNode) n).getIdentifierNode().getName());
-                        return matcher.find();
-                    } else if (n instanceof ClassStatementNode) {
-                        Matcher matcher = pattern.matcher(((ClassStatementNode) n).getIdentifierNode().getName());
-                        return matcher.find();
-                    } else if (n instanceof FunctionDefinitionNode) {
-                        Matcher matcher = pattern.matcher(((FunctionDefinitionNode) n).getIdentifierNode().getName());
-                        return matcher.find();
-                    }
-
-                    return false;
-                })
-                .findFirst()
-                .orElse(null);
+        AstNode node = matchDeclaration(currentName);
 
         if (node == null && parentScope != null) {
             return parentScope.findDefinitionByVariable(currentName);
         }
 
         return node;
+    }
+
+    private AstNode matchDeclaration(String currentName) {
+        Pattern pattern = Pattern.compile("\\$\\d+_" + currentName);
+
+        return declarations
+                .stream()
+                .filter(n -> {
+                    Matcher matcher = null;
+                    if (n instanceof DeclarationStatementNode) {
+                        matcher = pattern.matcher(((DeclarationStatementNode) n).getIdentifierNode().getName());
+                    } else if (n instanceof ParameterNode) {
+                        matcher = pattern.matcher(((ParameterNode) n).getIdentifierNode().getName());
+                    } else if (n instanceof InterfaceStatementNode) {
+                        matcher = pattern.matcher(((InterfaceStatementNode) n).getIdentifierNode().getName());
+                    } else if (n instanceof ClassStatementNode) {
+                        matcher = pattern.matcher(((ClassStatementNode) n).getIdentifierNode().getName());
+                    } else if (n instanceof FunctionDefinitionNode) {
+                        matcher = pattern.matcher(((FunctionDefinitionNode) n).getIdentifierNode().getName());
+                    } else {
+                        return false;
+                    }
+
+                    return matcher.find();
+                })
+                .findFirst()
+                .orElse(null);
     }
 }

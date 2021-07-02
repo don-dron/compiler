@@ -1,17 +1,13 @@
 package lang.ast.expression.consts;
 
 import lang.ast.AstNode;
-import lang.ast.BasicTypeNode;
+import lang.ast.GlobalBasicType;
 import lang.ast.TypeNode;
 import lang.ast.expression.PrimaryExpressionNode;
 
 import java.util.List;
 
-import static lang.ast.TypeNode.Type.INT;
-
 public class IntConstantExpressionNode extends PrimaryExpressionNode {
-    public static final BasicTypeNode intType = new BasicTypeNode(INT);
-
     private final int value;
 
     public IntConstantExpressionNode(int value) {
@@ -25,7 +21,7 @@ public class IntConstantExpressionNode extends PrimaryExpressionNode {
 
     @Override
     public TypeNode getResultType() {
-        return intType;
+        return GlobalBasicType.INT_TYPE;
     }
 
     public int getValue() {

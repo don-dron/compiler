@@ -1,20 +1,37 @@
 package lang.ast.expression.consts;
 
+import lang.Position;
 import lang.ast.AstNode;
-import lang.ast.BasicTypeNode;
 import lang.ast.TypeNode;
 import lang.ast.expression.PrimaryExpressionNode;
+import lang.lexer.Token;
 
 import java.util.List;
 
-import static lang.ast.TypeNode.Type.BOOL;
+import static lang.ast.GlobalBasicType.BOOL_TYPE;
 
 public class BoolConstantExpressionNode extends PrimaryExpressionNode {
-    public static final BasicTypeNode boolType = new BasicTypeNode(BOOL);
     private final boolean value;
+    private final Token token;
 
-    public BoolConstantExpressionNode(boolean value) {
+    public BoolConstantExpressionNode(boolean value, Token token) {
         this.value = value;
+        this.token = token;
+    }
+
+    @Override
+    public Position getStart() {
+        return token.getStart();
+    }
+
+    @Override
+    public Position getEnd() {
+        return token.getEnd();
+    }
+
+    @Override
+    public String getFormattedText() {
+        return token.getContent();
     }
 
     @Override
@@ -24,7 +41,7 @@ public class BoolConstantExpressionNode extends PrimaryExpressionNode {
 
     @Override
     public TypeNode getResultType() {
-        return boolType;
+        return BOOL_TYPE;
     }
 
     public boolean getValue() {

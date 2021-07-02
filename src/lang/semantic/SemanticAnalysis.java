@@ -1,85 +1,37 @@
 package lang.semantic;
 
-import lang.ast.ArrayTypeNode;
-import lang.ast.AstNode;
-import lang.ast.BasicTypeNode;
-import lang.ast.FileNode;
-import lang.ast.FunctionNode;
-import lang.ast.ImportNode;
-import lang.ast.ObjectTypeNode;
-import lang.ast.ParameterNode;
-import lang.ast.TypeNode;
+import lang.ast.*;
 import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.expression.ConditionalExpressionNode;
 import lang.ast.expression.ExpressionNode;
 import lang.ast.expression.VariableExpressionNode;
-import lang.ast.expression.binary.AdditiveExpressionNode;
-import lang.ast.expression.binary.AssigmentExpressionNode;
-import lang.ast.expression.binary.EqualityExpressionNode;
-import lang.ast.expression.binary.LogicalAndExpressionNode;
-import lang.ast.expression.binary.LogicalOrExpressionNode;
-import lang.ast.expression.binary.MultiplicativeExpressionNode;
-import lang.ast.expression.binary.RelationalExpressionNode;
+import lang.ast.expression.binary.*;
 import lang.ast.expression.consts.BoolConstantExpressionNode;
 import lang.ast.expression.consts.FloatConstantExpressionNode;
 import lang.ast.expression.consts.IntConstantExpressionNode;
 import lang.ast.expression.consts.NullConstantExpressionNode;
-import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
-import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
-import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixDecrementSubtractionExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixIncrementAdditiveExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixIncrementMultiplicativeExpressionNode;
+import lang.ast.expression.unary.postfix.*;
 import lang.ast.expression.unary.prefix.CastExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixDecrementSubtractionExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementAdditiveExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionNode;
-import lang.ast.statement.BreakStatementNode;
-import lang.ast.statement.ClassStatementNode;
-import lang.ast.statement.CompoundStatementNode;
-import lang.ast.statement.ConstructorDefinitionNode;
-import lang.ast.statement.ContinueStatementNode;
-import lang.ast.statement.DeclarationStatementNode;
-import lang.ast.statement.ElifStatementNode;
-import lang.ast.statement.ElseStatementNode;
-import lang.ast.statement.EmptyStatementNode;
-import lang.ast.statement.ExpressionStatementNode;
-import lang.ast.statement.FunctionDefinitionNode;
-import lang.ast.statement.IfElseStatementNode;
-import lang.ast.statement.IfStatementNode;
-import lang.ast.statement.InterfaceStatementNode;
-import lang.ast.statement.ReturnStatementNode;
-import lang.ast.statement.StatementNode;
-import lang.ast.statement.WhileStatementNode;
+import lang.ast.statement.*;
 import lang.scope.Scope;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SemanticAnalysis {
 
     private final String rootPath;
     private final List<FileNode> fileNodes;
-    private final Map<FileNode, List<DeclarationStatementNode>> externDeclarationStatementNodes;
-    private final Map<FileNode, List<InterfaceStatementNode>> externIntefaceStatementsNodes;
-    private final Map<FileNode, List<ClassStatementNode>> externClassStatementsNodes;
-    private final Map<FileNode, List<FunctionDefinitionNode>> externFunctionDefinitionNodes;
     private final Map<FileNode, List<FileNode>> importedFiles;
     private FunctionDefinitionNode mainFunction;
 
     public SemanticAnalysis(String rootPath, List<FileNode> fileNodes) {
         this.rootPath = rootPath;
         this.fileNodes = fileNodes;
-        this.externDeclarationStatementNodes = new HashMap<>();
-        this.externIntefaceStatementsNodes = new HashMap<>();
-        this.externClassStatementsNodes = new HashMap<>();
-        this.externFunctionDefinitionNodes = new HashMap<>();
         this.importedFiles = new HashMap<>();
     }
 
@@ -89,38 +41,34 @@ public class SemanticAnalysis {
         }
 
         for (FileNode fileNode : fileNodes) {
-            analyseDefinitions(fileNode);
+            analyseDefinitionsStart(fileNode);
         }
 
         findMainFunction();
 
         for (FileNode fileNode : fileNodes) {
-            runAnalysis(fileNode);
+            analyseDefinitionsEnd(fileNode);
         }
 
-        System.out.println(Stream.of(externClassStatementsNodes,
-                externDeclarationStatementNodes,
-                externFunctionDefinitionNodes,
-                externIntefaceStatementsNodes)
-                .flatMap(mp -> mp.values().stream())
-                .flatMap(Collection::stream)
-                .map(st -> st.astDebug(0))
-                .collect(Collectors.joining("\n")));
+        for (FileNode fileNode : fileNodes) {
+            System.out.println(fileNode.astDebug());
+        }
     }
 
     private void findMainFunction() {
-        FileNode fileNode = null;
-        for (Map.Entry<FileNode, List<FunctionDefinitionNode>> entry : externFunctionDefinitionNodes.entrySet()) {
-            List<FunctionDefinitionNode> definitions = entry.getValue();
-
-            for (FunctionDefinitionNode functionDefinition : definitions) {
+        for (FileNode fileNode : fileNodes) {
+            for (FunctionDefinitionNode functionDefinition : fileNode
+                    .getStatementNodes()
+                    .stream()
+                    .filter(st -> st instanceof FunctionDefinitionNode)
+                    .map(st -> (FunctionDefinitionNode) st)
+                    .collect(Collectors.toList())) {
                 if (functionDefinition.getIdentifierNode().getName().equals("main")) {
-                    if (mainFunction != null && fileNode != null) {
+                    if (mainFunction != null) {
                         throw new IllegalArgumentException("Main already defined, first definition: "
                                 + mainFunction.getIdentifierNode().getToken());
                     }
                     mainFunction = functionDefinition;
-                    fileNode = entry.getKey();
                 }
             }
         }
@@ -152,7 +100,7 @@ public class SemanticAnalysis {
         }
 
         Collections.reverse(path);
-        String absolutePath = rootPath + "\\" + String.join("\\", path);
+        String absolutePath = Paths.get(rootPath, path.toArray(String[]::new)).toString();
 
         return fileNodes.stream()
                 .filter(f -> f.getPath().equals(absolutePath))
@@ -160,51 +108,13 @@ public class SemanticAnalysis {
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find file"));
     }
 
-    private void analyseDefinitions(FileNode fileNode) {
+    private void analyseDefinitionsStart(FileNode fileNode) {
         fileNode.getStatementNodes().removeIf(s -> s instanceof EmptyStatementNode);
 
         Scope scope = new Scope(null);
         fileNode.setScope(scope);
         scope.setOwner(fileNode);
 
-        List<StatementNode> imports = importedFiles.getOrDefault(fileNode, List.of())
-                .stream()
-                .flatMap(f -> f.getStatementNodes().stream())
-                .collect(Collectors.toList());
-
-        for (StatementNode statementNode : imports) {
-            scope.addWeakDeclaration(statementNode);
-        }
-
-        for (StatementNode statementNode : fileNode.getStatementNodes()) {
-            if (statementNode instanceof ClassStatementNode) {
-                ClassStatementNode classStatementNode = (ClassStatementNode) statementNode;
-                externClassStatementsNodes
-                        .computeIfAbsent(fileNode, (k) -> new ArrayList<>())
-                        .add(classStatementNode);
-            } else if (statementNode instanceof InterfaceStatementNode) {
-                InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) statementNode;
-                externIntefaceStatementsNodes
-                        .computeIfAbsent(fileNode, (k) -> new ArrayList<>())
-                        .add(interfaceStatementNode);
-            } else if (statementNode instanceof FunctionDefinitionNode) {
-                FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) statementNode;
-                externFunctionDefinitionNodes
-                        .computeIfAbsent(fileNode, (k) -> new ArrayList<>())
-                        .add(functionDefinitionNode);
-            } else if (statementNode instanceof DeclarationStatementNode) {
-                DeclarationStatementNode declarationStatementNode = (DeclarationStatementNode) statementNode;
-                externDeclarationStatementNodes
-                        .computeIfAbsent(fileNode, (k) -> new ArrayList<>())
-                        .add(declarationStatementNode);
-            } else {
-                throw new IllegalStateException("Wrong statement");
-            }
-        }
-    }
-
-    private void runAnalysis(FileNode fileNode) {
-        Scope scope = fileNode.getScope();
         for (StatementNode node : fileNode.getStatementNodes()) {
             if (node instanceof ClassStatementNode) {
                 analyseClassInGlobalStart((ClassStatementNode) node, scope);
@@ -217,6 +127,18 @@ public class SemanticAnalysis {
             } else {
                 throw new IllegalStateException("Wrong statement");
             }
+        }
+    }
+
+    private void analyseDefinitionsEnd(FileNode fileNode) {
+        Scope scope = fileNode.getScope();
+        List<StatementNode> imports = importedFiles.getOrDefault(fileNode, List.of())
+                .stream()
+                .flatMap(f -> f.getStatementNodes().stream())
+                .collect(Collectors.toList());
+
+        for (StatementNode statementNode : imports) {
+            scope.addWeakDeclaration(statementNode);
         }
 
         for (StatementNode node : fileNode.getStatementNodes()) {
@@ -549,7 +471,7 @@ public class SemanticAnalysis {
             analyseExpression(then, parentScope);
             analyseExpression(els, parentScope);
 
-            if (!cond.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!cond.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + cond.toString());
             }
 
@@ -603,15 +525,15 @@ public class SemanticAnalysis {
             analyseExpression(left, parentScope);
             analyseExpression(right, parentScope);
 
-            if (!left.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!left.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + left.toString());
             }
 
-            if (!right.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!right.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + right.toString());
             }
 
-            logicalAndExpressionNode.setResultType(BoolConstantExpressionNode.boolType);
+            logicalAndExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
         } else if (expressionNode instanceof LogicalOrExpressionNode) {
             LogicalOrExpressionNode logicalOrExpressionNode = (LogicalOrExpressionNode) expressionNode;
 
@@ -621,15 +543,15 @@ public class SemanticAnalysis {
             analyseExpression(left, parentScope);
             analyseExpression(right, parentScope);
 
-            if (!left.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!left.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + left.toString());
             }
 
-            if (!right.getResultType().equals(BoolConstantExpressionNode.boolType)) {
+            if (!right.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + right.toString());
             }
 
-            logicalOrExpressionNode.setResultType(BoolConstantExpressionNode.boolType);
+            logicalOrExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
         } else if (expressionNode instanceof RelationalExpressionNode) {
             RelationalExpressionNode relationalExpressionNode = (RelationalExpressionNode) expressionNode;
 
@@ -643,7 +565,7 @@ public class SemanticAnalysis {
                 throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
             }
 
-            relationalExpressionNode.setResultType(BoolConstantExpressionNode.boolType);
+            relationalExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
         } else if (expressionNode instanceof EqualityExpressionNode) {
             EqualityExpressionNode equalityExpressionNode = (EqualityExpressionNode) expressionNode;
 
@@ -657,7 +579,7 @@ public class SemanticAnalysis {
                 throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
             }
 
-            equalityExpressionNode.setResultType(BoolConstantExpressionNode.boolType);
+            equalityExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
         } else if (expressionNode instanceof VariableExpressionNode) {
             VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode;
             String name = ((VariableExpressionNode) expressionNode).getIdentifierNode().getName();
@@ -745,7 +667,7 @@ public class SemanticAnalysis {
             analyseExpression(array, parentScope);
             analyseExpression(argument, parentScope);
 
-            if (!argument.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!argument.getResultType().equals(GlobalBasicType.INT_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + argument.toString());
             }
 
@@ -765,7 +687,7 @@ public class SemanticAnalysis {
             ExpressionNode node = postfixDecrementSubtractionExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PostfixIncrementAdditiveExpressionNode) {
@@ -775,7 +697,7 @@ public class SemanticAnalysis {
             ExpressionNode node = postfixIncrementAdditiveExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PostfixIncrementMultiplicativeExpressionNode) {
@@ -785,7 +707,7 @@ public class SemanticAnalysis {
             ExpressionNode node = postfixIncrementMultiplicativeExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PrefixDecrementSubtractionExpressionNode) {
@@ -795,7 +717,7 @@ public class SemanticAnalysis {
             ExpressionNode node = prefixDecrementSubtractionExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PrefixIncrementAdditiveExpressionNode) {
@@ -805,7 +727,7 @@ public class SemanticAnalysis {
             ExpressionNode node = prefixIncrementAdditiveExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof PrefixIncrementMultiplicativeExpressionNode) {
@@ -815,7 +737,7 @@ public class SemanticAnalysis {
             ExpressionNode node = prefixIncrementMultiplicativeExpressionNode.getExpressionNode();
             analyseExpression(node, parentScope);
 
-            if (!node.getResultType().equals(IntConstantExpressionNode.intType)) {
+            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
                 throw new IllegalArgumentException("Wrong types " + node.toString());
             }
         } else if (expressionNode instanceof CastExpressionNode) {

@@ -34,7 +34,7 @@ public class FileNode extends AstNode {
 
     @Override
     public String astDebug(int shift) {
-        return (SHIFT.repeat(shift) + "FileNode:\n" +
+        return (SHIFT.repeat(shift) + "FileNode " + path + " :\n" +
                 (!importNodes.isEmpty() ? (importNodes.stream()
                         .map(i -> i.astDebug(shift + 1))
                         .collect(Collectors.joining("\n")) + "\n") : "") +
@@ -46,5 +46,11 @@ public class FileNode extends AstNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return new ArrayList<>(statementNodes);
+    }
+
+    @Override
+    public String toString() {
+        return importNodes.stream().map(Object::toString).collect(Collectors.joining("\n")) +
+                statementNodes.stream().map(Object::toString).collect(Collectors.joining("\n"));
     }
 }

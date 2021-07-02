@@ -1,17 +1,6 @@
 package lang.parser;
 
-import lang.ast.ArrayTypeNode;
-import lang.ast.BasicTypeNode;
-import lang.ast.ExpressionListNode;
-import lang.ast.FileNode;
-import lang.ast.FunctionNode;
-import lang.ast.IdentifierNode;
-import lang.ast.ImportNode;
-import lang.ast.ObjectTypeNode;
-import lang.ast.ParameterNode;
-import lang.ast.ParametersNode;
-import lang.ast.TranslationNode;
-import lang.ast.TypeNode;
+import lang.ast.*;
 import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.expression.ConditionalExpressionNode;
 import lang.ast.expression.ExpressionNode;
@@ -604,13 +593,13 @@ public class Parser {
 
         switch (type.getTokenType()) {
             case VOID:
-                typeNode = new BasicTypeNode(TypeNode.Type.VOID);
+                typeNode = new BasicTypeNode(TypeNode.Type.VOID, type);
                 break;
             case INT:
-                typeNode = IntConstantExpressionNode.intType;
+                typeNode = new BasicTypeNode(TypeNode.Type.INT, type);
                 break;
             case FLOAT:
-                typeNode = FloatConstantExpressionNode.floatType;
+                typeNode = new BasicTypeNode(TypeNode.Type.FLOAT, type);
                 break;
             default:
                 typeNode = null;
@@ -967,10 +956,10 @@ public class Parser {
             return new NullConstantExpressionNode();
         } else if (first.getTokenType() == Token.TokenType.TRUE) {
             next();
-            return new BoolConstantExpressionNode(true);
+            return new BoolConstantExpressionNode(true, first);
         } else if (first.getTokenType() == Token.TokenType.FALSE) {
             next();
-            return new BoolConstantExpressionNode(false);
+            return new BoolConstantExpressionNode(false, first);
         } else if (first.getTokenType() == Token.TokenType.L_PAREN) {
             next();
             ExpressionNode expressionNode = parseConditionalExpression();

@@ -1,5 +1,7 @@
 package lang.lexer;
 
+import lang.Position;
+
 public class Token {
 
     private final String content;

@@ -1,12 +1,12 @@
 package lang.ast;
 
+import lang.Position;
 import lang.scope.Scope;
 
 import java.util.List;
 
 public abstract class AstNode {
     public static final String SHIFT = "....";
-
     private Scope scope;
 
     public String astDebug() {
@@ -19,6 +19,18 @@ public abstract class AstNode {
 
     public Scope getScope() {
         return scope;
+    }
+
+    public String getFormattedText() {
+        return null;
+    }
+
+    public Position getEnd() {
+        return null;
+    }
+
+    public Position getStart() {
+        return null;
     }
 
     public abstract String astDebug(int shift);
