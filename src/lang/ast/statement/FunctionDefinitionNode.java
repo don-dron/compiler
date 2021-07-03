@@ -4,12 +4,14 @@ import lang.ast.AstNode;
 import lang.ast.FunctionNode;
 import lang.ast.IdentifierNode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionDefinitionNode extends StatementNode {
     private final FunctionNode functionNode;
     private final IdentifierNode identifierNode;
     private final StatementNode statementNode;
+    private final List<ReturnStatementNode> returns = new ArrayList<>();
 
     public FunctionDefinitionNode(FunctionNode functionNode,
                                   IdentifierNode identifierNode,
@@ -48,5 +50,13 @@ public class FunctionDefinitionNode extends StatementNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return List.of(statementNode);
+    }
+
+    public void addReturn(ReturnStatementNode node) {
+        returns.add(node);
+    }
+
+    public List<ReturnStatementNode> getReturns() {
+        return returns;
     }
 }

@@ -65,7 +65,7 @@ public class Scope {
         }
 
         if (matchDeclaration(originalName) != null) {
-            throw new IllegalArgumentException("Already defined");
+            throw new IllegalArgumentException("Already defined " + originalName);
         }
 
         declarations.add(node);

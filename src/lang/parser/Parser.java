@@ -1,6 +1,17 @@
 package lang.parser;
 
-import lang.ast.*;
+import lang.ast.ArrayTypeNode;
+import lang.ast.BasicTypeNode;
+import lang.ast.ExpressionListNode;
+import lang.ast.FileNode;
+import lang.ast.FunctionNode;
+import lang.ast.IdentifierNode;
+import lang.ast.ImportNode;
+import lang.ast.ObjectTypeNode;
+import lang.ast.ParameterNode;
+import lang.ast.ParametersNode;
+import lang.ast.TranslationNode;
+import lang.ast.TypeNode;
 import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.expression.ConditionalExpressionNode;
 import lang.ast.expression.ExpressionNode;
@@ -403,6 +414,9 @@ public class Parser {
                     StatementNode statement = parseStatement();
                     return new FunctionDefinitionNode((FunctionNode) typeNode, identifierNode, statement);
                 }
+            } else if (peek().getTokenType() == Token.TokenType.DEFINE) {
+                next();
+                expressionNode = parseExpression();
             } else {
                 next();
                 return new FunctionDefinitionNode((FunctionNode) typeNode, identifierNode, null);

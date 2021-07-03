@@ -9,11 +9,16 @@ import java.util.List;
 public class ConstructorDefinitionNode extends StatementNode {
     private final FunctionNode functionNode;
     private final StatementNode statementNode;
+    private ClassStatementNode classStatementNode;
 
     public ConstructorDefinitionNode(FunctionNode functionNode,
                                      StatementNode statementNode) {
         this.functionNode = functionNode;
         this.statementNode = statementNode;
+    }
+
+    public ClassStatementNode getClassStatementNode() {
+        return classStatementNode;
     }
 
     public FunctionNode getFunctionNode() {
@@ -29,6 +34,10 @@ public class ConstructorDefinitionNode extends StatementNode {
         return SHIFT.repeat(shift) + "ConstructorDefinition:\n" +
                 functionNode.astDebug(shift + 1) + "\n" +
                 statementNode.astDebug(shift + 1);
+    }
+
+    public void setClass(ClassStatementNode classStatementNode) {
+        this.classStatementNode = classStatementNode;
     }
 
     @Override

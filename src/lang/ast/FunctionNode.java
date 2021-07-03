@@ -2,6 +2,7 @@ package lang.ast;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class FunctionNode extends TypeNode {
     private final TypeNode typeNode;
@@ -26,6 +27,20 @@ public class FunctionNode extends TypeNode {
         return SHIFT.repeat(shift) + "Function:\n" +
                 (typeNode != null ? (typeNode.astDebug(shift + 1) + "\n") : "") +
                 parametersNode.astDebug(shift + 1);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FunctionNode that = (FunctionNode) o;
+        return Objects.equals(typeNode, that.typeNode) &&
+                Objects.equals(parametersNode, that.parametersNode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(typeNode, parametersNode);
     }
 
     @Override

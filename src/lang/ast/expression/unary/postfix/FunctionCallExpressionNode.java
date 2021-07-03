@@ -4,6 +4,7 @@ import lang.ast.AstNode;
 import lang.ast.ExpressionListNode;
 import lang.ast.expression.ExpressionNode;
 import lang.ast.expression.PrimaryExpressionNode;
+import lang.ast.statement.ConstructorDefinitionNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 public class FunctionCallExpressionNode extends PrimaryExpressionNode {
     private final ExpressionNode function;
     private final ExpressionListNode parameters;
+    private AstNode target;
 
     public FunctionCallExpressionNode(ExpressionNode function, ExpressionListNode parameters) {
         this.function = function;
@@ -43,5 +45,9 @@ public class FunctionCallExpressionNode extends PrimaryExpressionNode {
     @Override
     public String toString() {
         return function.toString() + "(" + parameters.toString() + ")";
+    }
+
+    public void setTarget(AstNode target) {
+        this.target = target;
     }
 }

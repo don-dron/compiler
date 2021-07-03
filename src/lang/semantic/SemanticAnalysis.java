@@ -1,26 +1,68 @@
 package lang.semantic;
 
-import lang.ast.*;
+import lang.ast.ArrayTypeNode;
+import lang.ast.AstNode;
+import lang.ast.BasicTypeNode;
+import lang.ast.FileNode;
+import lang.ast.FunctionNode;
+import lang.ast.GlobalBasicType;
+import lang.ast.ImportNode;
+import lang.ast.ObjectTypeNode;
+import lang.ast.ParameterNode;
+import lang.ast.TypeNode;
 import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.expression.ConditionalExpressionNode;
 import lang.ast.expression.ExpressionNode;
 import lang.ast.expression.VariableExpressionNode;
-import lang.ast.expression.binary.*;
+import lang.ast.expression.binary.AdditiveExpressionNode;
+import lang.ast.expression.binary.AssigmentExpressionNode;
+import lang.ast.expression.binary.EqualityExpressionNode;
+import lang.ast.expression.binary.LogicalAndExpressionNode;
+import lang.ast.expression.binary.LogicalOrExpressionNode;
+import lang.ast.expression.binary.MultiplicativeExpressionNode;
+import lang.ast.expression.binary.RelationalExpressionNode;
 import lang.ast.expression.consts.BoolConstantExpressionNode;
 import lang.ast.expression.consts.FloatConstantExpressionNode;
 import lang.ast.expression.consts.IntConstantExpressionNode;
 import lang.ast.expression.consts.NullConstantExpressionNode;
-import lang.ast.expression.unary.postfix.*;
+import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
+import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
+import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixDecrementSubtractionExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixIncrementAdditiveExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixIncrementMultiplicativeExpressionNode;
 import lang.ast.expression.unary.prefix.CastExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixDecrementSubtractionExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementAdditiveExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionNode;
-import lang.ast.statement.*;
+import lang.ast.statement.BreakStatementNode;
+import lang.ast.statement.ClassStatementNode;
+import lang.ast.statement.CompoundStatementNode;
+import lang.ast.statement.ConstructorDefinitionNode;
+import lang.ast.statement.ContinueStatementNode;
+import lang.ast.statement.DeclarationStatementNode;
+import lang.ast.statement.ElifStatementNode;
+import lang.ast.statement.ElseStatementNode;
+import lang.ast.statement.EmptyStatementNode;
+import lang.ast.statement.ExpressionStatementNode;
+import lang.ast.statement.FunctionDefinitionNode;
+import lang.ast.statement.IfElseStatementNode;
+import lang.ast.statement.IfStatementNode;
+import lang.ast.statement.InterfaceStatementNode;
+import lang.ast.statement.ReturnStatementNode;
+import lang.ast.statement.StatementNode;
+import lang.ast.statement.WhileStatementNode;
 import lang.scope.Scope;
 
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static lang.ast.GlobalBasicType.REF_TYPE;
 
 public class SemanticAnalysis {
 
@@ -194,6 +236,8 @@ public class SemanticAnalysis {
 
     private void analyseBreak(BreakStatementNode node, Scope scope) {
         node.setScope(scope);
+        AstNode cycle = findCycle(scope);
+        node.setCycle(cycle);
     }
 
     private void analyseClassInGlobalStart(ClassStatementNode classNode, Scope parentScope) {
@@ -288,16 +332,31 @@ public class SemanticAnalysis {
 
     private void analyseConstructorDefinitionNodeStart(ConstructorDefinitionNode node, Scope scope) {
         node.setScope(scope);
+
+        if (scope.getOwner() instanceof ClassStatementNode) {
+            node.setClass((ClassStatementNode) scope.getOwner());
+            ((ClassStatementNode) scope.getOwner()).addConstructor(node);
+        } else {
+            throw new IllegalArgumentException("");
+        }
     }
 
     private void analyseConstructorDefinitionNodeEnd(ConstructorDefinitionNode node, Scope scope) {
         Scope constructorScope = new Scope(scope);
         scope.setOwner(node);
+        node.getFunctionNode().getParametersNode().getParameters()
+                .forEach(p -> {
+                    analyseType(p.getTypeNode(), scope);
+                    scope.addDeclaration(p);
+                });
         analyseStatement(node.getStatementNode(), constructorScope);
     }
 
     private void analyseContinue(ContinueStatementNode node, Scope scope) {
         node.setScope(scope);
+
+        AstNode cycle = findCycle(scope);
+        node.setCycle(cycle);
     }
 
     private void analyseDeclaration(DeclarationStatementNode node, Scope parentScope) {
@@ -312,6 +371,14 @@ public class SemanticAnalysis {
         if (node.getExpressionNode() != null) {
             node.getExpressionNode().setScope(parentScope);
             analyseExpression(node.getExpressionNode(), parentScope);
+
+            TypeNode typeNode = node.getExpressionNode().getResultType();
+
+            if (!typeNode.equals(node.getTypeNode())) {
+                throw new IllegalArgumentException("Wrong types " + node.getTypeNode().toString() + " " +
+                        node.getExpressionNode().toString() + " : " +
+                        node.getTypeNode() + " and " + node.getExpressionNode().getResultType().toString());
+            }
         }
     }
 
@@ -340,7 +407,10 @@ public class SemanticAnalysis {
             Scope scope = new Scope(parentScope);
             scope.setOwner(function);
             function.getFunctionNode().getParametersNode().getParameters()
-                    .forEach(scope::addDeclaration);
+                    .forEach(p -> {
+                        analyseType(p.getTypeNode(), parentScope);
+                        scope.addDeclaration(p);
+                    });
             analyseStatement(function.getStatementNode(), scope);
         }
     }
@@ -355,7 +425,10 @@ public class SemanticAnalysis {
             Scope scope = new Scope(parentScope);
             scope.setOwner(function);
             function.getFunctionNode().getParametersNode().getParameters()
-                    .forEach(scope::addDeclaration);
+                    .forEach(p -> {
+                        analyseType(p.getTypeNode(), parentScope);
+                        scope.addDeclaration(p);
+                    });
             analyseStatement(function.getStatementNode(), scope);
         }
     }
@@ -429,9 +502,39 @@ public class SemanticAnalysis {
     private void analyseReturn(ReturnStatementNode node, Scope parentScope) {
         node.setScope(parentScope);
 
+        FunctionDefinitionNode functionDefinitionNode = findFunction(parentScope);
+
+        node.setFunction(functionDefinitionNode);
+        functionDefinitionNode.addReturn(node);
+
         if (node.getExpressionNode() != null) {
             node.getExpressionNode().setScope(parentScope);
             analyseExpression(node.getExpressionNode(), parentScope);
+
+            if (!functionDefinitionNode.getFunctionNode().getTypeNode()
+                    .equals(node.getExpressionNode().getResultType())) {
+                throw new IllegalArgumentException("Wrong type");
+            }
+        } else {
+            if (!functionDefinitionNode.getFunctionNode().getTypeNode().equals(GlobalBasicType.VOID_TYPE)) {
+                throw new IllegalArgumentException("Wrong type");
+            }
+        }
+    }
+
+    private FunctionDefinitionNode findFunction(Scope parentScope) {
+        if (parentScope.getOwner() instanceof FunctionDefinitionNode) {
+            return (FunctionDefinitionNode) parentScope.getOwner();
+        } else {
+            return findFunction(parentScope.getParentScope());
+        }
+    }
+
+    private WhileStatementNode findCycle(Scope parentScope) {
+        if (parentScope.getOwner() instanceof WhileStatementNode) {
+            return (WhileStatementNode) parentScope.getOwner();
+        } else {
+            return findCycle(parentScope.getParentScope());
         }
     }
 
@@ -458,6 +561,13 @@ public class SemanticAnalysis {
             if (left.getResultType() instanceof BasicTypeNode
                     && right.getResultType() instanceof BasicTypeNode) {
                 typeNode = defineBinaryOperationType(expressionNode, left, right);
+            } else if (left.getResultType() instanceof ObjectTypeNode
+                    && right.getResultType() instanceof ObjectTypeNode) {
+                if (left.getResultType().equals(right.getResultType())) {
+                    typeNode = left.getResultType();
+                }
+            } else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {
+                typeNode = left.getResultType();
             }
 
             if (typeNode == null) {
@@ -641,27 +751,42 @@ public class SemanticAnalysis {
             ExpressionNode function = functionCallExpressionNode.getFunction();
             analyseExpression(function, parentScope);
 
-            FunctionNode functionNode = (FunctionNode) function.getResultType();
+            TypeNode typeNode = function.getResultType();
 
-            List<ExpressionNode> expressions = functionCallExpressionNode.getParameters().getList();
-            List<ParameterNode> parameterNodes = functionNode.getParametersNode().getParameters();
-            if (expressions.size() != parameterNodes.size()) {
-                throw new IllegalArgumentException("Wrong parameter's size");
-            }
+            if (typeNode instanceof FunctionNode) {
+                FunctionNode functionNode = (FunctionNode) function.getResultType();
 
-            for (int i = 0; i < expressions.size(); i++) {
-                ExpressionNode node = expressions.get(i);
-                ParameterNode parameterNode = parameterNodes.get(i);
-
-                analyseExpression(node, parentScope);
-
-                if (!parameterNode.getTypeNode().equals(node.getResultType())) {
-                    throw new IllegalArgumentException("Wrong parameter type " +
-                            parameterNode.getTypeNode() + " " + node.getResultType());
+                List<ExpressionNode> expressions = functionCallExpressionNode.getParameters().getList();
+                List<ParameterNode> parameterNodes = functionNode.getParametersNode().getParameters();
+                if (expressions.size() != parameterNodes.size()) {
+                    throw new IllegalArgumentException("Wrong parameter's size");
                 }
-            }
 
-            functionCallExpressionNode.setResultType(functionNode.getTypeNode());
+                for (int i = 0; i < expressions.size(); i++) {
+                    ExpressionNode node = expressions.get(i);
+                    ParameterNode parameterNode = parameterNodes.get(i);
+
+                    analyseExpression(node, parentScope);
+
+                    if (!parameterNode.getTypeNode().equals(node.getResultType())) {
+                        throw new IllegalArgumentException("Wrong parameter type " +
+                                parameterNode.getTypeNode() + " " + node.getResultType());
+                    }
+                }
+
+                functionCallExpressionNode.setResultType(functionNode.getTypeNode());
+            } else if (typeNode instanceof ObjectTypeNode) {
+                ObjectTypeNode objectTypeNode = (ObjectTypeNode) typeNode;
+
+                if (objectTypeNode.getDefinitionNode() instanceof ClassStatementNode) {
+                    ClassStatementNode classStatementNode = (ClassStatementNode) objectTypeNode.getDefinitionNode();
+                    functionCallExpressionNode.setTarget(classStatementNode.getConstructors()
+                            .stream()
+                            .findFirst()
+                            .orElseThrow(RuntimeException::new));
+                }
+
+            }
         } else if (expressionNode instanceof ArrayAccessExpressionNode) {
             ArrayAccessExpressionNode arrayAccessExpressionNode = (ArrayAccessExpressionNode) expressionNode;
 

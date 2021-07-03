@@ -4,6 +4,7 @@ import lang.ast.statement.ClassStatementNode;
 import lang.ast.statement.InterfaceStatementNode;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ObjectTypeNode extends TypeNode {
     private final IdentifierNode identifierNode;
@@ -37,6 +38,19 @@ public class ObjectTypeNode extends TypeNode {
     @Override
     public List<? extends AstNode> getChildren() {
         return List.of();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ObjectTypeNode that = (ObjectTypeNode) o;
+        return Objects.equals(definitionNode, that.definitionNode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(identifierNode, definitionNode);
     }
 
     @Override

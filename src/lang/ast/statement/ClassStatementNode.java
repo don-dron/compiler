@@ -4,6 +4,7 @@ import lang.ast.AstNode;
 import lang.ast.IdentifierNode;
 import lang.ast.TranslationNode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ public class ClassStatementNode extends StatementNode {
     private final IdentifierNode identifierNode;
     private final List<IdentifierNode> extend;
     private final TranslationNode translationNode;
+    private final List<ConstructorDefinitionNode> constructors = new ArrayList<>();
 
     public ClassStatementNode(IdentifierNode identifierNode,
                               List<IdentifierNode> extend,
@@ -40,6 +42,14 @@ public class ClassStatementNode extends StatementNode {
                 identifierNode.astDebug(shift + 1) + "\n" +
                 extend.stream().map(e -> e.astDebug(shift + 1) + "\n").collect(Collectors.joining()) +
                 translationNode.astDebug(shift + 1);
+    }
+
+    public void addConstructor(ConstructorDefinitionNode constructorDefinitionNode) {
+        constructors.add(constructorDefinitionNode);
+    }
+
+    public List<ConstructorDefinitionNode> getConstructors() {
+        return constructors;
     }
 
     @Override

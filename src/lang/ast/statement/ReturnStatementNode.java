@@ -7,6 +7,7 @@ import java.util.List;
 
 public class ReturnStatementNode extends StatementNode {
     private final ExpressionNode expressionNode;
+    private FunctionDefinitionNode functionDefinitionNode;
 
     public ReturnStatementNode(ExpressionNode expressionNode) {
         super();
@@ -15,6 +16,10 @@ public class ReturnStatementNode extends StatementNode {
 
     public ExpressionNode getExpressionNode() {
         return expressionNode;
+    }
+
+    public FunctionDefinitionNode getFunctionDefinitionNode() {
+        return functionDefinitionNode;
     }
 
     @Override
@@ -31,5 +36,9 @@ public class ReturnStatementNode extends StatementNode {
     @Override
     public String toString() {
         return "return";
+    }
+
+    public void setFunction(FunctionDefinitionNode functionDefinitionNode) {
+        this.functionDefinitionNode = functionDefinitionNode;
     }
 }

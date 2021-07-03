@@ -1,11 +1,9 @@
+() int h ->
+    return 1
 
-class T
-    A a
-
-class A
-    T t
-
-(A a, T t) T main ->
-    return 0
+() void main ->
+    () int s = h
+    int c = s()
+    return
 
 
