@@ -5,7 +5,7 @@ class T
 class A
     T t
 
-() void main ->
+(A a, T t) T main ->
     return 0
 
 
