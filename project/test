@@ -15,20 +15,6 @@ class Rectangle : Parallelogram
     () float area ->
         return a * b
 
-class Parallelogram : Shape
-    float a
-    float b
-    float sin
-
-    () float perimeter ->
-        return a * 2 + b * 2
-
-    () float area ->
-        return a * b * sin
-
-interface Shape
-    () float perimeter
-    () float area
 
 
 () int main ->

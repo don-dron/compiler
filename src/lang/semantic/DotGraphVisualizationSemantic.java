@@ -1,6 +1,7 @@
 package lang.semantic;
 
 import lang.ast.ArrayTypeNode;
+import lang.ast.AstNode;
 import lang.ast.BasicTypeNode;
 import lang.ast.FileNode;
 import lang.ast.FunctionNode;
@@ -49,13 +50,20 @@ import lang.ast.statement.ReturnStatementNode;
 import lang.ast.statement.StatementNode;
 import lang.ast.statement.WhileStatementNode;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
 public class DotGraphVisualizationSemantic {
 
     private final List<FileNode> fileNodes;
+    private int count;
+
+    private final Map<AstNode, String> nodeToField = new HashMap<>();
+    private final Map<AstNode, AstNode> nodeToNode = new HashMap<>();
+    private String currentStruct;
 
     public DotGraphVisualizationSemantic(List<FileNode> fileNodes) {
         this.fileNodes = fileNodes;
@@ -64,9 +72,17 @@ public class DotGraphVisualizationSemantic {
     public String dotVisualization() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("digraph G {\n");
+        builder.append("digraph G { \n" +
+                "graph [layout = neato,landscape=false, overlap = FALSE," +
+                " outputorder = edgesfirst, splines = curved]\n");
 
         fileNodes.forEach(f -> builder.append(fileNodeVisualization(f)));
+
+        builder.append("\n");
+
+        for (Map.Entry<AstNode, AstNode> entry : nodeToNode.entrySet()) {
+//            builder.append("\t" + nodeToField.get(entry.getKey()) + " -> " + nodeToField.get(entry.getValue()) + ";\n");
+        }
 
         builder.append("\n}");
 
@@ -76,11 +92,15 @@ public class DotGraphVisualizationSemantic {
     public String fileNodeVisualization(FileNode f) {
         StringBuilder builder = new StringBuilder();
 
+        String name = "\"" + "struct_" + f.getPath() + "\"";
+
+        currentStruct = name;
+
         builder.append("\tnode [shape=record];\n");
         builder
-                .append("\t\"struct_")
-                .append(f.getPath())
-                .append("\" [label=\"{")
+                .append("\t")
+                .append(name)
+                .append(" [label=\"{")
                 .append(f.getPath().replaceAll("\\\\", "\\\\\\\\"))
                 .append("|");
 
@@ -106,7 +126,7 @@ public class DotGraphVisualizationSemantic {
         } else if (node instanceof DeclarationStatementNode) {
             return declarationNodeVisualisation((DeclarationStatementNode) node);
         } else if (node instanceof IfElseStatementNode) {
-            return ifelseNodeVisualization((IfElseStatementNode) node);
+            return ifElseNodeVisualization((IfElseStatementNode) node);
         } else if (node instanceof InterfaceStatementNode) {
             return interfaceNodeVisualization((InterfaceStatementNode) node);
         } else if (node instanceof ReturnStatementNode) {
@@ -130,89 +150,6 @@ public class DotGraphVisualizationSemantic {
         } else {
             throw new IllegalArgumentException("");
         }
-    }
-
-    private String constructorNodeVisualization(ConstructorDefinitionNode node) {
-        StringBuilder builder = new StringBuilder();
-        builder
-                .append("{ constructor")
-                .append("| {")
-                .append(statementNodeVisualization(node.getStatementNode()))
-                .append("}")
-                .append("}");
-        return builder.toString();
-    }
-
-    private String interfaceNodeVisualization(InterfaceStatementNode node) {
-        StringBuilder builder = new StringBuilder();
-
-        builder
-                .append("{{interface ")
-                .append(node.getIdentifierNode().getName())
-                .append("|{ ")
-                .append("extends |{")
-                .append(node.getExtendNodes().stream()
-                        .map(i -> {
-                            if (i instanceof ClassStatementNode) {
-                                return ((ClassStatementNode) i).getIdentifierNode().getName();
-                            } else if (i instanceof InterfaceStatementNode) {
-                                return ((InterfaceStatementNode) i).getIdentifierNode().getName();
-                            }
-                            return "";
-                        })
-                        .collect(Collectors.joining("|")))
-                .append("}|")
-                .append("statements |{")
-                .append(node.getTranslationNode().getStatements().stream()
-                        .map(this::statementNodeVisualization)
-                        .collect(Collectors.joining("|")))
-                .append("}}}}");
-        return builder.toString();
-    }
-
-    private String ifelseNodeVisualization(IfElseStatementNode node) {
-        StringBuilder builder = new StringBuilder();
-        builder
-                .append("{ ifelse")
-                .append("| {")
-                .append(statementNodeVisualization(node.getIfStatementNode()))
-                .append(node.getElifStatementNodes().stream()
-                        .map(this::statementNodeVisualization)
-                        .map(s -> "|" + s)
-                        .collect(Collectors.joining()))
-                .append(node.getElifStatementNodes() != null
-                        ? ""
-                        : ("|" + statementNodeVisualization(node.getElseStatementNode())))
-                .append("}")
-                .append("}");
-        return builder.toString();
-    }
-
-    private String whileNodeVisualization(WhileStatementNode node) {
-        StringBuilder builder = new StringBuilder();
-        builder
-                .append("{ while")
-                .append("| {")
-                .append(expressionNodeVisualization(node.getConditionNode()))
-                .append("|")
-                .append(statementNodeVisualization(node.getBodyNode()))
-                .append("}")
-                .append("}");
-        return builder.toString();
-    }
-
-    private String breakNodeVisualization(BreakStatementNode node) {
-        StringBuilder builder = new StringBuilder();
-        builder
-                .append("{ break }");
-        return builder.toString();
-    }
-
-    private String continueNodeVisualization(ContinueStatementNode node) {
-        StringBuilder builder = new StringBuilder();
-        builder
-                .append("{ continue }");
-        return builder.toString();
     }
 
     private String expressionNodeVisualization(ExpressionNode expressionNode) {
@@ -431,10 +368,115 @@ public class DotGraphVisualizationSemantic {
         return builder.toString();
     }
 
-    private String returnNodeVisualization(ReturnStatementNode node) {
+    private String constructorNodeVisualization(ConstructorDefinitionNode node) {
+        StringBuilder builder = new StringBuilder();
+        count++;
+        nodeToField.put(node, currentStruct + ":f" + count);
+
+        nodeToNode.put(node, node.getClassStatementNode());
+
+        builder
+                .append("{<f" + count + "> constructor")
+                .append("| {")
+                .append(statementNodeVisualization(node.getStatementNode()))
+                .append("}")
+                .append("}");
+        return builder.toString();
+    }
+
+    private String interfaceNodeVisualization(InterfaceStatementNode node) {
+        StringBuilder builder = new StringBuilder();
+        count++;
+        nodeToField.put(node, currentStruct + ":f" + count);
+
+        node.getExtendNodes()
+                .forEach(c -> nodeToNode.put(c, node));
+
+        builder
+                .append("{{<f" + count + "> interface ")
+                .append(node.getIdentifierNode().getName())
+                .append("|{ ")
+                .append("extends |{")
+                .append(node.getExtendNodes().stream()
+                        .map(i -> {
+                            if (i instanceof ClassStatementNode) {
+                                return ((ClassStatementNode) i).getIdentifierNode().getName();
+                            } else if (i instanceof InterfaceStatementNode) {
+                                return ((InterfaceStatementNode) i).getIdentifierNode().getName();
+                            } else {
+                                throw new IllegalArgumentException("");
+                            }
+                        })
+                        .collect(Collectors.joining("|")))
+                .append("}|")
+                .append("statements |{")
+                .append(node.getTranslationNode().getStatements().stream()
+                        .map(this::statementNodeVisualization)
+                        .collect(Collectors.joining("|")))
+                .append("}}}}");
+        return builder.toString();
+    }
+
+    private String ifElseNodeVisualization(IfElseStatementNode node) {
         StringBuilder builder = new StringBuilder();
         builder
-                .append("{ return");
+                .append("{ ifelse")
+                .append("| {")
+                .append(statementNodeVisualization(node.getIfStatementNode()))
+                .append(node.getElifStatementNodes().stream()
+                        .map(this::statementNodeVisualization)
+                        .map(s -> "|" + s)
+                        .collect(Collectors.joining()))
+                .append(node.getElifStatementNodes() != null
+                        ? ""
+                        : ("|" + statementNodeVisualization(node.getElseStatementNode())))
+                .append("}")
+                .append("}");
+        return builder.toString();
+    }
+
+    private String whileNodeVisualization(WhileStatementNode node) {
+        StringBuilder builder = new StringBuilder();
+        count++;
+        nodeToField.put(node, currentStruct + ":f" + count);
+        builder
+                .append("{<f" + count + "> while")
+                .append("| {")
+                .append(expressionNodeVisualization(node.getConditionNode()))
+                .append("|")
+                .append(statementNodeVisualization(node.getBodyNode()))
+                .append("}")
+                .append("}");
+        return builder.toString();
+    }
+
+    private String breakNodeVisualization(BreakStatementNode node) {
+        StringBuilder builder = new StringBuilder();
+        count++;
+        nodeToField.put(node, currentStruct + ":f" + count);
+        nodeToNode.put(node, node.getCycle());
+
+        builder
+                .append("{<f" + count + "> break }");
+        return builder.toString();
+    }
+
+    private String continueNodeVisualization(ContinueStatementNode node) {
+        StringBuilder builder = new StringBuilder();
+        count++;
+        nodeToField.put(node, currentStruct + ":f" + count);
+        builder
+                .append("{ <f" + count + "> continue }");
+        return builder.toString();
+    }
+
+    private String returnNodeVisualization(ReturnStatementNode node) {
+        StringBuilder builder = new StringBuilder();
+        count++;
+        nodeToField.put(node, currentStruct + ":f" + count);
+        builder.append("{<f" + count + "> return");
+
+        nodeToNode.put(node, node.getFunctionDefinitionNode());
 
         if (node.getExpressionNode() != null) {
             builder.append("| {")
@@ -517,9 +559,13 @@ public class DotGraphVisualizationSemantic {
 
     private String classNodeVisualization(ClassStatementNode node) {
         StringBuilder builder = new StringBuilder();
+        count++;
+        nodeToField.put(node, currentStruct + ":f" + count);
+
+        node.getExtendNodes().forEach(c -> nodeToNode.put(c, node));
 
         builder
-                .append("{{class ")
+                .append("{{<f"+count+"> class ")
                 .append(node.getIdentifierNode().getName())
                 .append("|{ ")
                 .append("extends |{")
@@ -544,9 +590,11 @@ public class DotGraphVisualizationSemantic {
 
     private String functionDefinitionNodeVisualization(FunctionDefinitionNode node) {
         StringBuilder builder = new StringBuilder();
+        count++;
+        nodeToField.put(node, currentStruct + ":f" + count);
 
         builder
-                .append("{function definition ")
+                .append("{<f"+count+"> function definition ")
                 .append("|{ ")
                 .append(node.getIdentifierNode().getName())
                 .append("|")
@@ -584,7 +632,10 @@ public class DotGraphVisualizationSemantic {
             builder.append("}");
         } else if (typeNode instanceof ObjectTypeNode) {
             ObjectTypeNode objectTypeNode = (ObjectTypeNode) typeNode;
-            builder.append(objectTypeNode.getIdentifierNode().getName());
+            count++;
+            nodeToField.put(objectTypeNode, currentStruct + ":" + count);
+            nodeToNode.put(objectTypeNode, objectTypeNode.getDefinitionNode());
+            builder.append("<f" + count + "> " + objectTypeNode.getIdentifierNode().getName());
         } else if (typeNode instanceof ArrayTypeNode) {
             ArrayTypeNode arrayTypeNode = (ArrayTypeNode) typeNode;
             builder.append("{ array | " + typeNodeVisualization(arrayTypeNode.getTypeNode()) + "}");

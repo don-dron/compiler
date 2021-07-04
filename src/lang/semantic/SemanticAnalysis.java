@@ -431,9 +431,8 @@ public class SemanticAnalysis {
 
             TypeNode typeNode = node.getExpressionNode().getResultType();
 
-            if (typeNode instanceof ObjectTypeNode && node.getTypeNode() instanceof ObjectTypeNode) {
-                ObjectTypeNode right = (ObjectTypeNode) typeNode;
-                ObjectTypeNode left = (ObjectTypeNode) node.getTypeNode();
+            if (node.getTypeNode() instanceof ObjectTypeNode && (typeNode instanceof ObjectTypeNode
+                    || typeNode.equals(REF_TYPE))) {
 
                 // ....
                 return;
