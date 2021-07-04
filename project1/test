@@ -1,9 +1,33 @@
-() int h ->
-    return 1
+class Square : Rectangle
+
+    (float a) ->
+        a = a
+
+    () float area ->
+        return a * a
+
+    () float perimeter ->
+        return a * 4
+
+class Rectangle : Parallelogram
+    () float area ->
+        return a * b
+
+class Parallelogram : Shape
+    float a
+    float b
+    float sin
+
+    () float perimeter ->
+        return a * 2 + b * 2
+
+    () float area ->
+        return a * b * sin
+
+interface Shape
+    () float perimeter
+    () float area
 
 () void main ->
-    () int s = h
-    int c = s()
+    int[] a = int[100]
     return
-
-

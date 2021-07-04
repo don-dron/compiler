@@ -89,12 +89,23 @@ public class SemanticAnalysis {
         findMainFunction();
 
         for (FileNode fileNode : fileNodes) {
-            analyseDefinitionsEnd(fileNode);
+            linkImports(fileNode);
         }
 
         for (FileNode fileNode : fileNodes) {
-            System.out.println(fileNode.astDebug());
+            analyseDefinitionsMiddle(fileNode);
         }
+
+        for (FileNode fileNode : fileNodes) {
+            analyseDefinitionsEnd(fileNode);
+        }
+
+//        for (FileNode fileNode : fileNodes) {
+//            System.out.println(fileNode.astDebug());
+//        }
+
+        DotGraphVisualizationSemantic dotGraphVisualizationSemantic = new DotGraphVisualizationSemantic(fileNodes);
+        System.out.println(dotGraphVisualizationSemantic.dotVisualization());
     }
 
     private void findMainFunction() {
@@ -172,7 +183,7 @@ public class SemanticAnalysis {
         }
     }
 
-    private void analyseDefinitionsEnd(FileNode fileNode) {
+    private void linkImports(FileNode fileNode) {
         Scope scope = fileNode.getScope();
         List<StatementNode> imports = importedFiles.getOrDefault(fileNode, List.of())
                 .stream()
@@ -182,7 +193,21 @@ public class SemanticAnalysis {
         for (StatementNode statementNode : imports) {
             scope.addWeakDeclaration(statementNode);
         }
+    }
 
+    private void analyseDefinitionsMiddle(FileNode fileNode) {
+        Scope scope = fileNode.getScope();
+        for (StatementNode node : fileNode.getStatementNodes()) {
+            if (node instanceof ClassStatementNode) {
+                analyseClassInGlobalMiddle((ClassStatementNode) node, scope);
+            } else if (node instanceof InterfaceStatementNode) {
+                analyseInterfaceInGlobalMiddle((InterfaceStatementNode) node, scope);
+            }
+        }
+    }
+
+    private void analyseDefinitionsEnd(FileNode fileNode) {
+        Scope scope = fileNode.getScope();
         for (StatementNode node : fileNode.getStatementNodes()) {
             if (node instanceof ClassStatementNode) {
                 analyseClassInGlobalEnd((ClassStatementNode) node, scope);
@@ -203,6 +228,7 @@ public class SemanticAnalysis {
             analyseBreak((BreakStatementNode) node, scope);
         } else if (node instanceof ClassStatementNode) {
             analyseClassInGlobalStart((ClassStatementNode) node, scope);
+            analyseClassInGlobalMiddle((ClassStatementNode) node, scope);
             analyseClassInGlobalEnd((ClassStatementNode) node, scope);
         } else if (node instanceof CompoundStatementNode) {
             analyseCompound((CompoundStatementNode) node, scope);
@@ -214,6 +240,7 @@ public class SemanticAnalysis {
             analyseIfElse((IfElseStatementNode) node, scope);
         } else if (node instanceof InterfaceStatementNode) {
             analyseInterfaceInGlobalStart((InterfaceStatementNode) node, scope);
+            analyseInterfaceInGlobalMiddle((InterfaceStatementNode) node, scope);
             analyseInterfaceInGlobalEnd((InterfaceStatementNode) node, scope);
         } else if (node instanceof ReturnStatementNode) {
             analyseReturn((ReturnStatementNode) node, scope);
@@ -245,6 +272,7 @@ public class SemanticAnalysis {
         parentScope.addDeclaration(classNode);
 
         Scope scope = new Scope(parentScope);
+        classNode.setInnerScope(scope);
         scope.setOwner(classNode);
         classNode.getTranslationNode().getStatements().removeIf(s -> s instanceof EmptyStatementNode);
 
@@ -261,6 +289,35 @@ public class SemanticAnalysis {
                 analyseConstructorDefinitionNodeStart((ConstructorDefinitionNode) node, scope);
             } else {
                 throw new IllegalStateException("Wrong statement");
+            }
+        }
+    }
+
+    private void analyseClassInGlobalMiddle(ClassStatementNode classNode, Scope scope) {
+        List<AstNode> extendsNode = classNode.getExtendNames()
+                .stream()
+                .map(i -> {
+                    AstNode node = scope.findDefinitionByVariable(i.getName());
+
+                    if (node == null) {
+                        throw new IllegalArgumentException("Undefined node");
+                    } else if (node instanceof ClassStatementNode) {
+                        classNode.addExtendNode(node);
+                        classNode.getInnerScope().addAlternativeScope(((ClassStatementNode) node).getInnerScope());
+                    } else if (node instanceof InterfaceStatementNode) {
+                        classNode.addExtendNode(node);
+                        classNode.getInnerScope().addAlternativeScope(((InterfaceStatementNode) node).getInnerScope());
+                    }
+
+                    return node;
+                })
+                .collect(Collectors.toList());
+
+        for (StatementNode node : classNode.getTranslationNode().getStatements()) {
+            if (node instanceof ClassStatementNode) {
+                analyseClassInGlobalMiddle((ClassStatementNode) node, node.getScope());
+            } else if (node instanceof InterfaceStatementNode) {
+                analyseInterfaceInGlobalMiddle((InterfaceStatementNode) node, node.getScope());
             }
         }
     }
@@ -374,6 +431,14 @@ public class SemanticAnalysis {
 
             TypeNode typeNode = node.getExpressionNode().getResultType();
 
+            if (typeNode instanceof ObjectTypeNode && node.getTypeNode() instanceof ObjectTypeNode) {
+                ObjectTypeNode right = (ObjectTypeNode) typeNode;
+                ObjectTypeNode left = (ObjectTypeNode) node.getTypeNode();
+
+                // ....
+                return;
+            }
+
             if (!typeNode.equals(node.getTypeNode())) {
                 throw new IllegalArgumentException("Wrong types " + node.getTypeNode().toString() + " " +
                         node.getExpressionNode().toString() + " : " +
@@ -468,6 +533,7 @@ public class SemanticAnalysis {
         parentScope.addDeclaration(interfaceStatementNode);
 
         Scope scope = new Scope(parentScope);
+        interfaceStatementNode.setInnerScope(scope);
         scope.setOwner(interfaceStatementNode);
 
         interfaceStatementNode.getTranslationNode().getStatements().removeIf(s -> s instanceof EmptyStatementNode);
@@ -485,14 +551,35 @@ public class SemanticAnalysis {
         }
     }
 
+    private void analyseInterfaceInGlobalMiddle(InterfaceStatementNode interfaceNode, Scope scope) {
+        List<AstNode> extendsNode = interfaceNode.getExtendNames()
+                .stream()
+                .map(i -> {
+                    AstNode node = scope.findDefinitionByVariable(i.getName());
+
+                    if (node == null) {
+                        throw new IllegalArgumentException("Undefined node");
+                    } else if (node instanceof ClassStatementNode) {
+                        interfaceNode.addExtendNode(node);
+                        interfaceNode.getInnerScope().addAlternativeScope(((ClassStatementNode) node).getInnerScope());
+                    } else if (node instanceof InterfaceStatementNode) {
+                        interfaceNode.addExtendNode(node);
+                        interfaceNode.getInnerScope().addAlternativeScope(((InterfaceStatementNode) node).getInnerScope());
+                    }
+
+                    return node;
+                })
+                .collect(Collectors.toList());
+    }
+
     private void analyseInterfaceInGlobalEnd(InterfaceStatementNode interfaceStatementNode, Scope parentScope) {
         for (StatementNode node : interfaceStatementNode.getTranslationNode().getStatements()) {
             if (node instanceof ClassStatementNode) {
-                analyseClassInGlobalStart((ClassStatementNode) node, node.getScope());
+                analyseClassInGlobalEnd((ClassStatementNode) node, node.getScope());
             } else if (node instanceof InterfaceStatementNode) {
-                analyseInterfaceInGlobalStart((InterfaceStatementNode) node, node.getScope());
+                analyseInterfaceInGlobalEnd((InterfaceStatementNode) node, node.getScope());
             } else if (node instanceof FunctionDefinitionNode) {
-                analyseFunctionInGlobalStart((FunctionDefinitionNode) node, node.getScope());
+                analyseFunctionInGlobalEnd((FunctionDefinitionNode) node, node.getScope());
             } else {
                 throw new IllegalStateException("Wrong statement");
             }
@@ -513,11 +600,14 @@ public class SemanticAnalysis {
 
             if (!functionDefinitionNode.getFunctionNode().getTypeNode()
                     .equals(node.getExpressionNode().getResultType())) {
-                throw new IllegalArgumentException("Wrong type");
+                throw new IllegalArgumentException("Wrong type " +
+                        functionDefinitionNode.getFunctionNode().getTypeNode().toString() + " "
+                        + node.getExpressionNode().getResultType());
             }
         } else {
             if (!functionDefinitionNode.getFunctionNode().getTypeNode().equals(GlobalBasicType.VOID_TYPE)) {
-                throw new IllegalArgumentException("Wrong type");
+                throw new IllegalArgumentException("Wrong type " +
+                        functionDefinitionNode.getFunctionNode().getTypeNode().toString());
             }
         }
     }
@@ -543,7 +633,7 @@ public class SemanticAnalysis {
         analyseExpression(node.getConditionNode(), scope);
 
         Scope whileScope = new Scope(scope);
-        scope.setOwner(node);
+        whileScope.setOwner(node);
         analyseStatement(node.getBodyNode(), whileScope);
     }
 
@@ -719,8 +809,9 @@ public class SemanticAnalysis {
                 variableExpressionNode.setIdentifier(functionDefinitionNode.getIdentifierNode());
             } else if (variableNode instanceof ClassStatementNode) {
                 ClassStatementNode classStatementNode = (ClassStatementNode) variableNode;
-                variableExpressionNode.setResultType(new ObjectTypeNode(
-                        classStatementNode.getIdentifierNode()));
+                ObjectTypeNode objectTypeNode = new ObjectTypeNode(classStatementNode.getIdentifierNode());
+                objectTypeNode.setDefinition(classStatementNode);
+                variableExpressionNode.setResultType(objectTypeNode);
                 variableExpressionNode.setIdentifier(classStatementNode.getIdentifierNode());
             } else if (variableNode instanceof InterfaceStatementNode) {
                 InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) variableNode;
@@ -742,9 +833,14 @@ public class SemanticAnalysis {
             ArrayConstructorExpressionNode arrayConstructorExpressionNode =
                     (ArrayConstructorExpressionNode) expressionNode;
 
+            analyseType(arrayConstructorExpressionNode.getTypeNode(), parentScope);
+
             ExpressionNode sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
 
             analyseExpression(sizeExpression, parentScope);
+
+            arrayConstructorExpressionNode.setResultType(
+                    new ArrayTypeNode(arrayConstructorExpressionNode.getTypeNode()));
         } else if (expressionNode instanceof FunctionCallExpressionNode) {
             FunctionCallExpressionNode functionCallExpressionNode = (FunctionCallExpressionNode) expressionNode;
 
@@ -777,7 +873,6 @@ public class SemanticAnalysis {
                 functionCallExpressionNode.setResultType(functionNode.getTypeNode());
             } else if (typeNode instanceof ObjectTypeNode) {
                 ObjectTypeNode objectTypeNode = (ObjectTypeNode) typeNode;
-
                 if (objectTypeNode.getDefinitionNode() instanceof ClassStatementNode) {
                     ClassStatementNode classStatementNode = (ClassStatementNode) objectTypeNode.getDefinitionNode();
                     functionCallExpressionNode.setTarget(classStatementNode.getConstructors()
@@ -785,7 +880,7 @@ public class SemanticAnalysis {
                             .findFirst()
                             .orElseThrow(RuntimeException::new));
                 }
-
+                functionCallExpressionNode.setResultType(objectTypeNode);
             }
         } else if (expressionNode instanceof ArrayAccessExpressionNode) {
             ArrayAccessExpressionNode arrayAccessExpressionNode = (ArrayAccessExpressionNode) expressionNode;
@@ -990,6 +1085,21 @@ public class SemanticAnalysis {
                 && rightType.getType() == TypeNode.Type.LONG) {
             expressionNode.setResultType(rightType);
         } else if (leftType.getType() == TypeNode.Type.FLOAT
+                && rightType.getType() == TypeNode.Type.BOOL) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.FLOAT
+                && rightType.getType() == TypeNode.Type.CHAR) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.FLOAT
+                && rightType.getType() == TypeNode.Type.SHORT) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.FLOAT
+                && rightType.getType() == TypeNode.Type.INT) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.FLOAT
+                && rightType.getType() == TypeNode.Type.LONG) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.FLOAT
                 && rightType.getType() == TypeNode.Type.FLOAT) {
             expressionNode.setResultType(leftType);
         } else if (leftType.getType() == TypeNode.Type.FLOAT
@@ -1001,6 +1111,21 @@ public class SemanticAnalysis {
         } else if (leftType.getType() == TypeNode.Type.DOUBLE
                 && rightType.getType() == TypeNode.Type.DOUBLE) {
             expressionNode.setResultType(rightType);
+        } else if (leftType.getType() == TypeNode.Type.DOUBLE
+                && rightType.getType() == TypeNode.Type.BOOL) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.DOUBLE
+                && rightType.getType() == TypeNode.Type.CHAR) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.DOUBLE
+                && rightType.getType() == TypeNode.Type.SHORT) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.DOUBLE
+                && rightType.getType() == TypeNode.Type.INT) {
+            expressionNode.setResultType(leftType);
+        } else if (leftType.getType() == TypeNode.Type.DOUBLE
+                && rightType.getType() == TypeNode.Type.LONG) {
+            expressionNode.setResultType(leftType);
         }
 
         return expressionNode.getResultType();

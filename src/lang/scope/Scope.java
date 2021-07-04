@@ -2,10 +2,16 @@ package lang.scope;
 
 import lang.ast.AstNode;
 import lang.ast.ParameterNode;
-import lang.ast.statement.*;
+import lang.ast.statement.ClassStatementNode;
+import lang.ast.statement.DeclarationStatementNode;
+import lang.ast.statement.FunctionDefinitionNode;
+import lang.ast.statement.InterfaceStatementNode;
+import lang.ast.statement.StatementNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +20,7 @@ public class Scope {
     private static int SCOPE_COUNT = 0;
 
     private final Scope parentScope;
+    private final List<Scope> alternativeScopes = new ArrayList<>();
     private final List<AstNode> nodes;
     private final List<AstNode> declarations;
     private final int number = SCOPE_COUNT++;
@@ -32,6 +39,14 @@ public class Scope {
 
     public AstNode getOwner() {
         return owner;
+    }
+
+    public void addAlternativeScope(Scope scope) {
+        alternativeScopes.add(scope);
+    }
+
+    public List<Scope> getAlternativeScopes() {
+        return alternativeScopes;
     }
 
     public void addDeclaration(AstNode node) {
@@ -110,14 +125,27 @@ public class Scope {
         AstNode node = matchDeclaration(currentName);
 
         if (node == null && parentScope != null) {
-            return parentScope.findDefinitionByVariable(currentName);
+            node = parentScope.findDefinitionByVariable(currentName);
+        }
+
+        if (node == null) {
+            node = matchInAlternativeScopes(currentName);
         }
 
         return node;
     }
 
-    private AstNode matchDeclaration(String currentName) {
-        Pattern pattern = Pattern.compile("\\$\\d+_" + currentName);
+    public AstNode matchInAlternativeScopes(String currentName) {
+        return alternativeScopes.stream()
+                .map(i -> Optional.ofNullable(i.matchDeclaration(currentName))
+                        .orElse(i.matchInAlternativeScopes(currentName)))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public AstNode matchDeclaration(String currentName) {
+        Pattern pattern = Pattern.compile("\\$\\d+_" + currentName + "\\Z");
 
         return declarations
                 .stream()

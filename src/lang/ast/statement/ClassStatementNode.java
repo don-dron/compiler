@@ -3,6 +3,7 @@ package lang.ast.statement;
 import lang.ast.AstNode;
 import lang.ast.IdentifierNode;
 import lang.ast.TranslationNode;
+import lang.scope.Scope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,20 +12,30 @@ import java.util.stream.Collectors;
 
 public class ClassStatementNode extends StatementNode {
     private final IdentifierNode identifierNode;
-    private final List<IdentifierNode> extend;
+    private final List<IdentifierNode> extendNames;
+    private final List<AstNode> extendNodes = new ArrayList<>();
     private final TranslationNode translationNode;
     private final List<ConstructorDefinitionNode> constructors = new ArrayList<>();
+    private Scope innerScope;
 
     public ClassStatementNode(IdentifierNode identifierNode,
-                              List<IdentifierNode> extend,
+                              List<IdentifierNode> extendNames,
                               TranslationNode translationNode) {
         this.identifierNode = identifierNode;
-        this.extend = extend;
+        this.extendNames = extendNames;
         this.translationNode = translationNode;
     }
 
-    public List<IdentifierNode> getExtend() {
-        return extend;
+    public void setInnerScope(Scope innerScope) {
+        this.innerScope = innerScope;
+    }
+
+    public Scope getInnerScope() {
+        return innerScope;
+    }
+
+    public List<IdentifierNode> getExtendNames() {
+        return extendNames;
     }
 
     public IdentifierNode getIdentifierNode() {
@@ -35,13 +46,12 @@ public class ClassStatementNode extends StatementNode {
         return translationNode;
     }
 
-    @Override
-    public String astDebug(int shift) {
+    public void addExtendNode(AstNode astNode) {
+        this.extendNodes.add(astNode);
+    }
 
-        return SHIFT.repeat(shift) + "ClassStatement: \n" +
-                identifierNode.astDebug(shift + 1) + "\n" +
-                extend.stream().map(e -> e.astDebug(shift + 1) + "\n").collect(Collectors.joining()) +
-                translationNode.astDebug(shift + 1);
+    public List<AstNode> getExtendNodes() {
+        return extendNodes;
     }
 
     public void addConstructor(ConstructorDefinitionNode constructorDefinitionNode) {
@@ -53,6 +63,15 @@ public class ClassStatementNode extends StatementNode {
     }
 
     @Override
+    public String astDebug(int shift) {
+
+        return SHIFT.repeat(shift) + "ClassStatement: \n" +
+                identifierNode.astDebug(shift + 1) + "\n" +
+                extendNames.stream().map(e -> e.astDebug(shift + 1) + "\n").collect(Collectors.joining()) +
+                translationNode.astDebug(shift + 1);
+    }
+
+    @Override
     public List<? extends AstNode> getChildren() {
         return List.of(translationNode);
     }
@@ -60,7 +79,7 @@ public class ClassStatementNode extends StatementNode {
     @Override
     public String toString() {
         return "class " + identifierNode.toString() + " : " +
-                extend.stream().map(Objects::toString).collect(Collectors.joining(",")) + "\n" +
+                extendNames.stream().map(Objects::toString).collect(Collectors.joining(",")) + "\n" +
                 translationNode.toString();
     }
 }

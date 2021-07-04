@@ -1,5 +1,4 @@
 
-
 (int[] numbers, int left, int right) void quickSort ->
     int pivot
     int l_hold = left
@@ -33,3 +32,4 @@
 
     if right > pivot
         quickSort(numbers, pivot, right)
+
