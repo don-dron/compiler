@@ -1,22 +1,5 @@
 import sort.quick.quickSort
 
-class Square : Rectangle
-
-    (float a) ->
-        a = a
-
-    () float area ->
-        return a * a
-
-    () float perimeter ->
-        return a * 4
-
-class Rectangle : Parallelogram
-    () float area ->
-        return a * b
-
-
-
 () int main ->
     int size = 100
     int[] a = int[size]

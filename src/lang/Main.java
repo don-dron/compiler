@@ -2,6 +2,7 @@ package lang;
 
 import lang.ast.FileNode;
 import lang.ast.TranslationNode;
+import lang.ir.translate.Translator;
 import lang.lexer.Lexer;
 import lang.parser.Parser;
 import lang.semantic.SemanticAnalysis;
@@ -33,7 +34,10 @@ public class Main {
         SemanticAnalysis semanticAnalysis = new SemanticAnalysis(
                 root.getAbsolutePath(),
                 files);
-        semanticAnalysis.analyse();
+
+        Translator translator = new Translator(semanticAnalysis.analyse());
+        Module module = translator.translate();
+
         System.out.println("End");
     }
 

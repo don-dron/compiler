@@ -1,43 +1,21 @@
 
-class Parallelogram : Shape
-    float a
-    float b
-    float sin
-
-    () float perimeter ->
-        return a * 2 + b * 2
-
-    () float area ->
-        return a * b * sin
-
-interface Shape
-    () float perimeter
-    () float area
-
 (int[] numbers, int left, int right) void quickSort ->
     int pivot
     int l_hold = left
     int r_hold = right
-
-    Shape s= null
 
     pivot = numbers[left]
 
     while left < right
         while numbers[right] >= pivot && left < right
             right--
-            break
-
-        continue
 
         if left != right
             numbers[left] = numbers[right]
             left++
-            break
 
         while numbers[left] <= pivot && left < right
             left++
-            continue
 
         if left != right
             numbers[right] = numbers[left]

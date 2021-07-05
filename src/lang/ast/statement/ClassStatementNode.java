@@ -3,7 +3,7 @@ package lang.ast.statement;
 import lang.ast.AstNode;
 import lang.ast.IdentifierNode;
 import lang.ast.TranslationNode;
-import lang.scope.Scope;
+import lang.semantic.Scope;
 
 import java.util.ArrayList;
 import java.util.List;

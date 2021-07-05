@@ -1,7 +1,7 @@
 package lang.ast;
 
 import lang.Position;
-import lang.scope.Scope;
+import lang.semantic.Scope;
 
 import java.util.List;
 

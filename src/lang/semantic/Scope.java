@@ -1,4 +1,4 @@
-package lang.scope;
+package lang.semantic;
 
 import lang.ast.AstNode;
 import lang.ast.ParameterNode;

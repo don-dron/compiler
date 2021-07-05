@@ -9,6 +9,7 @@ import lang.ast.GlobalBasicType;
 import lang.ast.ImportNode;
 import lang.ast.ObjectTypeNode;
 import lang.ast.ParameterNode;
+import lang.ast.Program;
 import lang.ast.TypeNode;
 import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.expression.ConditionalExpressionNode;
@@ -52,7 +53,6 @@ import lang.ast.statement.InterfaceStatementNode;
 import lang.ast.statement.ReturnStatementNode;
 import lang.ast.statement.StatementNode;
 import lang.ast.statement.WhileStatementNode;
-import lang.scope.Scope;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -70,14 +70,16 @@ public class SemanticAnalysis {
     private final List<FileNode> fileNodes;
     private final Map<FileNode, List<FileNode>> importedFiles;
     private FunctionDefinitionNode mainFunction;
+    private final List<FunctionDefinitionNode> functions;
 
     public SemanticAnalysis(String rootPath, List<FileNode> fileNodes) {
         this.rootPath = rootPath;
         this.fileNodes = fileNodes;
         this.importedFiles = new HashMap<>();
+        this.functions = new ArrayList<>();
     }
 
-    public void analyse() {
+    public Program analyse() {
         for (FileNode fileNode : fileNodes) {
             analyseImports(fileNode);
         }
@@ -100,12 +102,9 @@ public class SemanticAnalysis {
             analyseDefinitionsEnd(fileNode);
         }
 
-//        for (FileNode fileNode : fileNodes) {
-//            System.out.println(fileNode.astDebug());
-//        }
-
-        DotGraphVisualizationSemantic dotGraphVisualizationSemantic = new DotGraphVisualizationSemantic(fileNodes);
-        System.out.println(dotGraphVisualizationSemantic.dotVisualization());
+        return new Program(
+                new ArrayList<>(functions),
+                new ArrayList<>(fileNodes));
     }
 
     private void findMainFunction() {
@@ -468,6 +467,8 @@ public class SemanticAnalysis {
         parentScope.addDeclaration(function);
 
         if (function.getStatementNode() != null) {
+            functions.add(function);
+
             Scope scope = new Scope(parentScope);
             scope.setOwner(function);
             function.getFunctionNode().getParametersNode().getParameters()
@@ -486,6 +487,7 @@ public class SemanticAnalysis {
 
     private void analyseFunctionInGlobalEnd(FunctionDefinitionNode function, Scope parentScope) {
         if (function.getStatementNode() != null) {
+            functions.add(function);
             Scope scope = new Scope(parentScope);
             scope.setOwner(function);
             function.getFunctionNode().getParametersNode().getParameters()
