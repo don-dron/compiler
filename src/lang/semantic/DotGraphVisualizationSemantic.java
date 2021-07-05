@@ -55,11 +55,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static lang.semantic.DotGraphVisualizationSemantic.GraphStyle.STRUCT;
+import static lang.semantic.DotGraphVisualizationSemantic.GraphStyle.TREE;
+
 
 public class DotGraphVisualizationSemantic {
+    public enum GraphStyle {
+        STRUCT,
+        TREE
+    }
 
     private final List<FileNode> fileNodes;
     private int count;
+    private int clusterCount;
+    private int compoundCount;
+
+    private GraphStyle style = TREE;
 
     private final Map<AstNode, String> nodeToField = new HashMap<>();
     private final Map<AstNode, AstNode> nodeToNode = new HashMap<>();
@@ -72,19 +83,31 @@ public class DotGraphVisualizationSemantic {
     public String dotVisualization() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append("digraph G { \n" +
-                "graph [layout = neato,landscape=false, overlap = FALSE," +
-                " outputorder = edgesfirst, splines = curved]\n");
+        if (style == STRUCT) {
+            builder.append("digraph G { \n" +
+                    "graph [layout = neato,landscape=false, overlap = FALSE," +
+                    " outputorder = edgesfirst, splines = curved]\n");
 
-        fileNodes.forEach(f -> builder.append(fileNodeVisualization(f)));
+            fileNodes.forEach(f -> builder.append(fileNodeVisualization(f)));
 
-        builder.append("\n");
+            builder.append("\n");
 
-        for (Map.Entry<AstNode, AstNode> entry : nodeToNode.entrySet()) {
-//            builder.append("\t" + nodeToField.get(entry.getKey()) + " -> " + nodeToField.get(entry.getValue()) + ";\n");
+            for (Map.Entry<AstNode, AstNode> entry : nodeToNode.entrySet()) {
+                builder.append("\t" + nodeToField.get(entry.getKey()) + " -> " + nodeToField.get(entry.getValue()) + ";\n");
+            }
+
+            builder.append("\n}");
+        } else {
+            builder.append("digraph G { \n");
+            fileNodes.forEach(f -> builder.append(fileNodeVisualization(f)).append("\n"));
+            builder.append("\n");
+
+            for (Map.Entry<AstNode, AstNode> entry : nodeToNode.entrySet()) {
+                builder.append("\t" + nodeToField.get(entry.getKey()) + " -> " + nodeToField.get(entry.getValue()) + ";\n");
+            }
+
+            builder.append("\n}");
         }
-
-        builder.append("\n}");
 
         return builder.toString();
     }
@@ -92,25 +115,43 @@ public class DotGraphVisualizationSemantic {
     public String fileNodeVisualization(FileNode f) {
         StringBuilder builder = new StringBuilder();
 
-        String name = "\"" + "struct_" + f.getPath() + "\"";
+        if (style == STRUCT) {
+            String name = "\"" + "struct_" + f.getPath() + "\"";
 
-        currentStruct = name;
+            currentStruct = name;
 
-        builder.append("\tnode [shape=record];\n");
-        builder
-                .append("\t")
-                .append(name)
-                .append(" [label=\"{")
-                .append(f.getPath().replaceAll("\\\\", "\\\\\\\\"))
-                .append("|");
+            builder.append("\tnode [shape=record];\n");
+            builder
+                    .append("\t")
+                    .append(name)
+                    .append(" [label=\"{")
+                    .append(f.getPath().replaceAll("\\\\", "\\\\\\\\"))
+                    .append("|");
 
-        builder.append(f.getStatementNodes().stream()
-                .map(this::statementNodeVisualization)
-                .collect(Collectors.joining("|")));
+            builder.append(f.getStatementNodes().stream()
+                    .map(this::statementNodeVisualization)
+                    .collect(Collectors.joining("|")));
 
-        builder
-                .append("}\"];");
+            builder
+                    .append("}\"];");
+        } else {
+            String name = "\"" + f.getPath().replaceAll("\\\\", "\\\\\\\\") + "\"";
+            clusterCount++;
+            currentStruct = name;
+            builder
+                    .append("\tsubgraph cluster_")
+                    .append(clusterCount)
+                    .append(" {")
+                    .append("label=")
+                    .append(name)
+                    .append(";");
 
+            builder.append(f.getStatementNodes().stream()
+                    .map(this::statementNodeVisualization)
+                    .collect(Collectors.joining("\n")));
+
+            builder.append("}");
+        }
         return builder.toString();
     }
 
@@ -160,13 +201,23 @@ public class DotGraphVisualizationSemantic {
             ExpressionNode left = assigmentExpressionNode.getLeft();
             ExpressionNode right = assigmentExpressionNode.getRight();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(left));
-            builder.append("|");
-            builder.append("=");
-            builder.append("|");
-            builder.append(expressionNodeVisualization(right));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append("=");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append("=");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof ConditionalExpressionNode) {
             ConditionalExpressionNode conditionalExpressionNode = (ConditionalExpressionNode) expressionNode;
 
@@ -174,193 +225,348 @@ public class DotGraphVisualizationSemantic {
             ExpressionNode then = conditionalExpressionNode.getThenNode();
             ExpressionNode els = conditionalExpressionNode.getElseNode();
 
-            builder.append("{ COND_EXPR | {");
-            builder.append(expressionNodeVisualization(cond));
-            builder.append("|");
-            builder.append(expressionNodeVisualization(then));
-            builder.append("|");
-            builder.append(expressionNodeVisualization(els));
-            builder.append("}}");
+            if (style == STRUCT) {
+                builder.append("{ COND_EXPR | {");
+                builder.append(expressionNodeVisualization(cond));
+                builder.append("|");
+                builder.append(expressionNodeVisualization(then));
+                builder.append("|");
+                builder.append(expressionNodeVisualization(els));
+                builder.append("}}");
+            } else {
+                builder.append("{ COND_EXPR | {");
+                builder.append(expressionNodeVisualization(cond));
+                builder.append("|");
+                builder.append(expressionNodeVisualization(then));
+                builder.append("|");
+                builder.append(expressionNodeVisualization(els));
+                builder.append("}}");
+            }
         } else if (expressionNode instanceof AdditiveExpressionNode) {
             AdditiveExpressionNode additiveExpressionNode = (AdditiveExpressionNode) expressionNode;
 
             ExpressionNode left = additiveExpressionNode.getLeft();
             ExpressionNode right = additiveExpressionNode.getRight();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(left));
-            builder.append("|");
-            builder.append(additiveExpressionNode.getType().toString());
-            builder.append("|");
-            builder.append(expressionNodeVisualization(right));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append(additiveExpressionNode.getType().toString());
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append(additiveExpressionNode.getType().toString());
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof MultiplicativeExpressionNode) {
             MultiplicativeExpressionNode multiplicativeExpressionNode = (MultiplicativeExpressionNode) expressionNode;
 
             ExpressionNode left = multiplicativeExpressionNode.getLeft();
             ExpressionNode right = multiplicativeExpressionNode.getRight();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(left));
-            builder.append("|");
-            builder.append(multiplicativeExpressionNode.getType().toString());
-            builder.append("|");
-            builder.append(expressionNodeVisualization(right));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append(multiplicativeExpressionNode.getType().toString());
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append(multiplicativeExpressionNode.getType().toString());
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof LogicalAndExpressionNode) {
             LogicalAndExpressionNode logicalAndExpressionNode = (LogicalAndExpressionNode) expressionNode;
 
             ExpressionNode left = logicalAndExpressionNode.getLeft();
             ExpressionNode right = logicalAndExpressionNode.getRight();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(left));
-            builder.append("|");
-            builder.append("AND");
-            builder.append("|");
-            builder.append(expressionNodeVisualization(right));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append("AND");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append("AND");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof LogicalOrExpressionNode) {
             LogicalOrExpressionNode logicalOrExpressionNode = (LogicalOrExpressionNode) expressionNode;
 
             ExpressionNode left = logicalOrExpressionNode.getLeft();
             ExpressionNode right = logicalOrExpressionNode.getRight();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(left));
-            builder.append("|");
-            builder.append("OR");
-            builder.append("|");
-            builder.append(expressionNodeVisualization(right));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append("OR");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append("OR");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof RelationalExpressionNode) {
             RelationalExpressionNode relationalExpressionNode = (RelationalExpressionNode) expressionNode;
 
             ExpressionNode left = relationalExpressionNode.getLeft();
             ExpressionNode right = relationalExpressionNode.getRight();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(left));
-            builder.append("|");
-            builder.append(relationalExpressionNode.getType().toString());
-            builder.append("|");
-            builder.append(expressionNodeVisualization(right));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append(relationalExpressionNode.getType().toString());
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append(relationalExpressionNode.getType().toString());
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof EqualityExpressionNode) {
             EqualityExpressionNode equalityExpressionNode = (EqualityExpressionNode) expressionNode;
 
             ExpressionNode left = equalityExpressionNode.getLeft();
             ExpressionNode right = equalityExpressionNode.getRight();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(left));
-            builder.append("|");
-            builder.append(equalityExpressionNode.getType().toString());
-            builder.append("|");
-            builder.append(expressionNodeVisualization(right));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append(equalityExpressionNode.getType().toString());
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append(equalityExpressionNode.getType().toString());
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof VariableExpressionNode) {
             VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode;
             String name = ((VariableExpressionNode) expressionNode).getIdentifierNode().getName();
-            builder.append(name);
+            if (style == STRUCT) {
+                builder.append(name);
+            } else {
+                builder.append(name);
+            }
         } else if (expressionNode instanceof BoolConstantExpressionNode) {
             BoolConstantExpressionNode boolConstantExpressionNode = (BoolConstantExpressionNode) expressionNode;
-            builder.append(String.valueOf(boolConstantExpressionNode.getValue()));
+
+            if (style == STRUCT) {
+                builder.append(String.valueOf(boolConstantExpressionNode.getValue()));
+            } else {
+                builder.append(String.valueOf(boolConstantExpressionNode.getValue()));
+            }
         } else if (expressionNode instanceof IntConstantExpressionNode) {
             IntConstantExpressionNode intConstantExpressionNode = (IntConstantExpressionNode) expressionNode;
-            builder.append(String.valueOf(intConstantExpressionNode.getValue()));
+            if (style == STRUCT) {
+                builder.append(String.valueOf(intConstantExpressionNode.getValue()));
+            } else {
+                builder.append(String.valueOf(intConstantExpressionNode.getValue()));
+            }
         } else if (expressionNode instanceof FloatConstantExpressionNode) {
             FloatConstantExpressionNode floatConstantExpressionNode = (FloatConstantExpressionNode) expressionNode;
-            builder.append(String.valueOf(floatConstantExpressionNode.getValue()));
+            if (style == STRUCT) {
+                builder.append(String.valueOf(floatConstantExpressionNode.getValue()));
+            } else {
+                builder.append(String.valueOf(floatConstantExpressionNode.getValue()));
+            }
         } else if (expressionNode instanceof NullConstantExpressionNode) {
             NullConstantExpressionNode nullConstantExpressionNode = (NullConstantExpressionNode) expressionNode;
-            builder.append("null");
+            if (style == STRUCT) {
+                builder.append("null");
+            } else {
+                builder.append("null");
+            }
         } else if (expressionNode instanceof ArrayConstructorExpressionNode) {
             ArrayConstructorExpressionNode arrayConstructorExpressionNode =
                     (ArrayConstructorExpressionNode) expressionNode;
             ExpressionNode sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
-            builder.append("{ARRAY_CONSTRUCT|" + typeNodeVisualization(arrayConstructorExpressionNode.getTypeNode())
-                    + "|" + expressionNodeVisualization(sizeExpression) + " }");
+            if (style == STRUCT) {
+                builder.append("{ARRAY_CONSTRUCT|" + typeNodeVisualization(arrayConstructorExpressionNode.getTypeNode())
+                        + "|" + expressionNodeVisualization(sizeExpression) + " }");
+            } else {
+                builder.append("{ARRAY_CONSTRUCT|" + typeNodeVisualization(arrayConstructorExpressionNode.getTypeNode())
+                        + "|" + expressionNodeVisualization(sizeExpression) + " }");
+            }
         } else if (expressionNode instanceof FunctionCallExpressionNode) {
             FunctionCallExpressionNode functionCallExpressionNode = (FunctionCallExpressionNode) expressionNode;
 
             ExpressionNode function = functionCallExpressionNode.getFunction();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(function));
-            builder.append("|{");
-            builder.append(functionCallExpressionNode.getParameters().getList()
-                    .stream()
-                    .map(this::expressionNodeVisualization)
-                    .collect(Collectors.joining("|")));
-            builder.append("}}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(function));
+                builder.append("|{");
+                builder.append(functionCallExpressionNode.getParameters().getList()
+                        .stream()
+                        .map(this::expressionNodeVisualization)
+                        .collect(Collectors.joining("|")));
+                builder.append("}}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(function));
+                builder.append("|{");
+                builder.append(functionCallExpressionNode.getParameters().getList()
+                        .stream()
+                        .map(this::expressionNodeVisualization)
+                        .collect(Collectors.joining("|")));
+                builder.append("}}");
+            }
         } else if (expressionNode instanceof ArrayAccessExpressionNode) {
             ArrayAccessExpressionNode arrayAccessExpressionNode = (ArrayAccessExpressionNode) expressionNode;
 
             ExpressionNode array = arrayAccessExpressionNode.getArray();
             ExpressionNode argument = arrayAccessExpressionNode.getArgument();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(array));
-            builder.append("|");
-            builder.append("ARRAY_ACCESS");
-            builder.append("|");
-            builder.append(expressionNodeVisualization(argument));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(array));
+                builder.append("|");
+                builder.append("ARRAY_ACCESS");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(argument));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(array));
+                builder.append("|");
+                builder.append("ARRAY_ACCESS");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(argument));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof FieldAccessExpressionNode) {
             FieldAccessExpressionNode fieldAccessExpressionNode = (FieldAccessExpressionNode) expressionNode;
 
             ExpressionNode left = fieldAccessExpressionNode.getLeft();
             ExpressionNode right = fieldAccessExpressionNode.getRight();
 
-            builder.append("{");
-            builder.append(expressionNodeVisualization(left));
-            builder.append("|");
-            builder.append("FIELD_ACCESS");
-            builder.append("|");
-            builder.append(expressionNodeVisualization(right));
-            builder.append("}");
+            if (style == STRUCT) {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append("FIELD_ACCESS");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            } else {
+                builder.append("{");
+                builder.append(expressionNodeVisualization(left));
+                builder.append("|");
+                builder.append("FIELD_ACCESS");
+                builder.append("|");
+                builder.append(expressionNodeVisualization(right));
+                builder.append("}");
+            }
         } else if (expressionNode instanceof PostfixDecrementSubtractionExpressionNode) {
             PostfixDecrementSubtractionExpressionNode postfixDecrementSubtractionExpressionNode =
                     (PostfixDecrementSubtractionExpressionNode) expressionNode;
 
             ExpressionNode node = postfixDecrementSubtractionExpressionNode.getExpressionNode();
-            builder.append("{ POST_DEC | " + expressionNodeVisualization(node) + " }");
+            if (style == STRUCT) {
+                builder.append("{ POST_DEC | " + expressionNodeVisualization(node) + " }");
+            } else {
+                builder.append("{ POST_DEC | " + expressionNodeVisualization(node) + " }");
+            }
         } else if (expressionNode instanceof PostfixIncrementAdditiveExpressionNode) {
             PostfixIncrementAdditiveExpressionNode postfixIncrementAdditiveExpressionNode =
                     (PostfixIncrementAdditiveExpressionNode) expressionNode;
 
             ExpressionNode node = postfixIncrementAdditiveExpressionNode.getExpressionNode();
-            builder.append("{ POST_INC | " + expressionNodeVisualization(node) + " }");
+            if (style == STRUCT) {
+                builder.append("{ POST_INC | " + expressionNodeVisualization(node) + " }");
+            } else {
+                builder.append("{ POST_INC | " + expressionNodeVisualization(node) + " }");
+            }
         } else if (expressionNode instanceof PostfixIncrementMultiplicativeExpressionNode) {
             PostfixIncrementMultiplicativeExpressionNode postfixIncrementMultiplicativeExpressionNode =
                     (PostfixIncrementMultiplicativeExpressionNode) expressionNode;
 
             ExpressionNode node = postfixIncrementMultiplicativeExpressionNode.getExpressionNode();
-            builder.append("{ POST_MUL | " + expressionNodeVisualization(node) + " }");
+            if (style == STRUCT) {
+                builder.append("{ POST_MUL | " + expressionNodeVisualization(node) + " }");
+            } else {
+                builder.append("{ POST_MUL | " + expressionNodeVisualization(node) + " }");
+            }
         } else if (expressionNode instanceof PrefixDecrementSubtractionExpressionNode) {
             PrefixDecrementSubtractionExpressionNode prefixDecrementSubtractionExpressionNode =
                     (PrefixDecrementSubtractionExpressionNode) expressionNode;
 
             ExpressionNode node = prefixDecrementSubtractionExpressionNode.getExpressionNode();
-            builder.append("{ PRE_DEC | " + expressionNodeVisualization(node) + " }");
+            if (style == STRUCT) {
+                builder.append("{ PRE_DEC | " + expressionNodeVisualization(node) + " }");
+            } else {
+                builder.append("{ PRE_DEC | " + expressionNodeVisualization(node) + " }");
+            }
         } else if (expressionNode instanceof PrefixIncrementAdditiveExpressionNode) {
             PrefixIncrementAdditiveExpressionNode prefixIncrementAdditiveExpressionNode =
                     (PrefixIncrementAdditiveExpressionNode) expressionNode;
 
             ExpressionNode node = prefixIncrementAdditiveExpressionNode.getExpressionNode();
-            builder.append("{ PRE_INC | " + expressionNodeVisualization(node) + " }");
+            if (style == STRUCT) {
+                builder.append("{ PRE_INC | " + expressionNodeVisualization(node) + " }");
+            } else {
+                builder.append("{ PRE_INC | " + expressionNodeVisualization(node) + " }");
+            }
         } else if (expressionNode instanceof PrefixIncrementMultiplicativeExpressionNode) {
             PrefixIncrementMultiplicativeExpressionNode prefixIncrementMultiplicativeExpressionNode =
                     (PrefixIncrementMultiplicativeExpressionNode) expressionNode;
 
             ExpressionNode node = prefixIncrementMultiplicativeExpressionNode.getExpressionNode();
-            builder.append("{ PRE_MUL | " + expressionNodeVisualization(node) + " }");
+            if (style == STRUCT) {
+                builder.append("{ PRE_MUL | " + expressionNodeVisualization(node) + " }");
+            } else {
+                builder.append("{ PRE_MUL | " + expressionNodeVisualization(node) + " }");
+            }
         } else if (expressionNode instanceof CastExpressionNode) {
             CastExpressionNode castExpressionNode = (CastExpressionNode) expressionNode;
 
             ExpressionNode node = castExpressionNode.getExpressionNode();
-            builder.append("{ CAST | " + expressionNodeVisualization(node) + " }");
+            if (style == STRUCT) {
+                builder.append("{ CAST | " + expressionNodeVisualization(node) + " }");
+            } else {
+                builder.append("{ CAST | " + expressionNodeVisualization(node) + " }");
+            }
         } else {
             throw new IllegalArgumentException("");
         }
@@ -370,239 +576,421 @@ public class DotGraphVisualizationSemantic {
 
     private String constructorNodeVisualization(ConstructorDefinitionNode node) {
         StringBuilder builder = new StringBuilder();
-        count++;
-        nodeToField.put(node, currentStruct + ":f" + count);
+        if (style == STRUCT) {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
 
-        nodeToNode.put(node, node.getClassStatementNode());
+            nodeToNode.put(node, node.getClassStatementNode());
 
-        builder
-                .append("{<f" + count + "> constructor")
-                .append("| {")
-                .append(statementNodeVisualization(node.getStatementNode()))
-                .append("}")
-                .append("}");
+            builder
+                    .append("{<f" + count + "> constructor")
+                    .append("| {")
+                    .append(statementNodeVisualization(node.getStatementNode()))
+                    .append("}")
+                    .append("}");
+        } else {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+
+            nodeToNode.put(node, node.getClassStatementNode());
+            builder
+                    .append("node [shape=record];\n")
+                    .append("\"struct_compound_")
+                    .append(compoundCount)
+                    .append("\" [label = ")
+                    .append("\"{")
+                    .append(statementNodeVisualization(node.getStatementNode()))
+                    .append("}\"]");
+        }
         return builder.toString();
     }
 
     private String interfaceNodeVisualization(InterfaceStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        count++;
-        nodeToField.put(node, currentStruct + ":f" + count);
+        if (style == STRUCT) {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
 
-        node.getExtendNodes()
-                .forEach(c -> nodeToNode.put(c, node));
+            node.getExtendNodes()
+                    .forEach(c -> nodeToNode.put(c, node));
 
-        builder
-                .append("{{<f" + count + "> interface ")
-                .append(node.getIdentifierNode().getName())
-                .append("|{ ")
-                .append("extends |{")
-                .append(node.getExtendNodes().stream()
-                        .map(i -> {
-                            if (i instanceof ClassStatementNode) {
-                                return ((ClassStatementNode) i).getIdentifierNode().getName();
-                            } else if (i instanceof InterfaceStatementNode) {
-                                return ((InterfaceStatementNode) i).getIdentifierNode().getName();
-                            } else {
-                                throw new IllegalArgumentException("");
-                            }
-                        })
-                        .collect(Collectors.joining("|")))
-                .append("}|")
-                .append("statements |{")
-                .append(node.getTranslationNode().getStatements().stream()
-                        .map(this::statementNodeVisualization)
-                        .collect(Collectors.joining("|")))
-                .append("}}}}");
+            builder
+                    .append("{{<f" + count + "> interface ")
+                    .append(node.getIdentifierNode().getName())
+                    .append("|{ ")
+                    .append("extends |{")
+                    .append(node.getExtendNodes().stream()
+                            .map(i -> {
+                                if (i instanceof ClassStatementNode) {
+                                    return ((ClassStatementNode) i).getIdentifierNode().getName();
+                                } else if (i instanceof InterfaceStatementNode) {
+                                    return ((InterfaceStatementNode) i).getIdentifierNode().getName();
+                                } else {
+                                    throw new IllegalArgumentException("");
+                                }
+                            })
+                            .collect(Collectors.joining("|")))
+                    .append("}|")
+                    .append("statements |{")
+                    .append(node.getTranslationNode().getStatements().stream()
+                            .map(this::statementNodeVisualization)
+                            .collect(Collectors.joining("|")))
+                    .append("}}}}");
+        }else {
+            clusterCount++;
+            builder
+                    .append("subgraph cluster_")
+                    .append(clusterCount)
+                    .append(" {\n")
+                    .append("label = \"")
+                    .append(node.getIdentifierNode().getName())
+                    .append("\";\n")
+                    .append(node.getTranslationNode().getStatements().stream()
+                            .map(this::statementNodeVisualization)
+                            .collect(Collectors.joining("\n")))
+                    .append("\n}");
+        }
         return builder.toString();
     }
 
     private String ifElseNodeVisualization(IfElseStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        builder
-                .append("{ ifelse")
-                .append("| {")
-                .append(statementNodeVisualization(node.getIfStatementNode()))
-                .append(node.getElifStatementNodes().stream()
-                        .map(this::statementNodeVisualization)
-                        .map(s -> "|" + s)
-                        .collect(Collectors.joining()))
-                .append(node.getElifStatementNodes() != null
-                        ? ""
-                        : ("|" + statementNodeVisualization(node.getElseStatementNode())))
-                .append("}")
-                .append("}");
+        if (style == STRUCT) {
+            builder
+                    .append("{ ifelse")
+                    .append("| {")
+                    .append(statementNodeVisualization(node.getIfStatementNode()))
+                    .append(node.getElifStatementNodes().stream()
+                            .map(this::statementNodeVisualization)
+                            .map(s -> "|" + s)
+                            .collect(Collectors.joining()))
+                    .append(node.getElifStatementNodes() != null
+                            ? ""
+                            : ("|" + statementNodeVisualization(node.getElseStatementNode())))
+                    .append("}")
+                    .append("}");
+        } else {
+            builder
+                    .append("{ ifelse")
+                    .append("| {")
+                    .append(statementNodeVisualization(node.getIfStatementNode()))
+                    .append(node.getElifStatementNodes().stream()
+                            .map(this::statementNodeVisualization)
+                            .map(s -> "|" + s)
+                            .collect(Collectors.joining()))
+                    .append(node.getElifStatementNodes() != null
+                            ? ""
+                            : ("|" + statementNodeVisualization(node.getElseStatementNode())))
+                    .append("}")
+                    .append("}");
+        }
         return builder.toString();
     }
 
     private String whileNodeVisualization(WhileStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        count++;
-        nodeToField.put(node, currentStruct + ":f" + count);
-        builder
-                .append("{<f" + count + "> while")
-                .append("| {")
-                .append(expressionNodeVisualization(node.getConditionNode()))
-                .append("|")
-                .append(statementNodeVisualization(node.getBodyNode()))
-                .append("}")
-                .append("}");
+        if (style == STRUCT) {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+            builder
+                    .append("{<f" + count + "> while")
+                    .append("| {")
+                    .append(expressionNodeVisualization(node.getConditionNode()))
+                    .append("|")
+                    .append(statementNodeVisualization(node.getBodyNode()))
+                    .append("}")
+                    .append("}");
+        } else {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+            builder
+                    .append("{<f" + count + "> while")
+                    .append("| {")
+                    .append(expressionNodeVisualization(node.getConditionNode()))
+                    .append("|")
+                    .append(statementNodeVisualization(node.getBodyNode()))
+                    .append("}")
+                    .append("}");
+        }
         return builder.toString();
     }
 
     private String breakNodeVisualization(BreakStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        count++;
-        nodeToField.put(node, currentStruct + ":f" + count);
-        nodeToNode.put(node, node.getCycle());
+        if (style == STRUCT) {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+            nodeToNode.put(node, node.getCycle());
 
-        builder
-                .append("{<f" + count + "> break }");
+            builder
+                    .append("{<f" + count + "> break }");
+        } else {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+            nodeToNode.put(node, node.getCycle());
+
+            builder
+                    .append("{<f" + count + "> break }");
+        }
         return builder.toString();
     }
 
     private String continueNodeVisualization(ContinueStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        count++;
-        nodeToField.put(node, currentStruct + ":f" + count);
-        builder
-                .append("{ <f" + count + "> continue }");
+        if (style == STRUCT) {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+            builder
+                    .append("{ <f" + count + "> continue }");
+        } else {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+            builder
+                    .append("{ <f" + count + "> continue }");
+        }
         return builder.toString();
     }
 
     private String returnNodeVisualization(ReturnStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        count++;
-        nodeToField.put(node, currentStruct + ":f" + count);
-        builder.append("{<f" + count + "> return");
+        if (style == STRUCT) {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+            builder.append("{<f" + count + "> return");
 
-        nodeToNode.put(node, node.getFunctionDefinitionNode());
+            nodeToNode.put(node, node.getFunctionDefinitionNode());
 
-        if (node.getExpressionNode() != null) {
-            builder.append("| {")
-                    .append(expressionNodeVisualization(node.getExpressionNode()))
-                    .append("}");
+            if (node.getExpressionNode() != null) {
+                builder.append("| {")
+                        .append(expressionNodeVisualization(node.getExpressionNode()))
+                        .append("}");
+            }
+
+            builder.append("}");
+        } else {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
+            builder.append("{<f" + count + "> return");
+
+            nodeToNode.put(node, node.getFunctionDefinitionNode());
+
+            if (node.getExpressionNode() != null) {
+                builder.append("| {")
+                        .append(expressionNodeVisualization(node.getExpressionNode()))
+                        .append("}");
+            }
+
+            builder.append("}");
         }
-
-        builder.append("}");
-
         return builder.toString();
     }
 
     private String ifNodeVisualization(IfStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        builder
-                .append("{ if")
-                .append("| {")
-                .append(expressionNodeVisualization(node.getConditionNode()))
-                .append("|")
-                .append(statementNodeVisualization(node.getThenNode()))
-                .append("}")
-                .append("}");
+        if (style == STRUCT) {
+            builder
+                    .append("{ if")
+                    .append("| {")
+                    .append(expressionNodeVisualization(node.getConditionNode()))
+                    .append("|")
+                    .append(statementNodeVisualization(node.getThenNode()))
+                    .append("}")
+                    .append("}");
+        } else {
+            builder
+                    .append("{ if")
+                    .append("| {")
+                    .append(expressionNodeVisualization(node.getConditionNode()))
+                    .append("|")
+                    .append(statementNodeVisualization(node.getThenNode()))
+                    .append("}")
+                    .append("}");
+        }
         return builder.toString();
     }
 
     private String elifNodeVisualization(ElifStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        builder
-                .append("{ elif")
-                .append("| {")
-                .append(expressionNodeVisualization(node.getConditionNode()))
-                .append("|")
-                .append(statementNodeVisualization(node.getElseNode()))
-                .append("}")
-                .append("}");
+        if (style == STRUCT) {
+            builder
+                    .append("{ elif")
+                    .append("| {")
+                    .append(expressionNodeVisualization(node.getConditionNode()))
+                    .append("|")
+                    .append(statementNodeVisualization(node.getElseNode()))
+                    .append("}")
+                    .append("}");
+        } else {
+            builder
+                    .append("{ elif")
+                    .append("| {")
+                    .append(expressionNodeVisualization(node.getConditionNode()))
+                    .append("|")
+                    .append(statementNodeVisualization(node.getElseNode()))
+                    .append("}")
+                    .append("}");
+        }
         return builder.toString();
     }
 
     private String elseNodeVisualization(ElseStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        builder
-                .append("{else")
-                .append("| {")
-                .append(statementNodeVisualization(node.getElseNode()))
-                .append("}")
-                .append("}");
+        if (style == STRUCT) {
+            builder
+                    .append("{else")
+                    .append("| {")
+                    .append(statementNodeVisualization(node.getElseNode()))
+                    .append("}")
+                    .append("}");
+        } else {
+            builder
+                    .append("{else")
+                    .append("| {")
+                    .append(statementNodeVisualization(node.getElseNode()))
+                    .append("}")
+                    .append("}");
+        }
         return builder.toString();
     }
 
     private String compoundNodeVisualization(CompoundStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        builder
-                .append("{{")
-                .append(node.getStatements().stream()
-                        .map(this::statementNodeVisualization)
-                        .collect(Collectors.joining("|")))
-                .append("}}");
+        if (style == STRUCT) {
+            builder
+                    .append("{{")
+                    .append(node.getStatements().stream()
+                            .map(this::statementNodeVisualization)
+                            .collect(Collectors.joining("|")))
+                    .append("}}");
+        } else {
+            compoundCount++;
+            builder
+                    .append("{{")
+                    .append(node.getStatements().stream()
+                            .map(this::statementNodeVisualization)
+                            .collect(Collectors.joining("|")))
+                    .append("}}");
+        }
         return builder.toString();
     }
 
     private String declarationNodeVisualisation(DeclarationStatementNode node) {
         StringBuilder builder = new StringBuilder();
-
-        builder
-                .append("{declaration | {")
-                .append(typeNodeVisualization(node.getTypeNode()))
-                .append("|")
-                .append(node.getIdentifierNode().getName());
-
-        if (node.getExpressionNode() != null) {
+        if (style == STRUCT) {
             builder
-                    .append("|" + expressionNodeVisualization(node.getExpressionNode()));
+                    .append("{declaration | {")
+                    .append(typeNodeVisualization(node.getTypeNode()))
+                    .append("|")
+                    .append(node.getIdentifierNode().getName());
+
+            if (node.getExpressionNode() != null) {
+                builder
+                        .append("|")
+                        .append(expressionNodeVisualization(node.getExpressionNode()));
+            }
+
+            builder
+                    .append("}}");
+        } else {
+            builder
+                    .append("{declaration | {")
+                    .append(typeNodeVisualization(node.getTypeNode()))
+                    .append("|")
+                    .append(node.getIdentifierNode().getName());
+
+            if (node.getExpressionNode() != null) {
+                builder
+                        .append("|")
+                        .append(expressionNodeVisualization(node.getExpressionNode()));
+            }
+
+            builder
+                    .append("}}");
         }
-
-        builder
-                .append("}}");
-
         return builder.toString();
     }
 
     private String classNodeVisualization(ClassStatementNode node) {
         StringBuilder builder = new StringBuilder();
-        count++;
-        nodeToField.put(node, currentStruct + ":f" + count);
+        if (style == STRUCT) {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
 
-        node.getExtendNodes().forEach(c -> nodeToNode.put(c, node));
+            node.getExtendNodes().forEach(c -> nodeToNode.put(c, node));
 
-        builder
-                .append("{{<f"+count+"> class ")
-                .append(node.getIdentifierNode().getName())
-                .append("|{ ")
-                .append("extends |{")
-                .append(node.getExtendNodes().stream()
-                        .map(i -> {
-                            if (i instanceof ClassStatementNode) {
-                                return ((ClassStatementNode) i).getIdentifierNode().getName();
-                            } else if (i instanceof InterfaceStatementNode) {
-                                return ((InterfaceStatementNode) i).getIdentifierNode().getName();
-                            }
-                            return "";
-                        })
-                        .collect(Collectors.joining("|")))
-                .append("}|")
-                .append("statements |{")
-                .append(node.getTranslationNode().getStatements().stream()
-                        .map(this::statementNodeVisualization)
-                        .collect(Collectors.joining("|")))
-                .append("}}}}");
+            builder
+                    .append("{{<f" + count + "> class ")
+                    .append(node.getIdentifierNode().getName())
+                    .append("|{ ")
+                    .append("extends |{")
+                    .append(node.getExtendNodes().stream()
+                            .map(i -> {
+                                if (i instanceof ClassStatementNode) {
+                                    return ((ClassStatementNode) i).getIdentifierNode().getName();
+                                } else if (i instanceof InterfaceStatementNode) {
+                                    return ((InterfaceStatementNode) i).getIdentifierNode().getName();
+                                }
+                                return "";
+                            })
+                            .collect(Collectors.joining("|")))
+                    .append("}|")
+                    .append("statements |{")
+                    .append(node.getTranslationNode().getStatements().stream()
+                            .map(this::statementNodeVisualization)
+                            .collect(Collectors.joining("|")))
+                    .append("}}}}");
+        } else {
+            clusterCount++;
+            builder
+                    .append("subgraph cluster_")
+                    .append(clusterCount)
+                    .append(" {\n")
+                    .append("label = \"")
+                    .append(node.getIdentifierNode().getName())
+                    .append("\";\n")
+                    .append(node.getTranslationNode().getStatements().stream()
+                            .map(this::statementNodeVisualization)
+                            .collect(Collectors.joining("\n")))
+                    .append("\n}");
+        }
         return builder.toString();
     }
 
     private String functionDefinitionNodeVisualization(FunctionDefinitionNode node) {
         StringBuilder builder = new StringBuilder();
-        count++;
-        nodeToField.put(node, currentStruct + ":f" + count);
+        if (style == STRUCT) {
+            count++;
+            nodeToField.put(node, currentStruct + ":f" + count);
 
-        builder
-                .append("{<f"+count+"> function definition ")
-                .append("|{ ")
-                .append(node.getIdentifierNode().getName())
-                .append("|")
-                .append(typeNodeVisualization(node.getFunctionNode()))
-                .append(node.getStatementNode() == null
-                        ? ""
-                        : ("|" + statementNodeVisualization(node.getStatementNode())))
-                .append("}}");
+            builder
+                    .append("{<f" + count + "> function definition ")
+                    .append("|{ ")
+                    .append(node.getIdentifierNode().getName())
+                    .append("|")
+                    .append(typeNodeVisualization(node.getFunctionNode()))
+                    .append(node.getStatementNode() == null
+                            ? ""
+                            : ("|" + statementNodeVisualization(node.getStatementNode())))
+                    .append("}}");
+        } else {
+            builder
+                    .append("node [shape=record];\n")
+                    .append("\"")
+                    .append(node.getIdentifierNode().getName())
+                    .append("\" [label = \"{")
+                    .append(typeNodeVisualization(node.getFunctionNode()) + " " + node.getIdentifierNode().getName());
+
+            if (node.getStatementNode() != null) {
+                builder
+                        .append("|")
+                        .append("{{")
+                        .append(statementNodeVisualization(node.getStatementNode()))
+                        .append("}}");
+            }
+
+            builder
+                    .append("}\"];");
+        }
         return builder.toString();
     }
 
@@ -611,34 +999,59 @@ public class DotGraphVisualizationSemantic {
 
         if (typeNode instanceof BasicTypeNode) {
             BasicTypeNode basicTypeNode = (BasicTypeNode) typeNode;
-            builder.append(basicTypeNode.getType().toString());
+            if (style == STRUCT) {
+                builder.append(basicTypeNode.getType().toString());
+            } else {
+                builder.append(basicTypeNode.getType().toString());
+            }
         } else if (typeNode instanceof FunctionNode) {
             FunctionNode functionNode = (FunctionNode) typeNode;
 
-            builder.append("{");
-
-            if (!functionNode.getParametersNode().getParameters().isEmpty()) {
+            if (style == STRUCT) {
                 builder.append("{");
-                builder.append(functionNode.getParametersNode().getParameters().stream()
-                        .map(parameterNode -> {
-                            return "{" + parameterNode.getIdentifierNode().getName() + "| {" +
-                                    typeNodeVisualization(parameterNode.getTypeNode()) + "}}";
-                        })
-                        .collect(Collectors.joining("|")));
-                builder.append("}|");
-            }
 
-            builder.append(typeNodeVisualization(functionNode.getTypeNode()));
-            builder.append("}");
+                if (!functionNode.getParametersNode().getParameters().isEmpty()) {
+                    builder.append("{");
+                    builder.append(functionNode.getParametersNode().getParameters().stream()
+                            .map(parameterNode -> {
+                                return "{" + parameterNode.getIdentifierNode().getName() + "| {" +
+                                        typeNodeVisualization(parameterNode.getTypeNode()) + "}}";
+                            })
+                            .collect(Collectors.joining("|")));
+                    builder.append("}|");
+                }
+
+                builder.append(typeNodeVisualization(functionNode.getTypeNode()));
+                builder.append("}");
+            } else {
+                builder.append("(");
+                if (!functionNode.getParametersNode().getParameters().isEmpty()) {
+                    builder.append(functionNode.getParametersNode().getParameters().stream()
+                            .map(parameterNode -> parameterNode.getIdentifierNode().getName() + " " +
+                                    typeNodeVisualization(parameterNode.getTypeNode()))
+                            .collect(Collectors.joining(", ")));
+                }
+                builder.append(") ");
+
+                builder.append(typeNodeVisualization(functionNode.getTypeNode()));
+            }
         } else if (typeNode instanceof ObjectTypeNode) {
             ObjectTypeNode objectTypeNode = (ObjectTypeNode) typeNode;
-            count++;
-            nodeToField.put(objectTypeNode, currentStruct + ":" + count);
-            nodeToNode.put(objectTypeNode, objectTypeNode.getDefinitionNode());
-            builder.append("<f" + count + "> " + objectTypeNode.getIdentifierNode().getName());
+            if (style == STRUCT) {
+                count++;
+                nodeToField.put(objectTypeNode, currentStruct + ":" + count);
+                nodeToNode.put(objectTypeNode, objectTypeNode.getDefinitionNode());
+                builder.append("<f" + count + "> " + objectTypeNode.getIdentifierNode().getName());
+            } else {
+                builder.append(objectTypeNode.getIdentifierNode().getName());
+            }
         } else if (typeNode instanceof ArrayTypeNode) {
             ArrayTypeNode arrayTypeNode = (ArrayTypeNode) typeNode;
-            builder.append("{ array | " + typeNodeVisualization(arrayTypeNode.getTypeNode()) + "}");
+            if (style == STRUCT) {
+                builder.append("{ array | " + typeNodeVisualization(arrayTypeNode.getTypeNode()) + "}");
+            } else {
+                builder.append(typeNodeVisualization(arrayTypeNode.getTypeNode()) + "[]");
+            }
         }
 
         return builder.toString();
