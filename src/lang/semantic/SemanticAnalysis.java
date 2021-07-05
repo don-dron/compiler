@@ -640,338 +640,434 @@ public class SemanticAnalysis {
 
     private void analyseExpression(ExpressionNode expressionNode, Scope parentScope) {
         if (expressionNode instanceof AssigmentExpressionNode) {
-            AssigmentExpressionNode assigmentExpressionNode = (AssigmentExpressionNode) expressionNode;
+            analyseAssigmentExpression(expressionNode, parentScope);
+        } else if (expressionNode instanceof ConditionalExpressionNode) {
+            analyseConditionalExpression(expressionNode, parentScope);
+        } else if (expressionNode instanceof AdditiveExpressionNode) {
+            analyseAdditionalExpression(expressionNode, parentScope);
+        } else if (expressionNode instanceof MultiplicativeExpressionNode) {
+            analyseMultiplicativeExpression(expressionNode, parentScope);
+        } else if (expressionNode instanceof LogicalAndExpressionNode) {
+            analyseLogicalAndExpression((LogicalAndExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof LogicalOrExpressionNode) {
+            analyseLogicalOrExpression((LogicalOrExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof RelationalExpressionNode) {
+            analyseRelationalExpression((RelationalExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof EqualityExpressionNode) {
+            analyseEqualityExpression((EqualityExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof VariableExpressionNode) {
+            analyseVariableExpression((VariableExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof BoolConstantExpressionNode) {
+            analyseBoolConstantExpression((BoolConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof IntConstantExpressionNode) {
+            analyseIntConstantExpression((IntConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof FloatConstantExpressionNode) {
+            analyseFloatConstantExpression((FloatConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof NullConstantExpressionNode) {
+            analyseNullConstantExpression((NullConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof ArrayConstructorExpressionNode) {
+            analyseArrayConstructorExpression((ArrayConstructorExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof FunctionCallExpressionNode) {
+            analyseFunctionCallExpression((FunctionCallExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof ArrayAccessExpressionNode) {
+            analyseArrayAccessExpression(expressionNode, parentScope);
+        } else if (expressionNode instanceof FieldAccessExpressionNode) {
+            analyseFieldAccessExpression((FieldAccessExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof PostfixDecrementSubtractionExpressionNode) {
+            analysePostfixDecrementExpression((PostfixDecrementSubtractionExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof PostfixIncrementAdditiveExpressionNode) {
+            analysePostfixIncrementExpression((PostfixIncrementAdditiveExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof PostfixIncrementMultiplicativeExpressionNode) {
+            analysePostfixMultiplicative((PostfixIncrementMultiplicativeExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof PrefixDecrementSubtractionExpressionNode) {
+            analysePrefixDecrement((PrefixDecrementSubtractionExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof PrefixIncrementAdditiveExpressionNode) {
+            analysePrefixIncrement((PrefixIncrementAdditiveExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof PrefixIncrementMultiplicativeExpressionNode) {
+            analysePrefixMultiplicative((PrefixIncrementMultiplicativeExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof CastExpressionNode) {
+            analyseCastExpression((CastExpressionNode) expressionNode, parentScope);
+        }
+    }
 
-            ExpressionNode left = assigmentExpressionNode.getLeft();
-            ExpressionNode right = assigmentExpressionNode.getRight();
+    private void analyseCastExpression(CastExpressionNode expressionNode, Scope parentScope) {
+        CastExpressionNode castExpressionNode = expressionNode;
 
-            analyseExpression(left, parentScope);
-            analyseExpression(right, parentScope);
+        ExpressionNode node = castExpressionNode.getExpressionNode();
+        analyseExpression(node, parentScope);
 
-            TypeNode typeNode = null;
-            if (left.getResultType() instanceof BasicTypeNode
-                    && right.getResultType() instanceof BasicTypeNode) {
-                typeNode = defineBinaryOperationType(expressionNode, left, right);
-            } else if (left.getResultType() instanceof ObjectTypeNode
-                    && right.getResultType() instanceof ObjectTypeNode) {
-                if (left.getResultType().equals(right.getResultType())) {
-                    typeNode = left.getResultType();
+        castExpressionNode.setResultType(castExpressionNode.getTypeNode());
+    }
+
+    private void analysePrefixMultiplicative(PrefixIncrementMultiplicativeExpressionNode expressionNode, Scope parentScope) {
+        PrefixIncrementMultiplicativeExpressionNode prefixIncrementMultiplicativeExpressionNode =
+                expressionNode;
+
+        ExpressionNode node = prefixIncrementMultiplicativeExpressionNode.getExpressionNode();
+        analyseExpression(node, parentScope);
+
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + node.toString());
+        }
+    }
+
+    private void analysePrefixIncrement(PrefixIncrementAdditiveExpressionNode expressionNode, Scope parentScope) {
+        PrefixIncrementAdditiveExpressionNode prefixIncrementAdditiveExpressionNode =
+                expressionNode;
+
+        ExpressionNode node = prefixIncrementAdditiveExpressionNode.getExpressionNode();
+        analyseExpression(node, parentScope);
+
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + node.toString());
+        }
+    }
+
+    private void analysePrefixDecrement(PrefixDecrementSubtractionExpressionNode expressionNode, Scope parentScope) {
+        PrefixDecrementSubtractionExpressionNode prefixDecrementSubtractionExpressionNode =
+                expressionNode;
+
+        ExpressionNode node = prefixDecrementSubtractionExpressionNode.getExpressionNode();
+        analyseExpression(node, parentScope);
+
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + node.toString());
+        }
+    }
+
+    private void analysePostfixMultiplicative(PostfixIncrementMultiplicativeExpressionNode expressionNode, Scope parentScope) {
+        PostfixIncrementMultiplicativeExpressionNode postfixIncrementMultiplicativeExpressionNode =
+                expressionNode;
+
+        ExpressionNode node = postfixIncrementMultiplicativeExpressionNode.getExpressionNode();
+        analyseExpression(node, parentScope);
+
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + node.toString());
+        }
+    }
+
+    private void analysePostfixIncrementExpression(PostfixIncrementAdditiveExpressionNode expressionNode, Scope parentScope) {
+        PostfixIncrementAdditiveExpressionNode postfixIncrementAdditiveExpressionNode =
+                expressionNode;
+
+        ExpressionNode node = postfixIncrementAdditiveExpressionNode.getExpressionNode();
+        analyseExpression(node, parentScope);
+
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + node.toString());
+        }
+    }
+
+    private void analysePostfixDecrementExpression(PostfixDecrementSubtractionExpressionNode expressionNode, Scope parentScope) {
+        PostfixDecrementSubtractionExpressionNode postfixDecrementSubtractionExpressionNode =
+                expressionNode;
+
+        ExpressionNode node = postfixDecrementSubtractionExpressionNode.getExpressionNode();
+        analyseExpression(node, parentScope);
+
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + node.toString());
+        }
+    }
+
+    private void analyseFieldAccessExpression(FieldAccessExpressionNode expressionNode, Scope parentScope) {
+        FieldAccessExpressionNode fieldAccessExpressionNode = expressionNode;
+
+        ExpressionNode left = fieldAccessExpressionNode.getLeft();
+        ExpressionNode right = fieldAccessExpressionNode.getRight();
+
+        analyseExpression(left, parentScope);
+        analyseExpression(right, parentScope);
+    }
+
+    private void analyseArrayAccessExpression(ExpressionNode expressionNode, Scope parentScope) {
+        ArrayAccessExpressionNode arrayAccessExpressionNode = (ArrayAccessExpressionNode) expressionNode;
+
+        ExpressionNode array = arrayAccessExpressionNode.getArray();
+        ExpressionNode argument = arrayAccessExpressionNode.getArgument();
+
+        analyseExpression(array, parentScope);
+        analyseExpression(argument, parentScope);
+
+        if (!argument.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + argument.toString());
+        }
+
+        expressionNode.setResultType(((ArrayTypeNode) array.getResultType()).getTypeNode());
+    }
+
+    private void analyseFunctionCallExpression(FunctionCallExpressionNode expressionNode, Scope parentScope) {
+        FunctionCallExpressionNode functionCallExpressionNode = expressionNode;
+
+        ExpressionNode function = functionCallExpressionNode.getFunction();
+        analyseExpression(function, parentScope);
+
+        TypeNode typeNode = function.getResultType();
+
+        if (typeNode instanceof FunctionNode) {
+            FunctionNode functionNode = (FunctionNode) function.getResultType();
+
+            List<ExpressionNode> expressions = functionCallExpressionNode.getParameters().getList();
+            List<ParameterNode> parameterNodes = functionNode.getParametersNode().getParameters();
+            if (expressions.size() != parameterNodes.size()) {
+                throw new IllegalArgumentException("Wrong parameter's size");
+            }
+
+            for (int i = 0; i < expressions.size(); i++) {
+                ExpressionNode node = expressions.get(i);
+                ParameterNode parameterNode = parameterNodes.get(i);
+
+                analyseExpression(node, parentScope);
+
+                if (!parameterNode.getTypeNode().equals(node.getResultType())) {
+                    throw new IllegalArgumentException("Wrong parameter type " +
+                            parameterNode.getTypeNode() + " " + node.getResultType());
                 }
-            } else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {
+            }
+
+            functionCallExpressionNode.setResultType(functionNode.getTypeNode());
+        } else if (typeNode instanceof ObjectTypeNode) {
+            ObjectTypeNode objectTypeNode = (ObjectTypeNode) typeNode;
+            if (objectTypeNode.getDefinitionNode() instanceof ClassStatementNode) {
+                ClassStatementNode classStatementNode = (ClassStatementNode) objectTypeNode.getDefinitionNode();
+                functionCallExpressionNode.setTarget(classStatementNode.getConstructors()
+                        .stream()
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new));
+            }
+            functionCallExpressionNode.setResultType(objectTypeNode);
+        }
+    }
+
+    private void analyseArrayConstructorExpression(ArrayConstructorExpressionNode expressionNode, Scope parentScope) {
+        ArrayConstructorExpressionNode arrayConstructorExpressionNode =
+                expressionNode;
+
+        analyseType(arrayConstructorExpressionNode.getTypeNode(), parentScope);
+
+        ExpressionNode sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
+
+        analyseExpression(sizeExpression, parentScope);
+
+        arrayConstructorExpressionNode.setResultType(
+                new ArrayTypeNode(arrayConstructorExpressionNode.getTypeNode()));
+    }
+
+    private void analyseNullConstantExpression(NullConstantExpressionNode expressionNode) {
+        NullConstantExpressionNode nullConstantExpressionNode = expressionNode;
+    }
+
+    private void analyseFloatConstantExpression(FloatConstantExpressionNode expressionNode) {
+        FloatConstantExpressionNode floatConstantExpressionNode = expressionNode;
+    }
+
+    private void analyseIntConstantExpression(IntConstantExpressionNode expressionNode) {
+        IntConstantExpressionNode intConstantExpressionNode = expressionNode;
+    }
+
+    private void analyseBoolConstantExpression(BoolConstantExpressionNode expressionNode) {
+        BoolConstantExpressionNode boolConstantExpressionNode = expressionNode;
+    }
+
+    private void analyseVariableExpression(VariableExpressionNode expressionNode, Scope parentScope) {
+        VariableExpressionNode variableExpressionNode = expressionNode;
+        String name = expressionNode.getIdentifierNode().getName();
+        AstNode variableNode = parentScope.findDefinitionByVariable(name);
+        variableExpressionNode.setExpression(variableNode);
+
+        if (variableNode == null) {
+            throw new IllegalArgumentException("Undefined variable " +
+                    variableExpressionNode.getIdentifierNode().toString());
+        }
+
+        if (variableNode instanceof DeclarationStatementNode) {
+            DeclarationStatementNode statementNode = (DeclarationStatementNode) variableNode;
+            variableExpressionNode.setResultType(statementNode.getTypeNode());
+            variableExpressionNode.setIdentifier(statementNode.getIdentifierNode());
+        } else if (variableNode instanceof ParameterNode) {
+            ParameterNode parameterNode = (ParameterNode) variableNode;
+            variableExpressionNode.setResultType(parameterNode.getTypeNode());
+            variableExpressionNode.setIdentifier(parameterNode.getIdentifierNode());
+        } else if (variableNode instanceof FunctionDefinitionNode) {
+            FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) variableNode;
+            variableExpressionNode.setResultType(functionDefinitionNode.getFunctionNode());
+            variableExpressionNode.setIdentifier(functionDefinitionNode.getIdentifierNode());
+        } else if (variableNode instanceof ClassStatementNode) {
+            ClassStatementNode classStatementNode = (ClassStatementNode) variableNode;
+            ObjectTypeNode objectTypeNode = new ObjectTypeNode(classStatementNode.getIdentifierNode());
+            objectTypeNode.setDefinition(classStatementNode);
+            variableExpressionNode.setResultType(objectTypeNode);
+            variableExpressionNode.setIdentifier(classStatementNode.getIdentifierNode());
+        } else if (variableNode instanceof InterfaceStatementNode) {
+            InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) variableNode;
+            variableExpressionNode.setResultType(new ObjectTypeNode(
+                    interfaceStatementNode.getIdentifierNode()));
+            variableExpressionNode.setIdentifier(interfaceStatementNode.getIdentifierNode());
+        } else {
+            throw new IllegalArgumentException("Unknown");
+        }
+    }
+
+    private void analyseEqualityExpression(EqualityExpressionNode expressionNode, Scope parentScope) {
+        EqualityExpressionNode equalityExpressionNode = expressionNode;
+
+        ExpressionNode left = equalityExpressionNode.getLeft();
+        ExpressionNode right = equalityExpressionNode.getRight();
+
+        analyseExpression(left, parentScope);
+        analyseExpression(right, parentScope);
+
+        if (!left.getResultType().equals(right.getResultType())) {
+            throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
+        }
+
+        equalityExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
+    }
+
+    private void analyseRelationalExpression(RelationalExpressionNode expressionNode, Scope parentScope) {
+        RelationalExpressionNode relationalExpressionNode = expressionNode;
+
+        ExpressionNode left = relationalExpressionNode.getLeft();
+        ExpressionNode right = relationalExpressionNode.getRight();
+
+        analyseExpression(left, parentScope);
+        analyseExpression(right, parentScope);
+
+        if (!left.getResultType().equals(right.getResultType())) {
+            throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
+        }
+
+        relationalExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
+    }
+
+    private void analyseLogicalOrExpression(LogicalOrExpressionNode expressionNode, Scope parentScope) {
+        LogicalOrExpressionNode logicalOrExpressionNode = expressionNode;
+
+        ExpressionNode left = logicalOrExpressionNode.getLeft();
+        ExpressionNode right = logicalOrExpressionNode.getRight();
+
+        analyseExpression(left, parentScope);
+        analyseExpression(right, parentScope);
+
+        if (!left.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + left.toString());
+        }
+
+        if (!right.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + right.toString());
+        }
+
+        logicalOrExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
+    }
+
+    private void analyseLogicalAndExpression(LogicalAndExpressionNode expressionNode, Scope parentScope) {
+        LogicalAndExpressionNode logicalAndExpressionNode = expressionNode;
+
+        ExpressionNode left = logicalAndExpressionNode.getLeft();
+        ExpressionNode right = logicalAndExpressionNode.getRight();
+
+        analyseExpression(left, parentScope);
+        analyseExpression(right, parentScope);
+
+        if (!left.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + left.toString());
+        }
+
+        if (!right.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + right.toString());
+        }
+
+        logicalAndExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
+    }
+
+    private void analyseMultiplicativeExpression(ExpressionNode expressionNode, Scope parentScope) {
+        MultiplicativeExpressionNode multiplicativeExpressionNode = (MultiplicativeExpressionNode) expressionNode;
+
+        ExpressionNode left = multiplicativeExpressionNode.getLeft();
+        ExpressionNode right = multiplicativeExpressionNode.getRight();
+
+        analyseExpression(left, parentScope);
+        analyseExpression(right, parentScope);
+
+        TypeNode typeNode = null;
+        if (left.getResultType() instanceof BasicTypeNode
+                && right.getResultType() instanceof BasicTypeNode) {
+            typeNode = defineBinaryOperationType(expressionNode, left, right);
+        }
+
+        if (typeNode == null) {
+            throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
+        }
+    }
+
+    private void analyseAdditionalExpression(ExpressionNode expressionNode, Scope parentScope) {
+        AdditiveExpressionNode additiveExpressionNode = (AdditiveExpressionNode) expressionNode;
+
+        ExpressionNode left = additiveExpressionNode.getLeft();
+        ExpressionNode right = additiveExpressionNode.getRight();
+
+        analyseExpression(left, parentScope);
+        analyseExpression(right, parentScope);
+
+        TypeNode typeNode = null;
+        if (left.getResultType() instanceof BasicTypeNode
+                && right.getResultType() instanceof BasicTypeNode) {
+            typeNode = defineBinaryOperationType(expressionNode, left, right);
+        }
+
+        if (typeNode == null) {
+            throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
+        }
+    }
+
+    private void analyseConditionalExpression(ExpressionNode expressionNode, Scope parentScope) {
+        ConditionalExpressionNode conditionalExpressionNode = (ConditionalExpressionNode) expressionNode;
+
+        ExpressionNode cond = conditionalExpressionNode.getConditionNode();
+        ExpressionNode then = conditionalExpressionNode.getThenNode();
+        ExpressionNode els = conditionalExpressionNode.getElseNode();
+
+        analyseExpression(cond, parentScope);
+        analyseExpression(then, parentScope);
+        analyseExpression(els, parentScope);
+
+        if (!cond.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
+            throw new IllegalArgumentException("Wrong types " + cond.toString());
+        }
+
+        if (!then.getResultType().equals(els.getResultType())) {
+            throw new IllegalArgumentException("Wrong types " + then.toString() + " " + els.toString());
+        }
+
+        expressionNode.setResultType(then.getResultType());
+    }
+
+    private void analyseAssigmentExpression(ExpressionNode expressionNode, Scope parentScope) {
+        AssigmentExpressionNode assigmentExpressionNode = (AssigmentExpressionNode) expressionNode;
+
+        ExpressionNode left = assigmentExpressionNode.getLeft();
+        ExpressionNode right = assigmentExpressionNode.getRight();
+
+        analyseExpression(left, parentScope);
+        analyseExpression(right, parentScope);
+
+        TypeNode typeNode = null;
+        if (left.getResultType() instanceof BasicTypeNode
+                && right.getResultType() instanceof BasicTypeNode) {
+            typeNode = defineBinaryOperationType(expressionNode, left, right);
+        } else if (left.getResultType() instanceof ObjectTypeNode
+                && right.getResultType() instanceof ObjectTypeNode) {
+            if (left.getResultType().equals(right.getResultType())) {
                 typeNode = left.getResultType();
             }
-
-            if (typeNode == null) {
-                throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString() + " : " +
-                        left.getResultType().toString() + " and " + right.getResultType().toString());
-            }
-        } else if (expressionNode instanceof ConditionalExpressionNode) {
-            ConditionalExpressionNode conditionalExpressionNode = (ConditionalExpressionNode) expressionNode;
-
-            ExpressionNode cond = conditionalExpressionNode.getConditionNode();
-            ExpressionNode then = conditionalExpressionNode.getThenNode();
-            ExpressionNode els = conditionalExpressionNode.getElseNode();
-
-            analyseExpression(cond, parentScope);
-            analyseExpression(then, parentScope);
-            analyseExpression(els, parentScope);
-
-            if (!cond.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + cond.toString());
-            }
-
-            if (!then.getResultType().equals(els.getResultType())) {
-                throw new IllegalArgumentException("Wrong types " + then.toString() + " " + els.toString());
-            }
-
-            expressionNode.setResultType(then.getResultType());
-        } else if (expressionNode instanceof AdditiveExpressionNode) {
-            AdditiveExpressionNode additiveExpressionNode = (AdditiveExpressionNode) expressionNode;
-
-            ExpressionNode left = additiveExpressionNode.getLeft();
-            ExpressionNode right = additiveExpressionNode.getRight();
-
-            analyseExpression(left, parentScope);
-            analyseExpression(right, parentScope);
-
-            TypeNode typeNode = null;
-            if (left.getResultType() instanceof BasicTypeNode
-                    && right.getResultType() instanceof BasicTypeNode) {
-                typeNode = defineBinaryOperationType(expressionNode, left, right);
-            }
-
-            if (typeNode == null) {
-                throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
-            }
-        } else if (expressionNode instanceof MultiplicativeExpressionNode) {
-            MultiplicativeExpressionNode multiplicativeExpressionNode = (MultiplicativeExpressionNode) expressionNode;
-
-            ExpressionNode left = multiplicativeExpressionNode.getLeft();
-            ExpressionNode right = multiplicativeExpressionNode.getRight();
-
-            analyseExpression(left, parentScope);
-            analyseExpression(right, parentScope);
-
-            TypeNode typeNode = null;
-            if (left.getResultType() instanceof BasicTypeNode
-                    && right.getResultType() instanceof BasicTypeNode) {
-                typeNode = defineBinaryOperationType(expressionNode, left, right);
-            }
-
-            if (typeNode == null) {
-                throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
-            }
-        } else if (expressionNode instanceof LogicalAndExpressionNode) {
-            LogicalAndExpressionNode logicalAndExpressionNode = (LogicalAndExpressionNode) expressionNode;
-
-            ExpressionNode left = logicalAndExpressionNode.getLeft();
-            ExpressionNode right = logicalAndExpressionNode.getRight();
-
-            analyseExpression(left, parentScope);
-            analyseExpression(right, parentScope);
-
-            if (!left.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + left.toString());
-            }
-
-            if (!right.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + right.toString());
-            }
-
-            logicalAndExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
-        } else if (expressionNode instanceof LogicalOrExpressionNode) {
-            LogicalOrExpressionNode logicalOrExpressionNode = (LogicalOrExpressionNode) expressionNode;
-
-            ExpressionNode left = logicalOrExpressionNode.getLeft();
-            ExpressionNode right = logicalOrExpressionNode.getRight();
-
-            analyseExpression(left, parentScope);
-            analyseExpression(right, parentScope);
-
-            if (!left.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + left.toString());
-            }
-
-            if (!right.getResultType().equals(GlobalBasicType.BOOL_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + right.toString());
-            }
-
-            logicalOrExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
-        } else if (expressionNode instanceof RelationalExpressionNode) {
-            RelationalExpressionNode relationalExpressionNode = (RelationalExpressionNode) expressionNode;
-
-            ExpressionNode left = relationalExpressionNode.getLeft();
-            ExpressionNode right = relationalExpressionNode.getRight();
-
-            analyseExpression(left, parentScope);
-            analyseExpression(right, parentScope);
-
-            if (!left.getResultType().equals(right.getResultType())) {
-                throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
-            }
-
-            relationalExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
-        } else if (expressionNode instanceof EqualityExpressionNode) {
-            EqualityExpressionNode equalityExpressionNode = (EqualityExpressionNode) expressionNode;
-
-            ExpressionNode left = equalityExpressionNode.getLeft();
-            ExpressionNode right = equalityExpressionNode.getRight();
-
-            analyseExpression(left, parentScope);
-            analyseExpression(right, parentScope);
-
-            if (!left.getResultType().equals(right.getResultType())) {
-                throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
-            }
-
-            equalityExpressionNode.setResultType(GlobalBasicType.BOOL_TYPE);
-        } else if (expressionNode instanceof VariableExpressionNode) {
-            VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode;
-            String name = ((VariableExpressionNode) expressionNode).getIdentifierNode().getName();
-            AstNode variableNode = parentScope.findDefinitionByVariable(name);
-            variableExpressionNode.setExpression(variableNode);
-
-            if (variableNode == null) {
-                throw new IllegalArgumentException("Undefined variable " +
-                        variableExpressionNode.getIdentifierNode().toString());
-            }
-
-            if (variableNode instanceof DeclarationStatementNode) {
-                DeclarationStatementNode statementNode = (DeclarationStatementNode) variableNode;
-                variableExpressionNode.setResultType(statementNode.getTypeNode());
-                variableExpressionNode.setIdentifier(statementNode.getIdentifierNode());
-            } else if (variableNode instanceof ParameterNode) {
-                ParameterNode parameterNode = (ParameterNode) variableNode;
-                variableExpressionNode.setResultType(parameterNode.getTypeNode());
-                variableExpressionNode.setIdentifier(parameterNode.getIdentifierNode());
-            } else if (variableNode instanceof FunctionDefinitionNode) {
-                FunctionDefinitionNode functionDefinitionNode = (FunctionDefinitionNode) variableNode;
-                variableExpressionNode.setResultType(functionDefinitionNode.getFunctionNode());
-                variableExpressionNode.setIdentifier(functionDefinitionNode.getIdentifierNode());
-            } else if (variableNode instanceof ClassStatementNode) {
-                ClassStatementNode classStatementNode = (ClassStatementNode) variableNode;
-                ObjectTypeNode objectTypeNode = new ObjectTypeNode(classStatementNode.getIdentifierNode());
-                objectTypeNode.setDefinition(classStatementNode);
-                variableExpressionNode.setResultType(objectTypeNode);
-                variableExpressionNode.setIdentifier(classStatementNode.getIdentifierNode());
-            } else if (variableNode instanceof InterfaceStatementNode) {
-                InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) variableNode;
-                variableExpressionNode.setResultType(new ObjectTypeNode(
-                        interfaceStatementNode.getIdentifierNode()));
-                variableExpressionNode.setIdentifier(interfaceStatementNode.getIdentifierNode());
-            } else {
-                throw new IllegalArgumentException("Unknown");
-            }
-        } else if (expressionNode instanceof BoolConstantExpressionNode) {
-            BoolConstantExpressionNode boolConstantExpressionNode = (BoolConstantExpressionNode) expressionNode;
-        } else if (expressionNode instanceof IntConstantExpressionNode) {
-            IntConstantExpressionNode intConstantExpressionNode = (IntConstantExpressionNode) expressionNode;
-        } else if (expressionNode instanceof FloatConstantExpressionNode) {
-            FloatConstantExpressionNode floatConstantExpressionNode = (FloatConstantExpressionNode) expressionNode;
-        } else if (expressionNode instanceof NullConstantExpressionNode) {
-            NullConstantExpressionNode nullConstantExpressionNode = (NullConstantExpressionNode) expressionNode;
-        } else if (expressionNode instanceof ArrayConstructorExpressionNode) {
-            ArrayConstructorExpressionNode arrayConstructorExpressionNode =
-                    (ArrayConstructorExpressionNode) expressionNode;
-
-            analyseType(arrayConstructorExpressionNode.getTypeNode(), parentScope);
-
-            ExpressionNode sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
-
-            analyseExpression(sizeExpression, parentScope);
-
-            arrayConstructorExpressionNode.setResultType(
-                    new ArrayTypeNode(arrayConstructorExpressionNode.getTypeNode()));
-        } else if (expressionNode instanceof FunctionCallExpressionNode) {
-            FunctionCallExpressionNode functionCallExpressionNode = (FunctionCallExpressionNode) expressionNode;
-
-            ExpressionNode function = functionCallExpressionNode.getFunction();
-            analyseExpression(function, parentScope);
-
-            TypeNode typeNode = function.getResultType();
-
-            if (typeNode instanceof FunctionNode) {
-                FunctionNode functionNode = (FunctionNode) function.getResultType();
-
-                List<ExpressionNode> expressions = functionCallExpressionNode.getParameters().getList();
-                List<ParameterNode> parameterNodes = functionNode.getParametersNode().getParameters();
-                if (expressions.size() != parameterNodes.size()) {
-                    throw new IllegalArgumentException("Wrong parameter's size");
-                }
-
-                for (int i = 0; i < expressions.size(); i++) {
-                    ExpressionNode node = expressions.get(i);
-                    ParameterNode parameterNode = parameterNodes.get(i);
-
-                    analyseExpression(node, parentScope);
-
-                    if (!parameterNode.getTypeNode().equals(node.getResultType())) {
-                        throw new IllegalArgumentException("Wrong parameter type " +
-                                parameterNode.getTypeNode() + " " + node.getResultType());
-                    }
-                }
-
-                functionCallExpressionNode.setResultType(functionNode.getTypeNode());
-            } else if (typeNode instanceof ObjectTypeNode) {
-                ObjectTypeNode objectTypeNode = (ObjectTypeNode) typeNode;
-                if (objectTypeNode.getDefinitionNode() instanceof ClassStatementNode) {
-                    ClassStatementNode classStatementNode = (ClassStatementNode) objectTypeNode.getDefinitionNode();
-                    functionCallExpressionNode.setTarget(classStatementNode.getConstructors()
-                            .stream()
-                            .findFirst()
-                            .orElseThrow(RuntimeException::new));
-                }
-                functionCallExpressionNode.setResultType(objectTypeNode);
-            }
-        } else if (expressionNode instanceof ArrayAccessExpressionNode) {
-            ArrayAccessExpressionNode arrayAccessExpressionNode = (ArrayAccessExpressionNode) expressionNode;
-
-            ExpressionNode array = arrayAccessExpressionNode.getArray();
-            ExpressionNode argument = arrayAccessExpressionNode.getArgument();
-
-            analyseExpression(array, parentScope);
-            analyseExpression(argument, parentScope);
-
-            if (!argument.getResultType().equals(GlobalBasicType.INT_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + argument.toString());
-            }
-
-            expressionNode.setResultType(((ArrayTypeNode) array.getResultType()).getTypeNode());
-        } else if (expressionNode instanceof FieldAccessExpressionNode) {
-            FieldAccessExpressionNode fieldAccessExpressionNode = (FieldAccessExpressionNode) expressionNode;
-
-            ExpressionNode left = fieldAccessExpressionNode.getLeft();
-            ExpressionNode right = fieldAccessExpressionNode.getRight();
-
-            analyseExpression(left, parentScope);
-            analyseExpression(right, parentScope);
-        } else if (expressionNode instanceof PostfixDecrementSubtractionExpressionNode) {
-            PostfixDecrementSubtractionExpressionNode postfixDecrementSubtractionExpressionNode =
-                    (PostfixDecrementSubtractionExpressionNode) expressionNode;
-
-            ExpressionNode node = postfixDecrementSubtractionExpressionNode.getExpressionNode();
-            analyseExpression(node, parentScope);
-
-            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + node.toString());
-            }
-        } else if (expressionNode instanceof PostfixIncrementAdditiveExpressionNode) {
-            PostfixIncrementAdditiveExpressionNode postfixIncrementAdditiveExpressionNode =
-                    (PostfixIncrementAdditiveExpressionNode) expressionNode;
-
-            ExpressionNode node = postfixIncrementAdditiveExpressionNode.getExpressionNode();
-            analyseExpression(node, parentScope);
-
-            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + node.toString());
-            }
-        } else if (expressionNode instanceof PostfixIncrementMultiplicativeExpressionNode) {
-            PostfixIncrementMultiplicativeExpressionNode postfixIncrementMultiplicativeExpressionNode =
-                    (PostfixIncrementMultiplicativeExpressionNode) expressionNode;
-
-            ExpressionNode node = postfixIncrementMultiplicativeExpressionNode.getExpressionNode();
-            analyseExpression(node, parentScope);
-
-            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + node.toString());
-            }
-        } else if (expressionNode instanceof PrefixDecrementSubtractionExpressionNode) {
-            PrefixDecrementSubtractionExpressionNode prefixDecrementSubtractionExpressionNode =
-                    (PrefixDecrementSubtractionExpressionNode) expressionNode;
-
-            ExpressionNode node = prefixDecrementSubtractionExpressionNode.getExpressionNode();
-            analyseExpression(node, parentScope);
-
-            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + node.toString());
-            }
-        } else if (expressionNode instanceof PrefixIncrementAdditiveExpressionNode) {
-            PrefixIncrementAdditiveExpressionNode prefixIncrementAdditiveExpressionNode =
-                    (PrefixIncrementAdditiveExpressionNode) expressionNode;
-
-            ExpressionNode node = prefixIncrementAdditiveExpressionNode.getExpressionNode();
-            analyseExpression(node, parentScope);
-
-            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + node.toString());
-            }
-        } else if (expressionNode instanceof PrefixIncrementMultiplicativeExpressionNode) {
-            PrefixIncrementMultiplicativeExpressionNode prefixIncrementMultiplicativeExpressionNode =
-                    (PrefixIncrementMultiplicativeExpressionNode) expressionNode;
-
-            ExpressionNode node = prefixIncrementMultiplicativeExpressionNode.getExpressionNode();
-            analyseExpression(node, parentScope);
-
-            if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
-                throw new IllegalArgumentException("Wrong types " + node.toString());
-            }
-        } else if (expressionNode instanceof CastExpressionNode) {
-            CastExpressionNode castExpressionNode = (CastExpressionNode) expressionNode;
-
-            ExpressionNode node = castExpressionNode.getExpressionNode();
-            analyseExpression(node, parentScope);
-
-            castExpressionNode.setResultType(castExpressionNode.getTypeNode());
+        } else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {
+            typeNode = left.getResultType();
+        }
+
+        if (typeNode == null) {
+            throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString() + " : " +
+                    left.getResultType().toString() + " and " + right.getResultType().toString());
         }
     }
 
