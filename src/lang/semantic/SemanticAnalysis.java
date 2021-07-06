@@ -359,6 +359,7 @@ public class SemanticAnalysis {
                         elifStatementNodes.add((ElifStatementNode) node);
                     } else if (node instanceof ElseStatementNode) {
                         elseStatementNode = (ElseStatementNode) node;
+                        i++;
                         break;
                     } else {
                         break;

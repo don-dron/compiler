@@ -30,16 +30,24 @@ import lang.ast.statement.BreakStatementNode;
 import lang.ast.statement.CompoundStatementNode;
 import lang.ast.statement.ContinueStatementNode;
 import lang.ast.statement.DeclarationStatementNode;
+import lang.ast.statement.ElifStatementNode;
+import lang.ast.statement.ElseStatementNode;
 import lang.ast.statement.ExpressionStatementNode;
 import lang.ast.statement.FunctionDefinitionNode;
 import lang.ast.statement.IfElseStatementNode;
+import lang.ast.statement.IfStatementNode;
 import lang.ast.statement.ReturnStatementNode;
 import lang.ast.statement.StatementNode;
 import lang.ast.statement.WhileStatementNode;
+import lang.ir.BasicBlock;
+import lang.ir.Branch;
+import lang.ir.Command;
+import lang.ir.ConditionalBranch;
 import lang.ir.Function;
 import lang.ir.Module;
-import lang.semantic.Scope;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class Translator {
@@ -57,184 +65,354 @@ public class Translator {
     }
 
     private Function translateFunction(FunctionDefinitionNode functionDefinitionNode) {
+        Function function = new Function();
 
-        return new Function();
+        BasicBlock header = function.appendBlock("header");
+
+        BasicBlock returnBlock = function.appendBlock("return");
+
+        BasicBlock entry = function.appendBlock("entry");
+        header.setTerminator(new Branch(entry));
+
+        translateStatement(function, functionDefinitionNode.getStatementNode());
+
+        function.getCurrentBlock().setTerminator(new Branch(returnBlock));
+
+        System.out.println(graphVizDebug(function));
+        return function;
     }
 
-    private void translateStatement(StatementNode node) {
+    public static String graphVizDebug(Function functionBlock) {
+        StringBuilder s = new StringBuilder("digraph G {\n");
+
+        for (BasicBlock basicBlock : functionBlock.getBlocks()) {
+            String body = basicBlock.getName();
+
+            s.append("\t\"")
+                    .append(basicBlock.getName())
+                    .append("\"")
+                    .append(" ")
+                    .append("[")
+                    .append("style=filled, shape=box, label=\"")
+                    .append(body)
+                    .append("\"];\n");
+        }
+
+        for (BasicBlock basicBlock : functionBlock.getBlocks()) {
+            for (BasicBlock other : basicBlock.getOutput()) {
+                s.append("\"")
+                        .append(basicBlock.getName())
+                        .append("\"")
+                        .append(" -> ")
+                        .append("\"")
+                        .append(other.getName())
+                        .append("\";\n");
+            }
+        }
+        s.append("}");
+
+        return s.toString();
+    }
+
+    private void createBranch(BasicBlock source,
+                              BasicBlock target) {
+        source.addOutput(target);
+        target.addInput(source);
+        source.setTerminator(new Branch(target));
+    }
+
+    private void createConditionalBranch(BasicBlock source,
+                                         Command command,
+                                         BasicBlock left,
+                                         BasicBlock right) {
+        source.addOutput(left);
+        source.addOutput(right);
+        left.addInput(source);
+        right.addInput(source);
+        source.setTerminator(new ConditionalBranch(command, left, right));
+    }
+
+    private void translateStatement(Function function, StatementNode node) {
         if (node instanceof BreakStatementNode) {
-            translateBreak((BreakStatementNode) node);
+            translateBreak(function, (BreakStatementNode) node);
         } else if (node instanceof CompoundStatementNode) {
-            translateCompound((CompoundStatementNode) node);
+            translateCompound(function, (CompoundStatementNode) node);
         } else if (node instanceof ContinueStatementNode) {
-            translateContinue((ContinueStatementNode) node);
+            translateContinue(function, (ContinueStatementNode) node);
         } else if (node instanceof DeclarationStatementNode) {
-            translateDeclaration((DeclarationStatementNode) node);
+            translateDeclaration(function, (DeclarationStatementNode) node);
         } else if (node instanceof IfElseStatementNode) {
-            translateIfElse((IfElseStatementNode) node);
+            translateIfElse(function, (IfElseStatementNode) node);
+        } else if (node instanceof IfStatementNode) {
+            translateIf(function, (IfStatementNode) node);
+        } else if (node instanceof ElifStatementNode) {
+            translateElif(function, (ElifStatementNode) node);
+        } else if (node instanceof ElseStatementNode) {
+            translateElse(function, (ElseStatementNode) node);
         } else if (node instanceof ReturnStatementNode) {
-            translateReturn((ReturnStatementNode) node);
+            translateReturn(function, (ReturnStatementNode) node);
         } else if (node instanceof WhileStatementNode) {
-            translateWhile((WhileStatementNode) node);
+            translateWhile(function, (WhileStatementNode) node);
         } else if (node instanceof ExpressionStatementNode) {
-            translateExpressionStatement((ExpressionStatementNode) node);
+            translateExpressionStatement(function, (ExpressionStatementNode) node);
         } else {
             throw new IllegalArgumentException("Undefined statement");
         }
     }
 
-    private void translateBreak(BreakStatementNode node) {
-    }
-
-    private void translateCompound(CompoundStatementNode node) {
-
-    }
-
-    private void translateContinue(ContinueStatementNode node) {
-
-    }
-
-    private void translateIfElse(IfElseStatementNode node) {
-
-    }
-
-    private void translateExpressionStatement(ExpressionStatementNode node) {
-
-    }
-
-    private void translateDeclaration(DeclarationStatementNode node) {
-
-    }
-
-    private void translateReturn(ReturnStatementNode node) {
-
-    }
-
-    private void translateWhile(WhileStatementNode node) {
-
-    }
-
-    private void translateExpression(ExpressionNode expressionNode, Scope parentScope) {
+    private Command translateExpression(Function function, ExpressionNode expressionNode) {
         if (expressionNode instanceof AssigmentExpressionNode) {
-            translateAssigmentExpression(expressionNode);
+            return translateAssigmentExpression(function, (AssigmentExpressionNode) expressionNode);
         } else if (expressionNode instanceof ConditionalExpressionNode) {
-            translateConditionalExpression(expressionNode);
+            return translateConditionalExpression(function, (ConditionalExpressionNode) expressionNode);
         } else if (expressionNode instanceof AdditiveExpressionNode) {
-            translateAdditionalExpression(expressionNode);
+            return translateAdditionalExpression(function, (AdditiveExpressionNode) expressionNode);
         } else if (expressionNode instanceof MultiplicativeExpressionNode) {
-            translateMultiplicativeExpression(expressionNode);
+            return translateMultiplicativeExpression(function, (MultiplicativeExpressionNode) expressionNode);
         } else if (expressionNode instanceof LogicalAndExpressionNode) {
-            translateLogicalAndExpression((LogicalAndExpressionNode) expressionNode);
+            return translateLogicalAndExpression(function, (LogicalAndExpressionNode) expressionNode);
         } else if (expressionNode instanceof LogicalOrExpressionNode) {
-            translateLogicalOrExpression((LogicalOrExpressionNode) expressionNode);
+            return translateLogicalOrExpression(function, (LogicalOrExpressionNode) expressionNode);
         } else if (expressionNode instanceof RelationalExpressionNode) {
-            translateRelationalExpression((RelationalExpressionNode) expressionNode);
+            return translateRelationalExpression(function, (RelationalExpressionNode) expressionNode);
         } else if (expressionNode instanceof EqualityExpressionNode) {
-            translateEqualityExpression((EqualityExpressionNode) expressionNode);
+            return translateEqualityExpression(function, (EqualityExpressionNode) expressionNode);
         } else if (expressionNode instanceof VariableExpressionNode) {
-            translateVariableExpression((VariableExpressionNode) expressionNode);
+            return translateVariableExpression(function, (VariableExpressionNode) expressionNode);
         } else if (expressionNode instanceof BoolConstantExpressionNode) {
-            translateBoolConstantExpression((BoolConstantExpressionNode) expressionNode);
+            return translateBoolConstantExpression(function, (BoolConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof IntConstantExpressionNode) {
-            translateIntConstantExpression((IntConstantExpressionNode) expressionNode);
+            return translateIntConstantExpression(function, (IntConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof FloatConstantExpressionNode) {
-            translateFloatConstantExpression((FloatConstantExpressionNode) expressionNode);
+            return translateFloatConstantExpression(function, (FloatConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof NullConstantExpressionNode) {
-            translateNullConstantExpression((NullConstantExpressionNode) expressionNode);
+            return translateNullConstantExpression(function, (NullConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof ArrayConstructorExpressionNode) {
-            translateArrayConstructorExpression((ArrayConstructorExpressionNode) expressionNode);
+            return translateArrayConstructorExpression(function, (ArrayConstructorExpressionNode) expressionNode);
         } else if (expressionNode instanceof FunctionCallExpressionNode) {
-            translateFunctionCallExpression((FunctionCallExpressionNode) expressionNode);
+            return translateFunctionCallExpression(function, (FunctionCallExpressionNode) expressionNode);
         } else if (expressionNode instanceof ArrayAccessExpressionNode) {
-            translateArrayAccessExpression(expressionNode);
+            return translateArrayAccessExpression(function, (ArrayAccessExpressionNode) expressionNode);
         } else if (expressionNode instanceof FieldAccessExpressionNode) {
-            translateFieldAccessExpression((FieldAccessExpressionNode) expressionNode);
+            return translateFieldAccessExpression(function, (FieldAccessExpressionNode) expressionNode);
         } else if (expressionNode instanceof PostfixDecrementSubtractionExpressionNode) {
-            translatePostfixDecrementExpression((PostfixDecrementSubtractionExpressionNode) expressionNode);
+            return translatePostfixDecrementExpression(function, (PostfixDecrementSubtractionExpressionNode) expressionNode);
         } else if (expressionNode instanceof PostfixIncrementAdditiveExpressionNode) {
-            translatePostfixIncrementExpression((PostfixIncrementAdditiveExpressionNode) expressionNode);
+            return translatePostfixIncrementExpression(function, (PostfixIncrementAdditiveExpressionNode) expressionNode);
         } else if (expressionNode instanceof PostfixIncrementMultiplicativeExpressionNode) {
-            translatePostfixMultiplicative((PostfixIncrementMultiplicativeExpressionNode) expressionNode);
+            return translatePostfixMultiplicative(function, (PostfixIncrementMultiplicativeExpressionNode) expressionNode);
         } else if (expressionNode instanceof PrefixDecrementSubtractionExpressionNode) {
-            translatePrefixDecrement((PrefixDecrementSubtractionExpressionNode) expressionNode);
+            return translatePrefixDecrement(function, (PrefixDecrementSubtractionExpressionNode) expressionNode);
         } else if (expressionNode instanceof PrefixIncrementAdditiveExpressionNode) {
-            translatePrefixIncrement((PrefixIncrementAdditiveExpressionNode) expressionNode);
+            return translatePrefixIncrement(function, (PrefixIncrementAdditiveExpressionNode) expressionNode);
         } else if (expressionNode instanceof PrefixIncrementMultiplicativeExpressionNode) {
-            translatePrefixMultiplicative((PrefixIncrementMultiplicativeExpressionNode) expressionNode);
+            return translatePrefixMultiplicative(function, (PrefixIncrementMultiplicativeExpressionNode) expressionNode);
         } else if (expressionNode instanceof CastExpressionNode) {
-            translateCastExpression((CastExpressionNode) expressionNode);
+            return translateCastExpression(function, (CastExpressionNode) expressionNode);
+        } else {
+            throw new IllegalArgumentException("");
         }
     }
 
-    private void translateCastExpression(CastExpressionNode expressionNode) {
+    private void translateBreak(Function function, BreakStatementNode node) {
+        BasicBlock last = function.getCurrentBlock();
+
+        BasicBlock breakBlock = function.appendBlock("break");
+        createBranch(last, breakBlock);
+
+        function.appendBlock("dummy");
     }
 
-    private void translatePrefixMultiplicative(PrefixIncrementMultiplicativeExpressionNode expressionNode) {
+    private void translateCompound(Function function, CompoundStatementNode node) {
+        node.getStatements().forEach(n -> translateStatement(function, n));
     }
 
-    private void translatePrefixIncrement(PrefixIncrementAdditiveExpressionNode expressionNode) {
+    private void translateContinue(Function function, ContinueStatementNode node) {
+        BasicBlock last = function.getCurrentBlock();
+
+        BasicBlock continueBlock = function.appendBlock("continue");
+        createBranch(last, continueBlock);
+
+        function.appendBlock("dummy");
     }
 
-    private void translatePrefixDecrement(PrefixDecrementSubtractionExpressionNode expressionNode) {
+    private void translateIfElse(Function function, IfElseStatementNode node) {
+        List<BasicBlock> mergeBranches = new ArrayList<>();
+
+        BasicBlock last = function.getCurrentBlock();
+
+        BasicBlock condition = function.appendBlock("if_condition");
+        createBranch(last, condition);
+
+        Command ifCommand = translateExpression(function, node.getIfStatementNode().getConditionNode());
+        last = function.getCurrentBlock();
+
+        BasicBlock then = function.appendBlock("if_then");
+        translateStatement(function, node.getIfStatementNode().getThenNode());
+
+        BasicBlock elseBlock = null;
+        BasicBlock finalMerge = function.appendBlock("merge");
+        BasicBlock merge = function.appendBlock("merge");
+
+        createConditionalBranch(last, ifCommand, then, merge);
+
+        mergeBranches.add(then);
+
+        for (ElifStatementNode elifStatementNode : node.getElifStatementNodes()) {
+            Command elifCommand = translateExpression(function, elifStatementNode.getConditionNode());
+            last = function.getCurrentBlock();
+
+            BasicBlock elifThen = function.appendBlock("elif_then");
+            translateStatement(function, elifStatementNode.getElseNode());
+
+            merge = function.appendBlock("merge");
+
+            createConditionalBranch(last, elifCommand, elifThen, merge);
+            mergeBranches.add(elifThen);
+        }
+
+        if (node.getElseStatementNode() != null) {
+            elseBlock = function.appendBlock("else_then");
+            translateStatement(function, node.getElseStatementNode().getElseNode());
+            createBranch(merge, elseBlock);
+            mergeBranches.add(elseBlock);
+        }
+
+        mergeBranches.forEach(b -> createBranch(b, finalMerge));
     }
 
-    private void translatePostfixMultiplicative(PostfixIncrementMultiplicativeExpressionNode expressionNode) {
+    private void translateIf(Function function, IfStatementNode node) {
+        throw new IllegalArgumentException("");
     }
 
-    private void translatePostfixIncrementExpression(PostfixIncrementAdditiveExpressionNode expressionNode) {
+    private void translateElif(Function function, ElifStatementNode node) {
+        throw new IllegalArgumentException("");
     }
 
-    private void translatePostfixDecrementExpression(PostfixDecrementSubtractionExpressionNode expressionNode) {
+    private void translateElse(Function function, ElseStatementNode node) {
+        throw new IllegalArgumentException("");
     }
 
-    private void translateFieldAccessExpression(FieldAccessExpressionNode expressionNode) {
+    private void translateExpressionStatement(Function function, ExpressionStatementNode node) {
+
     }
 
-    private void translateArrayAccessExpression(ExpressionNode expressionNode) {
+    private void translateDeclaration(Function function, DeclarationStatementNode node) {
+
     }
 
-    private void translateFunctionCallExpression(FunctionCallExpressionNode expressionNode) {
+    private void translateReturn(Function function, ReturnStatementNode node) {
+
     }
 
-    private void translateArrayConstructorExpression(ArrayConstructorExpressionNode expressionNode) {
+    private void translateWhile(Function function, WhileStatementNode node) {
+        BasicBlock last = function.getCurrentBlock();
+
+        BasicBlock condition = function.appendBlock("while_condition");
+        createBranch(last, condition);
+
+        Command command = translateExpression(function, node.getConditionNode());
+
+        BasicBlock body = function.appendBlock("while_body");
+        body.setTerminator(new Branch(condition));
+
+        BasicBlock merge = function.appendBlock("while_merge");
+        condition.setTerminator(new ConditionalBranch(command, body, merge));
     }
 
-    private void translateNullConstantExpression(NullConstantExpressionNode expressionNode) {
+    private Command translateCastExpression(Function function, CastExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateFloatConstantExpression(FloatConstantExpressionNode expressionNode) {
+    private Command translatePrefixMultiplicative(Function function, PrefixIncrementMultiplicativeExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateIntConstantExpression(IntConstantExpressionNode expressionNode) {
+    private Command translatePrefixIncrement(Function function, PrefixIncrementAdditiveExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateBoolConstantExpression(BoolConstantExpressionNode expressionNode) {
+    private Command translatePrefixDecrement(Function function, PrefixDecrementSubtractionExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateVariableExpression(VariableExpressionNode expressionNode) {
+    private Command translatePostfixMultiplicative(Function function, PostfixIncrementMultiplicativeExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateEqualityExpression(EqualityExpressionNode expressionNode) {
+    private Command translatePostfixIncrementExpression(Function function, PostfixIncrementAdditiveExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateRelationalExpression(RelationalExpressionNode expressionNode) {
+    private Command translatePostfixDecrementExpression(Function function, PostfixDecrementSubtractionExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateLogicalOrExpression(LogicalOrExpressionNode expressionNode) {
+    private Command translateFieldAccessExpression(Function function, FieldAccessExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateLogicalAndExpression(LogicalAndExpressionNode expressionNode) {
+    private Command translateArrayAccessExpression(Function function, ArrayAccessExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateMultiplicativeExpression(ExpressionNode expressionNode) {
+    private Command translateFunctionCallExpression(Function function, FunctionCallExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateAdditionalExpression(ExpressionNode expressionNode) {
+    private Command translateArrayConstructorExpression(Function function, ArrayConstructorExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateConditionalExpression(ExpressionNode expressionNode) {
+    private Command translateNullConstantExpression(Function function, NullConstantExpressionNode expressionNode) {
+        return null;
     }
 
-    private void translateAssigmentExpression(ExpressionNode expressionNode) {
+    private Command translateFloatConstantExpression(Function function, FloatConstantExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateIntConstantExpression(Function function, IntConstantExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateBoolConstantExpression(Function function, BoolConstantExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateVariableExpression(Function function, VariableExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateEqualityExpression(Function function, EqualityExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateRelationalExpression(Function function, RelationalExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateLogicalOrExpression(Function function, LogicalOrExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateLogicalAndExpression(Function function, LogicalAndExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateMultiplicativeExpression(Function function, MultiplicativeExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateAdditionalExpression(Function function, AdditiveExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateConditionalExpression(Function function, ConditionalExpressionNode expressionNode) {
+        return null;
+    }
+
+    private Command translateAssigmentExpression(Function function, AssigmentExpressionNode expressionNode) {
+        return null;
     }
 }

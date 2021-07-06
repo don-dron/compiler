@@ -2,6 +2,7 @@ package lang;
 
 import lang.ast.FileNode;
 import lang.ast.TranslationNode;
+import lang.ir.Module;
 import lang.ir.translate.Translator;
 import lang.lexer.Lexer;
 import lang.parser.Parser;
@@ -20,7 +21,7 @@ import java.util.stream.Stream;
 public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         List<FileNode> files = new ArrayList<>();
-        File root = new File("project");
+        File root = new File("project1");
         for(File file : getFiles(root)) {
             Reader reader = new FileReader(file);
             Lexer lexer = new Lexer(reader);

@@ -1,33 +1,14 @@
-class Square : Rectangle
-
-    (float a) ->
-        a = a
-
-    () float area ->
-        return a * a
-
-    () float perimeter ->
-        return a * 4
-
-class Rectangle : Parallelogram
-    () float area ->
-        return a * b
-
-class Parallelogram : Shape
-    float a
-    float b
-    float sin
-
-    () float perimeter ->
-        return a * 2 + b * 2
-
-    () float area ->
-        return a * b * sin
-
-interface Shape
-    () float perimeter
-    () float area
 
 () void main ->
-    int[] a = int[100]
+    int a = 1
+
+    if a == 2
+        a = 1
+    elif a ==3
+        a = 4
+    elif a == 3
+        a = 6
+    else
+        a = 7
+
     return
