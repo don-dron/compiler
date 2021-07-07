@@ -1,6 +1,7 @@
 package lang.ir.translate;
 
 import lang.ast.Program;
+import lang.ast.TypeNode;
 import lang.ast.expression.ArrayConstructorExpressionNode;
 import lang.ast.expression.ConditionalExpressionNode;
 import lang.ast.expression.ExpressionNode;
@@ -40,21 +41,56 @@ import lang.ast.statement.ReturnStatementNode;
 import lang.ast.statement.StatementNode;
 import lang.ast.statement.WhileStatementNode;
 import lang.ir.BasicBlock;
+import lang.ir.BoolValue;
 import lang.ir.Branch;
 import lang.ir.Command;
 import lang.ir.ConditionalBranch;
+import lang.ir.FloatValue;
 import lang.ir.Function;
+import lang.ir.IntValue;
 import lang.ir.Module;
+import lang.ir.Operation;
+import lang.ir.Return;
+import lang.ir.Type;
+import lang.ir.Value;
+import lang.ir.VariableValue;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static lang.ir.Operation.ADD;
+import static lang.ir.Operation.AND;
+import static lang.ir.Operation.DIV;
+import static lang.ir.Operation.EQ;
+import static lang.ir.Operation.GE;
+import static lang.ir.Operation.GT;
+import static lang.ir.Operation.LE;
+import static lang.ir.Operation.LT;
+import static lang.ir.Operation.MOD;
+import static lang.ir.Operation.MUL;
+import static lang.ir.Operation.NE;
+import static lang.ir.Operation.OR;
+import static lang.ir.Operation.STORE;
+import static lang.ir.Operation.SUB;
 
 public class Translator {
     private final Program program;
+    private int TEMP_VARIABLE_COUNT = 0;
+
+    private final Map<String, Value> variables;
+    private final Map<WhileStatementNode, BasicBlock> whileToConditionBlock;
+    private final Map<WhileStatementNode, BasicBlock> whileToMergeBlock;
 
     public Translator(Program program) {
         this.program = program;
+        variables = new HashMap<>();
+        whileToConditionBlock = new HashMap<>();
+        whileToMergeBlock = new HashMap<>();
     }
 
     public Module translate() {
@@ -70,9 +106,11 @@ public class Translator {
         BasicBlock header = function.appendBlock("header");
 
         BasicBlock returnBlock = function.appendBlock("return");
+        function.setReturnBlock(returnBlock);
+        returnBlock.setTerminator(new Return());
 
         BasicBlock entry = function.appendBlock("entry");
-        header.setTerminator(new Branch(entry));
+        createBranch(header, entry);
 
         translateStatement(function, functionDefinitionNode.getStatementNode());
 
@@ -86,7 +124,12 @@ public class Translator {
         StringBuilder s = new StringBuilder("digraph G {\n");
 
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
-            String body = basicBlock.getName();
+            String body = basicBlock.getName() + ":\n" +
+                    basicBlock.getCommands()
+                            .stream()
+                            .map(Objects::toString)
+                            .collect(Collectors.joining("\n")) + "\n" +
+                    basicBlock.getTerminator().toString();
 
             s.append("\t\"")
                     .append(basicBlock.getName())
@@ -95,7 +138,8 @@ public class Translator {
                     .append("[")
                     .append("style=filled, shape=box, label=\"")
                     .append(body)
-                    .append("\"];\n");
+                    .append("\"")
+                    .append("];\n");
         }
 
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
@@ -122,14 +166,14 @@ public class Translator {
     }
 
     private void createConditionalBranch(BasicBlock source,
-                                         Command command,
+                                         Value value,
                                          BasicBlock left,
                                          BasicBlock right) {
         source.addOutput(left);
         source.addOutput(right);
         left.addInput(source);
         right.addInput(source);
-        source.setTerminator(new ConditionalBranch(command, left, right));
+        source.setTerminator(new ConditionalBranch(value, left, right));
     }
 
     private void translateStatement(Function function, StatementNode node) {
@@ -160,7 +204,7 @@ public class Translator {
         }
     }
 
-    private Command translateExpression(Function function, ExpressionNode expressionNode) {
+    private Value translateExpression(Function function, ExpressionNode expressionNode) {
         if (expressionNode instanceof AssigmentExpressionNode) {
             return translateAssigmentExpression(function, (AssigmentExpressionNode) expressionNode);
         } else if (expressionNode instanceof ConditionalExpressionNode) {
@@ -220,6 +264,8 @@ public class Translator {
         BasicBlock breakBlock = function.appendBlock("break");
         createBranch(last, breakBlock);
 
+        createBranch(breakBlock, whileToMergeBlock.get((WhileStatementNode) node.getCycle()));
+
         function.appendBlock("dummy");
     }
 
@@ -233,52 +279,56 @@ public class Translator {
         BasicBlock continueBlock = function.appendBlock("continue");
         createBranch(last, continueBlock);
 
+        createBranch(continueBlock, whileToConditionBlock.get((WhileStatementNode) node.getCycle()));
+
         function.appendBlock("dummy");
     }
 
     private void translateIfElse(Function function, IfElseStatementNode node) {
-        List<BasicBlock> mergeBranches = new ArrayList<>();
-
+        List<BasicBlock> endsBlocks = new ArrayList<>();
         BasicBlock last = function.getCurrentBlock();
 
         BasicBlock condition = function.appendBlock("if_condition");
         createBranch(last, condition);
 
-        Command ifCommand = translateExpression(function, node.getIfStatementNode().getConditionNode());
-        last = function.getCurrentBlock();
+        Value ifCommand = translateExpression(function, node.getIfStatementNode().getConditionNode());
+        BasicBlock endCondition = function.getCurrentBlock();
 
         BasicBlock then = function.appendBlock("if_then");
         translateStatement(function, node.getIfStatementNode().getThenNode());
+        endsBlocks.add(function.getCurrentBlock());
 
-        BasicBlock elseBlock = null;
-        BasicBlock finalMerge = function.appendBlock("merge");
-        BasicBlock merge = function.appendBlock("merge");
+        BasicBlock merge = function.appendBlock("if_else");
+        createConditionalBranch(endCondition, ifCommand, then, merge);
 
-        createConditionalBranch(last, ifCommand, then, merge);
-
-        mergeBranches.add(then);
+        if(node.getElifStatementNodes().isEmpty() && node.getElseStatementNode() == null) {
+            endsBlocks.add(function.getCurrentBlock());
+        }
 
         for (ElifStatementNode elifStatementNode : node.getElifStatementNodes()) {
-            Command elifCommand = translateExpression(function, elifStatementNode.getConditionNode());
+            Value elifCommand = translateExpression(function, elifStatementNode.getConditionNode());
             last = function.getCurrentBlock();
 
             BasicBlock elifThen = function.appendBlock("elif_then");
             translateStatement(function, elifStatementNode.getElseNode());
+            endsBlocks.add(function.getCurrentBlock());
 
-            merge = function.appendBlock("merge");
+            merge = function.appendBlock("elif_else");
 
             createConditionalBranch(last, elifCommand, elifThen, merge);
-            mergeBranches.add(elifThen);
         }
 
         if (node.getElseStatementNode() != null) {
-            elseBlock = function.appendBlock("else_then");
+            last = function.getCurrentBlock();
+            BasicBlock elseBlock = function.appendBlock("else_then");
+            createBranch(last, elseBlock);
             translateStatement(function, node.getElseStatementNode().getElseNode());
-            createBranch(merge, elseBlock);
-            mergeBranches.add(elseBlock);
+            endsBlocks.add(function.getCurrentBlock());
         }
 
-        mergeBranches.forEach(b -> createBranch(b, finalMerge));
+        BasicBlock finalMerge = function.appendBlock("merge");
+
+        endsBlocks.forEach(b -> createBranch(b, finalMerge));
     }
 
     private void translateIf(Function function, IfStatementNode node) {
@@ -294,15 +344,43 @@ public class Translator {
     }
 
     private void translateExpressionStatement(Function function, ExpressionStatementNode node) {
-
+        translateExpression(function, node.getExpressionNode());
     }
 
     private void translateDeclaration(Function function, DeclarationStatementNode node) {
+        Value variableValue = new VariableValue(node.getIdentifierNode().getName(), matchType(node.getTypeNode()));
+        variables.put(node.getIdentifierNode().getName(), variableValue);
 
+        if (node.getExpressionNode() != null) {
+            Value value = translateExpression(function, node.getExpressionNode());
+            BasicBlock current = function.getCurrentBlock();
+            current.addCommand(new Command(variableValue, STORE, List.of(value)));
+        }
+    }
+
+    private Type matchType(TypeNode typeNode) {
+        return Type.INT_4;
     }
 
     private void translateReturn(Function function, ReturnStatementNode node) {
+        BasicBlock last = function.getCurrentBlock();
+        Value value = null;
 
+        if (node.getExpressionNode() != null) {
+            value = translateExpression(function, node.getExpressionNode());
+            last = function.getCurrentBlock();
+        }
+
+        BasicBlock returnBlock = function.appendBlock("local_return");
+
+        if (value != null) {
+
+        }
+
+        createBranch(last, returnBlock);
+        createBranch(returnBlock, function.getReturnBlock());
+
+        function.appendBlock("dummy");
     }
 
     private void translateWhile(Function function, WhileStatementNode node) {
@@ -311,108 +389,253 @@ public class Translator {
         BasicBlock condition = function.appendBlock("while_condition");
         createBranch(last, condition);
 
-        Command command = translateExpression(function, node.getConditionNode());
+        whileToConditionBlock.put(node, condition);
+
+        Value value = translateExpression(function, node.getConditionNode());
+        last = function.getCurrentBlock();
+
+        BasicBlock merge = function.appendBlock("merge");
+        whileToMergeBlock.put(node, merge);
 
         BasicBlock body = function.appendBlock("while_body");
-        body.setTerminator(new Branch(condition));
+        translateStatement(function, node.getBodyNode());
+        createBranch(function.getCurrentBlock(), condition);
 
-        BasicBlock merge = function.appendBlock("while_merge");
-        condition.setTerminator(new ConditionalBranch(command, body, merge));
+        BasicBlock whileMerge = function.appendBlock("while_merge");
+        createBranch(merge, whileMerge);
+
+        createConditionalBranch(last, value, body, merge);
     }
 
-    private Command translateCastExpression(Function function, CastExpressionNode expressionNode) {
+    private Value translateCastExpression(Function function, CastExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translatePrefixMultiplicative(Function function, PrefixIncrementMultiplicativeExpressionNode expressionNode) {
+    private Value translatePrefixMultiplicative(Function function, PrefixIncrementMultiplicativeExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translatePrefixIncrement(Function function, PrefixIncrementAdditiveExpressionNode expressionNode) {
+    private Value translatePrefixIncrement(Function function, PrefixIncrementAdditiveExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translatePrefixDecrement(Function function, PrefixDecrementSubtractionExpressionNode expressionNode) {
+    private Value translatePrefixDecrement(Function function, PrefixDecrementSubtractionExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translatePostfixMultiplicative(Function function, PostfixIncrementMultiplicativeExpressionNode expressionNode) {
+    private Value translatePostfixMultiplicative(Function function, PostfixIncrementMultiplicativeExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translatePostfixIncrementExpression(Function function, PostfixIncrementAdditiveExpressionNode expressionNode) {
+    private Value translatePostfixIncrementExpression(Function function, PostfixIncrementAdditiveExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translatePostfixDecrementExpression(Function function, PostfixDecrementSubtractionExpressionNode expressionNode) {
+    private Value translatePostfixDecrementExpression(Function function, PostfixDecrementSubtractionExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translateFieldAccessExpression(Function function, FieldAccessExpressionNode expressionNode) {
+    private Value translateFieldAccessExpression(Function function, FieldAccessExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translateArrayAccessExpression(Function function, ArrayAccessExpressionNode expressionNode) {
+    private Value translateArrayAccessExpression(Function function, ArrayAccessExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translateFunctionCallExpression(Function function, FunctionCallExpressionNode expressionNode) {
+    private Value translateFunctionCallExpression(Function function, FunctionCallExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translateArrayConstructorExpression(Function function, ArrayConstructorExpressionNode expressionNode) {
+    private Value translateArrayConstructorExpression(Function function, ArrayConstructorExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translateNullConstantExpression(Function function, NullConstantExpressionNode expressionNode) {
+    private Value translateNullConstantExpression(Function function, NullConstantExpressionNode expressionNode) {
+
+        BasicBlock current = function.getCurrentBlock();
         return null;
     }
 
-    private Command translateFloatConstantExpression(Function function, FloatConstantExpressionNode expressionNode) {
-        return null;
+    private Value translateFloatConstantExpression(Function function, FloatConstantExpressionNode expressionNode) {
+        return new FloatValue(expressionNode.getValue());
     }
 
-    private Command translateIntConstantExpression(Function function, IntConstantExpressionNode expressionNode) {
-        return null;
+    private Value translateIntConstantExpression(Function function, IntConstantExpressionNode expressionNode) {
+        return new IntValue(expressionNode.getValue());
     }
 
-    private Command translateBoolConstantExpression(Function function, BoolConstantExpressionNode expressionNode) {
-        return null;
+    private Value translateBoolConstantExpression(Function function, BoolConstantExpressionNode expressionNode) {
+        return new BoolValue(expressionNode.getValue());
     }
 
-    private Command translateVariableExpression(Function function, VariableExpressionNode expressionNode) {
-        return null;
+    private Value translateVariableExpression(Function function, VariableExpressionNode expressionNode) {
+        BasicBlock current = function.getCurrentBlock();
+
+        Command command = new Command(createTempVariable(matchType(
+                expressionNode.getResultType())),
+                STORE,
+                List.of(variables.get(expressionNode.getIdentifierNode().getName())));
+
+        current.addCommand(command);
+
+        return command.getResult();
     }
 
-    private Command translateEqualityExpression(Function function, EqualityExpressionNode expressionNode) {
-        return null;
+    private Value translateEqualityExpression(Function function, EqualityExpressionNode expressionNode) {
+        return translateBinaryOperation(
+                function,
+                expressionNode.getLeft(),
+                expressionNode.getRight(),
+                expressionNode.getType() == EqualityExpressionNode.EqualityType.EQ ? EQ : NE,
+                matchType(expressionNode.getResultType()));
     }
 
-    private Command translateRelationalExpression(Function function, RelationalExpressionNode expressionNode) {
-        return null;
+    private Value translateRelationalExpression(Function function, RelationalExpressionNode expressionNode) {
+        Operation operation = null;
+        switch (expressionNode.getType()) {
+            case GE:
+                operation = GE;
+                break;
+            case GT:
+                operation = GT;
+                break;
+            case LE:
+                operation = LE;
+                break;
+            case LT:
+            default:
+                operation = LT;
+        }
+
+        return translateBinaryOperation(
+                function,
+                expressionNode.getLeft(),
+                expressionNode.getRight(),
+                operation,
+                matchType(expressionNode.getResultType()));
     }
 
-    private Command translateLogicalOrExpression(Function function, LogicalOrExpressionNode expressionNode) {
-        return null;
+    private Value translateLogicalOrExpression(Function function, LogicalOrExpressionNode expressionNode) {
+        return translateBinaryOperation(
+                function,
+                expressionNode.getLeft(),
+                expressionNode.getRight(),
+                OR,
+                matchType(expressionNode.getResultType()));
     }
 
-    private Command translateLogicalAndExpression(Function function, LogicalAndExpressionNode expressionNode) {
-        return null;
+    private Value translateLogicalAndExpression(Function function, LogicalAndExpressionNode expressionNode) {
+        return translateBinaryOperation(
+                function,
+                expressionNode.getLeft(),
+                expressionNode.getRight(),
+                AND,
+                matchType(expressionNode.getResultType()));
     }
 
-    private Command translateMultiplicativeExpression(Function function, MultiplicativeExpressionNode expressionNode) {
-        return null;
+    private Value translateMultiplicativeExpression(Function function, MultiplicativeExpressionNode expressionNode) {
+        Operation operation = expressionNode.getType() == MultiplicativeExpressionNode.MultiplicativeType.MUL
+                ? MUL
+                : expressionNode.getType() == MultiplicativeExpressionNode.MultiplicativeType.DIV
+                ? DIV
+                : MOD;
+
+        return translateBinaryOperation(
+                function,
+                expressionNode.getLeft(),
+                expressionNode.getRight(),
+                operation,
+                matchType(expressionNode.getResultType()));
     }
 
-    private Command translateAdditionalExpression(Function function, AdditiveExpressionNode expressionNode) {
-        return null;
+    private Value translateAdditionalExpression(Function function, AdditiveExpressionNode expressionNode) {
+        Operation operation = expressionNode.getType() == AdditiveExpressionNode.AdditiveType.ADD ? ADD : SUB;
+
+        return translateBinaryOperation(
+                function,
+                expressionNode.getLeft(),
+                expressionNode.getRight(),
+                operation,
+                matchType(expressionNode.getResultType()));
     }
 
-    private Command translateConditionalExpression(Function function, ConditionalExpressionNode expressionNode) {
-        return null;
+    private Value translateBinaryOperation(Function function,
+                                           ExpressionNode left,
+                                           ExpressionNode right,
+                                           Operation operation,
+                                           Type resultType) {
+        Value leftValue = translateExpression(function, left);
+        Value rightValue = translateExpression(function, right);
+
+        Command command = new Command(createTempVariable(resultType), operation, List.of(leftValue, rightValue));
+
+        BasicBlock current = function.getCurrentBlock();
+        current.addCommand(command);
+
+        return command.getResult();
     }
 
-    private Command translateAssigmentExpression(Function function, AssigmentExpressionNode expressionNode) {
-        return null;
+    private Value translateConditionalExpression(Function function, ConditionalExpressionNode expressionNode) {
+        BasicBlock last = function.getCurrentBlock();
+        BasicBlock condition = function.appendBlock("conditional");
+        BasicBlock thenBlock = null;
+        BasicBlock elseBlock = null;
+        BasicBlock mergeBlock = null;
+
+        createBranch(last, condition);
+
+        Value resultValue = createTempVariable(matchType(expressionNode.getResultType()));
+        Value conditionValue = translateExpression(function, expressionNode.getConditionNode());
+        BasicBlock endCondition = function.getCurrentBlock();
+
+        thenBlock = function.appendBlock("conditional_then");
+        Value firstArg = translateExpression(function, expressionNode.getThenNode());
+        BasicBlock endThen = function.getCurrentBlock();
+        Command firstStore = new Command(resultValue, STORE, List.of(firstArg));
+        endThen.addCommand(firstStore);
+
+        elseBlock = function.appendBlock("conditional_else");
+        Value secondArg = translateExpression(function, expressionNode.getElseNode());
+        BasicBlock endElse = function.getCurrentBlock();
+        Command secondStore = new Command(resultValue, STORE, List.of(secondArg));
+        endElse.addCommand(secondStore);
+
+        mergeBlock = function.appendBlock("conditional_result");
+
+        createBranch(endThen, mergeBlock);
+        createBranch(endElse, mergeBlock);
+        createConditionalBranch(endCondition, conditionValue, thenBlock, elseBlock);
+
+        return resultValue;
+    }
+
+    private Value translateAssigmentExpression(Function function, AssigmentExpressionNode expressionNode) {
+        Value left = translateExpression(function, expressionNode.getLeft());
+        Value right = translateExpression(function, expressionNode.getRight());
+
+        Command command = new Command(left, STORE, List.of(right));
+
+        BasicBlock current = function.getCurrentBlock();
+        current.addCommand(command);
+
+        return command.getResult();
+    }
+
+    private VariableValue createTempVariable(Type type) {
+        return new VariableValue(
+                "$$_" + TEMP_VARIABLE_COUNT++,
+                type);
     }
 }

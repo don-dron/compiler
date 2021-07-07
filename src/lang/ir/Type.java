@@ -1,4 +1,5 @@
 package lang.ir;
 
-public class Type {
+public enum Type {
+    INT_1, INT_2, INT_4, INT_8;
 }

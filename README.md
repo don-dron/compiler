@@ -190,7 +190,7 @@ class a<t>
 
 ```
 class opt<t>
-    value t
+    variableValue t
     error e
     ok() bool
 ```

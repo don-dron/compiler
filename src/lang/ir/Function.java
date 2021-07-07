@@ -6,6 +6,7 @@ import java.util.List;
 public class Function {
     private final List<BasicBlock> blocks;
     private BasicBlock currentBlock;
+    private BasicBlock returnBlock;
 
     public Function() {
         blocks = new ArrayList<>();
@@ -24,5 +25,13 @@ public class Function {
 
     public BasicBlock getCurrentBlock() {
         return currentBlock;
+    }
+
+    public void setReturnBlock(BasicBlock returnBlock) {
+        this.returnBlock = returnBlock;
+    }
+
+    public BasicBlock getReturnBlock() {
+        return returnBlock;
     }
 }

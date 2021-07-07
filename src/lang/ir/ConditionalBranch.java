@@ -1,12 +1,12 @@
 package lang.ir;
 
 public class ConditionalBranch  implements Terminator {
-    private final Command command;
+    private final Value value;
     private final BasicBlock left;
     private final BasicBlock right;
 
-    public ConditionalBranch(Command command, BasicBlock left, BasicBlock right) {
-        this.command = command;
+    public ConditionalBranch(Value value, BasicBlock left, BasicBlock right) {
+        this.value = value;
         this.left = left;
         this.right = right;
     }
@@ -19,7 +19,12 @@ public class ConditionalBranch  implements Terminator {
         return right;
     }
 
-    public Command getCommand() {
-        return command;
+    public Value getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "branch " + value.toString() + " " + left.getName() + "," + right.getName();
     }
 }

@@ -1,10 +1,10 @@
 package lang.ir;
 
-public class Variable {
+public class VariableValue implements Value {
     private final String name;
     private final Type type;
 
-    public Variable(String name, Type type) {
+    public VariableValue(String name, Type type) {
         this.name = name;
         this.type = type;
     }
@@ -15,5 +15,10 @@ public class Variable {
 
     public Type getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + name + "," + type.toString() + ")";
     }
 }

@@ -878,7 +878,7 @@ public class Parser {
     }
 
     private ExpressionNode parseCastExpression() {
-        if (peek().getTokenType() == Token.TokenType.L_PAREN) {
+        if (peek().getTokenType() == Token.TokenType.LB_PAREN) {
             next();
             TypeNode typeNode = parseType();
             next();
