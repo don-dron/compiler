@@ -1,5 +1,6 @@
 package lang.ir.translate;
 
+import lang.ast.BasicTypeNode;
 import lang.ast.GlobalBasicType;
 import lang.ast.Program;
 import lang.ast.TypeNode;
@@ -70,6 +71,7 @@ import static lang.ir.Operation.AND;
 import static lang.ir.Operation.ARRAY_ACCESS;
 import static lang.ir.Operation.ARRAY_ALLOCATION;
 import static lang.ir.Operation.CALL;
+import static lang.ir.Operation.CAST;
 import static lang.ir.Operation.DIV;
 import static lang.ir.Operation.EQ;
 import static lang.ir.Operation.FIELD_ACCESS;
@@ -400,7 +402,12 @@ public class Translator {
     }
 
     private Type matchType(TypeNode typeNode) {
-        return Type.INT_4;
+        if (typeNode instanceof BasicTypeNode) {
+            BasicTypeNode basicTypeNode = (BasicTypeNode)typeNode;
+            return Type.INT_4;
+        } else {
+            return Type.POINTER;
+        }
     }
 
     private void translateReturn(Function function, ReturnStatementNode node) {
@@ -449,38 +456,243 @@ public class Translator {
     }
 
     private Value translateCastExpression(Function function, CastExpressionNode expressionNode) {
-        BasicBlock current = function.getCurrentBlock();
-        return null;
+        Type type = matchType(expressionNode.getTypeNode());
+        Value value = translateExpression(function, expressionNode.getExpressionNode());
+
+        Command command = new Command(createTempVariable(type), CAST, List.of(value));
+        function.getCurrentBlock().addCommand(command);
+        return command.getResult();
     }
 
     private Value translatePrefixMultiplicative(Function function, PrefixIncrementMultiplicativeExpressionNode expressionNode) {
+        Type type = matchType(expressionNode.getResultType());
+
+        VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
+
+        Value value = variables.get(variableExpressionNode.getIdentifierNode().getName());
+
+        Command load = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(load);
+
+        Command change = new Command(
+                createTempVariable(type),
+                ADD,
+                List.of(load.getResult(), load.getResult())
+        );
+
+        current.addCommand(change);
+
+        Command store = new Command(
+                value,
+                STORE,
+                List.of(change.getResult())
+        );
+
+        current.addCommand(store);
+
+        load = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
+        current.addCommand(load);
+        return load.getResult();
     }
 
     private Value translatePrefixIncrement(Function function, PrefixIncrementAdditiveExpressionNode expressionNode) {
+        Type type = matchType(expressionNode.getResultType());
+
+        VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
+
+        Value value = variables.get(variableExpressionNode.getIdentifierNode().getName());
+
+        Command load = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(load);
+
+        Command change = new Command(
+                createTempVariable(type),
+                ADD,
+                List.of(load.getResult(), new IntValue(1))
+        );
+
+        current.addCommand(change);
+
+        Command store = new Command(
+                value,
+                STORE,
+                List.of(change.getResult())
+        );
+
+        current.addCommand(store);
+
+        load = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
+        current.addCommand(load);
+        return load.getResult();
     }
 
     private Value translatePrefixDecrement(Function function, PrefixDecrementSubtractionExpressionNode expressionNode) {
+        Type type = matchType(expressionNode.getResultType());
+
+        VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
+
+        Value value = variables.get(variableExpressionNode.getIdentifierNode().getName());
+
+        Command load = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(load);
+
+        Command change = new Command(
+                createTempVariable(type),
+                SUB,
+                List.of(load.getResult(), new IntValue(1))
+        );
+
+        current.addCommand(change);
+
+        Command store = new Command(
+                value,
+                STORE,
+                List.of(change.getResult())
+        );
+
+        current.addCommand(store);
+
+        load = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
+        current.addCommand(load);
+        return load.getResult();
     }
 
     private Value translatePostfixMultiplicative(Function function, PostfixIncrementMultiplicativeExpressionNode expressionNode) {
+        Type type = matchType(expressionNode.getResultType());
+
+        VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
+
+        Value value = variables.get(variableExpressionNode.getIdentifierNode().getName());
+
+        Command loadValue = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(loadValue);
+
+        Command change = new Command(
+                createTempVariable(type),
+                ADD,
+                List.of(loadValue.getResult(), loadValue.getResult())
+        );
+
+        current.addCommand(change);
+
+        Command store = new Command(
+                value,
+                STORE,
+                List.of(change.getResult())
+        );
+
+        current.addCommand(store);
+
+        return loadValue.getResult();
     }
 
     private Value translatePostfixIncrementExpression(Function function, PostfixIncrementAdditiveExpressionNode expressionNode) {
+        Type type = matchType(expressionNode.getResultType());
+
+        VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
+
+        Value value = variables.get(variableExpressionNode.getIdentifierNode().getName());
+
+        Command loadValue = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(loadValue);
+
+        Command change = new Command(
+                createTempVariable(type),
+                ADD,
+                List.of(loadValue.getResult(), new IntValue(1))
+        );
+
+        current.addCommand(change);
+
+        Command store = new Command(
+                value,
+                STORE,
+                List.of(change.getResult())
+        );
+
+        current.addCommand(store);
+
+        return loadValue.getResult();
     }
 
     private Value translatePostfixDecrementExpression(Function function, PostfixDecrementSubtractionExpressionNode expressionNode) {
+        Type type = matchType(expressionNode.getResultType());
+
+        VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
+
+        Value value = variables.get(variableExpressionNode.getIdentifierNode().getName());
+
+        Command loadValue = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(value)
+        );
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(loadValue);
+
+        Command change = new Command(
+                createTempVariable(type),
+                SUB,
+                List.of(loadValue.getResult(), new IntValue(1))
+        );
+
+        current.addCommand(change);
+
+        Command store = new Command(
+                value,
+                STORE,
+                List.of(change.getResult())
+        );
+
+        current.addCommand(store);
+
+        return loadValue.getResult();
     }
 
     private Value translateFieldAccessExpression(Function function, FieldAccessExpressionNode expressionNode) {
@@ -537,10 +749,12 @@ public class Translator {
         Value sizeValue = translateExpression(function, expressionNode.getSizeExpression());
 
         Command command = new Command(
-                createTempVariable(Type.INT_8),
+                createTempVariable(Type.POINTER),
                 ARRAY_ALLOCATION,
-                List.of(sizeValue)
+                List.of(new IntValue(8), sizeValue)
         );
+
+        function.getCurrentBlock().addCommand(command);
 
         return command.getResult();
     }

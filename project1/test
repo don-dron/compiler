@@ -3,8 +3,10 @@
     return 1
 
 () void main ->
-    () int t = h
+    int[] a = int[2]
 
-    int c = t()
+    a[1] = 4
+
+    int c = a[1]
 
     return
