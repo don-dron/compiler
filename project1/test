@@ -1,16 +1,10 @@
 
+() int h ->
+    return 1
+
 () void main ->
-    int b = 2;
-    int c = 3;
-    int d = 2;
+    () int t = h
 
-    if (1 == d ? c : b) == 4
-        return
-    elif b == 3
-        b = 1
-    else
-        return
-
-
+    int c = t()
 
     return

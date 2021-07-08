@@ -3,13 +3,25 @@ package lang.ir;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Function {
+public class Function implements Value {
     private final List<BasicBlock> blocks;
+    private final String name;
     private BasicBlock currentBlock;
     private BasicBlock returnBlock;
+    private Value returnValue;
 
-    public Function() {
+    public Function(String name) {
+        this.name = name;
         blocks = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public List<BasicBlock> getBlocks() {
@@ -33,5 +45,13 @@ public class Function {
 
     public BasicBlock getReturnBlock() {
         return returnBlock;
+    }
+
+    public void setReturnValue(Value variableValue) {
+        this.returnValue = variableValue;
+    }
+
+    public Value getReturnValue() {
+        return returnValue;
     }
 }

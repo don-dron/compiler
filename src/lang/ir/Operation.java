@@ -21,7 +21,13 @@ public enum  Operation {
     LE("<- le"),
 
     EQ("<- eq"),
-    NE("<- ne")
+    NE("<- ne"),
+
+    CALL("<- call"),
+    ARRAY_ACCESS("<- array_access"),
+    FIELD_ACCESS("<- field_access"),
+    ARRAY_ALLOCATION("<- array_allocation"),
+    STRUCT_ALLOCATION("<- struct_allocation")
 
     ;
 

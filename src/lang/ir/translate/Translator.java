@@ -1,5 +1,6 @@
 package lang.ir.translate;
 
+import lang.ast.GlobalBasicType;
 import lang.ast.Program;
 import lang.ast.TypeNode;
 import lang.ast.expression.ArrayConstructorExpressionNode;
@@ -48,13 +49,13 @@ import lang.ir.ConditionalBranch;
 import lang.ir.FloatValue;
 import lang.ir.Function;
 import lang.ir.IntValue;
+import lang.ir.LongValue;
 import lang.ir.Module;
 import lang.ir.Operation;
 import lang.ir.Return;
 import lang.ir.Type;
 import lang.ir.Value;
 import lang.ir.VariableValue;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,14 +63,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static lang.ir.Operation.ADD;
 import static lang.ir.Operation.AND;
+import static lang.ir.Operation.ARRAY_ACCESS;
+import static lang.ir.Operation.ARRAY_ALLOCATION;
+import static lang.ir.Operation.CALL;
 import static lang.ir.Operation.DIV;
 import static lang.ir.Operation.EQ;
+import static lang.ir.Operation.FIELD_ACCESS;
 import static lang.ir.Operation.GE;
 import static lang.ir.Operation.GT;
 import static lang.ir.Operation.LE;
+import static lang.ir.Operation.LOAD;
 import static lang.ir.Operation.LT;
 import static lang.ir.Operation.MOD;
 import static lang.ir.Operation.MUL;
@@ -94,20 +101,57 @@ public class Translator {
     }
 
     public Module translate() {
-        return new Module(program.getFunctions()
+        Map<Function, FunctionDefinitionNode> functionToStatement = program.getFunctions()
                 .stream()
-                .map(this::translateFunction)
+                .collect(Collectors.toMap(
+                        functionDefinitionNode -> {
+                            String name = functionDefinitionNode.getIdentifierNode().getName();
+                            Function function = new Function(name);
+                            variables.put(name, function);
+                            return function;
+                        },
+                        java.util.function.Function.identity()));
+
+        Module module = new Module(functionToStatement
+                .entrySet()
+                .stream()
+                .map(entry -> translateFunction(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList()));
+
+        String s = "digraph G {\n" +
+                module.getFunctions().stream()
+                        .map(Translator::graphVizDebug)
+                        .collect(Collectors.joining("\n")) + "\n}";
+
+        System.out.println(s);
+
+        return module;
     }
 
-    private Function translateFunction(FunctionDefinitionNode functionDefinitionNode) {
-        Function function = new Function();
-
+    private Function translateFunction(Function function, FunctionDefinitionNode functionDefinitionNode) {
         BasicBlock header = function.appendBlock("header");
 
         BasicBlock returnBlock = function.appendBlock("return");
+        if (!functionDefinitionNode.getFunctionNode().getTypeNode().equals(GlobalBasicType.VOID_TYPE)) {
+            String name = "ret_value_" + TEMP_VARIABLE_COUNT++;
+            Type type = matchType(functionDefinitionNode.getFunctionNode().getTypeNode());
+            Value variableValue = new VariableValue(name, type);
+            variables.put(name, variableValue);
+            Command loadReturn = new Command(
+                    createTempVariable(type),
+                    LOAD,
+                    List.of(variableValue)
+            );
+
+            function.setReturnValue(variableValue);
+
+            returnBlock.addCommand(loadReturn);
+            returnBlock.setTerminator(new Return(loadReturn.getResult()));
+        } else {
+            returnBlock.setTerminator(new Return(null));
+        }
+
         function.setReturnBlock(returnBlock);
-        returnBlock.setTerminator(new Return());
 
         BasicBlock entry = function.appendBlock("entry");
         createBranch(header, entry);
@@ -116,13 +160,11 @@ public class Translator {
 
         function.getCurrentBlock().setTerminator(new Branch(returnBlock));
 
-        System.out.println(graphVizDebug(function));
         return function;
     }
 
     public static String graphVizDebug(Function functionBlock) {
-        StringBuilder s = new StringBuilder("digraph G {\n");
-
+        StringBuilder s = new StringBuilder();
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
             String body = basicBlock.getName() + ":\n" +
                     basicBlock.getCommands()
@@ -153,7 +195,6 @@ public class Translator {
                         .append("\";\n");
             }
         }
-        s.append("}");
 
         return s.toString();
     }
@@ -301,7 +342,7 @@ public class Translator {
         BasicBlock merge = function.appendBlock("if_else");
         createConditionalBranch(endCondition, ifCommand, then, merge);
 
-        if(node.getElifStatementNodes().isEmpty() && node.getElseStatementNode() == null) {
+        if (node.getElifStatementNodes().isEmpty() && node.getElseStatementNode() == null) {
             endsBlocks.add(function.getCurrentBlock());
         }
 
@@ -364,21 +405,21 @@ public class Translator {
 
     private void translateReturn(Function function, ReturnStatementNode node) {
         BasicBlock last = function.getCurrentBlock();
-        Value value = null;
+        BasicBlock returnBlock = function.appendBlock("local_return");
+        createBranch(last, returnBlock);
 
         if (node.getExpressionNode() != null) {
-            value = translateExpression(function, node.getExpressionNode());
-            last = function.getCurrentBlock();
+            Value value = translateExpression(function, node.getExpressionNode());
+
+            Command storeReturn = new Command(
+                    function.getReturnValue(),
+                    STORE,
+                    List.of(value)
+            );
+            returnBlock.addCommand(storeReturn);
         }
 
-        BasicBlock returnBlock = function.appendBlock("local_return");
-
-        if (value != null) {
-
-        }
-
-        createBranch(last, returnBlock);
-        createBranch(returnBlock, function.getReturnBlock());
+        createBranch(function.getCurrentBlock(), function.getReturnBlock());
 
         function.appendBlock("dummy");
     }
@@ -443,29 +484,69 @@ public class Translator {
     }
 
     private Value translateFieldAccessExpression(Function function, FieldAccessExpressionNode expressionNode) {
+        Value arrayValue = translateExpression(function, expressionNode.getLeft());
+        Value offsetValue = translateExpression(function, expressionNode.getRight());
+
+        Command command = new Command(
+                createTempVariable(matchType(expressionNode.getResultType())),
+                FIELD_ACCESS,
+                List.of(arrayValue, offsetValue));
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(command);
+
+        return command.getResult();
     }
 
     private Value translateArrayAccessExpression(Function function, ArrayAccessExpressionNode expressionNode) {
+        Value arrayValue = translateExpression(function, expressionNode.getArray());
+        Value offsetValue = translateExpression(function, expressionNode.getArgument());
+
+        Command command = new Command(
+                createTempVariable(matchType(expressionNode.getResultType())),
+                ARRAY_ACCESS,
+                List.of(arrayValue, offsetValue));
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(command);
+
+        return command.getResult();
     }
 
     private Value translateFunctionCallExpression(Function function, FunctionCallExpressionNode expressionNode) {
+        Value functionValue = translateExpression(function, expressionNode.getFunction());
+
+        Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
+                Stream.concat(
+                        Stream.of(functionValue),
+                        expressionNode
+                                .getParameters()
+                                .getList()
+                                .stream()
+                                .map(exp -> translateExpression(function, exp)))
+                        .collect(Collectors.toList()));
+
         BasicBlock current = function.getCurrentBlock();
-        return null;
+        current.addCommand(command);
+
+        return command.getResult();
     }
 
     private Value translateArrayConstructorExpression(Function function, ArrayConstructorExpressionNode expressionNode) {
-        BasicBlock current = function.getCurrentBlock();
-        return null;
+        Type targetType = matchType(expressionNode.getTypeNode());
+        Value sizeValue = translateExpression(function, expressionNode.getSizeExpression());
+
+        Command command = new Command(
+                createTempVariable(Type.INT_8),
+                ARRAY_ALLOCATION,
+                List.of(sizeValue)
+        );
+
+        return command.getResult();
     }
 
     private Value translateNullConstantExpression(Function function, NullConstantExpressionNode expressionNode) {
-
-        BasicBlock current = function.getCurrentBlock();
-        return null;
+        return new LongValue(0L);
     }
 
     private Value translateFloatConstantExpression(Function function, FloatConstantExpressionNode expressionNode) {
@@ -483,14 +564,19 @@ public class Translator {
     private Value translateVariableExpression(Function function, VariableExpressionNode expressionNode) {
         BasicBlock current = function.getCurrentBlock();
 
-        Command command = new Command(createTempVariable(matchType(
-                expressionNode.getResultType())),
-                STORE,
-                List.of(variables.get(expressionNode.getIdentifierNode().getName())));
+        Value value = variables.get(expressionNode.getIdentifierNode().getName());
 
-        current.addCommand(command);
+        if (value instanceof Function) {
+            return value;
+        } else {
+            Command command = new Command(createTempVariable(matchType(
+                    expressionNode.getResultType())),
+                    STORE,
+                    List.of(value));
+            current.addCommand(command);
 
-        return command.getResult();
+            return command.getResult();
+        }
     }
 
     private Value translateEqualityExpression(Function function, EqualityExpressionNode expressionNode) {
