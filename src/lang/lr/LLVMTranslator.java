@@ -19,7 +19,9 @@ public class LLVMTranslator {
 
     public String translate() {
         StringBuilder builder = new StringBuilder();
-
+        builder.append("; ModuleID = 'main'\n" +
+                "source_filename = \"main\"\n")
+        .append("declare i32* @malloc(i32)\n");
         builder.append(module.getFunctions()
                 .stream()
                 .map(this::translateFunction)
@@ -34,7 +36,7 @@ public class LLVMTranslator {
         builder
                 .append("define")
                 .append(" ")
-                .append(function.getType() == VOID ? "" : "i32")
+                .append(function.getType() == VOID ? "void" : "i32")
                 .append(" ")
                 .append("@")
                 .append(function.getName())

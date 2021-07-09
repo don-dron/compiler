@@ -708,6 +708,7 @@ public class SemanticAnalysis {
         ExpressionNode node = prefixIncrementMultiplicativeExpressionNode.getExpressionNode();
         analyseExpression(node, parentScope);
 
+        expressionNode.setResultType(node.getResultType());
         if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }
@@ -720,6 +721,7 @@ public class SemanticAnalysis {
         ExpressionNode node = prefixIncrementAdditiveExpressionNode.getExpressionNode();
         analyseExpression(node, parentScope);
 
+        expressionNode.setResultType(node.getResultType());
         if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }
@@ -732,6 +734,7 @@ public class SemanticAnalysis {
         ExpressionNode node = prefixDecrementSubtractionExpressionNode.getExpressionNode();
         analyseExpression(node, parentScope);
 
+        expressionNode.setResultType(node.getResultType());
         if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }
@@ -744,6 +747,7 @@ public class SemanticAnalysis {
         ExpressionNode node = postfixIncrementMultiplicativeExpressionNode.getExpressionNode();
         analyseExpression(node, parentScope);
 
+        expressionNode.setResultType(node.getResultType());
         if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }
@@ -756,6 +760,7 @@ public class SemanticAnalysis {
         ExpressionNode node = postfixIncrementAdditiveExpressionNode.getExpressionNode();
         analyseExpression(node, parentScope);
 
+        expressionNode.setResultType(node.getResultType());
         if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }
@@ -768,6 +773,7 @@ public class SemanticAnalysis {
         ExpressionNode node = postfixDecrementSubtractionExpressionNode.getExpressionNode();
         analyseExpression(node, parentScope);
 
+        expressionNode.setResultType(node.getResultType());
         if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }

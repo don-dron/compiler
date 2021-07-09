@@ -4,9 +4,7 @@ package lang.ir;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static lang.ir.Operation.ALLOC;
-import static lang.ir.Operation.LOAD;
-import static lang.ir.Operation.STORE;
+import static lang.ir.Operation.*;
 
 public class Command implements Value {
     private final Value result;
@@ -33,7 +31,7 @@ public class Command implements Value {
 
     @Override
     public String toString() {
-        return result.toString() + " " + operation.toString() + " " +
+        return (result == null ? "" : result.toString()) + " " + operation.toString() + " " +
                 parameters.stream()
                         .map(Object::toString)
                         .collect(Collectors.joining(","));
@@ -52,14 +50,60 @@ public class Command implements Value {
                             .stream()
                             .map(Value::toLLVM)
                             .collect(Collectors.joining(","));
+        } else if (operation == SUB) {
+            return result.toLLVM() + " = sub " + result.getType().toLLVM() + " " +
+                    parameters
+                            .stream()
+                            .map(Value::toLLVM)
+                            .collect(Collectors.joining(","));
+        } else if (operation == MUL) {
+            return result.toLLVM() + " = mul " + result.getType().toLLVM() + " " +
+                    parameters
+                            .stream()
+                            .map(Value::toLLVM)
+                            .collect(Collectors.joining(","));
+        } else if (operation == AND) {
+            return result.toLLVM() + " = and " + result.getType().toLLVM() + " " +
+                    parameters
+                            .stream()
+                            .map(Value::toLLVM)
+                            .collect(Collectors.joining(","));
         } else if (operation == LOAD) {
-            return result.toLLVM() + " = load " + result.getType().toLLVM() + "* " +
+            return result.toLLVM() + " = load " + result.getType().toLLVM() + "," +
+                    parameters.get(0).getType().toLLVM() + "* " +
                     parameters.get(0).toLLVM();
         } else if (operation == STORE) {
             return "store " + parameters.get(0).getType().toLLVM() + " " +
                     parameters.get(0).toLLVM() + ", " + result.getType().toLLVM() + "* " + result.toLLVM();
-        } else if(operation == ALLOC) {
+        } else if (operation == ALLOC) {
             return result.toLLVM() + " = alloca " + result.getType().toLLVM();
+        } else if (operation == GT
+                || operation == GE
+                || operation == LT
+                || operation == LE
+                || operation == EQ
+                || operation == NE) {
+            return result.toLLVM() + " = icmp " + operation.toLLVM() + " " +
+                    parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
+                    " " + parameters.get(1).toLLVM();
+        } else if (operation == ARRAY_ALLOCATION) {
+            return result.toLLVM() + " = call " + result.getType().toLLVM()
+                    + " @malloc(" + parameters.get(1).getType().toLLVM() + " "
+                    + parameters.get(1).toLLVM() + ")";
+        } else if (operation == ARRAY_REFERENCE) {
+            return result.toLLVM() + " = getelementptr inbounds " + result.getType().toLLVM() + " , "
+                    + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
+                    parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
+        } else if (operation == ARRAY_ACCESS) {
+            return result.toLLVM() + " = getelementptr inbounds " + result.getType().toLLVM() + " , "
+                    + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
+                    parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
+        } else if (operation == CALL) {
+            return (result == null ? "" : (result.toLLVM() + " = " )) + "call " +
+                    (result == null ? "void" : result.getType().toLLVM())
+                    + " @" + parameters.get(0).toLLVM() + "(" +
+                    parameters.stream().skip(1).map(p -> p.getType().toLLVM() + " "
+                            + p.toLLVM()).collect(Collectors.joining(",")) + ")";
         }
         return "";
     }

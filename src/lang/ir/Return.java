@@ -18,6 +18,6 @@ public class Return implements Terminator {
 
     @Override
     public String toLLVM() {
-        return "ret " + (value == null ? "" : (value.getType().toLLVM() + " " + value.toLLVM()));
+        return "ret " + (value == null ? "void" : (value.getType().toLLVM() + " " + value.toLLVM()));
     }
 }

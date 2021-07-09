@@ -31,5 +31,6 @@
         quickSort(numbers, left, pivot - 1)
 
     if right > pivot
-        quickSort(numbers, pivot, right)
+        quickSort(numbers, pivot + 1, right)
+
 

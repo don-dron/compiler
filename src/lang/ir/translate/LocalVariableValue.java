@@ -25,4 +25,9 @@ public class LocalVariableValue implements Value {
     public int getIndex() {
         return index;
     }
+
+    @Override
+    public String toString() {
+        return "(%" + index + "," + type.toString() + ")";
+    }
 }

@@ -67,7 +67,7 @@ public class Function implements Value {
 
     @Override
     public String toLLVM() {
-        throw new IllegalArgumentException("");
+        return name;
     }
 
     public void setParameterTypes(List<Type> parameterTypes) {
