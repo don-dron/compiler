@@ -15,4 +15,9 @@ public class Branch implements Terminator {
     public String toString() {
         return "branch " + target.getName();
     }
+
+    @Override
+    public String toLLVM() {
+        return "br " + "label %" + target.getName();
+    }
 }

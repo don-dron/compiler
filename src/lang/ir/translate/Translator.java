@@ -1,7 +1,10 @@
 package lang.ir.translate;
 
+import com.google.errorprone.annotations.Var;
 import lang.ast.BasicTypeNode;
 import lang.ast.GlobalBasicType;
+import lang.ast.IdentifierNode;
+import lang.ast.ParameterNode;
 import lang.ast.Program;
 import lang.ast.TypeNode;
 import lang.ast.expression.ArrayConstructorExpressionNode;
@@ -53,6 +56,7 @@ import lang.ir.IntValue;
 import lang.ir.LongValue;
 import lang.ir.Module;
 import lang.ir.Operation;
+import lang.ir.Reference;
 import lang.ir.Return;
 import lang.ir.Type;
 import lang.ir.Value;
@@ -67,6 +71,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static lang.ir.Operation.ADD;
+import static lang.ir.Operation.ALLOC;
 import static lang.ir.Operation.AND;
 import static lang.ir.Operation.ARRAY_ACCESS;
 import static lang.ir.Operation.ARRAY_ALLOCATION;
@@ -89,6 +94,7 @@ import static lang.ir.Operation.SUB;
 
 public class Translator {
     private final Program program;
+    private int RET_COUNT = 0;
     private int TEMP_VARIABLE_COUNT = 0;
 
     private final Map<String, Value> variables;
@@ -108,6 +114,12 @@ public class Translator {
                 .collect(Collectors.toMap(
                         functionDefinitionNode -> {
                             String name = functionDefinitionNode.getIdentifierNode().getName();
+
+                            if (program.getMainFunction().getIdentifierNode().getName()
+                                    .equals(functionDefinitionNode.getIdentifierNode().getName())) {
+                                name = "main";
+                            }
+
                             Function function = new Function(name);
                             variables.put(name, function);
                             return function;
@@ -133,12 +145,52 @@ public class Translator {
     private Function translateFunction(Function function, FunctionDefinitionNode functionDefinitionNode) {
         BasicBlock header = function.appendBlock("header");
 
-        BasicBlock returnBlock = function.appendBlock("return");
+        List<Type> parameterTypes = new ArrayList<>();
+        for (ParameterNode n : functionDefinitionNode
+                .getFunctionNode()
+                .getParametersNode()
+                .getParameters()) {
+            Type type = matchType(n.getTypeNode());
+            parameterTypes.add(type);
+            VariableValue variableValue = new VariableValue(
+                    n.getIdentifierNode().getName(),
+                    type
+            );
+            variables.put(n.getIdentifierNode().getName(), variableValue);
+
+            Command alloc = new Command(
+                    variableValue,
+                    ALLOC,
+                    List.of()
+            );
+
+            header.addCommand(alloc);
+
+            Command command = new Command(
+                    variableValue,
+                    STORE,
+                    List.of(createTempVariable(type))
+            );
+
+            header.addCommand(command);
+        }
+        BasicBlock returnBlock = null;
+
         if (!functionDefinitionNode.getFunctionNode().getTypeNode().equals(GlobalBasicType.VOID_TYPE)) {
-            String name = "ret_value_" + TEMP_VARIABLE_COUNT++;
+            String name = "$$_ret_value_" + RET_COUNT++;
             Type type = matchType(functionDefinitionNode.getFunctionNode().getTypeNode());
             Value variableValue = new VariableValue(name, type);
             variables.put(name, variableValue);
+
+            Command alloc = new Command(
+                    variableValue,
+                    ALLOC,
+                    List.of()
+            );
+
+            header.addCommand(alloc);
+            returnBlock = function.appendBlock("return");
+
             Command loadReturn = new Command(
                     createTempVariable(type),
                     LOAD,
@@ -150,9 +202,12 @@ public class Translator {
             returnBlock.addCommand(loadReturn);
             returnBlock.setTerminator(new Return(loadReturn.getResult()));
         } else {
+            returnBlock = function.appendBlock("return");
             returnBlock.setTerminator(new Return(null));
         }
 
+        function.setParameterTypes(parameterTypes);
+        function.setResultType(matchType(functionDefinitionNode.getFunctionNode().getTypeNode()));
         function.setReturnBlock(returnBlock);
 
         BasicBlock entry = function.appendBlock("entry");
@@ -394,6 +449,14 @@ public class Translator {
         Value variableValue = new VariableValue(node.getIdentifierNode().getName(), matchType(node.getTypeNode()));
         variables.put(node.getIdentifierNode().getName(), variableValue);
 
+        Command alloc = new Command(
+                variableValue,
+                ALLOC,
+                List.of()
+        );
+
+        function.getCurrentBlock().addCommand(alloc);
+
         if (node.getExpressionNode() != null) {
             Value value = translateExpression(function, node.getExpressionNode());
             BasicBlock current = function.getCurrentBlock();
@@ -403,8 +466,8 @@ public class Translator {
 
     private Type matchType(TypeNode typeNode) {
         if (typeNode instanceof BasicTypeNode) {
-            BasicTypeNode basicTypeNode = (BasicTypeNode)typeNode;
-            return Type.INT_4;
+            BasicTypeNode basicTypeNode = (BasicTypeNode) typeNode;
+            return Type.INT_32;
         } else {
             return Type.POINTER;
         }
@@ -464,7 +527,8 @@ public class Translator {
         return command.getResult();
     }
 
-    private Value translatePrefixMultiplicative(Function function, PrefixIncrementMultiplicativeExpressionNode expressionNode) {
+    private Value translatePrefixMultiplicative(Function function, PrefixIncrementMultiplicativeExpressionNode
+            expressionNode) {
         Type type = matchType(expressionNode.getResultType());
 
         VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
@@ -548,7 +612,8 @@ public class Translator {
         return load.getResult();
     }
 
-    private Value translatePrefixDecrement(Function function, PrefixDecrementSubtractionExpressionNode expressionNode) {
+    private Value translatePrefixDecrement(Function function, PrefixDecrementSubtractionExpressionNode
+            expressionNode) {
         Type type = matchType(expressionNode.getResultType());
 
         VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
@@ -590,7 +655,8 @@ public class Translator {
         return load.getResult();
     }
 
-    private Value translatePostfixMultiplicative(Function function, PostfixIncrementMultiplicativeExpressionNode expressionNode) {
+    private Value translatePostfixMultiplicative(Function function, PostfixIncrementMultiplicativeExpressionNode
+            expressionNode) {
         Type type = matchType(expressionNode.getResultType());
 
         VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
@@ -625,7 +691,8 @@ public class Translator {
         return loadValue.getResult();
     }
 
-    private Value translatePostfixIncrementExpression(Function function, PostfixIncrementAdditiveExpressionNode expressionNode) {
+    private Value translatePostfixIncrementExpression(Function function, PostfixIncrementAdditiveExpressionNode
+            expressionNode) {
         Type type = matchType(expressionNode.getResultType());
 
         VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
@@ -660,7 +727,8 @@ public class Translator {
         return loadValue.getResult();
     }
 
-    private Value translatePostfixDecrementExpression(Function function, PostfixDecrementSubtractionExpressionNode expressionNode) {
+    private Value translatePostfixDecrementExpression(Function function, PostfixDecrementSubtractionExpressionNode
+            expressionNode) {
         Type type = matchType(expressionNode.getResultType());
 
         VariableExpressionNode variableExpressionNode = (VariableExpressionNode) expressionNode.getExpressionNode();
@@ -744,7 +812,8 @@ public class Translator {
         return command.getResult();
     }
 
-    private Value translateArrayConstructorExpression(Function function, ArrayConstructorExpressionNode expressionNode) {
+    private Value translateArrayConstructorExpression(Function function, ArrayConstructorExpressionNode
+            expressionNode) {
         Type targetType = matchType(expressionNode.getTypeNode());
         Value sizeValue = translateExpression(function, expressionNode.getSizeExpression());
 
@@ -785,7 +854,7 @@ public class Translator {
         } else {
             Command command = new Command(createTempVariable(matchType(
                     expressionNode.getResultType())),
-                    STORE,
+                    LOAD,
                     List.of(value));
             current.addCommand(command);
 
@@ -922,7 +991,7 @@ public class Translator {
     }
 
     private Value translateAssigmentExpression(Function function, AssigmentExpressionNode expressionNode) {
-        Value left = translateExpression(function, expressionNode.getLeft());
+        Value left = translateLeftValue(expressionNode.getLeft());
         Value right = translateExpression(function, expressionNode.getRight());
 
         Command command = new Command(left, STORE, List.of(right));
@@ -933,9 +1002,17 @@ public class Translator {
         return command.getResult();
     }
 
-    private VariableValue createTempVariable(Type type) {
-        return new VariableValue(
-                "$$_" + TEMP_VARIABLE_COUNT++,
+    private Value translateLeftValue(ExpressionNode left) {
+        if(left instanceof VariableExpressionNode) {
+            VariableExpressionNode variableExpressionNode = (VariableExpressionNode)left;
+            return variables.get(variableExpressionNode.getIdentifierNode().getName());
+        }
+        return null;
+    }
+
+    private Value createTempVariable(Type type) {
+        return new LocalVariableValue(
+                TEMP_VARIABLE_COUNT++,
                 type);
     }
 }

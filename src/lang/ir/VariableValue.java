@@ -21,4 +21,9 @@ public class VariableValue implements Value {
     public String toString() {
         return "(" + name + "," + type.toString() + ")";
     }
+
+    @Override
+    public String toLLVM() {
+        return "%" + name;
+    }
 }

@@ -80,6 +80,8 @@ public class SemanticAnalysis {
     }
 
     public Program analyse() {
+        findMainFunction();
+
         for (FileNode fileNode : fileNodes) {
             analyseImports(fileNode);
         }
@@ -87,8 +89,6 @@ public class SemanticAnalysis {
         for (FileNode fileNode : fileNodes) {
             analyseDefinitionsStart(fileNode);
         }
-
-        findMainFunction();
 
         for (FileNode fileNode : fileNodes) {
             linkImports(fileNode);
@@ -103,6 +103,7 @@ public class SemanticAnalysis {
         }
 
         return new Program(
+                mainFunction,
                 new ArrayList<>(functions),
                 new ArrayList<>(fileNodes));
     }

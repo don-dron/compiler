@@ -1,6 +1,7 @@
 package lang.ir;
 
 public enum  Operation {
+    ALLOC("alloc"),
 
     STORE("store"),
     LOAD("load"),

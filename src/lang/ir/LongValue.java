@@ -15,4 +15,14 @@ public class LongValue implements Value {
     public String toString() {
         return String.valueOf(value);
     }
+
+    @Override
+    public String toLLVM() {
+        return String.valueOf(value);
+    }
+
+    @Override
+    public Type getType() {
+        return Type.INT_64;
+    }
 }

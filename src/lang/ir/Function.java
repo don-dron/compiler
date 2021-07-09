@@ -9,6 +9,8 @@ public class Function implements Value {
     private BasicBlock currentBlock;
     private BasicBlock returnBlock;
     private Value returnValue;
+    private Type resultType;
+    private List<Type> parameterTypes;
 
     public Function(String name) {
         this.name = name;
@@ -53,5 +55,26 @@ public class Function implements Value {
 
     public Value getReturnValue() {
         return returnValue;
+    }
+
+    public void setResultType(Type resultType) {
+        this.resultType = resultType;
+    }
+
+    public Type getType() {
+        return resultType;
+    }
+
+    @Override
+    public String toLLVM() {
+        throw new IllegalArgumentException("");
+    }
+
+    public void setParameterTypes(List<Type> parameterTypes) {
+        this.parameterTypes = parameterTypes;
+    }
+
+    public List<Type> getParameterTypes() {
+        return parameterTypes;
     }
 }

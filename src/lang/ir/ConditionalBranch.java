@@ -1,6 +1,6 @@
 package lang.ir;
 
-public class ConditionalBranch  implements Terminator {
+public class ConditionalBranch implements Terminator {
     private final Value value;
     private final BasicBlock left;
     private final BasicBlock right;
@@ -26,5 +26,11 @@ public class ConditionalBranch  implements Terminator {
     @Override
     public String toString() {
         return "branch " + value.toString() + " " + left.getName() + "," + right.getName();
+    }
+
+    @Override
+    public String toLLVM() {
+        return "br " + value.getType().toLLVM() + " " + value.toLLVM() +
+                ", label %" + left.getName() + ",label %" + right.getName();
     }
 }
