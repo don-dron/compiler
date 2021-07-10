@@ -854,12 +854,20 @@ public class SemanticAnalysis {
 
         analyseType(arrayConstructorExpressionNode.getTypeNode(), parentScope);
 
-        ExpressionNode sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
+        List<ExpressionNode> sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
 
-        analyseExpression(sizeExpression, parentScope);
+        sizeExpression.forEach(e -> analyseExpression(e, parentScope));
+        ArrayTypeNode arrayTypeNode = null;
 
-        arrayConstructorExpressionNode.setResultType(
-                new ArrayTypeNode(arrayConstructorExpressionNode.getTypeNode()));
+        for (ExpressionNode node : sizeExpression) {
+            if (arrayTypeNode == null) {
+                arrayTypeNode = new ArrayTypeNode(arrayConstructorExpressionNode.getTypeNode());
+            } else {
+                arrayTypeNode = new ArrayTypeNode(arrayTypeNode);
+            }
+        }
+
+        arrayConstructorExpressionNode.setResultType(arrayTypeNode);
     }
 
     private void analyseNullConstantExpression(NullConstantExpressionNode expressionNode) {
@@ -1070,6 +1078,8 @@ public class SemanticAnalysis {
                 typeNode = left.getResultType();
             }
         } else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {
+            typeNode = left.getResultType();
+        } else if (left.getResultType() instanceof ArrayTypeNode) {
             typeNode = left.getResultType();
         }
 

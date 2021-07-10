@@ -53,8 +53,12 @@ public class BasicTypeNode extends TypeNode {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        BasicTypeNode that = (BasicTypeNode) o;
-        return Objects.equals(type, that.type);
+
+        if (o instanceof BasicTypeNode) {
+            BasicTypeNode that = (BasicTypeNode) o;
+            return Objects.equals(type, that.type);
+        }
+        return false;
     }
 
     @Override

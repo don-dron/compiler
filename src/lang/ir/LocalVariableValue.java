@@ -1,4 +1,4 @@
-package lang.ir.translate;
+package lang.ir;
 
 import lang.ir.Type;
 import lang.ir.Value;

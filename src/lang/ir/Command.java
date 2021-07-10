@@ -99,11 +99,14 @@ public class Command implements Value {
                     + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
                     parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
         } else if (operation == CALL) {
-            return (result == null ? "" : (result.toLLVM() + " = " )) + "call " +
+            return (result == null ? "" : (result.toLLVM() + " = ")) + "call " +
                     (result == null ? "void" : result.getType().toLLVM())
                     + " @" + parameters.get(0).toLLVM() + "(" +
                     parameters.stream().skip(1).map(p -> p.getType().toLLVM() + " "
                             + p.toLLVM()).collect(Collectors.joining(",")) + ")";
+        } else if (operation == CAST) {
+            return result.toLLVM() + " = bitcast " + parameters.get(0).getType().toLLVM() + " " +
+                    parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
         }
         return "";
     }

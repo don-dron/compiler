@@ -420,13 +420,19 @@ public class DotGraphVisualizationSemantic {
         } else if (expressionNode instanceof ArrayConstructorExpressionNode) {
             ArrayConstructorExpressionNode arrayConstructorExpressionNode =
                     (ArrayConstructorExpressionNode) expressionNode;
-            ExpressionNode sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
+            List<ExpressionNode> sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
             if (style == STRUCT) {
                 builder.append("{ARRAY_CONSTRUCT|" + typeNodeVisualization(arrayConstructorExpressionNode.getTypeNode())
-                        + "|" + expressionNodeVisualization(sizeExpression) + " }");
+                        + "|" + 
+                        sizeExpression.stream()
+                                .map(this::expressionNodeVisualization)
+                                .collect(Collectors.joining("|")) + " }");
             } else {
                 builder.append("{ARRAY_CONSTRUCT|" + typeNodeVisualization(arrayConstructorExpressionNode.getTypeNode())
-                        + "|" + expressionNodeVisualization(sizeExpression) + " }");
+                        + "|" +
+                        sizeExpression.stream()
+                                .map(this::expressionNodeVisualization)
+                                .collect(Collectors.joining("|")) + " }");
             }
         } else if (expressionNode instanceof FunctionCallExpressionNode) {
             FunctionCallExpressionNode functionCallExpressionNode = (FunctionCallExpressionNode) expressionNode;

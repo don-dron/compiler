@@ -171,6 +171,11 @@ public class Token {
         CONTINUE("continue", "continue"),
 
         /**
+         * new
+         */
+        NEW("new", "new"),
+
+        /**
          * break
          */
         BREAK("break", "break"),

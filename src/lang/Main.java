@@ -5,6 +5,7 @@ import lang.ir.Module;
 import lang.ir.translate.Translator;
 import lang.lexer.Lexer;
 import lang.lr.LLVMTranslator;
+import lang.opt.Optimizer;
 import lang.parser.Parser;
 import lang.semantic.SemanticAnalysis;
 
@@ -15,9 +16,35 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
+    public static int func() {
+        int[][] b = new int[10][10];
+        int i = 0;
+        int j = 0;
+        int res = 0;
+        while (i < 10) {
+            b[i] = new int[10];
+            j = 0;
+            while (j < 10) {
+                b[i][j] = i * 10 + j;
+                j++;
+            }
+            i++;
+        }
+        i = 0;
+        while (i < 9) {
+            j = 0;
+
+            res = res + b[i + 1][i + 1] - b[i][i];
+            i++;
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
         List<FileNode> files = new ArrayList<>();
-        File root = new File("project");
+        func();
+        File root = new File("project1");
         for (File file : getFiles(root)) {
             Reader reader = new FileReader(file);
             Lexer lexer = new Lexer(reader);
@@ -35,9 +62,20 @@ public class Main {
         Translator translator = new Translator(semanticAnalysis.analyse());
         Module module = translator.translate();
 
+        Optimizer optimizer = new Optimizer(module);
+        optimizer.optimize();
+
+        String s = "digraph G {\n" +
+                module.getFunctions().stream()
+                        .map(Translator::graphVizDebug)
+                        .collect(Collectors.joining("\n")) + "\n}";
+
+        System.out.println(s);
+
+
         LLVMTranslator llvmTranslator = new LLVMTranslator(module);
 
-        String dump =llvmTranslator.translate()  ;
+        String dump = llvmTranslator.translate();
         System.out.println(dump);
         System.out.println("End");
 

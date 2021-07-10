@@ -21,7 +21,9 @@ public class LLVMTranslator {
         StringBuilder builder = new StringBuilder();
         builder.append("; ModuleID = 'main'\n" +
                 "source_filename = \"main\"\n")
-        .append("declare i32* @malloc(i32)\n");
+                .append("declare i64* @malloc(i32)\n")
+                .append("declare i32 @putchar(i32)\n")
+                .append("declare i32 @getchar()\n");
         builder.append(module.getFunctions()
                 .stream()
                 .map(this::translateFunction)

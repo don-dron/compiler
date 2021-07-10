@@ -39,21 +39,8 @@ import lang.ast.statement.IfStatementNode;
 import lang.ast.statement.ReturnStatementNode;
 import lang.ast.statement.StatementNode;
 import lang.ast.statement.WhileStatementNode;
-import lang.ir.BasicBlock;
-import lang.ir.BoolValue;
-import lang.ir.Branch;
-import lang.ir.Command;
-import lang.ir.ConditionalBranch;
-import lang.ir.FloatValue;
-import lang.ir.Function;
-import lang.ir.IntValue;
-import lang.ir.LongValue;
+import lang.ir.*;
 import lang.ir.Module;
-import lang.ir.Operation;
-import lang.ir.Return;
-import lang.ir.Type;
-import lang.ir.Value;
-import lang.ir.VariableValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,20 +87,11 @@ public class Translator {
                         },
                         java.util.function.Function.identity()));
 
-        Module module = new Module(functionToStatement
+        return new Module(functionToStatement
                 .entrySet()
                 .stream()
                 .map(entry -> translateFunction(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList()));
-
-        String s = "digraph G {\n" +
-                module.getFunctions().stream()
-                        .map(Translator::graphVizDebug)
-                        .collect(Collectors.joining("\n")) + "\n}";
-
-        System.out.println(s);
-
-        return module;
     }
 
     private Function translateFunction(Function function, FunctionDefinitionNode functionDefinitionNode) {
@@ -482,29 +460,7 @@ public class Translator {
             return Type.INT_32;
         } else if (typeNode instanceof ArrayTypeNode) {
             ArrayTypeNode arrayTypeNode = (ArrayTypeNode) typeNode;
-            return matchArrayType(arrayTypeNode.getTypeNode());
-        } else {
-            return null;
-        }
-    }
-
-    private Type matchArrayType(TypeNode typeNode) {
-        if (typeNode instanceof BasicTypeNode) {
-            BasicTypeNode basicTypeNode = (BasicTypeNode) typeNode;
-
-            if (basicTypeNode.getType() == TypeNode.Type.VOID) {
-
-            } else if (basicTypeNode.getType() == TypeNode.Type.BOOL) {
-                return POINTER_INT_1;
-            } else if (basicTypeNode.getType() == TypeNode.Type.CHAR) {
-                return Type.POINTER_INT_8;
-            } else if (basicTypeNode.getType() == TypeNode.Type.INT) {
-                return Type.POINTER_INT_32;
-            } else if (basicTypeNode.getType() == TypeNode.Type.LONG) {
-                return Type.POINTER_INT_64;
-            }
-
-            return Type.POINTER_INT_32;
+            return new PointerType(matchType(arrayTypeNode.getTypeNode()));
         } else {
             return null;
         }
@@ -861,25 +817,34 @@ public class Translator {
 
     private Value translateArrayConstructorExpression(Function function, ArrayConstructorExpressionNode
             expressionNode) {
-        Type targetType = matchArrayType(expressionNode.getTypeNode());
-        Value sizeValue = translateExpression(function, expressionNode.getSizeExpression());
+        Type targetType = matchType(expressionNode.getResultType());
+        Value sizeValue = translateExpression(function, expressionNode.getSizeExpression().get(0));
 
         Command trueSize = new Command(
                 createTempVariable(INT_32),
                 MUL,
-                List.of(new IntValue(4), sizeValue)
+                List.of(new IntValue(8), sizeValue)
         );
         function.getCurrentBlock().addCommand(trueSize);
 
+        PointerType pointerType = new PointerType(INT_64);
         Command command = new Command(
-                createTempVariable(targetType),
+                createTempVariable(pointerType),
                 ARRAY_ALLOCATION,
-                List.of(targetType, trueSize.getResult())
+                List.of(pointerType, trueSize.getResult())
         );
 
         function.getCurrentBlock().addCommand(command);
 
-        return command.getResult();
+        Command castCommand = new Command(
+                createTempVariable(targetType),
+                CAST,
+                List.of(command.getResult())
+        );
+
+        function.getCurrentBlock().addCommand(castCommand);
+
+        return castCommand.getResult();
     }
 
     private Value translateNullConstantExpression(Function function, NullConstantExpressionNode expressionNode) {

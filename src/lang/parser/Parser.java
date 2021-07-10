@@ -63,10 +63,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
 
-import static lang.lexer.Token.TokenType.COLON;
-import static lang.lexer.Token.TokenType.COMMA;
-import static lang.lexer.Token.TokenType.EOF;
-import static lang.lexer.Token.TokenType.IMPORT;
+import static lang.lexer.Token.TokenType.*;
 
 public class Parser {
     private final Lexer lexer;
@@ -980,18 +977,49 @@ public class Parser {
             next();
             return expressionNode;
         } else {
-            if (peek().getTokenType() == Token.TokenType.INT || peek().getTokenType() == Token.TokenType.FLOAT) {
-                TypeNode typeNode = parseBasicType(peek());
+            IdentifierNode identifierNode = null;
+            Token token = peek();
+            TypeNode typeNode = null;
+
+            if (token.getTokenType() == NEW) {
+                next();
+                token = peek();
+                if (token.getTokenType() == IDENTIFIER
+                        || token.getTokenType() == INT
+                        || token.getTokenType() == FLOAT) {
+                    if (token.getTokenType() == IDENTIFIER) {
+                        identifierNode = new IdentifierNode(token.getContent(), token);
+                        typeNode = new ObjectTypeNode(identifierNode);
+                        next();
+                    } else {
+                        typeNode = parseBasicType(token);
+                    }
+                } else {
+                    throw new IllegalArgumentException("");
+                }
 
                 if (peek().getTokenType() == Token.TokenType.LB_PAREN) {
-                    next();
-                    ExpressionNode expressionNode = parseExpression();
-                    next();
-                    return new ArrayConstructorExpressionNode(typeNode, expressionNode);
+                    List<ExpressionNode> expressionNodes = new ArrayList<>();
+                    while (true) {
+                        if (peek().getTokenType() == Token.TokenType.LB_PAREN) {
+                            next();
+                            ExpressionNode expressionNode = parseExpression();
+                            next();
+
+                            expressionNodes.add(expressionNode);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    return new ArrayConstructorExpressionNode(typeNode, expressionNodes);
+                } else if (peek().getTokenType() == L_PAREN) {
+
                 }
             }
-            throw new IllegalArgumentException();
         }
+        throw new IllegalArgumentException("");
+
     }
 
     private void need(Token.TokenType tokenType, Token current) {

@@ -4,13 +4,15 @@ import lang.ast.AstNode;
 import lang.ast.TypeNode;
 import lang.ast.expression.ExpressionNode;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ArrayConstructorExpressionNode extends ExpressionNode {
     private final TypeNode typeNode;
-    private final ExpressionNode sizeExpression;
+    private final List<ExpressionNode> sizeExpression;
 
-    public ArrayConstructorExpressionNode(TypeNode typeNode, ExpressionNode sizeExpression) {
+    public ArrayConstructorExpressionNode(TypeNode typeNode, List<ExpressionNode> sizeExpression) {
         this.typeNode = typeNode;
         this.sizeExpression = sizeExpression;
     }
@@ -19,20 +21,21 @@ public class ArrayConstructorExpressionNode extends ExpressionNode {
         return typeNode;
     }
 
-    public ExpressionNode getSizeExpression() {
+    public List<ExpressionNode> getSizeExpression() {
         return sizeExpression;
     }
 
     @Override
     public String astDebug(int shift) {
         return SHIFT.repeat(shift) + "ArrayConstructor:\n" +
-                typeNode.astDebug(shift + 1) + "\n" +
-                sizeExpression.astDebug(shift + 1);
+                typeNode.astDebug(shift + 1) +
+                sizeExpression.stream().map(n -> "\n" + n.astDebug(shift + 1))
+                        .collect(Collectors.joining());
     }
 
     @Override
     public List<? extends AstNode> getChildren() {
-        return List.of(sizeExpression);
+        return new ArrayList<>(sizeExpression);
     }
 
     @Override

@@ -1,33 +1,32 @@
 package lang.ir;
 
-public enum Type implements Value {
-    VOID, INT_1, INT_8, INT_16, INT_32, INT_64, POINTER_INT_32, POINTER_INT_64, POINTER_INT_16, POINTER_INT_8, POINTER_INT_1;
+public class Type implements Value {
+    public static final Type VOID = new Type();
+    public static final Type INT_1 = new Type();
+    public static final Type INT_8 = new Type();
+    public static final Type INT_16 = new Type();
+    public static final Type INT_32 = new Type();
+    public static final Type INT_64 = new Type();
 
     public String toLLVM() {
-        switch (this) {
-            case VOID:
-                return "";
-            case INT_1:
-            case INT_8:
-                return "i1";
-            case INT_16:
-                return "i16";
-            case INT_32:
-                return "i32";
-            case INT_64:
-                return "i64";
-            case POINTER_INT_1:
-            case POINTER_INT_8:
-                return "i1*";
-            case POINTER_INT_16:
-                return "i16*";
-            case POINTER_INT_32:
-                return "i32*";
-            case POINTER_INT_64:
-                return "i64*";
-            default:
-                throw new IllegalArgumentException();
+        if (this == VOID) {
+            return "";
+        } else if (this == INT_1 || this == INT_8) {
+            return "i1";
+        } else if (this == INT_16) {
+            return "i16";
+        } else if (this == INT_32) {
+            return "i32";
+        } else if (this == INT_64) {
+            return "i64";
+        } else {
+            throw new IllegalArgumentException();
         }
+    }
+
+    @Override
+    public String toString() {
+        return toLLVM();
     }
 
     @Override

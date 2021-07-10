@@ -2,8 +2,8 @@ package lang.ir;
 
 public class ConditionalBranch implements Terminator {
     private final Value value;
-    private final BasicBlock left;
-    private final BasicBlock right;
+    private BasicBlock left;
+    private BasicBlock right;
 
     public ConditionalBranch(Value value, BasicBlock left, BasicBlock right) {
         this.value = value;
@@ -32,5 +32,13 @@ public class ConditionalBranch implements Terminator {
     public String toLLVM() {
         return "br " + value.getType().toLLVM() + " " + value.toLLVM() +
                 ", label %" + left.getName() + ",label %" + right.getName();
+    }
+
+    public void setLeft(BasicBlock target) {
+        left = target;
+    }
+
+    public void setRight(BasicBlock target) {
+        right = target;
     }
 }
