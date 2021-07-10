@@ -14,90 +14,66 @@ define i32 @main(i32){
 		ret i32 %1
 	entry_2:
 		%$2_b = alloca i32**
+		%$array_0 = alloca i32**
+		%$size_0 = alloca i32
+		%$alloc_iterator_0 = alloca i32
+		store i32 0, i32* %$alloc_iterator_0
 		%2 = mul i32 8,10
+		store i32 %2, i32* %$size_0
 		%3 = call i64* @malloc(i32 %2)
 		%4 = bitcast i64* %3 to i32**
-		store i32** %4, i32*** %$2_b
-		%$3_i = alloca i32
-		store i32 0, i32* %$3_i
-		%$4_j = alloca i32
-		store i32 0, i32* %$4_j
-		%$5_res = alloca i32
-		store i32 0, i32* %$5_res
-		br label %while_condition_3
-	while_condition_3:
-		%5 = load i32,i32* %$3_i
-		%6 = icmp slt i32 %5 ,  10
-		br i1 %6, label %while_body_5,label %while_merge_10
-	while_body_5:
-		%7 = load i32**,i32*** %$2_b
-		%8 = load i32,i32* %$3_i
-		%9 = getelementptr inbounds i32* , i32** %7 , i32 %8
-		%10 = mul i32 8,10
-		%11 = call i64* @malloc(i32 %10)
-		%12 = bitcast i64* %11 to i32*
-		store i32* %12, i32** %9
-		store i32 0, i32* %$4_j
-		br label %while_condition_6
-	while_condition_6:
-		%13 = load i32,i32* %$4_j
-		%14 = icmp slt i32 %13 ,  10
-		br i1 %14, label %while_body_8,label %while_merge_9
-	while_body_8:
-		%15 = load i32**,i32*** %$2_b
-		%16 = load i32,i32* %$3_i
-		%17 = getelementptr inbounds i32* , i32** %15 , i32 %16
-		%18 = load i32*,i32** %17
-		%19 = load i32,i32* %$4_j
-		%20 = getelementptr inbounds i32 , i32* %18 , i32 %19
-		%21 = load i32,i32* %$3_i
-		%22 = mul i32 %21,10
-		%23 = load i32,i32* %$4_j
-		%24 = add i32 %22,%23
-		store i32 %24, i32* %20
-		%25 = load i32,i32* %$4_j
-		%26 = add i32 %25,1
-		store i32 %26, i32* %$4_j
-		br label %while_condition_6
-	while_merge_9:
-		%27 = load i32,i32* %$3_i
-		%28 = add i32 %27,1
-		store i32 %28, i32* %$3_i
-		br label %while_condition_3
-	while_merge_10:
-		store i32 0, i32* %$3_i
-		br label %while_condition_11
-	while_condition_11:
-		%29 = load i32,i32* %$3_i
-		%30 = icmp slt i32 %29 ,  9
-		br i1 %30, label %while_body_13,label %local_return_15
-	while_body_13:
-		%31 = load i32,i32* %$5_res
-		%32 = load i32**,i32*** %$2_b
-		%33 = load i32,i32* %$3_i
-		%34 = add i32 %33,1
-		%35 = getelementptr inbounds i32* , i32** %32 , i32 %34
-		%36 = load i32*,i32** %35
-		%37 = load i32,i32* %$3_i
-		%38 = add i32 %37,1
-		%39 = getelementptr inbounds i32 , i32* %36 , i32 %38
-		%40 = load i32,i32* %39
-		%41 = add i32 %31,%40
-		%42 = load i32**,i32*** %$2_b
-		%43 = load i32,i32* %$3_i
-		%44 = getelementptr inbounds i32* , i32** %42 , i32 %43
-		%45 = load i32*,i32** %44
-		%46 = load i32,i32* %$3_i
-		%47 = getelementptr inbounds i32 , i32* %45 , i32 %46
-		%48 = load i32,i32* %47
-		%49 = sub i32 %41,%48
-		store i32 %49, i32* %$5_res
-		%50 = load i32,i32* %$3_i
-		%51 = add i32 %50,1
-		store i32 %51, i32* %$3_i
-		br label %while_condition_11
-	local_return_15:
-		%52 = load i32,i32* %$5_res
-		store i32 %52, i32* %$$_ret_value_0
+		store i32** %4, i32*** %$array_0
+		br label %alloc_condition_3
+	alloc_condition_3:
+		%5 = load i32,i32* %$size_0
+		%6 = load i32,i32* %$alloc_iterator_0
+		%7 = icmp slt i32 %6 ,  %5
+		br i1 %7, label %alloc_body_4,label %alloc_merge_8
+	alloc_body_4:
+		%8 = load i32**,i32*** %$array_0
+		%9 = load i32,i32* %$alloc_iterator_0
+		%$array_access_0 = alloca i32**
+		%10 = getelementptr inbounds i32* , i32** %8 , i32 %9
+		%$size_1 = alloca i32
+		%$alloc_iterator_1 = alloca i32
+		store i32 0, i32* %$alloc_iterator_1
+		%11 = mul i32 4,10
+		store i32 %11, i32* %$size_1
+		%12 = call i64* @malloc(i32 %11)
+		%13 = bitcast i64* %12 to i32*
+		store i32* %13, i32** %10
+		br label %alloc_condition_3
+	alloc_condition_5:
+		%14 = load i32,i32* %$size_1
+		%15 = load i32,i32* %$alloc_iterator_1
+		%16 = icmp slt i32 %15 ,  %14
+		br i1 %16, label %alloc_body_6,label %alloc_merge_7
+	alloc_body_6:
+		%17 = load i32*,i32** %10
+		%18 = load i32,i32* %$alloc_iterator_1
+		%$array_access_1 = alloca i32*
+		%19 = getelementptr inbounds i32 , i32* %17 , i32 %18
+		store i32 0, i32* %19
+		%20 = load i32,i32* %$alloc_iterator_1
+		%21 = add i32 %20,1
+		store i32 %21, i32* %$alloc_iterator_1
+		br label %alloc_condition_5
+	alloc_merge_7:
+		%22 = load i32,i32* %$alloc_iterator_0
+		%23 = add i32 %22,1
+		store i32 %23, i32* %$alloc_iterator_0
+		br label %alloc_condition_5
+	alloc_merge_8:
+		%24 = load i32**,i32*** %$array_0
+		store i32** %24, i32*** %$2_b
+		%$3_sum = alloca i32
+		store i32 1, i32* %$3_sum
+		br label %local_return_9
+	local_return_9:
+		%25 = load i32,i32* %$3_sum
+		store i32 %25, i32* %$$_ret_value_0
+		br label %return_1
+	dummy_10:
+
 		br label %return_1
 }

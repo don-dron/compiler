@@ -1,19 +1,7 @@
 (int a) int main ->
     int[][] b = new int[10][10]
-    int i = 0
-    int j = 0
-    int res = 0
-    while i < 10
-        b[i] = new int[10]
-        j = 0
-        while j < 10
-            b[i][j] = i * 10 + j
-            j++
-        i++
 
-    i = 0
-    while i < 9
-        res = res + b[i + 1][i + 1] - b[i][i]
-        i++
 
-    return res
+    int sum = 1
+
+    return sum

@@ -19,7 +19,7 @@ public class Optimizer {
     }
 
     private void optimizeFunction(Function function) {
-        removeEmptyBlocks(function);
+//        removeEmptyBlocks(function);
     }
 
     private void removeEmptyBlocks(Function function) {

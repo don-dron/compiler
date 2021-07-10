@@ -849,8 +849,7 @@ public class SemanticAnalysis {
     }
 
     private void analyseArrayConstructorExpression(ArrayConstructorExpressionNode expressionNode, Scope parentScope) {
-        ArrayConstructorExpressionNode arrayConstructorExpressionNode =
-                expressionNode;
+        ArrayConstructorExpressionNode arrayConstructorExpressionNode = expressionNode;
 
         analyseType(arrayConstructorExpressionNode.getTypeNode(), parentScope);
 
