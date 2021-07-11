@@ -835,30 +835,18 @@ public class Translator {
     }
 
     private Value addWhileAllocation(Function function,
-                                     VariableValue arrayValue,
+                                     Value arrayValue,
                                      Type type,
-                                     List<ExpressionNode> expressionNodes) {
+                                     List<VariableValue> arrayAccessVariables,
+                                     List<VariableValue> iteratorVariables,
+                                     List<VariableValue> sizeVariables) {
         if (type instanceof PointerType) {
             PointerType targetType = (PointerType) type;
-            ExpressionNode sizeExpression = expressionNodes.remove(0);
-            Value sizeValue = translateExpression(function, sizeExpression);
+            VariableValue sizeVariable = sizeVariables.remove(0);
+            VariableValue arrayAccessVariable = arrayAccessVariables.remove(0);
+            VariableValue iterator = iteratorVariables.remove(0);
 
             BasicBlock lastBlock = function.getCurrentBlock();
-            VariableValue size = new VariableValue("$size_" + ARRAY_SIZE_COUNT, INT_32);
-            VariableValue iterator = new VariableValue("$alloc_iterator_" + ARRAY_SIZE_COUNT, INT_32);
-            Command allocVariable = new Command(
-                    size,
-                    ALLOC,
-                    List.of()
-            );
-            function.getCurrentBlock().addCommand(allocVariable);
-
-            Command allocIterator = new Command(
-                    iterator,
-                    ALLOC,
-                    List.of()
-            );
-            function.getCurrentBlock().addCommand(allocIterator);
 
             Command writeIterator = new Command(
                     iterator,
@@ -867,19 +855,19 @@ public class Translator {
             );
             function.getCurrentBlock().addCommand(writeIterator);
 
+            Command loadSize = new Command(
+                    createTempVariable(sizeVariable.getType()),
+                    LOAD,
+                    List.of(sizeVariable)
+            );
+            function.getCurrentBlock().addCommand(loadSize);
+
             Command trueSize = new Command(
                     createTempVariable(INT_32),
                     MUL,
-                    List.of(new IntValue(defineArrayTypeSize(targetType.getType())), sizeValue)
+                    List.of(new IntValue(defineArrayTypeSize(type.getType())), loadSize.getResult())
             );
             function.getCurrentBlock().addCommand(trueSize);
-
-            Command writeSize = new Command(
-                    size,
-                    STORE,
-                    List.of(trueSize.getResult())
-            );
-            function.getCurrentBlock().addCommand(writeSize);
 
             PointerType pointerType = new PointerType(INT_64);
             Command command = new Command(
@@ -894,7 +882,6 @@ public class Translator {
                     CAST,
                     List.of(command.getResult())
             );
-
             function.getCurrentBlock().addCommand(castCommand);
 
             Command arrayStore = new Command(
@@ -904,13 +891,19 @@ public class Translator {
             );
             function.getCurrentBlock().addCommand(arrayStore);
 
+            Command loadAccess = new Command(
+                    arrayAccessVariable,
+                    STORE,
+                    List.of(castCommand.getResult())
+            );
+            function.getCurrentBlock().addCommand(loadAccess);
 
             BasicBlock allocCondition = function.appendBlock("alloc_condition");
             createBranch(lastBlock, allocCondition);
             Command readSize = new Command(
                     createTempVariable(INT_32),
                     LOAD,
-                    List.of(size)
+                    List.of(sizeVariable)
             );
             Command readIterator = new Command(
                     createTempVariable(INT_32),
@@ -932,7 +925,7 @@ public class Translator {
             Command accessArray = new Command(
                     createTempVariable(arrayValue.getType()),
                     LOAD,
-                    List.of(arrayValue)
+                    List.of(arrayAccessVariable)
             );
             function.getCurrentBlock().addCommand(accessArray);
 
@@ -943,30 +936,16 @@ public class Translator {
             );
             function.getCurrentBlock().addCommand(accessOffset);
 
-            VariableValue arrayAccessVariable = new VariableValue("$array_access_" + ARRAY_SIZE_COUNT,
-                    targetType);
-            Command defineAccess = new Command(
-                    arrayAccessVariable,
-                    ALLOC,
-                    List.of()
-            );
-            function.getCurrentBlock().addCommand(defineAccess);
-
             Command arrayAccess = new Command(
                     createTempVariable(targetType.getType()),
                     ARRAY_ACCESS,
                     List.of(accessArray.getResult(), accessOffset.getResult()));
             function.getCurrentBlock().addCommand(arrayAccess);
 
-            Command loadAccess = new Command(
-                    arrayAccessVariable,
-                    STORE,
-                    List.of(arrayAccess.getResult())
-            );
-            function.getCurrentBlock().addCommand(loadAccess);
-
-            ARRAY_SIZE_COUNT++;
-            addWhileAllocation(function, arrayAccessVariable, targetType.getType(), expressionNodes);
+            addWhileAllocation(function, arrayAccess.getResult(), targetType.getType(),
+                    arrayAccessVariables,
+                    iteratorVariables,
+                    sizeVariables);
 
             Command loadIterator = new Command(
                     createTempVariable(iterator.getType()),
@@ -989,10 +968,9 @@ public class Translator {
             );
             function.getCurrentBlock().addCommand(store);
 
-            createBranch(allocBody, allocCondition);
+            createBranch(function.getCurrentBlock(), allocCondition);
 
             BasicBlock allocMerge = function.appendBlock("alloc_merge");
-            createBranch(allocMerge, allocCondition);
             createConditionalBranch(allocCondition, condition.getResult(), allocBody, allocMerge);
 
             return arrayValue;
@@ -1018,8 +996,66 @@ public class Translator {
                 List.of()
         );
         function.getCurrentBlock().addCommand(arrayVariable);
+
+        List<VariableValue> arrayAccessValues = new ArrayList<>();
+        List<VariableValue> iteratorValues = new ArrayList<>();
+        List<VariableValue> sizeValues = new ArrayList<>();
+
+        Type type = targetType;
+
+        for (ExpressionNode node : expressionNode.getSizeExpression()) {
+            VariableValue size = new VariableValue("$size_" + ARRAY_SIZE_COUNT, INT_32);
+            VariableValue iterator = new VariableValue("$alloc_iterator_" + ARRAY_SIZE_COUNT, INT_32);
+            VariableValue arrayAccessVariable = new VariableValue("$array_access_" + ARRAY_SIZE_COUNT,
+                    type);
+
+            ARRAY_SIZE_COUNT++;
+            Command allocVariable = new Command(
+                    size,
+                    ALLOC,
+                    List.of()
+            );
+            function.getCurrentBlock().addCommand(allocVariable);
+
+            Command allocIterator = new Command(
+                    iterator,
+                    ALLOC,
+                    List.of()
+            );
+            function.getCurrentBlock().addCommand(allocIterator);
+
+            Command defineAccess = new Command(
+                    arrayAccessVariable,
+                    ALLOC,
+                    List.of()
+            );
+            function.getCurrentBlock().addCommand(defineAccess);
+
+            Command writeIterator = new Command(
+                    iterator,
+                    STORE,
+                    List.of(new IntValue(0))
+            );
+            function.getCurrentBlock().addCommand(writeIterator);
+
+            Value sizeValue = translateExpression(function, node);
+
+            Command writeSize = new Command(
+                    size,
+                    STORE,
+                    List.of(sizeValue)
+            );
+            function.getCurrentBlock().addCommand(writeSize);
+
+            arrayAccessValues.add(arrayAccessVariable);
+            iteratorValues.add(iterator);
+            sizeValues.add(size);
+
+            type = type.getType();
+        }
+
         Value mainAllocation = addWhileAllocation(function, arrayValue,
-                targetType, new ArrayList<>(expressionNode.getSizeExpression()));
+                targetType, arrayAccessValues, iteratorValues, sizeValues);
 
         Command read = new Command(
                 createTempVariable(mainAllocation.getType()),

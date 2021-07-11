@@ -31,9 +31,9 @@ public enum  Operation {
     ARRAY_ALLOCATION("<- array_allocation"),
     STRUCT_ALLOCATION("<- struct_allocation"),
 
-    CAST("<- cast")
+    CAST("<- cast"),
 
-    ;
+    STORE_TO_POINTER("<- store_ptr");
 
     private final String print;
 

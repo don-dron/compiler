@@ -1,54 +1,78 @@
-; ModuleID = 'text.c'
-source_filename = "text.c"
-target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16:32:64-S128"
-target triple = "x86_64-pc-linux-gnu"
+define i32 @main(i32){
+	header_0:
+		%$1_a = alloca i32
+		store i32 %0, i32* %$1_a
+		%$$_ret_value_0 = alloca i32
+		br label %entry_2
+	return_1:
+		%1 = load i32,i32* %$$_ret_value_0
+		ret i32 %1
+	entry_2:
+		%$2_b = alloca i32**
+		%$array_0 = alloca i32**
+		%$size_0 = alloca i32
+		%$alloc_iterator_0 = alloca i32
+		%$array_access_0 = alloca i32**
+		store i32 0, i32* %$alloc_iterator_0
+		%2 = mul i32 8,10
+		store i32 %2, i32* %$size_0
+		%$size_1 = alloca i32
+		%$alloc_iterator_1 = alloca i32
+		%$array_access_1 = alloca i32*
+		store i32 0, i32* %$alloc_iterator_1
+		%3 = mul i32 4,10
+		store i32 %3, i32* %$size_1
+		%4 = load i32,i32* %$size_0
+		%5 = call i64* @malloc(i32 %4)
+		%6 = bitcast i64* %5 to i32**
+		store i32** %6, i32*** %$array_0
+		store i32** %6, i32*** %$array_access_0
+		br label %alloc_condition_3
+	alloc_condition_3:
+		%7 = load i32,i32* %$size_0
+		%8 = load i32,i32* %$alloc_iterator_0
+		%9 = icmp slt i32 %8 ,  %7
+		br i1 %9, label %alloc_body_4,label %alloc_merge_8
+	alloc_body_4:
+		%10 = load i32**,i32*** %$array_access_0
+		%11 = load i32,i32* %$alloc_iterator_0
+		%12 = getelementptr inbounds i32* , i32** %10 , i32 %11
+		%13 = load i32,i32* %$size_1
+		%14 = call i64* @malloc(i32 %13)
+		%15 = bitcast i64* %14 to i32*
+		store i32* %15, i32** %12
+		store i32* %15, i32** %$array_access_1
+		br label %alloc_condition_5
+	alloc_condition_5:
+		%16 = load i32,i32* %$size_1
+		%17 = load i32,i32* %$alloc_iterator_1
+		%18 = icmp slt i32 %17 ,  %16
+		br i1 %18, label %alloc_body_6,label %alloc_merge_7
+	alloc_body_6:
+		%19 = load i32*,i32** %$array_access_1
+		%20 = load i32,i32* %$alloc_iterator_1
+		%21 = getelementptr inbounds i32 , i32* %19 , i32 %20
+		store i32 0, i32* %21
+		%22 = load i32,i32* %$alloc_iterator_1
+		%23 = add i32 %22,1
+		store i32 %23, i32* %$alloc_iterator_1
+		br label %alloc_condition_5
+	alloc_merge_7:
+		%24 = load i32,i32* %$alloc_iterator_0
+		%25 = add i32 %24,1
+		store i32 %25, i32* %$alloc_iterator_0
+		br label %alloc_condition_3
+	alloc_merge_8:
+		%26 = load i32**,i32*** %$array_0
+		store i32** %26, i32*** %$2_b
+		%$3_sum = alloca i32
+		store i32 8, i32* %$3_sum
+		br label %local_return_9
+	local_return_9:
+		%27 = load i32,i32* %$3_sum
+		store i32 %27, i32* %$$_ret_value_0
+		br label %return_1
+	dummy_10:
 
-; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @main() #0 {
-  %1 = alloca i32, align 4
-  %2 = alloca i32, align 4
-  %3 = alloca i32, align 4
-  %4 = alloca i32, align 4
-  store i32 0, i32* %1, align 4
-  store i32 0, i32* %2, align 4
-  store i32 0, i32* %3, align 4
-  store i32 0, i32* %4, align 4
-  br label %5
-
-5:                                                ; preds = %17, %0
-  %6 = load i32, i32* %2, align 4
-  %7 = icmp slt i32 %6, 4
-  br i1 %7, label %9, label %20
-
-9:                                                ; preds = %12, %8
-  %10 = load i32, i32* %3, align 4
-  %11 = icmp slt i32 %10, 4
-  br i1 %11, label %12, label %17
-
-12:                                               ; preds = %9
-  %13 = load i32, i32* %4, align 4
-  %14 = add nsw i32 %13, 1
-  store i32 %14, i32* %4, align 4
-  %15 = load i32, i32* %3, align 4
-  %16 = add nsw i32 %15, 1
-  store i32 %16, i32* %3, align 4
-  br label %9
-
-17:                                               ; preds = %9
-  %18 = load i32, i32* %2, align 4
-  %19 = add nsw i32 %18, 1
-  store i32 %19, i32* %2, align 4
-  br label %5
-
-20:                                               ; preds = %5
-  %21 = load i32, i32* %4, align 4
-  ret i32 %21
+		br label %return_1
 }
-
-attributes #0 = { noinline nounwind optnone uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "frame-pointer"="all" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-
-!llvm.module.flags = !{!0}
-!llvm.ident = !{!1}
-
-!0 = !{i32 1, !"wchar_size", i32 4}
-!1 = !{!"clang version 10.0.0-4ubuntu1 "}

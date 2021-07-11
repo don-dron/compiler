@@ -75,6 +75,9 @@ public class Command implements Value {
         } else if (operation == STORE) {
             return "store " + parameters.get(0).getType().toLLVM() + " " +
                     parameters.get(0).toLLVM() + ", " + result.getType().toLLVM() + "* " + result.toLLVM();
+        } else if (operation == STORE_TO_POINTER) {
+            return "store " + parameters.get(0).getType().toLLVM() + " " +
+                    parameters.get(0).toLLVM() + ", " + result.getType().toLLVM() + " " + result.toLLVM();
         } else if (operation == ALLOC) {
             return result.toLLVM() + " = alloca " + result.getType().toLLVM();
         } else if (operation == GT
@@ -95,7 +98,8 @@ public class Command implements Value {
                     + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
                     parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
         } else if (operation == ARRAY_ACCESS) {
-            return result.toLLVM() + " = getelementptr inbounds " + result.getType().toLLVM() + " , "
+            return result.toLLVM() + " = getelementptr inbounds " +
+                    ((PointerType) parameters.get(0).getType()).getType().toLLVM() + " , "
                     + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
                     parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
         } else if (operation == CALL) {
