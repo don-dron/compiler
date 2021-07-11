@@ -26,6 +26,7 @@ import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionN
 import lang.ast.statement.*;
 import lang.ir.*;
 import lang.ir.Module;
+import lang.lexer.Token;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ import static lang.ir.Type.*;
 public class Translator {
     private final Program program;
     private int RET_COUNT = 0;
+    private int CONSTRUCTOR_COUNT = 0;
     private int TEMP_VARIABLE_COUNT = 0;
     private int ARRAY_SIZE_COUNT = 0;
 
@@ -48,6 +50,7 @@ public class Translator {
     private final Map<String, Value> variables;
     private final Map<WhileStatementNode, BasicBlock> whileToConditionBlock;
     private final Map<WhileStatementNode, BasicBlock> whileToMergeBlock;
+    private Map<ConstructorDefinitionNode, Function> constructors;
 
     public Translator(Program program) {
         this.program = program;
@@ -78,6 +81,26 @@ public class Translator {
                         },
                         java.util.function.Function.identity()));
 
+
+        constructors = program.getConstructors()
+                .stream()
+                .collect(Collectors.toMap(java.util.function.Function.identity(),
+                        constructorDefinitionNode -> {
+                            String name = "$_constructor_" + CONSTRUCTOR_COUNT++;
+
+                            FunctionDefinitionNode functionDefinitionNode =
+                                    new FunctionDefinitionNode(
+                                            constructorDefinitionNode.getFunctionNode(),
+                                            new IdentifierNode(name, null),
+                                            constructorDefinitionNode.getStatementNode()
+                                    );
+                            Function function = new Function(name);
+                            variables.put(name, function);
+                            functionToStatement.put(function, functionDefinitionNode);
+
+                            return function;
+                        }
+                ));
         return new Module(
                 new ArrayList<>(classes.values()),
                 functionToStatement
@@ -317,7 +340,7 @@ public class Translator {
         } else if (expressionNode instanceof CastExpressionNode) {
             return translateCastExpression(function, (CastExpressionNode) expressionNode);
         } else if (expressionNode instanceof ObjectConstructorExpressionNode) {
-            return translateObjectConstructorExpression((ObjectConstructorExpressionNode)expressionNode);
+            return translateObjectConstructorExpression((ObjectConstructorExpressionNode) expressionNode);
         } else {
             throw new IllegalArgumentException("");
         }

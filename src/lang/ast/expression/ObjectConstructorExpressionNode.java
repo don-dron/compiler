@@ -2,6 +2,7 @@ package lang.ast.expression;
 
 import lang.ast.AstNode;
 import lang.ast.TypeNode;
+import lang.ast.statement.ConstructorDefinitionNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 public class ObjectConstructorExpressionNode extends ExpressionNode{
     private final TypeNode typeNode;
     private final List<ExpressionNode> sizeExpression;
+    private ConstructorDefinitionNode constructorDefinitionNode;
 
     public ObjectConstructorExpressionNode(TypeNode typeNode, List<ExpressionNode> sizeExpression) {
         this.typeNode = typeNode;
@@ -40,5 +42,13 @@ public class ObjectConstructorExpressionNode extends ExpressionNode{
     @Override
     public String toString() {
         return typeNode.toString() + "(" + sizeExpression.toString() + ")";
+    }
+
+    public void setConstructorDefinition(ConstructorDefinitionNode constructorDefinitionNode) {
+        this.constructorDefinitionNode = constructorDefinitionNode;
+    }
+
+    public ConstructorDefinitionNode getConstructorDefinitionNode() {
+        return constructorDefinitionNode;
     }
 }

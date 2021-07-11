@@ -69,6 +69,7 @@ public class SemanticAnalysis {
     private FunctionDefinitionNode mainFunction;
     private final List<FunctionDefinitionNode> functions;
     private final List<ClassStatementNode> classes;
+    private final List<ConstructorDefinitionNode> constructors;
 
     public SemanticAnalysis(String rootPath, List<FileNode> fileNodes) {
         this.rootPath = rootPath;
@@ -76,6 +77,7 @@ public class SemanticAnalysis {
         this.importedFiles = new HashMap<>();
         this.functions = new ArrayList<>();
         this.classes = new ArrayList<>();
+        this.constructors = new ArrayList<>();
     }
 
     public Program analyse() {
@@ -104,6 +106,7 @@ public class SemanticAnalysis {
         return new Program(
                 mainFunction,
                 new ArrayList<>(classes),
+                new ArrayList<>(constructors),
                 new ArrayList<>(functions),
                 new ArrayList<>(fileNodes));
     }
@@ -709,6 +712,10 @@ public class SemanticAnalysis {
 
         classStatementNode.getFields();
 
+        ConstructorDefinitionNode constructorDefinitionNode = classStatementNode.getConstructors().get(0);
+
+        expressionNode.setConstructorDefinition(constructorDefinitionNode);
+        constructors.add(constructorDefinitionNode);
         expressionNode.setResultType(typeNode);
     }
 
