@@ -12,10 +12,7 @@ import lang.ast.ParameterNode;
 import lang.ast.ParametersNode;
 import lang.ast.TranslationNode;
 import lang.ast.TypeNode;
-import lang.ast.expression.ArrayConstructorExpressionNode;
-import lang.ast.expression.ConditionalExpressionNode;
-import lang.ast.expression.ExpressionNode;
-import lang.ast.expression.VariableExpressionNode;
+import lang.ast.expression.*;
 import lang.ast.expression.binary.AdditiveExpressionNode;
 import lang.ast.expression.binary.AssigmentExpressionNode;
 import lang.ast.expression.binary.EqualityExpressionNode;
@@ -1014,7 +1011,10 @@ public class Parser {
 
                     return new ArrayConstructorExpressionNode(typeNode, expressionNodes);
                 } else if (peek().getTokenType() == L_PAREN) {
-
+                    next();
+                    ExpressionListNode expressionListNode = parseExpressionListNode();
+                    next();
+                    return new ObjectConstructorExpressionNode(typeNode, expressionListNode.getList());
                 }
             }
         }

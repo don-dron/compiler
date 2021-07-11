@@ -1,9 +1,7 @@
 package lang.lr;
 
-import lang.ir.BasicBlock;
-import lang.ir.Function;
+import lang.ir.*;
 import lang.ir.Module;
-import lang.ir.Type;
 
 import java.util.stream.Collectors;
 
@@ -24,12 +22,28 @@ public class LLVMTranslator {
                 .append("declare i64* @malloc(i32)\n")
                 .append("declare i32 @putchar(i32)\n")
                 .append("declare i32 @getchar()\n");
+        builder.append(module.getClasses()
+                .stream()
+                .map(this::translateStruct)
+                .collect(Collectors.joining("\n"))
+        );
+        builder.append("\n");
         builder.append(module.getFunctions()
                 .stream()
                 .map(this::translateFunction)
                 .collect(Collectors.joining("\n")));
 
         return builder.toString();
+    }
+
+    private String translateStruct(StructType structType) {
+        return "%struct." + structType.getName() + " = type " +
+                "{" + structType.getTypes()
+                .stream()
+                .map(VariableValue::getType)
+                .map(Type::toLLVM)
+                .collect(Collectors.joining(",")) +
+                "}";
     }
 
     private String translateFunction(Function function) {

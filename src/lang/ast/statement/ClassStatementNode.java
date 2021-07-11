@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class ClassStatementNode extends StatementNode {
     private final IdentifierNode identifierNode;
     private final List<IdentifierNode> extendNames;
+    private final List<DeclarationStatementNode> fields;
     private final List<AstNode> extendNodes = new ArrayList<>();
     private final TranslationNode translationNode;
     private final List<ConstructorDefinitionNode> constructors = new ArrayList<>();
@@ -23,6 +24,7 @@ public class ClassStatementNode extends StatementNode {
                               TranslationNode translationNode) {
         this.identifierNode = identifierNode;
         this.extendNames = extendNames;
+        this.fields = new ArrayList<>();
         this.translationNode = translationNode;
     }
 
@@ -81,5 +83,13 @@ public class ClassStatementNode extends StatementNode {
         return "class " + identifierNode.toString() + " : " +
                 extendNames.stream().map(Objects::toString).collect(Collectors.joining(",")) + "\n" +
                 translationNode.toString();
+    }
+
+    public List<DeclarationStatementNode> getFields() {
+        return fields;
+    }
+
+    public void addField(DeclarationStatementNode node) {
+        this.fields.add(node);
     }
 }

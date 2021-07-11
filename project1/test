@@ -1,27 +1,13 @@
+
+class Point
+    int x
+    int y
+
+    (int x, int y) ->
+        int c = x
+        c = y
+
 () int main ->
-    int[][] b = new int[13][17]
+    Point p = new Point(1, 2)
 
-    int i = 0
-    int j = 0
-
-    while i < 13
-        j = 0
-
-        while j < 17
-            b[i][j] = i * 10 + j
-            j++
-
-        i++
-
-    i = 0
-    while i < 13
-        j = 0
-
-        while j < 17
-            j++
-
-        i++
-
-    int sum = 8
-
-    return sum
+    return 1

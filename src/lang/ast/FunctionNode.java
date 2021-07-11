@@ -5,13 +5,17 @@ import java.util.List;
 import java.util.Objects;
 
 public class FunctionNode extends TypeNode {
-    private final TypeNode typeNode;
+    private TypeNode typeNode;
     private final ParametersNode parametersNode;
 
     public FunctionNode(ParametersNode parametersNode,
                         TypeNode typeNode) {
         this.typeNode = typeNode;
         this.parametersNode = parametersNode;
+    }
+
+    public void setTypeNode(TypeNode typeNode) {
+        this.typeNode = typeNode;
     }
 
     public ParametersNode getParametersNode() {

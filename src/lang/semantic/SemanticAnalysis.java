@@ -11,10 +11,7 @@ import lang.ast.ObjectTypeNode;
 import lang.ast.ParameterNode;
 import lang.ast.Program;
 import lang.ast.TypeNode;
-import lang.ast.expression.ArrayConstructorExpressionNode;
-import lang.ast.expression.ConditionalExpressionNode;
-import lang.ast.expression.ExpressionNode;
-import lang.ast.expression.VariableExpressionNode;
+import lang.ast.expression.*;
 import lang.ast.expression.binary.AdditiveExpressionNode;
 import lang.ast.expression.binary.AssigmentExpressionNode;
 import lang.ast.expression.binary.EqualityExpressionNode;
@@ -71,12 +68,14 @@ public class SemanticAnalysis {
     private final Map<FileNode, List<FileNode>> importedFiles;
     private FunctionDefinitionNode mainFunction;
     private final List<FunctionDefinitionNode> functions;
+    private final List<ClassStatementNode> classes;
 
     public SemanticAnalysis(String rootPath, List<FileNode> fileNodes) {
         this.rootPath = rootPath;
         this.fileNodes = fileNodes;
         this.importedFiles = new HashMap<>();
         this.functions = new ArrayList<>();
+        this.classes = new ArrayList<>();
     }
 
     public Program analyse() {
@@ -104,6 +103,7 @@ public class SemanticAnalysis {
 
         return new Program(
                 mainFunction,
+                new ArrayList<>(classes),
                 new ArrayList<>(functions),
                 new ArrayList<>(fileNodes));
     }
@@ -271,6 +271,8 @@ public class SemanticAnalysis {
         classNode.setScope(parentScope);
         parentScope.addDeclaration(classNode);
 
+        classes.add(classNode);
+
         Scope scope = new Scope(parentScope);
         classNode.setInnerScope(scope);
         scope.setOwner(classNode);
@@ -284,6 +286,7 @@ public class SemanticAnalysis {
             } else if (node instanceof FunctionDefinitionNode) {
                 analyseFunctionInGlobalStart((FunctionDefinitionNode) node, scope);
             } else if (node instanceof DeclarationStatementNode) {
+                classNode.addField((DeclarationStatementNode) node);
                 analyseDeclarationInGlobalStart((DeclarationStatementNode) node, scope);
             } else if (node instanceof ConstructorDefinitionNode) {
                 analyseConstructorDefinitionNodeStart((ConstructorDefinitionNode) node, scope);
@@ -392,6 +395,8 @@ public class SemanticAnalysis {
         node.setScope(scope);
 
         if (scope.getOwner() instanceof ClassStatementNode) {
+            node.getFunctionNode().setTypeNode(
+                    new ObjectTypeNode(((ClassStatementNode) scope.getOwner()).getIdentifierNode()));
             node.setClass((ClassStatementNode) scope.getOwner());
             ((ClassStatementNode) scope.getOwner()).addConstructor(node);
         } else {
@@ -405,7 +410,7 @@ public class SemanticAnalysis {
         node.getFunctionNode().getParametersNode().getParameters()
                 .forEach(p -> {
                     analyseType(p.getTypeNode(), scope);
-                    scope.addDeclaration(p);
+                    constructorScope.addDeclaration(p);
                 });
         analyseStatement(node.getStatementNode(), constructorScope);
     }
@@ -689,7 +694,22 @@ public class SemanticAnalysis {
             analysePrefixMultiplicative((PrefixIncrementMultiplicativeExpressionNode) expressionNode, parentScope);
         } else if (expressionNode instanceof CastExpressionNode) {
             analyseCastExpression((CastExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof ObjectConstructorExpressionNode) {
+            analyseObjectConstructorExpression((ObjectConstructorExpressionNode) expressionNode, parentScope);
+        } else {
+            throw new IllegalArgumentException("");
         }
+    }
+
+    private void analyseObjectConstructorExpression(ObjectConstructorExpressionNode expressionNode, Scope parentScope) {
+        ObjectTypeNode typeNode = (ObjectTypeNode) expressionNode.getTypeNode();
+
+        ClassStatementNode classStatementNode =
+                (ClassStatementNode) parentScope.findDefinitionByVariable(typeNode.getIdentifierNode().getName());
+
+        classStatementNode.getFields();
+
+        expressionNode.setResultType(typeNode);
     }
 
     private void analyseCastExpression(CastExpressionNode expressionNode, Scope parentScope) {

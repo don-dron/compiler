@@ -1,10 +1,7 @@
 package lang.ir.translate;
 
 import lang.ast.*;
-import lang.ast.expression.ArrayConstructorExpressionNode;
-import lang.ast.expression.ConditionalExpressionNode;
-import lang.ast.expression.ExpressionNode;
-import lang.ast.expression.VariableExpressionNode;
+import lang.ast.expression.*;
 import lang.ast.expression.binary.AdditiveExpressionNode;
 import lang.ast.expression.binary.AssigmentExpressionNode;
 import lang.ast.expression.binary.EqualityExpressionNode;
@@ -26,19 +23,7 @@ import lang.ast.expression.unary.prefix.CastExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixDecrementSubtractionExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementAdditiveExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionNode;
-import lang.ast.statement.BreakStatementNode;
-import lang.ast.statement.CompoundStatementNode;
-import lang.ast.statement.ContinueStatementNode;
-import lang.ast.statement.DeclarationStatementNode;
-import lang.ast.statement.ElifStatementNode;
-import lang.ast.statement.ElseStatementNode;
-import lang.ast.statement.ExpressionStatementNode;
-import lang.ast.statement.FunctionDefinitionNode;
-import lang.ast.statement.IfElseStatementNode;
-import lang.ast.statement.IfStatementNode;
-import lang.ast.statement.ReturnStatementNode;
-import lang.ast.statement.StatementNode;
-import lang.ast.statement.WhileStatementNode;
+import lang.ast.statement.*;
 import lang.ir.*;
 import lang.ir.Module;
 
@@ -59,18 +44,23 @@ public class Translator {
     private int TEMP_VARIABLE_COUNT = 0;
     private int ARRAY_SIZE_COUNT = 0;
 
+    private final Map<String, StructType> classes;
     private final Map<String, Value> variables;
     private final Map<WhileStatementNode, BasicBlock> whileToConditionBlock;
     private final Map<WhileStatementNode, BasicBlock> whileToMergeBlock;
 
     public Translator(Program program) {
         this.program = program;
+        classes = new HashMap<>();
         variables = new HashMap<>();
         whileToConditionBlock = new HashMap<>();
         whileToMergeBlock = new HashMap<>();
     }
 
     public Module translate() {
+        program.getClasses()
+                .forEach(this::translateClass);
+
         Map<Function, FunctionDefinitionNode> functionToStatement = program.getFunctions()
                 .stream()
                 .collect(Collectors.toMap(
@@ -88,11 +78,31 @@ public class Translator {
                         },
                         java.util.function.Function.identity()));
 
-        return new Module(functionToStatement
-                .entrySet()
-                .stream()
-                .map(entry -> translateFunction(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList()));
+        return new Module(
+                new ArrayList<>(classes.values()),
+                functionToStatement
+                        .entrySet()
+                        .stream()
+                        .map(entry -> translateFunction(entry.getKey(), entry.getValue()))
+                        .collect(Collectors.toList()));
+    }
+
+    private void translateClass(ClassStatementNode cl) {
+        List<DeclarationStatementNode> fields = cl.getFields();
+        List<VariableValue> values = new ArrayList<>();
+
+        for (DeclarationStatementNode field : fields) {
+            VariableValue variableValue = new VariableValue(
+                    field.getIdentifierNode().getName(),
+                    matchType(field.getTypeNode()));
+            values.add(variableValue);
+        }
+
+        StructType structType = new StructType(
+                cl.getIdentifierNode().getName(),
+                values);
+
+        classes.put(cl.getIdentifierNode().getName(), structType);
     }
 
     private Function translateFunction(Function function, FunctionDefinitionNode functionDefinitionNode) {
@@ -251,6 +261,7 @@ public class Translator {
             translateWhile(function, (WhileStatementNode) node);
         } else if (node instanceof ExpressionStatementNode) {
             translateExpressionStatement(function, (ExpressionStatementNode) node);
+        } else if (node instanceof FunctionDefinitionNode) {
         } else {
             throw new IllegalArgumentException("Undefined statement");
         }
@@ -305,9 +316,15 @@ public class Translator {
             return translatePrefixMultiplicative(function, (PrefixIncrementMultiplicativeExpressionNode) expressionNode);
         } else if (expressionNode instanceof CastExpressionNode) {
             return translateCastExpression(function, (CastExpressionNode) expressionNode);
+        } else if (expressionNode instanceof ObjectConstructorExpressionNode) {
+            return translateObjectConstructorExpression((ObjectConstructorExpressionNode)expressionNode);
         } else {
             throw new IllegalArgumentException("");
         }
+    }
+
+    private Value translateObjectConstructorExpression(ObjectConstructorExpressionNode expressionNode) {
+        return null;
     }
 
     private void translateBreak(Function function, BreakStatementNode node) {
