@@ -713,9 +713,11 @@ public class SemanticAnalysis {
         classStatementNode.getFields();
 
         ConstructorDefinitionNode constructorDefinitionNode = classStatementNode.getConstructors().get(0);
+        typeNode.getIdentifierNode().setName(classStatementNode.getIdentifierNode().getName());
 
         expressionNode.setConstructorDefinition(constructorDefinitionNode);
         constructors.add(constructorDefinitionNode);
+
         expressionNode.setResultType(typeNode);
     }
 
@@ -1131,9 +1133,11 @@ public class SemanticAnalysis {
             if (variableNode instanceof ClassStatementNode) {
                 ClassStatementNode classStatementNode = (ClassStatementNode) variableNode;
                 objectTypeNode.setDefinition(classStatementNode);
+                objectTypeNode.getIdentifierNode().setName(classStatementNode.getIdentifierNode().getName());
             } else if (variableNode instanceof InterfaceStatementNode) {
                 InterfaceStatementNode interfaceStatementNode = (InterfaceStatementNode) variableNode;
                 objectTypeNode.setDefinition(interfaceStatementNode);
+                objectTypeNode.getIdentifierNode().setName(interfaceStatementNode.getIdentifierNode().getName());
             } else {
                 throw new IllegalArgumentException("Unknown");
             }

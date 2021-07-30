@@ -340,14 +340,24 @@ public class Translator {
         } else if (expressionNode instanceof CastExpressionNode) {
             return translateCastExpression(function, (CastExpressionNode) expressionNode);
         } else if (expressionNode instanceof ObjectConstructorExpressionNode) {
-            return translateObjectConstructorExpression((ObjectConstructorExpressionNode) expressionNode);
+            return translateObjectConstructorExpression(function, (ObjectConstructorExpressionNode) expressionNode);
         } else {
             throw new IllegalArgumentException("");
         }
     }
 
-    private Value translateObjectConstructorExpression(ObjectConstructorExpressionNode expressionNode) {
-        return null;
+    private Value translateObjectConstructorExpression(Function function,
+                                                       ObjectConstructorExpressionNode expressionNode) {
+
+        PointerType pointerType = new PointerType(INT_64);
+        Command command = new Command(
+                createTempVariable(pointerType),
+                STRUCT_ALLOCATION,
+                List.of(pointerType, new IntValue(2))
+        );
+        function.getCurrentBlock().addCommand(command);
+
+        return command.getResult();
     }
 
     private void translateBreak(Function function, BreakStatementNode node) {
@@ -502,8 +512,18 @@ public class Translator {
         } else if (typeNode instanceof ArrayTypeNode) {
             ArrayTypeNode arrayTypeNode = (ArrayTypeNode) typeNode;
             return new PointerType(matchType(arrayTypeNode.getTypeNode()));
+        } else if (typeNode instanceof ObjectTypeNode) {
+            if (((ObjectTypeNode) typeNode).getDefinitionNode() instanceof InterfaceStatementNode) {
+                return new PointerType(classes.get(
+                        ((InterfaceStatementNode) ((ObjectTypeNode) typeNode).getDefinitionNode())
+                                .getIdentifierNode().getName()));
+            } else {
+                String name = ((ObjectTypeNode) typeNode).getIdentifierNode().getName();
+                StructType structType = classes.get(name);
+                return new PointerType(structType);
+            }
         } else {
-            return null;
+            throw new IllegalArgumentException("");
         }
     }
 
