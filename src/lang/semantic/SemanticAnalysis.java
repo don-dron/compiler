@@ -1,16 +1,6 @@
 package lang.semantic;
 
-import lang.ast.ArrayTypeNode;
-import lang.ast.AstNode;
-import lang.ast.BasicTypeNode;
-import lang.ast.FileNode;
-import lang.ast.FunctionNode;
-import lang.ast.GlobalBasicType;
-import lang.ast.ImportNode;
-import lang.ast.ObjectTypeNode;
-import lang.ast.ParameterNode;
-import lang.ast.Program;
-import lang.ast.TypeNode;
+import lang.ast.*;
 import lang.ast.expression.*;
 import lang.ast.expression.binary.AdditiveExpressionNode;
 import lang.ast.expression.binary.AssigmentExpressionNode;
@@ -50,6 +40,7 @@ import lang.ast.statement.InterfaceStatementNode;
 import lang.ast.statement.ReturnStatementNode;
 import lang.ast.statement.StatementNode;
 import lang.ast.statement.WhileStatementNode;
+import org.checkerframework.checker.units.qual.C;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -409,13 +400,14 @@ public class SemanticAnalysis {
 
     private void analyseConstructorDefinitionNodeEnd(ConstructorDefinitionNode node, Scope scope) {
         Scope constructorScope = new Scope(scope);
-        scope.setOwner(node);
+        constructorScope.setOwner(node);
         node.getFunctionNode().getParametersNode().getParameters()
                 .forEach(p -> {
                     analyseType(p.getTypeNode(), scope);
                     constructorScope.addDeclaration(p);
                 });
         analyseStatement(node.getStatementNode(), constructorScope);
+        constructors.add(node);
     }
 
     private void analyseContinue(ContinueStatementNode node, Scope scope) {
@@ -699,8 +691,25 @@ public class SemanticAnalysis {
             analyseCastExpression((CastExpressionNode) expressionNode, parentScope);
         } else if (expressionNode instanceof ObjectConstructorExpressionNode) {
             analyseObjectConstructorExpression((ObjectConstructorExpressionNode) expressionNode, parentScope);
+        } else if (expressionNode instanceof ThisExpressionNode) {
+            analyseThisExpression((ThisExpressionNode) expressionNode, parentScope);
         } else {
             throw new IllegalArgumentException("");
+        }
+    }
+
+    private void analyseThisExpression(ThisExpressionNode expressionNode, Scope parentScope) {
+        ClassStatementNode classStatementNode = findClass(parentScope);
+        ObjectTypeNode objectTypeNode = new ObjectTypeNode(classStatementNode.getIdentifierNode());
+        objectTypeNode.setDefinition(classStatementNode);
+        expressionNode.setResultType(objectTypeNode);
+    }
+
+    private ClassStatementNode findClass(Scope parentScope) {
+        if (parentScope.getOwner() instanceof ClassStatementNode) {
+            return (ClassStatementNode) parentScope.getOwner();
+        } else {
+            return findClass(parentScope.getParentScope());
         }
     }
 
@@ -710,13 +719,33 @@ public class SemanticAnalysis {
         ClassStatementNode classStatementNode =
                 (ClassStatementNode) parentScope.findDefinitionByVariable(typeNode.getIdentifierNode().getName());
 
-        classStatementNode.getFields();
+        List<ExpressionNode> expressions = expressionNode.getParameters();
+        ConstructorDefinitionNode constructorDefinitionNode = null;
 
-        ConstructorDefinitionNode constructorDefinitionNode = classStatementNode.getConstructors().get(0);
+        for (ConstructorDefinitionNode constructor : classStatementNode.getConstructors()) {
+            List<ParameterNode> parameters = constructor.getFunctionNode().getParametersNode().getParameters();
+
+            if (parameters.size() != expressions.size()) {
+                continue;
+            }
+
+            boolean flag = true;
+            for (int i = 0; i < parameters.size(); i++) {
+                flag &= (parameters.get(i).getTypeNode().equals(expressions.get(i).getResultType()));
+            }
+
+            if(flag) {
+                constructorDefinitionNode = constructor;
+            }
+        }
+
+        if (constructorDefinitionNode == null) {
+            throw new IllegalArgumentException();
+        }
+
         typeNode.getIdentifierNode().setName(classStatementNode.getIdentifierNode().getName());
 
         expressionNode.setConstructorDefinition(constructorDefinitionNode);
-        constructors.add(constructorDefinitionNode);
 
         expressionNode.setResultType(typeNode);
     }
@@ -815,7 +844,15 @@ public class SemanticAnalysis {
         ExpressionNode right = fieldAccessExpressionNode.getRight();
 
         analyseExpression(left, parentScope);
-        analyseExpression(right, parentScope);
+
+        ObjectTypeNode objectTypeNode = (ObjectTypeNode) left.getResultType();
+
+        if (objectTypeNode.getDefinitionNode() instanceof ClassStatementNode) {
+            analyseExpression(right, ((ClassStatementNode) objectTypeNode.getDefinitionNode()).getInnerScope());
+        } else {
+            analyseExpression(right, ((InterfaceStatementNode) objectTypeNode.getDefinitionNode()).getInnerScope());
+        }
+        expressionNode.setResultType(right.getResultType());
     }
 
     private void analyseArrayAccessExpression(ExpressionNode expressionNode, Scope parentScope) {

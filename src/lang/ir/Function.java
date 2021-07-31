@@ -9,6 +9,7 @@ public class Function implements Value {
     private BasicBlock currentBlock;
     private BasicBlock returnBlock;
     private Value returnValue;
+    private VariableValue thisValue;
     private Type resultType;
     private List<Type> parameterTypes;
 
@@ -65,6 +66,10 @@ public class Function implements Value {
         return resultType;
     }
 
+    public void setThisValue(VariableValue thisValue) {
+        this.thisValue = thisValue;
+    }
+
     @Override
     public String toLLVM() {
         return name;
@@ -76,5 +81,9 @@ public class Function implements Value {
 
     public List<Type> getParameterTypes() {
         return parameterTypes;
+    }
+
+    public VariableValue getThisValue() {
+        return thisValue;
     }
 }

@@ -1,12 +1,5 @@
-
 class Point
-    int x
-    int y
-
-    (int x, int y) ->
-        int c = x
-        c = y
 
 () int main ->
-    Point p = new Point(1, 2)
+    Point[] array = new Point[2]
     return 1

@@ -50,6 +50,11 @@ public class Token {
         TAB("tab", "\t"),
 
         /**
+         * this
+         */
+        THIS("this", "this"),
+
+        /**
          * colon
          */
         COLON("colon", "\\:"),

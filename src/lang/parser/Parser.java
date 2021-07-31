@@ -238,11 +238,39 @@ public class Parser {
             if (first.getTokenType() == Token.TokenType.IDENTIFIER) {
                 next();
                 Token token = peek();
-                if (token.getTokenType() == Token.TokenType.IDENTIFIER) {
-                    ret(first);
+                List<Token> retStack = new ArrayList<>();
+                boolean flag = true;
+                retStack.add(first);
+
+                while (true) {
+                    if (peek().getTokenType() == Token.TokenType.LB_PAREN) {
+                        retStack.add(token);
+                        next();
+                        token = peek();
+
+                        if(token.getTokenType() != RB_PAREN) {
+                            flag = false;
+                            break;
+                        }
+
+                        retStack.add(token);
+                        next();
+                        token = peek();
+                    } else {
+                        break;
+                    }
+                }
+
+                flag &= token.getTokenType() == Token.TokenType.IDENTIFIER;
+
+                Collections.reverse(retStack);
+                for(Token tkn : retStack) {
+                    ret(tkn);
+                }
+
+                if (flag) {
                     return parseDeclarationStatement();
                 }
-                ret(first);
             }
             return parseExpressionStatement();
         }
@@ -953,6 +981,9 @@ public class Parser {
         if (first.getTokenType() == Token.TokenType.IDENTIFIER) {
             IdentifierNode identifierNode = parseIdentifier();
             return new VariableExpressionNode(identifierNode);
+        } else if (first.getTokenType() == THIS) {
+            next();
+            return new ThisExpressionNode();
         } else if (first.getTokenType() == Token.TokenType.FLOAT_CONSTANT) {
             next();
             return new FloatConstantExpressionNode(Float.parseFloat(first.getContent()));

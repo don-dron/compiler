@@ -52,7 +52,7 @@ public class LLVMTranslator {
         builder
                 .append("define")
                 .append(" ")
-                .append(function.getType().toLLVM())
+                .append(function.getType() == VOID ? "void" : function.getType().toLLVM())
                 .append(" ")
                 .append("@")
                 .append(function.getName())

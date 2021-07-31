@@ -27,6 +27,7 @@ import lang.ast.statement.*;
 import lang.ir.*;
 import lang.ir.Module;
 import lang.lexer.Token;
+import org.checkerframework.common.returnsreceiver.qual.This;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -133,6 +134,40 @@ public class Translator {
         BasicBlock header = function.appendBlock("header");
 
         List<Type> parameterTypes = new ArrayList<>();
+
+        if (functionDefinitionNode.getScope() != null
+                && functionDefinitionNode.getScope().getOwner() instanceof ClassStatementNode
+                && !constructors.containsValue(function)) {
+            ClassStatementNode classStatementNode = (ClassStatementNode)
+                    functionDefinitionNode.getScope().getOwner();
+            Type type = matchType(new ObjectTypeNode(classStatementNode.getIdentifierNode()));
+            parameterTypes.add(type);
+
+            String thisName = "$$_this_value_" + THIS_COUNT++;
+            VariableValue thisValue = new VariableValue(
+                    thisName,
+                    type
+            );
+            variables.put(thisName, thisValue);
+
+            function.setThisValue(thisValue);
+            Command alloc = new Command(
+                    thisValue,
+                    ALLOC,
+                    List.of()
+            );
+
+            header.addCommand(alloc);
+
+            Command command = new Command(
+                    thisValue,
+                    STORE,
+                    List.of(createTempVariable(type))
+            );
+
+            header.addCommand(command);
+        }
+
         for (ParameterNode n : functionDefinitionNode
                 .getFunctionNode()
                 .getParametersNode()
@@ -181,8 +216,10 @@ public class Translator {
                 String thisName = "$$_this_value_" + THIS_COUNT++;
                 Type thisType = matchType(functionDefinitionNode.getFunctionNode().getTypeNode());
 
-                Value thisVariableValue = new VariableValue(thisName, thisType);
+                VariableValue thisVariableValue = new VariableValue(thisName, thisType);
                 variables.put(thisName, thisVariableValue);
+
+                function.setThisValue(thisVariableValue);
 
                 Command thisAlloc = new Command(
                         thisVariableValue,
@@ -388,9 +425,25 @@ public class Translator {
             return translateCastExpression(function, (CastExpressionNode) expressionNode);
         } else if (expressionNode instanceof ObjectConstructorExpressionNode) {
             return translateObjectConstructorExpression(function, (ObjectConstructorExpressionNode) expressionNode);
+        } else if (expressionNode instanceof ThisExpressionNode) {
+            return translateThisExpression(function, (ThisExpressionNode) expressionNode);
         } else {
             throw new IllegalArgumentException("");
         }
+    }
+
+    private Value translateThisExpression(Function function, ThisExpressionNode expressionNode) {
+
+        VariableValue variableValue = function.getThisValue();
+        Command load = new Command(
+                createTempVariable(variableValue.getType()),
+                LOAD,
+                List.of(variableValue)
+        );
+
+        BasicBlock current = function.getCurrentBlock();
+        current.addCommand(load);
+        return load.getResult();
     }
 
     private Value translateObjectConstructorExpression(Function function,
@@ -500,25 +553,55 @@ public class Translator {
     private void translateExpressionStatement(Function function, ExpressionStatementNode node) {
         if (node.getExpressionNode() instanceof FunctionCallExpressionNode) {
             FunctionCallExpressionNode expressionNode = (FunctionCallExpressionNode) node.getExpressionNode();
-            Value functionValue = translateExpression(function, expressionNode.getFunction());
-            List<Value> values =
-                    expressionNode
-                            .getParameters()
-                            .getList()
-                            .stream()
-                            .map(exp -> translateExpression(function, exp))
-                            .collect(Collectors.toList());
+            if (expressionNode.getFunction() instanceof FieldAccessExpressionNode) {
+                Value leftValue = translateExpression(
+                        function,
+                        ((FieldAccessExpressionNode) expressionNode.getFunction()).getLeft());
 
-            if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
-                Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
-                        Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
-                BasicBlock current = function.getCurrentBlock();
-                current.addCommand(command);
+                Value functionValue =
+                        translateVariableExpression(
+                                function, ((FieldAccessExpressionNode) expressionNode.getFunction()).getRight());
+                List<Value> values =
+                        expressionNode
+                                .getParameters()
+                                .getList()
+                                .stream()
+                                .map(exp -> translateExpression(function, exp))
+                                .collect(Collectors.toList());
+                values.add(0, leftValue);
+
+                if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
+                    Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
+                            Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
+                    BasicBlock current = function.getCurrentBlock();
+                    current.addCommand(command);
+                } else {
+                    Command command = new Command(null, CALL,
+                            Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
+                    BasicBlock current = function.getCurrentBlock();
+                    current.addCommand(command);
+                }
             } else {
-                Command command = new Command(null, CALL,
-                        Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
-                BasicBlock current = function.getCurrentBlock();
-                current.addCommand(command);
+                Value functionValue = translateExpression(function, expressionNode.getFunction());
+                List<Value> values =
+                        expressionNode
+                                .getParameters()
+                                .getList()
+                                .stream()
+                                .map(exp -> translateExpression(function, exp))
+                                .collect(Collectors.toList());
+
+                if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
+                    Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
+                            Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
+                    BasicBlock current = function.getCurrentBlock();
+                    current.addCommand(command);
+                } else {
+                    Command command = new Command(null, CALL,
+                            Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
+                    BasicBlock current = function.getCurrentBlock();
+                    current.addCommand(command);
+                }
             }
         } else {
             translateExpression(function, node.getExpressionNode());
@@ -869,19 +952,38 @@ public class Translator {
         return loadValue.getResult();
     }
 
-    private Value translateFieldAccessExpression(Function function, FieldAccessExpressionNode expressionNode) {
-        Value arrayValue = translateExpression(function, expressionNode.getLeft());
-        Value offsetValue = translateExpression(function, expressionNode.getRight());
+    private Value translateFieldAccessExpression(Function function,
+                                                 FieldAccessExpressionNode fieldAccessExpressionNode) {
+        Value structValue = translateExpression(function, fieldAccessExpressionNode.getLeft());
+
+        PointerType pointerType = (PointerType) structValue.getType();
+        StructType structType = (StructType) pointerType.getType();
+        int index = 0;
+        String name = fieldAccessExpressionNode.getRight().getIdentifierNode().getName();
+
+        for (int i = 0; i < structType.getTypes().size(); i++) {
+            if (structType.getTypes().get(i).getName().equals(name)) {
+                index = i;
+                break;
+            }
+        }
 
         Command command = new Command(
-                createTempVariable(matchType(expressionNode.getResultType())),
+                createTempVariable(matchType(fieldAccessExpressionNode.getResultType())),
                 FIELD_ACCESS,
-                List.of(arrayValue, offsetValue));
+                List.of(structValue, new IntValue(index)));
 
         BasicBlock current = function.getCurrentBlock();
         current.addCommand(command);
 
-        return command.getResult();
+        Command load = new Command(
+                createTempVariable(matchType(fieldAccessExpressionNode.getResultType())),
+                LOAD,
+                List.of(command.getResult())
+        );
+
+        function.getCurrentBlock().addCommand(load);
+        return load.getResult();
     }
 
     private Value translateArrayAccessExpression(Function function, ArrayAccessExpressionNode expressionNode) {
@@ -908,23 +1010,51 @@ public class Translator {
     }
 
     private Value translateFunctionCallExpression(Function function, FunctionCallExpressionNode expressionNode) {
-        Value functionValue = translateExpression(function, expressionNode.getFunction());
-        List<Value> values =
-                expressionNode
-                        .getParameters()
-                        .getList()
-                        .stream()
-                        .map(exp -> translateExpression(function, exp))
-                        .collect(Collectors.toList());
-        if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
-            Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
-                    Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
-            BasicBlock current = function.getCurrentBlock();
-            current.addCommand(command);
+        if (expressionNode.getFunction() instanceof FieldAccessExpressionNode) {
+            Value leftValue = translateExpression(
+                    function,
+                    ((FieldAccessExpressionNode) expressionNode.getFunction()).getLeft());
 
-            return command.getResult();
+            Value functionValue =
+                    translateVariableExpression(
+                            function, ((FieldAccessExpressionNode) expressionNode.getFunction()).getRight());
+            List<Value> values =
+                    expressionNode
+                            .getParameters()
+                            .getList()
+                            .stream()
+                            .map(exp -> translateExpression(function, exp))
+                            .collect(Collectors.toList());
+            values.add(0, leftValue);
+            if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
+                Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
+                        Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
+                BasicBlock current = function.getCurrentBlock();
+                current.addCommand(command);
+
+                return command.getResult();
+            } else {
+                throw new IllegalArgumentException();
+            }
         } else {
-            throw new IllegalArgumentException();
+            Value functionValue = translateExpression(function, expressionNode.getFunction());
+            List<Value> values =
+                    expressionNode
+                            .getParameters()
+                            .getList()
+                            .stream()
+                            .map(exp -> translateExpression(function, exp))
+                            .collect(Collectors.toList());
+            if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
+                Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
+                        Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
+                BasicBlock current = function.getCurrentBlock();
+                current.addCommand(command);
+
+                return command.getResult();
+            } else {
+                throw new IllegalArgumentException();
+            }
         }
     }
 
@@ -952,7 +1082,8 @@ public class Translator {
                                      List<VariableValue> arrayAccessVariables,
                                      List<VariableValue> iteratorVariables,
                                      List<VariableValue> sizeVariables) {
-        if (type instanceof PointerType) {
+        if (type instanceof PointerType
+                && !(((PointerType) type).getType() instanceof StructType)) {
             PointerType targetType = (PointerType) type;
             VariableValue sizeVariable = sizeVariables.remove(0);
             VariableValue arrayAccessVariable = arrayAccessVariables.remove(0);
@@ -1087,13 +1218,30 @@ public class Translator {
 
             return arrayValue;
         } else {
-            Command command = new Command(
-                    arrayValue,
-                    STORE,
-                    List.of(new IntValue(0))
-            );
-            function.getCurrentBlock().addCommand(command);
-            return command.getResult();
+            if (type instanceof PointerType) {
+                Command castCommand = new Command(
+                        createTempVariable(type),
+                        CAST,
+                        List.of(new LongValue(0))
+                );
+                function.getCurrentBlock().addCommand(castCommand);
+
+                Command command = new Command(
+                        arrayValue,
+                        STORE,
+                        List.of(castCommand.getResult())
+                );
+                function.getCurrentBlock().addCommand(command);
+                return command.getResult();
+            } else {
+                Command command = new Command(
+                        arrayValue,
+                        STORE,
+                        List.of(new IntValue(0))
+                );
+                function.getCurrentBlock().addCommand(command);
+                return command.getResult();
+            }
         }
     }
 
@@ -1366,6 +1514,31 @@ public class Translator {
                     createTempVariable(matchType(expressionNode.getResultType())),
                     ARRAY_REFERENCE,
                     List.of(arrayValue, offsetValue));
+
+            BasicBlock current = function.getCurrentBlock();
+            current.addCommand(command);
+            return command.getResult();
+        } else if (left instanceof FieldAccessExpressionNode) {
+            FieldAccessExpressionNode fieldAccessExpressionNode = (FieldAccessExpressionNode) left;
+
+            Value structValue = translateExpression(function, fieldAccessExpressionNode.getLeft());
+
+            PointerType pointerType = (PointerType) structValue.getType();
+            StructType structType = (StructType) pointerType.getType();
+            int index = 0;
+            String name = fieldAccessExpressionNode.getRight().getIdentifierNode().getName();
+
+            for (int i = 0; i < structType.getTypes().size(); i++) {
+                if (structType.getTypes().get(i).getName().equals(name)) {
+                    index = i;
+                    break;
+                }
+            }
+
+            Command command = new Command(
+                    createTempVariable(matchType(fieldAccessExpressionNode.getResultType())),
+                    FIELD_ACCESS,
+                    List.of(structValue, new IntValue(index)));
 
             BasicBlock current = function.getCurrentBlock();
             current.addCommand(command);

@@ -101,6 +101,11 @@ public class Command implements Value {
             return result.toLLVM() + " = getelementptr inbounds " + result.getType().toLLVM() + " , "
                     + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
                     parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
+        } else if (operation == FIELD_ACCESS) {
+            return result.toLLVM() + " = getelementptr inbounds " +
+                    ((PointerType) parameters.get(0).getType()).getType().toLLVM() + " , "
+                    + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , i64 0 , " +
+                    parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
         } else if (operation == ARRAY_ACCESS) {
             return result.toLLVM() + " = getelementptr inbounds " +
                     ((PointerType) parameters.get(0).getType()).getType().toLLVM() + " , "
