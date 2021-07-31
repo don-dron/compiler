@@ -28,4 +28,9 @@ public class StructType extends Type {
     public List<VariableValue> getTypes() {
         return values;
     }
+
+    @Override
+    public int getSize() {
+        return values.stream().map(v -> v.getType().getSize()).reduce(Integer::sum).orElseThrow();
+    }
 }

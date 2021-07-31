@@ -93,6 +93,10 @@ public class Command implements Value {
             return result.toLLVM() + " = call " + result.getType().toLLVM()
                     + " @malloc(" + parameters.get(1).getType().toLLVM() + " "
                     + parameters.get(1).toLLVM() + ")";
+        } else if (operation == STRUCT_ALLOCATION) {
+            return result.toLLVM() + " = call " + result.getType().toLLVM()
+                    + " @malloc(" + parameters.get(1).getType().toLLVM() + " "
+                    + parameters.get(1).toLLVM() + ")";
         } else if (operation == ARRAY_REFERENCE) {
             return result.toLLVM() + " = getelementptr inbounds " + result.getType().toLLVM() + " , "
                     + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +

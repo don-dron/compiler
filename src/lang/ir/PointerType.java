@@ -21,4 +21,9 @@ public class PointerType extends Type {
     public String toString() {
         return type.toLLVM() + "*";
     }
+
+    @Override
+    public int getSize() {
+        return 8;
+    }
 }

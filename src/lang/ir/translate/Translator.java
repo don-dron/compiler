@@ -41,6 +41,7 @@ import static lang.ir.Type.*;
 
 public class Translator {
     private final Program program;
+    private int THIS_COUNT = 0;
     private int RET_COUNT = 0;
     private int CONSTRUCTOR_COUNT = 0;
     private int TEMP_VARIABLE_COUNT = 0;
@@ -165,6 +166,7 @@ public class Translator {
         if (!functionDefinitionNode.getFunctionNode().getTypeNode().equals(GlobalBasicType.VOID_TYPE)) {
             String name = "$$_ret_value_" + RET_COUNT++;
             Type type = matchType(functionDefinitionNode.getFunctionNode().getTypeNode());
+
             Value variableValue = new VariableValue(name, type);
             variables.put(name, variableValue);
 
@@ -173,8 +175,53 @@ public class Translator {
                     ALLOC,
                     List.of()
             );
-
             header.addCommand(alloc);
+
+            if (constructors.containsValue(function)) {
+                String thisName = "$$_this_value_" + THIS_COUNT++;
+                Type thisType = matchType(functionDefinitionNode.getFunctionNode().getTypeNode());
+
+                Value thisVariableValue = new VariableValue(thisName, thisType);
+                variables.put(thisName, thisVariableValue);
+
+                Command thisAlloc = new Command(
+                        thisVariableValue,
+                        ALLOC,
+                        List.of()
+                );
+                header.addCommand(thisAlloc);
+
+                PointerType pointerStructType = (PointerType) type;
+                PointerType pointerType = new PointerType(INT_64);
+                Command command = new Command(
+                        createTempVariable(pointerType),
+                        STRUCT_ALLOCATION,
+                        List.of(pointerType, new IntValue(pointerStructType.getType().getSize()))
+                );
+                function.getCurrentBlock().addCommand(command);
+
+                Command castCommand = new Command(
+                        createTempVariable(type),
+                        CAST,
+                        List.of(command.getResult())
+                );
+                function.getCurrentBlock().addCommand(castCommand);
+
+                Command store = new Command(
+                        thisVariableValue,
+                        STORE,
+                        List.of(castCommand.getResult())
+                );
+                function.getCurrentBlock().addCommand(store);
+
+                Command storeRet = new Command(
+                        variableValue,
+                        STORE,
+                        List.of(castCommand.getResult())
+                );
+                function.getCurrentBlock().addCommand(storeRet);
+            }
+
             returnBlock = function.appendBlock("return");
 
             Command loadReturn = new Command(
@@ -348,17 +395,22 @@ public class Translator {
 
     private Value translateObjectConstructorExpression(Function function,
                                                        ObjectConstructorExpressionNode expressionNode) {
+        Value functionValue = constructors.get(expressionNode.getConstructorDefinitionNode());
+        List<Value> values =
+                expressionNode
+                        .getParameters()
+                        .stream()
+                        .map(exp -> translateExpression(function, exp))
+                        .collect(Collectors.toList());
 
-        PointerType pointerType = new PointerType(INT_64);
-        Command command = new Command(
-                createTempVariable(pointerType),
-                STRUCT_ALLOCATION,
-                List.of(pointerType, new IntValue(2))
-        );
-        function.getCurrentBlock().addCommand(command);
+        Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
+                Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
+        BasicBlock current = function.getCurrentBlock();
+        current.addCommand(command);
 
         return command.getResult();
     }
+
 
     private void translateBreak(Function function, BreakStatementNode node) {
         BasicBlock last = function.getCurrentBlock();

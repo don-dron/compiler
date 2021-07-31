@@ -33,4 +33,18 @@ public class Type implements Value {
     public Type getType() {
         return this;
     }
+
+    public int getSize() {
+        if (this == INT_1 || this == INT_8) {
+            return 1;
+        } else if (this == INT_16) {
+            return 2;
+        } else if (this == INT_32) {
+            return 4;
+        } else if (this == INT_64) {
+            return 8;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
 }
