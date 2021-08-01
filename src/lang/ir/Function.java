@@ -6,6 +6,7 @@ import java.util.List;
 public class Function implements Value {
     private final List<BasicBlock> blocks;
     private final String name;
+    private final boolean systemFunction;
     private BasicBlock currentBlock;
     private BasicBlock returnBlock;
     private Value returnValue;
@@ -14,8 +15,17 @@ public class Function implements Value {
     private List<Type> parameterTypes;
 
     public Function(String name) {
+        this(name, false);
+    }
+
+    public Function(String name, boolean systemFunction) {
         this.name = name;
+        this.systemFunction = systemFunction;
         blocks = new ArrayList<>();
+    }
+
+    public boolean isSystemFunction() {
+        return systemFunction;
     }
 
     public String getName() {

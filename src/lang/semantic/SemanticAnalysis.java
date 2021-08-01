@@ -720,6 +720,10 @@ public class SemanticAnalysis {
                 (ClassStatementNode) parentScope.findDefinitionByVariable(typeNode.getIdentifierNode().getName());
 
         List<ExpressionNode> expressions = expressionNode.getParameters();
+        for(ExpressionNode expression : expressions) {
+            analyseExpression(expression, parentScope);
+        }
+
         ConstructorDefinitionNode constructorDefinitionNode = null;
 
         for (ConstructorDefinitionNode constructor : classStatementNode.getConstructors()) {
@@ -1139,7 +1143,9 @@ public class SemanticAnalysis {
             typeNode = defineBinaryOperationType(expressionNode, left, right);
         } else if (left.getResultType() instanceof ObjectTypeNode
                 && right.getResultType() instanceof ObjectTypeNode) {
-            if (left.getResultType().equals(right.getResultType())) {
+            if (((ObjectTypeNode) left.getResultType())
+                    .getIdentifierNode().getName()
+                    .equals(((ObjectTypeNode) right.getResultType()).getIdentifierNode().getName())) {
                 typeNode = left.getResultType();
             }
         } else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {

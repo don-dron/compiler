@@ -53,6 +53,7 @@ public class Translator {
     private final Map<WhileStatementNode, BasicBlock> whileToConditionBlock;
     private final Map<WhileStatementNode, BasicBlock> whileToMergeBlock;
     private Map<ConstructorDefinitionNode, Function> constructors;
+    private final List<Function> predefinedFunctions;
 
     public Translator(Program program) {
         this.program = program;
@@ -60,9 +61,41 @@ public class Translator {
         variables = new HashMap<>();
         whileToConditionBlock = new HashMap<>();
         whileToMergeBlock = new HashMap<>();
+        predefinedFunctions = new ArrayList<>();
+    }
+
+    private Function getPutcharFunction() {
+        Function function = new Function("putchar", true);
+        function.setParameterTypes(List.of(INT_32));
+        function.setResultType(INT_32);
+        return function;
+    }
+
+    private Function getGetcharFunction() {
+        Function function = new Function("getchar", true);
+        function.setParameterTypes(List.of());
+        function.setResultType(INT_32);
+        return function;
+    }
+
+    private Function getMallocFunction() {
+        Function function = new Function("malloc", true);
+        function.setParameterTypes(List.of(INT_32));
+        function.setResultType(new PointerType(INT_64));
+        return function;
     }
 
     public Module translate() {
+        predefinedFunctions.add(getPutcharFunction());
+        predefinedFunctions.add(getGetcharFunction());
+        predefinedFunctions.add(getMallocFunction());
+
+        predefinedFunctions
+                .forEach(f -> {
+                    variables.put(f.getName(), f);
+                });
+
+
         program.getClasses()
                 .forEach(this::translateClass);
 
@@ -103,13 +136,15 @@ public class Translator {
                             return function;
                         }
                 ));
+        List<Function> functions = functionToStatement
+                .entrySet()
+                .stream()
+                .map(entry -> translateFunction(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+        functions.addAll(predefinedFunctions);
         return new Module(
                 new ArrayList<>(classes.values()),
-                functionToStatement
-                        .entrySet()
-                        .stream()
-                        .map(entry -> translateFunction(entry.getKey(), entry.getValue()))
-                        .collect(Collectors.toList()));
+                functions);
     }
 
     private void translateClass(ClassStatementNode cl) {
@@ -597,7 +632,10 @@ public class Translator {
                     BasicBlock current = function.getCurrentBlock();
                     current.addCommand(command);
                 } else {
-                    Command command = new Command(null, CALL,
+                    Command command = new Command(
+                            functionValue.getType() == null || functionValue.getType().equals(VOID)
+                                    ? null
+                                    : createTempVariable(functionValue.getType()), CALL,
                             Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
                     BasicBlock current = function.getCurrentBlock();
                     current.addCommand(command);
@@ -1219,17 +1257,10 @@ public class Translator {
             return arrayValue;
         } else {
             if (type instanceof PointerType) {
-                Command castCommand = new Command(
-                        createTempVariable(type),
-                        CAST,
-                        List.of(new LongValue(0))
-                );
-                function.getCurrentBlock().addCommand(castCommand);
-
                 Command command = new Command(
                         arrayValue,
                         STORE,
-                        List.of(castCommand.getResult())
+                        List.of(new NullValue(type.getType()))
                 );
                 function.getCurrentBlock().addCommand(command);
                 return command.getResult();
@@ -1347,6 +1378,13 @@ public class Translator {
         BasicBlock current = function.getCurrentBlock();
 
         Value value = variables.get(expressionNode.getIdentifierNode().getName());
+
+        if (value == null) {
+            value = predefinedFunctions.stream()
+                    .filter(f -> expressionNode.getIdentifierNode().getName().endsWith(f.getName()))
+                    .findFirst()
+                    .orElse(null);
+        }
 
         if (value instanceof Function) {
             return value;

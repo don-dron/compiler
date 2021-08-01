@@ -62,6 +62,18 @@ public class Command implements Value {
                             .stream()
                             .map(Value::toLLVM)
                             .collect(Collectors.joining(","));
+        } else if (operation == DIV) {
+            return result.toLLVM() + " = sdiv " + result.getType().toLLVM() + " " +
+                    parameters
+                            .stream()
+                            .map(Value::toLLVM)
+                            .collect(Collectors.joining(","));
+        } else if (operation == MOD) {
+            return result.toLLVM() + " = srem " + result.getType().toLLVM() + " " +
+                    parameters
+                            .stream()
+                            .map(Value::toLLVM)
+                            .collect(Collectors.joining(","));
         } else if (operation == AND) {
             return result.toLLVM() + " = and " + result.getType().toLLVM() + " " +
                     parameters
@@ -112,8 +124,9 @@ public class Command implements Value {
                     + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
                     parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
         } else if (operation == CALL) {
+            Function function = (Function) parameters.get(0);
             return (result == null ? "" : (result.toLLVM() + " = ")) + "call " +
-                    (result == null ? "void" : result.getType().toLLVM())
+                    (function.getType() == Type.VOID ? "void" : function.getType().toLLVM())
                     + " @" + parameters.get(0).toLLVM() + "(" +
                     parameters.stream().skip(1).map(p -> p.getType().toLLVM() + " "
                             + p.toLLVM()).collect(Collectors.joining(",")) + ")";
