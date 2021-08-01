@@ -26,6 +26,12 @@ public class LLVMTranslator {
                 .collect(Collectors.joining("\n"))
         );
         builder.append("\n");
+        builder.append(module.getLiterals()
+                .stream()
+                .map(this::translateLiteral)
+                .collect(Collectors.joining("\n"))
+        );
+        builder.append("\n");
         builder.append(module.getFunctions()
                 .stream()
                 .sorted(Comparator.comparing(Function::isSystemFunction).reversed())
@@ -92,5 +98,11 @@ public class LLVMTranslator {
         builder.append("\n\t\t").append(b.getTerminator().toLLVM());
 
         return builder.toString();
+    }
+
+    private String translateLiteral(StringValue stringValue) {
+        return  stringValue.getName() + " = private unnamed_addr constant "
+                + "[" + (stringValue.getValue().length()) + " x i8" + "] c"
+                + "\"" + stringValue.getValue() + "\"";
     }
 }

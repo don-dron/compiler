@@ -20,10 +20,7 @@ import lang.ast.expression.binary.LogicalAndExpressionNode;
 import lang.ast.expression.binary.LogicalOrExpressionNode;
 import lang.ast.expression.binary.MultiplicativeExpressionNode;
 import lang.ast.expression.binary.RelationalExpressionNode;
-import lang.ast.expression.consts.BoolConstantExpressionNode;
-import lang.ast.expression.consts.FloatConstantExpressionNode;
-import lang.ast.expression.consts.IntConstantExpressionNode;
-import lang.ast.expression.consts.NullConstantExpressionNode;
+import lang.ast.expression.consts.*;
 import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
@@ -187,6 +184,7 @@ public class Parser {
             return parseInterfaceStatement();
         } else if (first.getTokenType() == Token.TokenType.INT
                 || first.getTokenType() == Token.TokenType.FLOAT
+                || first.getTokenType() == CHAR
                 || first.getTokenType() == Token.TokenType.L_PAREN) {
             return parseDeclarationStatement();
         } else {
@@ -232,6 +230,7 @@ public class Parser {
             return parseContinueStatement();
         } else if (first.getTokenType() == Token.TokenType.INT
                 || first.getTokenType() == Token.TokenType.FLOAT
+                || first.getTokenType() == CHAR
                 || first.getTokenType() == Token.TokenType.L_PAREN) {
             return parseDeclarationStatement();
         } else {
@@ -248,7 +247,7 @@ public class Parser {
                         next();
                         token = peek();
 
-                        if(token.getTokenType() != RB_PAREN) {
+                        if (token.getTokenType() != RB_PAREN) {
                             flag = false;
                             break;
                         }
@@ -264,7 +263,7 @@ public class Parser {
                 flag &= token.getTokenType() == Token.TokenType.IDENTIFIER;
 
                 Collections.reverse(retStack);
-                for(Token tkn : retStack) {
+                for (Token tkn : retStack) {
                     ret(tkn);
                 }
 
@@ -637,6 +636,9 @@ public class Parser {
             case FLOAT:
                 typeNode = new BasicTypeNode(TypeNode.Type.FLOAT, type);
                 break;
+            case CHAR:
+                typeNode = new BasicTypeNode(TypeNode.Type.CHAR, type);
+                break;
             default:
                 typeNode = null;
         }
@@ -987,9 +989,16 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.FLOAT_CONSTANT) {
             next();
             return new FloatConstantExpressionNode(Float.parseFloat(first.getContent()));
+        } else if (first.getTokenType() == CHAR_CONSTANT) {
+            next();
+            return new CharConstantExpressionNode((char)
+                    Integer.parseInt(first.getContent().substring(0, first.getContent().length() - 1)));
         } else if (first.getTokenType() == Token.TokenType.INT_CONSTANT) {
             next();
             return new IntConstantExpressionNode(Integer.parseInt(first.getContent()));
+        } else if (first.getTokenType() == STRING_CONSTANT) {
+            next();
+            return new StringConstantExpressionNode(first.getContent().substring(1, first.getContent().length() - 1));
         } else if (first.getTokenType() == Token.TokenType.NULL) {
             next();
             return new NullConstantExpressionNode();
@@ -1014,7 +1023,8 @@ public class Parser {
                 token = peek();
                 if (token.getTokenType() == IDENTIFIER
                         || token.getTokenType() == INT
-                        || token.getTokenType() == FLOAT) {
+                        || token.getTokenType() == FLOAT
+                        || token.getTokenType() == CHAR) {
                     if (token.getTokenType() == IDENTIFIER) {
                         identifierNode = new IdentifierNode(token.getContent(), token);
                         typeNode = new ObjectTypeNode(identifierNode);

@@ -9,10 +9,7 @@ import lang.ast.expression.binary.LogicalAndExpressionNode;
 import lang.ast.expression.binary.LogicalOrExpressionNode;
 import lang.ast.expression.binary.MultiplicativeExpressionNode;
 import lang.ast.expression.binary.RelationalExpressionNode;
-import lang.ast.expression.consts.BoolConstantExpressionNode;
-import lang.ast.expression.consts.FloatConstantExpressionNode;
-import lang.ast.expression.consts.IntConstantExpressionNode;
-import lang.ast.expression.consts.NullConstantExpressionNode;
+import lang.ast.expression.consts.*;
 import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
@@ -155,6 +152,20 @@ public class SemanticAnalysis {
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find file"));
     }
 
+    private int compareNode(AstNode n1, AstNode n2) {
+        if (n1 instanceof ClassStatementNode && n2 instanceof ClassStatementNode) {
+            return ((ClassStatementNode) n1).getIdentifierNode().getName().compareTo(
+                    ((ClassStatementNode) n2).getIdentifierNode().getName()
+            );
+        } else if (n1 instanceof ClassStatementNode) {
+            return -1;
+        } else if (n2 instanceof ClassStatementNode) {
+            return 1;
+        } else {
+            return n1.hashCode() - n2.hashCode();
+        }
+    }
+
     private void analyseDefinitionsStart(FileNode fileNode) {
         fileNode.getStatementNodes().removeIf(s -> s instanceof EmptyStatementNode);
 
@@ -162,7 +173,8 @@ public class SemanticAnalysis {
         fileNode.setScope(scope);
         scope.setOwner(fileNode);
 
-        for (StatementNode node : fileNode.getStatementNodes()) {
+        for (StatementNode node : fileNode.getStatementNodes()
+                .stream().sorted(this::compareNode).collect(Collectors.toList())) {
             if (node instanceof ClassStatementNode) {
                 analyseClassInGlobalStart((ClassStatementNode) node, scope);
             } else if (node instanceof InterfaceStatementNode) {
@@ -439,6 +451,13 @@ public class SemanticAnalysis {
                 return;
             }
 
+            if (node.getTypeNode() instanceof ArrayTypeNode && (typeNode instanceof ArrayTypeNode
+                    || typeNode.equals(REF_TYPE))) {
+
+                // ....
+                return;
+            }
+
             if (!typeNode.equals(node.getTypeNode())) {
                 throw new IllegalArgumentException("Wrong types " + node.getTypeNode().toString() + " " +
                         node.getExpressionNode().toString() + " : " +
@@ -497,6 +516,10 @@ public class SemanticAnalysis {
                         analyseType(p.getTypeNode(), parentScope);
                         scope.addDeclaration(p);
                     });
+            if (function.getFunctionNode().getTypeNode() != null) {
+                analyseType(function.getFunctionNode().getTypeNode(), parentScope);
+            }
+
             analyseStatement(function.getStatementNode(), scope);
         }
     }
@@ -601,8 +624,9 @@ public class SemanticAnalysis {
             node.getExpressionNode().setScope(parentScope);
             analyseExpression(node.getExpressionNode(), parentScope);
 
-            if (!functionDefinitionNode.getFunctionNode().getTypeNode()
-                    .equals(node.getExpressionNode().getResultType())) {
+            TypeNode left = functionDefinitionNode.getFunctionNode().getTypeNode();
+            TypeNode right = node.getExpressionNode().getResultType();
+            if (!left.equals(right)) {
                 throw new IllegalArgumentException("Wrong type " +
                         functionDefinitionNode.getFunctionNode().getTypeNode().toString() + " "
                         + node.getExpressionNode().getResultType());
@@ -663,8 +687,12 @@ public class SemanticAnalysis {
             analyseBoolConstantExpression((BoolConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof IntConstantExpressionNode) {
             analyseIntConstantExpression((IntConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof CharConstantExpressionNode) {
+            analyseCharConstantExpression((CharConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof FloatConstantExpressionNode) {
             analyseFloatConstantExpression((FloatConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof StringConstantExpressionNode) {
+            analyseStringConstantExpressionNode((StringConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof NullConstantExpressionNode) {
             analyseNullConstantExpression((NullConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof ArrayConstructorExpressionNode) {
@@ -698,6 +726,16 @@ public class SemanticAnalysis {
         }
     }
 
+    private void analyseStringConstantExpressionNode(StringConstantExpressionNode expressionNode) {
+        ClassStatementNode classStatementNode = classes.stream().filter(c ->
+                        c.getIdentifierNode().getName().endsWith("_String"))
+                .findFirst()
+                .orElseThrow();
+        ObjectTypeNode objectTypeNode = new ObjectTypeNode(classStatementNode.getIdentifierNode());
+        objectTypeNode.setDefinition(classStatementNode);
+        expressionNode.setResultType(objectTypeNode);
+    }
+
     private void analyseThisExpression(ThisExpressionNode expressionNode, Scope parentScope) {
         ClassStatementNode classStatementNode = findClass(parentScope);
         ObjectTypeNode objectTypeNode = new ObjectTypeNode(classStatementNode.getIdentifierNode());
@@ -720,7 +758,7 @@ public class SemanticAnalysis {
                 (ClassStatementNode) parentScope.findDefinitionByVariable(typeNode.getIdentifierNode().getName());
 
         List<ExpressionNode> expressions = expressionNode.getParameters();
-        for(ExpressionNode expression : expressions) {
+        for (ExpressionNode expression : expressions) {
             analyseExpression(expression, parentScope);
         }
 
@@ -738,7 +776,7 @@ public class SemanticAnalysis {
                 flag &= (parameters.get(i).getTypeNode().equals(expressions.get(i).getResultType()));
             }
 
-            if(flag) {
+            if (flag) {
                 constructorDefinitionNode = constructor;
             }
         }
@@ -748,7 +786,7 @@ public class SemanticAnalysis {
         }
 
         typeNode.getIdentifierNode().setName(classStatementNode.getIdentifierNode().getName());
-
+        typeNode.setDefinition(classStatementNode);
         expressionNode.setConstructorDefinition(constructorDefinitionNode);
 
         expressionNode.setResultType(typeNode);
@@ -898,7 +936,11 @@ public class SemanticAnalysis {
 
                 analyseExpression(node, parentScope);
 
-                if (!parameterNode.getTypeNode().equals(node.getResultType())) {
+                if(node instanceof NullConstantExpressionNode &&
+                        (parameterNode.getTypeNode() instanceof ObjectTypeNode ||
+                                parameterNode.getTypeNode() instanceof ArrayTypeNode)) {
+                    ((NullConstantExpressionNode)node).setResultType(parameterNode.getTypeNode());
+                } else if (!parameterNode.getTypeNode().equals(node.getResultType())) {
                     throw new IllegalArgumentException("Wrong parameter type " +
                             parameterNode.getTypeNode() + " " + node.getResultType());
                 }
@@ -945,6 +987,10 @@ public class SemanticAnalysis {
 
     private void analyseFloatConstantExpression(FloatConstantExpressionNode expressionNode) {
         FloatConstantExpressionNode floatConstantExpressionNode = expressionNode;
+    }
+
+    private void analyseCharConstantExpression(CharConstantExpressionNode expressionNode) {
+        expressionNode.getValue();
     }
 
     private void analyseIntConstantExpression(IntConstantExpressionNode expressionNode) {
@@ -1003,7 +1049,9 @@ public class SemanticAnalysis {
         analyseExpression(left, parentScope);
         analyseExpression(right, parentScope);
 
-        if (!left.getResultType().equals(right.getResultType())) {
+        if(right instanceof NullConstantExpressionNode) {
+            ((NullConstantExpressionNode)right).setResultType(left.getResultType());
+        } else if (!left.getResultType().equals(right.getResultType())) {
             throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
         }
 
@@ -1019,7 +1067,9 @@ public class SemanticAnalysis {
         analyseExpression(left, parentScope);
         analyseExpression(right, parentScope);
 
-        if (!left.getResultType().equals(right.getResultType())) {
+        if(right instanceof NullConstantExpressionNode) {
+            ((NullConstantExpressionNode)right).setResultType(left.getResultType());
+        } else if (!left.getResultType().equals(right.getResultType())) {
             throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
         }
 
@@ -1148,7 +1198,13 @@ public class SemanticAnalysis {
                     .equals(((ObjectTypeNode) right.getResultType()).getIdentifierNode().getName())) {
                 typeNode = left.getResultType();
             }
-        } else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {
+        } else if (left.getResultType() instanceof ObjectTypeNode && right instanceof NullConstantExpressionNode) {
+            ((NullConstantExpressionNode) right).setResultType(left.getResultType());
+            typeNode = left.getResultType();
+        }else if (left.getResultType() instanceof ArrayTypeNode && right instanceof NullConstantExpressionNode) {
+            ((NullConstantExpressionNode) right).setResultType(left.getResultType());
+            typeNode = left.getResultType();
+        }  else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {
             typeNode = left.getResultType();
         } else if (left.getResultType() instanceof ArrayTypeNode) {
             typeNode = left.getResultType();

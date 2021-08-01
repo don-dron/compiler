@@ -1,6 +1,8 @@
 
 (int c) void putchar
 
+class String
+    int[] bytes
 
 (int[] arr, int length) void reverseArray ->
     int index = 0
@@ -68,9 +70,9 @@ class Point
         while i2 < size2
             array[i1][i2] = new Point(i1, i2)
 
-            printNumber(i1)
+            printNumber(array[i1][i2].x)
             putchar(32)
-            printNumber(i2)
+            printNumber(array[i1][i2].y)
             putchar(10)
 
             i2++

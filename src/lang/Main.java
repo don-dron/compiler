@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
         List<FileNode> files = new ArrayList<>();
-        File root = new File("project1");
+        File root = new File("project2");
         for (File file : getFiles(root)) {
             Reader reader = new FileReader(file);
             Lexer lexer = new Lexer(reader);

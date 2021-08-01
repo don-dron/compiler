@@ -18,11 +18,6 @@ public class NullConstantExpressionNode extends PrimaryExpressionNode {
     }
 
     @Override
-    public TypeNode getResultType() {
-        return REF_TYPE;
-    }
-
-    @Override
     public List<? extends AstNode> getChildren() {
         return List.of();
     }

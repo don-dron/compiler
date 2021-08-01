@@ -19,6 +19,6 @@ public class NullValue implements Value {
 
     @Override
     public Type getType() {
-        return new PointerType(type);
+        return type;
     }
 }

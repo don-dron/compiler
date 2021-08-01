@@ -32,6 +32,8 @@ public enum  Operation {
     STRUCT_ALLOCATION("<- struct_allocation"),
 
     CAST("<- cast"),
+    TRUNC("<- trunc"),
+    SEXT("<- sext"),
 
     STORE_TO_POINTER("<- store_ptr");
 

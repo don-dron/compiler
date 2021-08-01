@@ -70,260 +70,275 @@ public class Token {
         FLOAT_CONSTANT("fconst", "[0-9]+\\.[0-9]*"),
 
         /**
+         * char constant
+         */
+        CHAR_CONSTANT("cconst", "[0-9]+c"),
+
+        /**
          * int constant
          */
         INT_CONSTANT("iconst", "[0-9]+"),
 
+        SYMBOL_CONSTANT("sconst", "'(.|[^'])+'"),
+
+        STRING_CONSTANT("strconst","\"(.|[^\"])*?\""),
+
+
         /**
          * interface
          */
-        INTERFACE("interface", "interface"),
+        INTERFACE("interface","interface"),
 
         /**
          * import
          */
-        IMPORT("import", "import"),
+        IMPORT("import","import"),
 
         /**
          * class
          */
-        CLASS("class", "class"),
+        CLASS("class","class"),
 
         /**
          * void
          */
-        VOID("void", "void"),
+        VOID("void","void"),
 
         /**
          * arrow
          */
-        ARROW("arrow", "->"),
+        ARROW("arrow","->"),
 
         /**
          * inc_add
          */
-        INC_ADD("incadd", "\\+\\+"),
+        INC_ADD("incadd","\\+\\+"),
 
         /**
          * inc_mul
          */
-        INC_MUL("incmul", "\\*\\*"),
+        INC_MUL("incmul","\\*\\*"),
 
         /**
          * dec
          */
-        DEC("dec", "\\-\\-"),
+        DEC("dec","\\-\\-"),
 
         /**
          * point
          */
-        POINT("point", "\\."),
+        POINT("point","\\."),
 
         /**
          * int
          */
-        INT("int", "int"),
+        INT("int","int"),
+
+        /**
+         * char
+         */
+        CHAR("char","char"),
 
         /**
          * float
          */
-        FLOAT("float", "float"),
+        FLOAT("float","float"),
 
         /**
          * for
          */
-        FOR("for", "for"),
+        FOR("for","for"),
 
 
         /**
          * While
          */
-        WHILE("while", "while"),
+        WHILE("while","while"),
 
         /**
          * if
          */
-        IF("if", "if"),
+        IF("if","if"),
 
         /**
          * elif
          */
-        ELIF("elif", "elif"),
+        ELIF("elif","elif"),
 
         /**
          * else
          */
-        ELSE("else", "else"),
+        ELSE("else","else"),
 
         /**
          * null
          */
-        NULL("null", "null"),
+        NULL("null","null"),
 
         /**
          * true
          */
-        TRUE("true", "true"),
+        TRUE("true","true"),
 
         /**
          * false
          */
-        FALSE("false", "false"),
+        FALSE("false","false"),
 
         /**
          * continue
          */
-        CONTINUE("continue", "continue"),
+        CONTINUE("continue","continue"),
 
         /**
          * new
          */
-        NEW("new", "new"),
+        NEW("new","new"),
 
         /**
          * break
          */
-        BREAK("break", "break"),
+        BREAK("break","break"),
 
         /**
          * return
          */
-        RETURN("return", "return"),
+        RETURN("return","return"),
 
         /**
          * identifier
          */
-        IDENTIFIER("identifier", "[a-zA-Z_][_a-zA-Z0-9]*"),
+        IDENTIFIER("identifier","[a-zA-Z_][_a-zA-Z0-9]*"),
 
         /**
          * ==
          */
-        EQUAL("equal", "=="),
+        EQUAL("equal","=="),
 
         /**
          * !=
          */
-        NOT_EQUAL("notequal", "!="),
+        NOT_EQUAL("notequal","!="),
 
         /**
          * <=
          */
-        LE("le", "<="),
+        LE("le","<="),
 
         /**
          * >=
          */
-        GE("ge", ">="),
+        GE("ge",">="),
 
         /**
          * <
          */
-        LT("lt", "<"),
+        LT("lt","<"),
 
         /**
          * >
          */
-        GT("gt", ">"),
+        GT("gt",">"),
 
         /**
          * =
          */
-        DEFINE("define", "="),
+        DEFINE("define","="),
 
         /**
          * [
          */
-        LB_PAREN("lbparen", "\\["),
+        LB_PAREN("lbparen","\\["),
 
         /**
          * ]
          */
-        RB_PAREN("rbparen", "\\]"),
+        RB_PAREN("rbparen","\\]"),
 
         /**
          * (
          */
-        L_PAREN("lparen", "\\("),
+        L_PAREN("lparen","\\("),
 
         /**
          * )
          */
-        R_PAREN("rparen", "\\)"),
+        R_PAREN("rparen","\\)"),
 
         /**
          * {
          */
-        LF_PAREN("lfparen", "\\{"),
+        LF_PAREN("lfparen","\\{"),
 
         /**
          * }
          */
-        RF_PAREN("rfparen", "\\}"),
+        RF_PAREN("rfparen","\\}"),
 
         /**
          * *
          */
-        ASTERISK("asterisk", "\\*"),
+        ASTERISK("asterisk","\\*"),
 
         /**
          * ?
          */
-        QUESTION("question", "\\?"),
+        QUESTION("question","\\?"),
 
         /**
          * !
          */
-        NOT("not", "\\!"),
+        NOT("not","\\!"),
 
         /**
          * +
          */
-        PLUS("plus", "\\+"),
+        PLUS("plus","\\+"),
 
         /**
          * -
          */
-        MINUS("minus", "\\-"),
+        MINUS("minus","\\-"),
 
         /**
          * %
          */
-        PERCENT("percent", "\\%"),
+        PERCENT("percent","\\%"),
 
         /**
          * ,
          */
-        COMMA("comma", "\\,"),
+        COMMA("comma","\\,"),
 
         /**
          * //
          */
-        COMMENT("comment", "//.*\n"),
+        COMMENT("comment","//.*\n"),
 
         /**
          * '%s'
          */
-        LITERAL("literal", "'.*?'"),
+        LITERAL("literal","'.*?'"),
 
         /**
          * /
          */
-        SLASH("slash", "\\/"),
+        SLASH("slash","\\/"),
 
         /**
          * ||
          */
-        OR("or", "\\|\\|"),
+        OR("or","\\|\\|"),
 
         /**
          * &&
          */
-        AND("and", "\\&\\&"),
+        AND("and","\\&\\&"),
 
         /**
          * EOF
          */
-        EOF("eof", "\\Z");
+        EOF("eof","\\Z");
 
 
         private final String groupName;
@@ -341,5 +356,5 @@ public class Token {
         public String getRegexp() {
             return String.format("(?<%s>%s)", groupName, regexp);
         }
-    }
+        }
 }

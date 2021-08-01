@@ -85,8 +85,8 @@ public class Command implements Value {
                     parameters.get(0).getType().toLLVM() + "* " +
                     parameters.get(0).toLLVM();
         } else if (operation == STORE) {
-            return "store " + parameters.get(0).getType().toLLVM() + " " +
-                    parameters.get(0).toLLVM() + ", " + result.getType().toLLVM() + "* " + result.toLLVM();
+            return "store " + (parameters.get(0).getType() != null ? parameters.get(0).getType().toLLVM() : "")
+                    + " " + parameters.get(0).toLLVM() + ", " + result.getType().toLLVM() + "* " + result.toLLVM();
         } else if (operation == STORE_TO_POINTER) {
             return "store " + parameters.get(0).getType().toLLVM() + " " +
                     parameters.get(0).toLLVM() + ", " + result.getType().toLLVM() + " " + result.toLLVM();
@@ -132,6 +132,12 @@ public class Command implements Value {
                             + p.toLLVM()).collect(Collectors.joining(",")) + ")";
         } else if (operation == CAST) {
             return result.toLLVM() + " = bitcast " + parameters.get(0).getType().toLLVM() + " " +
+                    parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
+        } else if (operation == TRUNC) {
+            return result.toLLVM() + " = trunc " + parameters.get(0).getType().toLLVM() + " " +
+                    parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
+        } else if (operation == SEXT) {
+            return result.toLLVM() + " = sext " + parameters.get(0).getType().toLLVM() + " " +
                     parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
         }
         return "";

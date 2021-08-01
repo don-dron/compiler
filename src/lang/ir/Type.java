@@ -11,9 +11,11 @@ public class Type implements Value {
     public String toLLVM() {
         if (this == VOID) {
             return "";
-        } else if (this == INT_1 || this == INT_8) {
+        } else if (this == INT_1) {
             return "i1";
-        } else if (this == INT_16) {
+        } else if (this == INT_8) {
+            return "i8";
+        }else if (this == INT_16) {
             return "i16";
         } else if (this == INT_32) {
             return "i32";

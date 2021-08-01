@@ -1,0 +1,21 @@
+
+class String
+    char[] bytes
+    int length
+
+    (char [] bytes, int length) ->
+        this.bytes = bytes
+        this.length = length
+
+    () char[] getBytes ->
+        return this.bytes
+
+    () int getLength ->
+        return this.length
+
+() int main ->
+    String str1 = "Hello"
+    str1.bytes = null
+
+    return 0
+

@@ -9,10 +9,7 @@ import lang.ast.expression.binary.LogicalAndExpressionNode;
 import lang.ast.expression.binary.LogicalOrExpressionNode;
 import lang.ast.expression.binary.MultiplicativeExpressionNode;
 import lang.ast.expression.binary.RelationalExpressionNode;
-import lang.ast.expression.consts.BoolConstantExpressionNode;
-import lang.ast.expression.consts.FloatConstantExpressionNode;
-import lang.ast.expression.consts.IntConstantExpressionNode;
-import lang.ast.expression.consts.NullConstantExpressionNode;
+import lang.ast.expression.consts.*;
 import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
@@ -42,12 +39,14 @@ import static lang.ir.Type.*;
 
 public class Translator {
     private final Program program;
+    private int LITERAL_COUNT = 0;
     private int THIS_COUNT = 0;
     private int RET_COUNT = 0;
     private int CONSTRUCTOR_COUNT = 0;
     private int TEMP_VARIABLE_COUNT = 0;
     private int ARRAY_SIZE_COUNT = 0;
 
+    private final List<StringValue> literals;
     private final Map<String, StructType> classes;
     private final Map<String, Value> variables;
     private final Map<WhileStatementNode, BasicBlock> whileToConditionBlock;
@@ -57,11 +56,19 @@ public class Translator {
 
     public Translator(Program program) {
         this.program = program;
+        literals = new ArrayList<>();
         classes = new HashMap<>();
         variables = new HashMap<>();
         whileToConditionBlock = new HashMap<>();
         whileToMergeBlock = new HashMap<>();
         predefinedFunctions = new ArrayList<>();
+    }
+
+    private Function getPutStringFunction() {
+        Function function = new Function("puts", true);
+        function.setParameterTypes(List.of(new PointerType(INT_32)));
+        function.setResultType(INT_32);
+        return function;
     }
 
     private Function getPutcharFunction() {
@@ -86,6 +93,7 @@ public class Translator {
     }
 
     public Module translate() {
+        predefinedFunctions.add(getPutStringFunction());
         predefinedFunctions.add(getPutcharFunction());
         predefinedFunctions.add(getGetcharFunction());
         predefinedFunctions.add(getMallocFunction());
@@ -142,9 +150,11 @@ public class Translator {
                 .map(entry -> translateFunction(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
         functions.addAll(predefinedFunctions);
+
         return new Module(
                 new ArrayList<>(classes.values()),
-                functions);
+                functions,
+                literals);
     }
 
     private void translateClass(ClassStatementNode cl) {
@@ -432,6 +442,10 @@ public class Translator {
             return translateBoolConstantExpression(function, (BoolConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof IntConstantExpressionNode) {
             return translateIntConstantExpression(function, (IntConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof CharConstantExpressionNode) {
+            return translateCharConstantExpression(function, (CharConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof StringConstantExpressionNode) {
+            return translateStringConstantExpressionNode(function, (StringConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof FloatConstantExpressionNode) {
             return translateFloatConstantExpression(function, (FloatConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof NullConstantExpressionNode) {
@@ -466,6 +480,7 @@ public class Translator {
             throw new IllegalArgumentException("");
         }
     }
+
 
     private Value translateThisExpression(Function function, ThisExpressionNode expressionNode) {
 
@@ -693,6 +708,7 @@ public class Translator {
             } else {
                 String name = ((ObjectTypeNode) typeNode).getIdentifierNode().getName();
                 StructType structType = classes.get(name);
+
                 return new PointerType(structType);
             }
         } else {
@@ -749,9 +765,19 @@ public class Translator {
         Type type = matchType(expressionNode.getTypeNode());
         Value value = translateExpression(function, expressionNode.getExpressionNode());
 
-        Command command = new Command(createTempVariable(type), CAST, List.of(value));
-        function.getCurrentBlock().addCommand(command);
-        return command.getResult();
+        if(value.getType().getSize() < type.getSize()) {
+            Command command = new Command(createTempVariable(type), SEXT, List.of(value));
+            function.getCurrentBlock().addCommand(command);
+            return command.getResult();
+        } else if (value.getType().getSize() > type.getSize()) {
+            Command command = new Command(createTempVariable(type), TRUNC, List.of(value));
+            function.getCurrentBlock().addCommand(command);
+            return command.getResult();
+        } else {
+            Command command = new Command(createTempVariable(type), CAST, List.of(value));
+            function.getCurrentBlock().addCommand(command);
+            return command.getResult();
+        }
     }
 
     private Value translatePrefixMultiplicative(Function function, PrefixIncrementMultiplicativeExpressionNode
@@ -1260,7 +1286,7 @@ public class Translator {
                 Command command = new Command(
                         arrayValue,
                         STORE,
-                        List.of(new NullValue(type.getType()))
+                        List.of(new NullValue(type))
                 );
                 function.getCurrentBlock().addCommand(command);
                 return command.getResult();
@@ -1268,7 +1294,7 @@ public class Translator {
                 Command command = new Command(
                         arrayValue,
                         STORE,
-                        List.of(new IntValue(0))
+                        List.of(type.getType() == INT_8 ? new CharValue((char) 0) : new IntValue(0))
                 );
                 function.getCurrentBlock().addCommand(command);
                 return command.getResult();
@@ -1359,15 +1385,89 @@ public class Translator {
     }
 
     private Value translateNullConstantExpression(Function function, NullConstantExpressionNode expressionNode) {
-        return new LongValue(0L);
+        return new NullValue(matchType(expressionNode.getResultType()));
     }
 
     private Value translateFloatConstantExpression(Function function, FloatConstantExpressionNode expressionNode) {
         return new FloatValue(expressionNode.getValue());
     }
 
+    private Value translateCharConstantExpression(Function function, CharConstantExpressionNode expressionNode) {
+        return new CharValue(expressionNode.getValue());
+    }
+
     private Value translateIntConstantExpression(Function function, IntConstantExpressionNode expressionNode) {
         return new IntValue(expressionNode.getValue());
+    }
+
+    private Value translateStringConstantExpressionNode(Function function,
+                                                        StringConstantExpressionNode expressionNode) {
+        PointerType pointerStructType = new PointerType(
+                classes.entrySet()
+                        .stream()
+                        .filter(entry -> entry.getKey().endsWith("_String"))
+                        .map(Map.Entry::getValue)
+                        .findFirst()
+                        .orElse(null)
+        );
+        PointerType pointerType = new PointerType(INT_64);
+        Command command = new Command(
+                createTempVariable(pointerType),
+                STRUCT_ALLOCATION,
+                List.of(pointerType, new IntValue(pointerStructType.getType().getSize()))
+        );
+        function.getCurrentBlock().addCommand(command);
+
+        Command castCommand = new Command(
+                createTempVariable(pointerStructType),
+                CAST,
+                List.of(command.getResult())
+        );
+        function.getCurrentBlock().addCommand(castCommand);
+
+        Command struct = new Command(
+                createTempVariable(new PointerType(INT_8)),
+                FIELD_ACCESS,
+                List.of(castCommand.getResult(), new IntValue(0)));
+
+        BasicBlock current = function.getCurrentBlock();
+        current.addCommand(struct);
+
+        StringValue value = new StringValue("@.str" + LITERAL_COUNT++, expressionNode.getValue());
+        literals.add(value);
+
+        Command castStr = new Command(
+                createTempVariable(new PointerType(INT_8)),
+                CAST,
+                List.of(value)
+        );
+        function.getCurrentBlock().addCommand(castStr);
+
+        Command store = new Command(
+                struct.getResult(),
+                STORE,
+                List.of(castStr.getResult()));
+
+        current = function.getCurrentBlock();
+        current.addCommand(store);
+
+        Command structSize = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(castCommand.getResult(), new IntValue(1)));
+
+        current = function.getCurrentBlock();
+        current.addCommand(structSize);
+
+        Command storeSize = new Command(
+                structSize.getResult(),
+                STORE,
+                List.of(new IntValue(value.getType().getSize())));
+
+        current = function.getCurrentBlock();
+        current.addCommand(storeSize);
+
+        return castCommand.getResult();
     }
 
     private Value translateBoolConstantExpression(Function function, BoolConstantExpressionNode expressionNode) {
