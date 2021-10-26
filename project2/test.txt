@@ -1,0 +1,109 @@
+
+(char[] s) int puts
+
+(int n) int putchar
+
+(char[] arr, int length) void reverseArray ->
+    int index = 0
+
+    while index < length/2
+        char c = arr[index]
+        arr[index] = arr[length - index - 1]
+        arr[length - index - 1] = c
+
+        index++
+
+(int num) String toString ->
+    if num == 0
+        return "0"
+
+    char[] buffer = new char[16]
+
+
+
+    int i = 0
+    int cur = num
+
+    while cur != 0
+        buffer[i] = <char> (cur % 10 + 48)
+        cur = cur / 10
+        i++
+
+    reverseArray(buffer, i)
+
+    return new String(buffer, i)
+
+
+(String s) void println ->
+    if s == null
+        println("null")
+        return
+
+    int i = 0
+    int l = s.getLength()
+    char[] bytes = s.getBytes()
+
+    while i < l
+        int c = <int>bytes[i]
+        putchar(c)
+        i++
+    putchar(10)
+
+(String s1, String s2) String concat ->
+    int l1 = s1.getLength()
+    int l2 = s2.getLength()
+    char[] buff = new char[l1 + l2]
+
+    char[] b1 = s1.getBytes()
+    char[] b2 = s2.getBytes()
+
+    int i = 0
+    int i1 = 0
+    int i2 = 0
+
+    while i1 < l1
+        buff[i] = b1[i1]
+        i++
+        i1++
+
+    while i2 < l2
+        buff[i] = b2[i2]
+        i++
+        i2++
+
+
+    return new String(buff, i)
+
+class String
+    char[] bytes
+    int length
+
+    (char [] bytes, int length) ->
+        this.bytes = bytes
+        this.length = length
+
+    () char[] getBytes ->
+        return this.bytes
+
+    () int getLength ->
+        return this.length
+
+() int main ->
+    String[] a = new String[2]
+    a[1] = null
+
+    String str1 = "Hello"
+    String str2 = " world!"
+    println(str1)
+    println(str2)
+
+    String cnct = concat(str1, str2)
+    println(null)
+    println(toString(str1.getLength()))
+    println(toString(str2.length))
+    println(toString(cnct.length))
+
+    str1.bytes = null
+
+    return 0
+

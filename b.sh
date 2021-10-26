@@ -1,4 +1,4 @@
-llc -filetype=obj out.ll
-clang out.o -o prog
-./prog
+llc -filetype=obj text.ll
+clang text.o -o text
+./text
 echo $?
