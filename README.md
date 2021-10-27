@@ -1,9 +1,4 @@
 # lang
-да, мой язык так называется
-
-# Мотивация
-1. Нужно писать курсач
-2. Почему бы не сделать язык такой, какой я хочу
 
 # Цель
 1. Простой, удобный и эффективный
@@ -150,33 +145,33 @@ for <t> in <iterable>
 
 ```
 interface i
-    method(a int, b i64) short
+    (a int, b i64) short method
 ```
 
 реализация интерфейса
 
 ```
 interface i
-    method(a int, b i64) short
+    (a int, b i64) short method
 
 class a : i
     (param type, ...) - конструктор
-    method(a,b) -> a + b
+    (a,b) method  -> a + b
 ```
 
 ## Наследование
 
 ```
 class a : b
-    method(a int, b i64) short
+    (a int, b i64) short method
 
 ```
 
 ## Обобщенные типы
 
 ```
-class a<t>
-    method(a int, b i64) t
+class a<t> 
+    (a int, b i64) t method
 
 ```
 
@@ -195,56 +190,56 @@ class opt<t>
     ok() bool
 ```
 
-func(string a, string b) opt<int>
+(string a, string b) opt<int> func
 
 # Стандартная библиотека
 
 
 ```
 class atomic<t>
-    read() t
-    write(t) 
+    () t read
+    (t) write
 ```
 
 ```
 class thread
     (() int)
-    run()
-    interrupted() bool
-    stop() int
-    join() int
+    () run
+    () bool interrupted
+    () int stop
+    () int join
     
 ```
 
 ```
 class fiber
     (() int)
-    run()
+    () run
     
-    resume()
-    suspend()    
+    () resume
+    () suspend
 
-    interrupted() bool
-    stop() int
-    join() int
+    () bool interrupted
+    () int stop
+    () int join
 
 ```
 
 ```
 class socket
-    read() int
-    write(int)
+    () int read
+    (int) write
     
 ```
 
 ```
 class stdin
-    read(...)
+    () ... read
 ```
 
 ```
 class stdout
-    print(...)
+    (...) print
 ```
 
 
@@ -256,13 +251,13 @@ class a
     i8 i
     i64 t
     
-    method(i8 a, i8 b) i16
+    (i8 a, i8 b) i16 method
         a + b
 
-func(int n) i64
+(int n) i64 func
    n == 0 ? 0 : n==1 ? 1 : func(n-2) + func(n-1)
 
-main(int a, string[] b) i8
+(int a, string[] b) i8 main
     string s = "xyz"
     i8 i = 0
     while i < 40
