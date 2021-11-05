@@ -102,6 +102,7 @@ class String
     println(toString(str1.getLength()))
     println(toString(str2.length))
     println(toString(cnct.length))
+    println(cnct)
 
     str1.bytes = null
 

@@ -17,5 +17,5 @@ class String
     String str1 = "Hello"
     str1.bytes = null
 
-    return 0
+    return 5
 
