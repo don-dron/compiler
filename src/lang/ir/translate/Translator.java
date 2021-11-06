@@ -751,7 +751,7 @@ public class Translator {
                             Value v = translateExpression(function, exp);
 
                             if (v.getType() instanceof PointerType) {
-                                translateObjectIncCountCall(function, v, (PointerType) v.getType());
+                                translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                             }
                             return v;
                         })
@@ -904,7 +904,8 @@ public class Translator {
 
     private void translateObjectIncCountCall(Function function,
                                              Value fieldAccess,
-                                             PointerType pointerType) {
+                                             PointerType pointerType,
+                                             boolean reverse) {
         BasicBlock last = function.getCurrentBlock();
         BasicBlock ifCond = function.appendBlock("start_cond");
         createBranch(last, ifCond);
@@ -960,7 +961,7 @@ public class Translator {
             Command inc = new Command(
                     createTempVariable(INT_32),
                     ADD,
-                    List.of(oneLoadCount.getResult(), new IntValue(2))
+                    List.of(oneLoadCount.getResult(), new IntValue(reverse ? 2  : 1))
             );
             function.getCurrentBlock().addCommand(inc);
 
@@ -991,7 +992,7 @@ public class Translator {
             Command inc = new Command(
                     createTempVariable(INT_32),
                     ADD,
-                    List.of(twoLoadCount.getResult(), new IntValue(1))
+                    List.of(twoLoadCount.getResult(), new IntValue(reverse ? 1 : 2))
             );
             function.getCurrentBlock().addCommand(inc);
 
@@ -1068,7 +1069,7 @@ public class Translator {
                                     Value v = translateExpression(function, exp);
 
                                     if (v.getType() instanceof PointerType) {
-                                        translateObjectIncCountCall(function, v, (PointerType) v.getType());
+                                        translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                                     }
                                     return v;
                                 })
@@ -1101,7 +1102,7 @@ public class Translator {
                                     Value v = translateExpression(function, exp);
 
                                     if (v.getType() instanceof PointerType) {
-                                        translateObjectIncCountCall(function, v, (PointerType) v.getType());
+                                        translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                                     }
                                     return v;
                                 })
@@ -1278,7 +1279,7 @@ public class Translator {
             Value value = translateExpression(function, node.getExpressionNode());
 
             if (value.getType() instanceof PointerType) {
-//                translateObjectIncCount(function, value, (PointerType) value.getType());
+//                translateObjectIncCountCall(function, value, (PointerType) value.getType(), false);
             }
 
             Command storeReturn = new Command(
@@ -1648,7 +1649,7 @@ public class Translator {
                                 Value v = translateExpression(function, exp);
 
                                 if (v.getType() instanceof PointerType) {
-                                    translateObjectIncCountCall(function, v, (PointerType) v.getType());
+                                    translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                                 }
                                 return v;
                             })
@@ -1675,7 +1676,7 @@ public class Translator {
                                 Value v = translateExpression(function, exp);
 
                                 if (v.getType() instanceof PointerType) {
-                                    translateObjectIncCountCall(function, v, (PointerType) v.getType());
+                                    translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                                 }
                                 return v;
                             })
@@ -1685,6 +1686,11 @@ public class Translator {
                         Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
                 BasicBlock current = function.getCurrentBlock();
                 current.addCommand(command);
+
+                if (command.getResult().getType() instanceof PointerType) {
+//                    addDestructorCall(function, (PointerType) command.getResult().getType(), command.getResult());
+                }
+
 
                 return command.getResult();
             } else {

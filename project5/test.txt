@@ -15,10 +15,15 @@ class Point
         return new Point(3, 2)
     return new Point(p.x + 1, p.y +1 )
 
+(Point p) Point incrementPoint2 ->
+    Point c = new Point(p.x + 1, p.y +1 )
+    if p == null
+        return new Point(3, 2)
+    return c
+
 () int main ->
     Point p = new Point(1, 2)
     Point s = null
-
 
     p = null
     p = p
@@ -28,6 +33,33 @@ class Point
 
     p = incrementPoint1(p)
     p = p
+    s = new Point(1, 2)
+    s = incrementPoint1(p)
+
+    p = incrementPoint(p)
+    p = p
+    s = new Point(1, 2)
+    s = incrementPoint(p)
+
+    p = incrementPoint2(p)
+    p = p
+    s = new Point(1, 2)
+    s = incrementPoint2(p)
+
+    p = incrementPoint1(new Point(3, 4))
+    p = p
+    s = new Point(1, 2)
+    s = incrementPoint1(new Point(3, 4))
+
+    p = incrementPoint(new Point(3, 4))
+    p = p
+    s = new Point(1, 2)
+    s = incrementPoint(new Point(3, 4))
+
+    p = incrementPoint2(new Point(3, 4))
+    p = p
+    s = new Point(1, 2)
+    s = incrementPoint2(new Point(3, 4))
 
     p = incrementPoint1(incrementPoint1(incrementPoint1(incrementPoint1(new Point(3, 4)))))
     p = p
@@ -35,17 +67,16 @@ class Point
     p = incrementPoint1(incrementPoint1(incrementPoint1(incrementPoint1(null))))
     p = p
 
-
-    s = new Point(1, 2)
-
-    s = incrementPoint1(p)
-
     s = incrementPoint1(incrementPoint1(incrementPoint1(incrementPoint1(new Point(3, 4)))))
 
     s = incrementPoint1(incrementPoint1(incrementPoint1(incrementPoint1(null))))
 
+    incrementPoint(new Point(3, 4))
+    incrementPoint(p)
     incrementPoint1(p)
     incrementPoint1(new Point(3, 4))
+    incrementPoint2(p)
+    incrementPoint2(new Point(3, 4))
 
     return p.x + p.y
 
