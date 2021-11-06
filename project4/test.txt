@@ -1,0 +1,43 @@
+
+class Point
+    int x
+    int y
+
+    (int x, int y) ->
+        this.x = x
+        this.y = y
+
+(Point p) Point incrementPoint ->
+    if p == null
+        return new Point(3, 2)
+
+    return new Point(p.x + 1, p.y +1 )
+
+
+() int main ->
+    Point p = new Point(1, 2)
+    Point c = null
+    c = p
+    p = null
+    c = p
+
+    int i = 0
+
+    while i < 100000
+        p = new Point(i,i+1)
+
+        c = p
+        p = null
+        c = null
+
+        c = incrementPoint(c)
+
+        incrementPoint(c)
+
+        p = c
+        p = incrementPoint(p)
+
+        i++
+
+    return p.x + p.y
+

@@ -31,6 +31,8 @@ public enum  Operation {
     ARRAY_ALLOCATION("<- array_allocation"),
     STRUCT_ALLOCATION("<- struct_allocation"),
 
+    STRUCT_FREE("<- struct free"),
+
     CAST("<- cast"),
     TRUNC("<- trunc"),
     SEXT("<- sext"),

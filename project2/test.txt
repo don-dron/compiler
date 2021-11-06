@@ -14,12 +14,10 @@
         index++
 
 (int num) String toString ->
-    if num == 0
-        return "0"
-
     char[] buffer = new char[16]
 
-
+    if num == 0
+        return "0"
 
     int i = 0
     int cur = num
@@ -35,13 +33,15 @@
 
 
 (String s) void println ->
+    char[] bytes = null
+
     if s == null
         println("null")
         return
 
     int i = 0
     int l = s.getLength()
-    char[] bytes = s.getBytes()
+    bytes = s.getBytes()
 
     while i < l
         int c = <int>bytes[i]
@@ -52,6 +52,10 @@
 (String s1, String s2) String concat ->
     int l1 = s1.getLength()
     int l2 = s2.getLength()
+
+    println(toString(l1))
+    println(toString(l2))
+
     char[] buff = new char[l1 + l2]
 
     char[] b1 = s1.getBytes()
@@ -102,6 +106,7 @@ class String
     println(toString(str1.getLength()))
     println(toString(str2.length))
     println(toString(cnct.length))
+    println(cnct)
 
     str1.bytes = null
 

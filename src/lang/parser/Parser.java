@@ -1,61 +1,19 @@
 package lang.parser;
 
-import lang.ast.ArrayTypeNode;
-import lang.ast.BasicTypeNode;
-import lang.ast.ExpressionListNode;
-import lang.ast.FileNode;
-import lang.ast.FunctionNode;
-import lang.ast.IdentifierNode;
-import lang.ast.ImportNode;
-import lang.ast.ObjectTypeNode;
-import lang.ast.ParameterNode;
-import lang.ast.ParametersNode;
-import lang.ast.TranslationNode;
-import lang.ast.TypeNode;
+import lang.ast.*;
 import lang.ast.expression.*;
-import lang.ast.expression.binary.AdditiveExpressionNode;
-import lang.ast.expression.binary.AssigmentExpressionNode;
-import lang.ast.expression.binary.EqualityExpressionNode;
-import lang.ast.expression.binary.LogicalAndExpressionNode;
-import lang.ast.expression.binary.LogicalOrExpressionNode;
-import lang.ast.expression.binary.MultiplicativeExpressionNode;
-import lang.ast.expression.binary.RelationalExpressionNode;
+import lang.ast.expression.binary.*;
 import lang.ast.expression.consts.*;
-import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
-import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
-import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixDecrementSubtractionExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixIncrementAdditiveExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixIncrementMultiplicativeExpressionNode;
+import lang.ast.expression.unary.postfix.*;
 import lang.ast.expression.unary.prefix.CastExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixDecrementSubtractionExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementAdditiveExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionNode;
-import lang.ast.statement.BreakStatementNode;
-import lang.ast.statement.ClassStatementNode;
-import lang.ast.statement.CompoundStatementNode;
-import lang.ast.statement.ConstructorDefinitionNode;
-import lang.ast.statement.ContinueStatementNode;
-import lang.ast.statement.DeclarationStatementNode;
-import lang.ast.statement.ElifStatementNode;
-import lang.ast.statement.ElseStatementNode;
-import lang.ast.statement.EmptyStatementNode;
-import lang.ast.statement.ExpressionStatementNode;
-import lang.ast.statement.FunctionDefinitionNode;
-import lang.ast.statement.IfStatementNode;
-import lang.ast.statement.InterfaceStatementNode;
-import lang.ast.statement.ReturnStatementNode;
-import lang.ast.statement.StatementNode;
-import lang.ast.statement.WhileStatementNode;
+import lang.ast.statement.*;
 import lang.lexer.Lexer;
 import lang.lexer.Token;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
 import static lang.lexer.Token.TokenType.*;
 
@@ -443,7 +401,7 @@ public class Parser {
                 return new FunctionDefinitionNode((FunctionNode) typeNode, identifierNode, null);
             }
         } else if (peek().getTokenType() == Token.TokenType.DEFINE) {
-            next();
+            Token token = next();
             expressionNode = parseExpression();
         }
 
@@ -1060,7 +1018,6 @@ public class Parser {
             }
         }
         throw new IllegalArgumentException("");
-
     }
 
     private void need(Token.TokenType tokenType, Token current) {

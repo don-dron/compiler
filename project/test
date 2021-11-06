@@ -2,14 +2,14 @@ import sort.quick.quickSort
 
 () int main ->
     int size = 100
-    int[][] b = int[size][size]
+    int[][] b = new int[size][size]
     int i = 0
 
     while i < size
-        b[i] = int[size]
+        b[i] = new int[size]
         i++
 
-    int[] a = int[size]
+    int[] a = new int[size]
 
     i = 0
 
