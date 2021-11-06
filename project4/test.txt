@@ -1,22 +1,22 @@
 
-class Coord
-    int c
-
-    (int c) ->
-        this.c = c
-
 class Point
-    Coord coord
     int x
     int y
 
     (int x, int y) ->
-        this.coord = new Coord(5)
-        this.coord = null
+        this.x = x
+        this.y = y
 
-        this.x = x + 3
-        this.y = y + 5
+(Point p) Point incrementPoint ->
+    if p == null
+        return new Point(3, 2)
 
+    return new Point(p.x + 1, p.y +1 )
+
+(Point p) Point incrementPoint1 ->
+    if p == null
+        return new Point(3, 2)
+    return new Point(p.x + 1, p.y +1 )
 
 () int main ->
     Point p = new Point(1, 2)
@@ -27,10 +27,25 @@ class Point
 
     int i = 0
 
-    while i < 100000
-        p = new Point(1,2)
+    while i < 10
+        p = new Point(i,i+1)
+
+        c = incrementPoint(new Point(i-10,i-20))
         c = p
+        incrementPoint(c)
+        p = null
+        c = null
+
+        c = incrementPoint1(new Point(i-10,i-20))
+
+        incrementPoint1(c)
+
+        c = incrementPoint(c)
+
+        incrementPoint(c)
+
+        p = c
         i++
 
-    return 0
+    return p.x + p.y
 

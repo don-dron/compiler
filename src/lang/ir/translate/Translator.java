@@ -29,6 +29,7 @@ public class Translator {
     private int REF_COUNTER_COUNT = 0;
     private int TYPE_COUNTER_COUNT = 0;
     private int TEMP_VARIABLE_COUNT = 0;
+    private int TEMP_LEFT_COUNT = 0;
     private int ARRAY_SIZE_COUNT = 0;
     private int DESTRUCTOR_COUNT = 0;
 
@@ -434,6 +435,8 @@ public class Translator {
                     List.of()
             );
 
+            function.addDestructor(variableValue);
+
             header.addCommand(alloc);
 
             Command command = new Command(
@@ -804,7 +807,14 @@ public class Translator {
                 expressionNode
                         .getParameters()
                         .stream()
-                        .map(exp -> translateExpression(function, exp))
+                        .map(exp -> {
+                            Value v = translateExpression(function, exp);
+
+                            if (v.getType() instanceof PointerType) {
+                                translateObjectIncCount(function, v, (PointerType) v.getType());
+                            }
+                            return v;
+                        })
                         .collect(Collectors.toList());
 
         Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
@@ -901,6 +911,55 @@ public class Translator {
         throw new IllegalArgumentException("");
     }
 
+    private void translateObjectIncCount(Function function, Value fieldAccess, PointerType pointerType) {
+        BasicBlock last = function.getCurrentBlock();
+        BasicBlock ifCond = function.appendBlock("assigment_inc_count_if_cond");
+        createBranch(last, ifCond);
+
+        Command condition = new Command(
+                createTempVariable(INT_1),
+                NE,
+                List.of(fieldAccess, new NullValue(pointerType.getType()))
+        );
+
+        ifCond.addCommand(condition);
+
+        BasicBlock ifBody = function.appendBlock("assigment_inc_count_if_body");
+
+        Command counter = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(fieldAccess, new IntValue(0)));
+        function.getCurrentBlock().addCommand(counter);
+
+        Command loadCount = new Command(
+                createTempVariable(INT_32),
+                LOAD,
+                List.of(counter.getResult())
+        );
+        function.getCurrentBlock().addCommand(loadCount);
+
+        Command inc = new Command(
+                createTempVariable(INT_32),
+                ADD,
+                List.of(loadCount.getResult(), new IntValue(1))
+        );
+        function.getCurrentBlock().addCommand(inc);
+
+        Command storeCounter = new Command(
+                counter.getResult(),
+                STORE,
+                List.of(inc.getResult())
+        );
+        function.getCurrentBlock().addCommand(storeCounter);
+
+        BasicBlock ifMerge = function.appendBlock("assigment_inc_count_if_merge");
+        createBranch(ifBody, ifMerge);
+
+
+        createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+    }
+
     private void translateExpressionStatement(Function function, ExpressionStatementNode node) {
         if (node.getExpressionNode() instanceof FunctionCallExpressionNode) {
             FunctionCallExpressionNode expressionNode = (FunctionCallExpressionNode) node.getExpressionNode();
@@ -917,7 +976,14 @@ public class Translator {
                                 .getParameters()
                                 .getList()
                                 .stream()
-                                .map(exp -> translateExpression(function, exp))
+                                .map(exp -> {
+                                    Value v = translateExpression(function, exp);
+
+                                    if (v.getType() instanceof PointerType) {
+                                        translateObjectIncCount(function, v, (PointerType) v.getType());
+                                    }
+                                    return v;
+                                })
                                 .collect(Collectors.toList());
                 values.add(0, leftValue);
 
@@ -939,7 +1005,14 @@ public class Translator {
                                 .getParameters()
                                 .getList()
                                 .stream()
-                                .map(exp -> translateExpression(function, exp))
+                                .map(exp -> {
+                                    Value v = translateExpression(function, exp);
+
+                                    if (v.getType() instanceof PointerType) {
+                                        translateObjectIncCount(function, v, (PointerType) v.getType());
+                                    }
+                                    return v;
+                                })
                                 .collect(Collectors.toList());
 
                 if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
@@ -1471,7 +1544,14 @@ public class Translator {
                             .getParameters()
                             .getList()
                             .stream()
-                            .map(exp -> translateExpression(function, exp))
+                            .map(exp -> {
+                                Value v = translateExpression(function, exp);
+
+                                if (v.getType() instanceof PointerType) {
+                                    translateObjectIncCount(function, v, (PointerType) v.getType());
+                                }
+                                return v;
+                            })
                             .collect(Collectors.toList());
             values.add(0, leftValue);
             if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
@@ -1491,7 +1571,14 @@ public class Translator {
                             .getParameters()
                             .getList()
                             .stream()
-                            .map(exp -> translateExpression(function, exp))
+                            .map(exp -> {
+                                Value v = translateExpression(function, exp);
+
+                                if (v.getType() instanceof PointerType) {
+                                    translateObjectIncCount(function, v, (PointerType) v.getType());
+                                }
+                                return v;
+                            })
                             .collect(Collectors.toList());
             if (!expressionNode.getResultType().equals(GlobalBasicType.VOID_TYPE)) {
                 Command command = new Command(createTempVariable(matchType(expressionNode.getResultType())), CALL,
@@ -2013,54 +2100,23 @@ public class Translator {
 
     private Value translateAssigmentExpression(Function function, AssigmentExpressionNode expressionNode) {
         Type mt = matchType(expressionNode.getResultType());
+        Value left = translateLeftValue(function, expressionNode.getLeft());
+        Value saveLeft = null;
+
         if (mt instanceof PointerType) {
             PointerType pointerType = (PointerType) mt;
 
-            BasicBlock last = function.getCurrentBlock();
-            BasicBlock ifCond = function.appendBlock("assigment_destructor_if_cond");
-            createBranch(last, ifCond);
-
-            Value fieldAccess = translateLeftValue(function, expressionNode.getLeft());
-
-            Command load = new Command(
+            Command leftLoad = new Command(
                     createTempVariable(pointerType),
                     LOAD,
-                    List.of(fieldAccess)
+                    List.of(left)
             );
-            function.getCurrentBlock().addCommand(load);
-
-            Command condition = new Command(
-                    createTempVariable(INT_1),
-                    NE,
-                    List.of(load.getResult(), new NullValue(pointerType.getType()))
-            );
-
-            ifCond.addCommand(condition);
-
-            BasicBlock ifBody = function.appendBlock("assigment_destructor_if_body");
-
-            Command destructorCall = new Command(
-                    null,
-                    CALL,
-                    List.of(destructors.get(
-                            structToDestructors.get(
-                                    classes.entrySet().stream()
-                                            .filter(e -> e.getValue().equals(pointerType.getType()))
-                                            .map(Map.Entry::getKey)
-                                            .findFirst()
-                                            .get()
-                            )), load.getResult())
-            );
-            ifBody.addCommand(destructorCall);
-
-            BasicBlock ifMerge = function.appendBlock("assigment_destructor_if_merge");
-            createBranch(ifBody, ifMerge);
+            function.getCurrentBlock().addCommand(leftLoad);
 
 
-            createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+            saveLeft = leftLoad.getResult();
         }
 
-        Value left = translateLeftValue(function, expressionNode.getLeft());
         Value right = translateExpression(function, expressionNode.getRight());
 
         Command command = new Command(left, STORE, List.of(right));
@@ -2072,8 +2128,41 @@ public class Translator {
             PointerType pointerType = (PointerType) mt;
 
             BasicBlock last = function.getCurrentBlock();
-            BasicBlock ifCond = function.appendBlock("assigment_inc_count_if_cond");
+            BasicBlock ifCond = function.appendBlock("delete_left_if_cond");
             createBranch(last, ifCond);
+
+            Command condition = new Command(
+                    createTempVariable(INT_1),
+                    NE,
+                    List.of(saveLeft, new NullValue(pointerType.getType()))
+            );
+
+            ifCond.addCommand(condition);
+
+            BasicBlock ifBody = function.appendBlock("delete_left_if_body");
+
+            Command destructorCall = new Command(
+                    null,
+                    CALL,
+                    List.of(destructors.get(
+                            structToDestructors.get(
+                                    classes.entrySet().stream()
+                                            .filter(e -> e.getValue().equals(pointerType.getType()))
+                                            .map(Map.Entry::getKey)
+                                            .findFirst()
+                                            .get()
+                            )), saveLeft)
+            );
+            ifBody.addCommand(destructorCall);
+
+            BasicBlock ifMerge = function.appendBlock("delete_left_if_merge");
+            createBranch(ifBody, ifMerge);
+
+            createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+        }
+
+        if (mt instanceof PointerType) {
+            PointerType pointerType = (PointerType) mt;
 
             Value fieldAccess = translateLeftValue(function, expressionNode.getLeft());
 
@@ -2084,48 +2173,7 @@ public class Translator {
             );
             function.getCurrentBlock().addCommand(load);
 
-            Command condition = new Command(
-                    createTempVariable(INT_1),
-                    NE,
-                    List.of(load.getResult(), new NullValue(pointerType.getType()))
-            );
-
-            ifCond.addCommand(condition);
-
-            BasicBlock ifBody = function.appendBlock("assigment_inc_count_if_body");
-
-            Command counter = new Command(
-                    createTempVariable(INT_32),
-                    FIELD_ACCESS,
-                    List.of(load.getResult(), new IntValue(0)));
-            function.getCurrentBlock().addCommand(counter);
-
-            Command loadCount = new Command(
-                    createTempVariable(INT_32),
-                    LOAD,
-                    List.of(counter.getResult())
-            );
-            function.getCurrentBlock().addCommand(loadCount);
-
-            Command inc = new Command(
-                    createTempVariable(INT_32),
-                    ADD,
-                    List.of(loadCount.getResult(), new IntValue(1))
-            );
-            function.getCurrentBlock().addCommand(inc);
-
-            Command storeCounter = new Command(
-                    counter.getResult(),
-                    STORE,
-                    List.of(inc.getResult())
-            );
-            function.getCurrentBlock().addCommand(storeCounter);
-
-            BasicBlock ifMerge = function.appendBlock("assigment_inc_count_if_merge");
-            createBranch(ifBody, ifMerge);
-
-
-            createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+            translateObjectIncCount(function, load.getResult(), pointerType);
         }
 
         return command.getResult();
