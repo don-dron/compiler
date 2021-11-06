@@ -50,7 +50,7 @@ public class Main {
         output.setRequired(false);
         options.addOption(output);
 
-        Option mode = new Option("m", MODE, false, "work mode");
+        Option mode = new Option("m", MODE, true, "work mode");
         mode.setRequired(false);
         options.addOption(mode);
 
@@ -129,9 +129,13 @@ public class Main {
         runLLVM(llFile);
         runClang(binaryFile, executableFile);
 
-        if (!cmd.hasOption(MODE) ||
-                !Optional.ofNullable(cmd.getOptionValue(MODE)).orElse("buildAndRun").equals("build")) {
+        if (!cmd.hasOption(MODE)
+                || cmd.getOptionValue(MODE) == null
+                || cmd.getOptionValue(MODE).equals("buildAndRun")) {
             runProgram(executableFile);
+        } else if (cmd.hasOption(MODE) &&
+                Optional.ofNullable(cmd.getOptionValue(MODE)).orElse("buildAndRun").equals("valgrindDebug")) {
+            runWithValgrind(executableFile);
         }
     }
 
@@ -175,6 +179,11 @@ public class Main {
 
     private static void runProgram(File prog) throws IOException, InterruptedException {
         ProcessBuilder procBuilder = new ProcessBuilder("./" + prog.getName());
+        runProcess(procBuilder);
+    }
+
+    private static void runWithValgrind(File prog) throws IOException, InterruptedException {
+        ProcessBuilder procBuilder = new ProcessBuilder("valgrind ./" + prog.getName());
         runProcess(procBuilder);
     }
 

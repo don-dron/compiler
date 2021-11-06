@@ -11,7 +11,8 @@ class Point
     int y
 
     (int x, int y) ->
-        this.coord = new Coord(4)
+        this.coord = new Coord(5)
+        this.coord = null
 
         this.x = x + 3
         this.y = y + 5
@@ -19,7 +20,17 @@ class Point
 
 () int main ->
     Point p = new Point(1, 2)
-    int a = p.x + p.y + p.coord.c
+    Point c = null
+    c = p
+    p = null
+    c = p
 
-    return a
+    int i = 0
+
+    while i < 100000
+        p = new Point(1,2)
+        c = p
+        i++
+
+    return 0
 

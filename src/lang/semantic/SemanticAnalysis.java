@@ -2,49 +2,17 @@ package lang.semantic;
 
 import lang.ast.*;
 import lang.ast.expression.*;
-import lang.ast.expression.binary.AdditiveExpressionNode;
-import lang.ast.expression.binary.AssigmentExpressionNode;
-import lang.ast.expression.binary.EqualityExpressionNode;
-import lang.ast.expression.binary.LogicalAndExpressionNode;
-import lang.ast.expression.binary.LogicalOrExpressionNode;
-import lang.ast.expression.binary.MultiplicativeExpressionNode;
-import lang.ast.expression.binary.RelationalExpressionNode;
+import lang.ast.expression.binary.*;
 import lang.ast.expression.consts.*;
-import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
-import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
-import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixDecrementSubtractionExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixIncrementAdditiveExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixIncrementMultiplicativeExpressionNode;
+import lang.ast.expression.unary.postfix.*;
 import lang.ast.expression.unary.prefix.CastExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixDecrementSubtractionExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementAdditiveExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionNode;
-import lang.ast.statement.BreakStatementNode;
-import lang.ast.statement.ClassStatementNode;
-import lang.ast.statement.CompoundStatementNode;
-import lang.ast.statement.ConstructorDefinitionNode;
-import lang.ast.statement.ContinueStatementNode;
-import lang.ast.statement.DeclarationStatementNode;
-import lang.ast.statement.ElifStatementNode;
-import lang.ast.statement.ElseStatementNode;
-import lang.ast.statement.EmptyStatementNode;
-import lang.ast.statement.ExpressionStatementNode;
-import lang.ast.statement.FunctionDefinitionNode;
-import lang.ast.statement.IfElseStatementNode;
-import lang.ast.statement.IfStatementNode;
-import lang.ast.statement.InterfaceStatementNode;
-import lang.ast.statement.ReturnStatementNode;
-import lang.ast.statement.StatementNode;
-import lang.ast.statement.WhileStatementNode;
-import org.checkerframework.checker.units.qual.C;
+import lang.ast.statement.*;
 
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static lang.ast.GlobalBasicType.REF_TYPE;
@@ -443,6 +411,13 @@ public class SemanticAnalysis {
             analyseExpression(node.getExpressionNode(), parentScope);
 
             TypeNode typeNode = node.getExpressionNode().getResultType();
+            node.getExpressionNode().resultType = node.getTypeNode();
+
+            if (node.getTypeNode() instanceof ObjectTypeNode &&
+                    node.getExpressionNode() instanceof NullConstantExpressionNode) {
+                node.getExpressionNode().resultType = node.getTypeNode();
+                return;
+            }
 
             if (node.getTypeNode() instanceof ObjectTypeNode && (typeNode instanceof ObjectTypeNode
                     || typeNode.equals(REF_TYPE))) {
@@ -936,10 +911,10 @@ public class SemanticAnalysis {
 
                 analyseExpression(node, parentScope);
 
-                if(node instanceof NullConstantExpressionNode &&
+                if (node instanceof NullConstantExpressionNode &&
                         (parameterNode.getTypeNode() instanceof ObjectTypeNode ||
                                 parameterNode.getTypeNode() instanceof ArrayTypeNode)) {
-                    ((NullConstantExpressionNode)node).setResultType(parameterNode.getTypeNode());
+                    ((NullConstantExpressionNode) node).setResultType(parameterNode.getTypeNode());
                 } else if (!parameterNode.getTypeNode().equals(node.getResultType())) {
                     throw new IllegalArgumentException("Wrong parameter type " +
                             parameterNode.getTypeNode() + " " + node.getResultType());
@@ -1049,8 +1024,8 @@ public class SemanticAnalysis {
         analyseExpression(left, parentScope);
         analyseExpression(right, parentScope);
 
-        if(right instanceof NullConstantExpressionNode) {
-            ((NullConstantExpressionNode)right).setResultType(left.getResultType());
+        if (right instanceof NullConstantExpressionNode) {
+            ((NullConstantExpressionNode) right).setResultType(left.getResultType());
         } else if (!left.getResultType().equals(right.getResultType())) {
             throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
         }
@@ -1067,8 +1042,8 @@ public class SemanticAnalysis {
         analyseExpression(left, parentScope);
         analyseExpression(right, parentScope);
 
-        if(right instanceof NullConstantExpressionNode) {
-            ((NullConstantExpressionNode)right).setResultType(left.getResultType());
+        if (right instanceof NullConstantExpressionNode) {
+            ((NullConstantExpressionNode) right).setResultType(left.getResultType());
         } else if (!left.getResultType().equals(right.getResultType())) {
             throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString());
         }
@@ -1201,19 +1176,21 @@ public class SemanticAnalysis {
         } else if (left.getResultType() instanceof ObjectTypeNode && right instanceof NullConstantExpressionNode) {
             ((NullConstantExpressionNode) right).setResultType(left.getResultType());
             typeNode = left.getResultType();
-        }else if (left.getResultType() instanceof ArrayTypeNode && right instanceof NullConstantExpressionNode) {
+        } else if (left.getResultType() instanceof ArrayTypeNode && right instanceof NullConstantExpressionNode) {
             ((NullConstantExpressionNode) right).setResultType(left.getResultType());
             typeNode = left.getResultType();
-        }  else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {
+        } else if (left.getResultType() instanceof ObjectTypeNode && right.getResultType() == REF_TYPE) {
             typeNode = left.getResultType();
         } else if (left.getResultType() instanceof ArrayTypeNode) {
             typeNode = left.getResultType();
         }
 
+
         if (typeNode == null) {
             throw new IllegalArgumentException("Wrong types " + left.toString() + " " + right.toString() + " : " +
                     left.getResultType().toString() + " and " + right.getResultType().toString());
         }
+        assigmentExpressionNode.setResultType(typeNode);
     }
 
     private void analyseType(TypeNode typeNode, Scope parentScope) {

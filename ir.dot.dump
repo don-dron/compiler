@@ -1,133 +1,427 @@
 digraph G {
 	"header_15" [style=filled, shape=box, label="header_15:
-($7_c,i32) alloc 
-($7_c,i32) store (%0,i32)
-($$_ret_value_0,%struct.$0_Coord*) alloc 
-($$_this_value_2,%struct.$0_Coord*) alloc 
-(%1,i64*) <- struct_allocation i64*,12
-(%2,%struct.$0_Coord*) <- cast (%1,i64*)
-($$_this_value_2,%struct.$0_Coord*) store (%2,%struct.$0_Coord*)
-($$_ret_value_0,%struct.$0_Coord*) store (%2,%struct.$0_Coord*)
-(%3,%struct.$0_Coord*) load ($$_this_value_2,%struct.$0_Coord*)
-(%4,i32) <- field_access (%3,%struct.$0_Coord*),0
-(%4,i32) store 0
-(%5,i32) <- field_access (%3,%struct.$0_Coord*),1
-(%5,i32) store 0
-branch entry_17"];
-	"return_16" [style=filled, shape=box, label="return_16:
-(%6,%struct.$0_Coord*) load ($$_ret_value_0,%struct.$0_Coord*)
-return (%6,%struct.$0_Coord*)"];
-	"entry_17" [style=filled, shape=box, label="entry_17:
-(%7,%struct.$0_Coord*) load ($$_this_value_2,%struct.$0_Coord*)
-(%8,i32) <- field_access (%7,%struct.$0_Coord*),2
-(%9,i32) load ($7_c,i32)
-(%8,i32) store (%9,i32)
-branch end_function_destructor_18"];
-	"end_function_destructor_18" [style=filled, shape=box, label="end_function_destructor_18:
-
-branch return_16"];
-"header_15" -> "entry_17";
-"entry_17" -> "end_function_destructor_18";
-"end_function_destructor_18" -> "return_16";
-
-	"header_19" [style=filled, shape=box, label="header_19:
 ($8_x,i32) alloc 
 ($8_x,i32) store (%0,i32)
 ($9_y,i32) alloc 
 ($9_y,i32) store (%1,i32)
-($$_ret_value_1,%struct.$2_Point*) alloc 
-($$_this_value_3,%struct.$2_Point*) alloc 
+($$_ret_value_0,%struct.$2_Point*) alloc 
+($$_this_value_2,%struct.$2_Point*) alloc 
 (%2,i64*) <- struct_allocation i64*,24
 (%3,%struct.$2_Point*) <- cast (%2,i64*)
-($$_this_value_3,%struct.$2_Point*) store (%3,%struct.$2_Point*)
-($$_ret_value_1,%struct.$2_Point*) store (%3,%struct.$2_Point*)
-(%4,%struct.$2_Point*) load ($$_this_value_3,%struct.$2_Point*)
+($$_this_value_2,%struct.$2_Point*) store (%3,%struct.$2_Point*)
+($$_ret_value_0,%struct.$2_Point*) store (%3,%struct.$2_Point*)
+(%4,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
 (%5,i32) <- field_access (%4,%struct.$2_Point*),0
 (%5,i32) store 0
 (%6,i32) <- field_access (%4,%struct.$2_Point*),1
 (%6,i32) store 0
-branch entry_21"];
-	"return_20" [style=filled, shape=box, label="return_20:
-(%7,%struct.$2_Point*) load ($$_ret_value_1,%struct.$2_Point*)
-return (%7,%struct.$2_Point*)"];
-	"entry_21" [style=filled, shape=box, label="entry_21:
-(%8,%struct.$2_Point*) load ($$_this_value_3,%struct.$2_Point*)
-(%9,%struct.$0_Coord*) <- field_access (%8,%struct.$2_Point*),2
-(%10,%struct.$0_Coord*) <- call $_constructor_0,4
-(%9,%struct.$0_Coord*) store (%10,%struct.$0_Coord*)
-(%11,%struct.$2_Point*) load ($$_this_value_3,%struct.$2_Point*)
-(%12,i32) <- field_access (%11,%struct.$2_Point*),3
-(%13,i32) load ($8_x,i32)
-(%14,i32) <- add (%13,i32),3
-(%12,i32) store (%14,i32)
-(%15,%struct.$2_Point*) load ($$_this_value_3,%struct.$2_Point*)
-(%16,i32) <- field_access (%15,%struct.$2_Point*),4
-(%17,i32) load ($9_y,i32)
-(%18,i32) <- add (%17,i32),5
-(%16,i32) store (%18,i32)
-branch end_function_destructor_22"];
-	"end_function_destructor_22" [style=filled, shape=box, label="end_function_destructor_22:
+(%7,%struct.$0_Coord*) <- field_access (%4,%struct.$2_Point*),2
+(%7,%struct.$0_Coord*) store null
+(%8,i32) <- field_access (%4,%struct.$2_Point*),3
+(%8,i32) store 0
+(%9,i32) <- field_access (%4,%struct.$2_Point*),4
+(%9,i32) store 0
+branch entry_17"];
+	"return_16" [style=filled, shape=box, label="return_16:
+(%10,%struct.$2_Point*) load ($$_ret_value_0,%struct.$2_Point*)
+return (%10,%struct.$2_Point*)"];
+	"entry_17" [style=filled, shape=box, label="entry_17:
 
-branch return_20"];
-"header_19" -> "entry_21";
-"entry_21" -> "end_function_destructor_22";
-"end_function_destructor_22" -> "return_20";
+branch assigment_destructor_if_cond_18"];
+	"assigment_destructor_if_cond_18" [style=filled, shape=box, label="assigment_destructor_if_cond_18:
+(%11,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
+(%12,%struct.$0_Coord*) <- field_access (%11,%struct.$2_Point*),2
+(%13,%struct.$0_Coord*) load (%12,%struct.$0_Coord*)
+(%14,i1) <- ne (%13,%struct.$0_Coord*),null
+branch (%14,i1) assigment_destructor_if_body_19,assigment_destructor_if_merge_20"];
+	"assigment_destructor_if_body_19" [style=filled, shape=box, label="assigment_destructor_if_body_19:
+ <- call $_destructor_0,(%13,%struct.$0_Coord*)
+branch assigment_destructor_if_merge_20"];
+	"assigment_destructor_if_merge_20" [style=filled, shape=box, label="assigment_destructor_if_merge_20:
+(%15,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
+(%16,%struct.$0_Coord*) <- field_access (%15,%struct.$2_Point*),2
+(%17,%struct.$0_Coord*) <- call $_constructor_0,5
+(%16,%struct.$0_Coord*) store (%17,%struct.$0_Coord*)
+branch assigment_inc_count_if_cond_21"];
+	"assigment_inc_count_if_cond_21" [style=filled, shape=box, label="assigment_inc_count_if_cond_21:
+(%18,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
+(%19,%struct.$0_Coord*) <- field_access (%18,%struct.$2_Point*),2
+(%20,%struct.$0_Coord*) load (%19,%struct.$0_Coord*)
+(%21,i1) <- ne (%20,%struct.$0_Coord*),null
+branch (%21,i1) assigment_inc_count_if_body_22,assigment_inc_count_if_merge_23"];
+	"assigment_inc_count_if_body_22" [style=filled, shape=box, label="assigment_inc_count_if_body_22:
+(%22,i32) <- field_access (%20,%struct.$0_Coord*),0
+(%23,i32) load (%22,i32)
+(%24,i32) <- add (%23,i32),1
+(%22,i32) store (%24,i32)
+branch assigment_inc_count_if_merge_23"];
+	"assigment_inc_count_if_merge_23" [style=filled, shape=box, label="assigment_inc_count_if_merge_23:
 
-	"header_23" [style=filled, shape=box, label="header_23:
-($$_ret_value_2,i32) alloc 
-branch entry_25"];
-	"return_24" [style=filled, shape=box, label="return_24:
-(%0,i32) load ($$_ret_value_2,i32)
+branch assigment_destructor_if_cond_24"];
+	"assigment_destructor_if_cond_24" [style=filled, shape=box, label="assigment_destructor_if_cond_24:
+(%25,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
+(%26,%struct.$0_Coord*) <- field_access (%25,%struct.$2_Point*),2
+(%27,%struct.$0_Coord*) load (%26,%struct.$0_Coord*)
+(%28,i1) <- ne (%27,%struct.$0_Coord*),null
+branch (%28,i1) assigment_destructor_if_body_25,assigment_destructor_if_merge_26"];
+	"assigment_destructor_if_body_25" [style=filled, shape=box, label="assigment_destructor_if_body_25:
+ <- call $_destructor_0,(%27,%struct.$0_Coord*)
+branch assigment_destructor_if_merge_26"];
+	"assigment_destructor_if_merge_26" [style=filled, shape=box, label="assigment_destructor_if_merge_26:
+(%29,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
+(%30,%struct.$0_Coord*) <- field_access (%29,%struct.$2_Point*),2
+(%30,%struct.$0_Coord*) store null
+branch assigment_inc_count_if_cond_27"];
+	"assigment_inc_count_if_cond_27" [style=filled, shape=box, label="assigment_inc_count_if_cond_27:
+(%31,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
+(%32,%struct.$0_Coord*) <- field_access (%31,%struct.$2_Point*),2
+(%33,%struct.$0_Coord*) load (%32,%struct.$0_Coord*)
+(%34,i1) <- ne (%33,%struct.$0_Coord*),null
+branch (%34,i1) assigment_inc_count_if_body_28,assigment_inc_count_if_merge_29"];
+	"assigment_inc_count_if_body_28" [style=filled, shape=box, label="assigment_inc_count_if_body_28:
+(%35,i32) <- field_access (%33,%struct.$0_Coord*),0
+(%36,i32) load (%35,i32)
+(%37,i32) <- add (%36,i32),1
+(%35,i32) store (%37,i32)
+branch assigment_inc_count_if_merge_29"];
+	"assigment_inc_count_if_merge_29" [style=filled, shape=box, label="assigment_inc_count_if_merge_29:
+(%38,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
+(%39,i32) <- field_access (%38,%struct.$2_Point*),3
+(%40,i32) load ($8_x,i32)
+(%41,i32) <- add (%40,i32),3
+(%39,i32) store (%41,i32)
+(%42,%struct.$2_Point*) load ($$_this_value_2,%struct.$2_Point*)
+(%43,i32) <- field_access (%42,%struct.$2_Point*),4
+(%44,i32) load ($9_y,i32)
+(%45,i32) <- add (%44,i32),5
+(%43,i32) store (%45,i32)
+branch end_function_destructor_30"];
+	"end_function_destructor_30" [style=filled, shape=box, label="end_function_destructor_30:
+
+branch return_16"];
+"header_15" -> "entry_17";
+"entry_17" -> "assigment_destructor_if_cond_18";
+"assigment_destructor_if_cond_18" -> "assigment_destructor_if_body_19";
+"assigment_destructor_if_cond_18" -> "assigment_destructor_if_merge_20";
+"assigment_destructor_if_body_19" -> "assigment_destructor_if_merge_20";
+"assigment_destructor_if_merge_20" -> "assigment_inc_count_if_cond_21";
+"assigment_inc_count_if_cond_21" -> "assigment_inc_count_if_body_22";
+"assigment_inc_count_if_cond_21" -> "assigment_inc_count_if_merge_23";
+"assigment_inc_count_if_body_22" -> "assigment_inc_count_if_merge_23";
+"assigment_inc_count_if_merge_23" -> "assigment_destructor_if_cond_24";
+"assigment_destructor_if_cond_24" -> "assigment_destructor_if_body_25";
+"assigment_destructor_if_cond_24" -> "assigment_destructor_if_merge_26";
+"assigment_destructor_if_body_25" -> "assigment_destructor_if_merge_26";
+"assigment_destructor_if_merge_26" -> "assigment_inc_count_if_cond_27";
+"assigment_inc_count_if_cond_27" -> "assigment_inc_count_if_body_28";
+"assigment_inc_count_if_cond_27" -> "assigment_inc_count_if_merge_29";
+"assigment_inc_count_if_body_28" -> "assigment_inc_count_if_merge_29";
+"assigment_inc_count_if_merge_29" -> "end_function_destructor_30";
+"end_function_destructor_30" -> "return_16";
+
+	"header_31" [style=filled, shape=box, label="header_31:
+($$_ret_value_1,i32) alloc 
+branch entry_33"];
+	"return_32" [style=filled, shape=box, label="return_32:
+(%0,i32) load ($$_ret_value_1,i32)
 return (%0,i32)"];
-	"entry_25" [style=filled, shape=box, label="entry_25:
+	"entry_33" [style=filled, shape=box, label="entry_33:
 ($10_p,%struct.$2_Point*) alloc 
 (%1,%struct.$2_Point*) <- call $_constructor_1,1,2
 ($10_p,%struct.$2_Point*) store (%1,%struct.$2_Point*)
-($11_a,i32) alloc 
+branch declaration_inc_count_if_cond_34"];
+	"declaration_inc_count_if_cond_34" [style=filled, shape=box, label="declaration_inc_count_if_cond_34:
 (%2,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
-(%3,i32) <- field_access (%2,%struct.$2_Point*),3
-(%4,i32) load (%3,i32)
-(%5,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
-(%6,i32) <- field_access (%5,%struct.$2_Point*),4
-(%7,i32) load (%6,i32)
-(%8,i32) <- add (%4,i32),(%7,i32)
-(%9,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
-(%10,%struct.$0_Coord*) <- field_access (%9,%struct.$2_Point*),2
-(%11,%struct.$0_Coord*) load (%10,%struct.$0_Coord*)
-(%12,i32) <- field_access (%11,%struct.$0_Coord*),2
-(%13,i32) load (%12,i32)
-(%14,i32) <- add (%8,i32),(%13,i32)
-($11_a,i32) store (%14,i32)
-branch local_return_26"];
-	"local_return_26" [style=filled, shape=box, label="local_return_26:
-(%15,i32) load ($11_a,i32)
-($$_ret_value_2,i32) store (%15,i32)
-branch end_function_destructor_28"];
-	"dummy_27" [style=filled, shape=box, label="dummy_27:
+(%3,i1) <- ne (%2,%struct.$2_Point*),null
+branch (%3,i1) declaration_inc_count_if_body_35,declaration_inc_count_if_merge_36"];
+	"declaration_inc_count_if_body_35" [style=filled, shape=box, label="declaration_inc_count_if_body_35:
+(%4,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%5,i32) <- field_access (%4,%struct.$2_Point*),0
+(%6,i32) load (%5,i32)
+(%7,i32) <- add (%6,i32),1
+(%5,i32) store (%7,i32)
+branch declaration_inc_count_if_merge_36"];
+	"declaration_inc_count_if_merge_36" [style=filled, shape=box, label="declaration_inc_count_if_merge_36:
+($11_c,%struct.$2_Point*) alloc 
+($11_c,%struct.$2_Point*) store null
+branch declaration_inc_count_if_cond_37"];
+	"declaration_inc_count_if_cond_37" [style=filled, shape=box, label="declaration_inc_count_if_cond_37:
+(%8,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%9,i1) <- ne (%8,%struct.$2_Point*),null
+branch (%9,i1) declaration_inc_count_if_body_38,declaration_inc_count_if_merge_39"];
+	"declaration_inc_count_if_body_38" [style=filled, shape=box, label="declaration_inc_count_if_body_38:
+(%10,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%11,i32) <- field_access (%10,%struct.$2_Point*),0
+(%12,i32) load (%11,i32)
+(%13,i32) <- add (%12,i32),1
+(%11,i32) store (%13,i32)
+branch declaration_inc_count_if_merge_39"];
+	"declaration_inc_count_if_merge_39" [style=filled, shape=box, label="declaration_inc_count_if_merge_39:
 
-branch end_function_destructor_28"];
-	"end_function_destructor_28" [style=filled, shape=box, label="end_function_destructor_28:
-
-branch end_function_destructor_if_cond_29"];
-	"end_function_destructor_if_cond_29" [style=filled, shape=box, label="end_function_destructor_if_cond_29:
+branch assigment_destructor_if_cond_40"];
+	"assigment_destructor_if_cond_40" [style=filled, shape=box, label="assigment_destructor_if_cond_40:
+(%14,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%15,i1) <- ne (%14,%struct.$2_Point*),null
+branch (%15,i1) assigment_destructor_if_body_41,assigment_destructor_if_merge_42"];
+	"assigment_destructor_if_body_41" [style=filled, shape=box, label="assigment_destructor_if_body_41:
+ <- call $_destructor_1,(%14,%struct.$2_Point*)
+branch assigment_destructor_if_merge_42"];
+	"assigment_destructor_if_merge_42" [style=filled, shape=box, label="assigment_destructor_if_merge_42:
 (%16,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
-(%17,i1) <- ne (%16,%struct.$2_Point*),null
-branch (%17,i1) end_function_destructor_if_body_30,end_function_destructor_if_merge_31"];
-	"end_function_destructor_if_body_30" [style=filled, shape=box, label="end_function_destructor_if_body_30:
- <- call $_destructor_1,(%16,%struct.$2_Point*)
-branch end_function_destructor_if_merge_31"];
-	"end_function_destructor_if_merge_31" [style=filled, shape=box, label="end_function_destructor_if_merge_31:
+($11_c,%struct.$2_Point*) store (%16,%struct.$2_Point*)
+branch assigment_inc_count_if_cond_43"];
+	"assigment_inc_count_if_cond_43" [style=filled, shape=box, label="assigment_inc_count_if_cond_43:
+(%17,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%18,i1) <- ne (%17,%struct.$2_Point*),null
+branch (%18,i1) assigment_inc_count_if_body_44,assigment_inc_count_if_merge_45"];
+	"assigment_inc_count_if_body_44" [style=filled, shape=box, label="assigment_inc_count_if_body_44:
+(%19,i32) <- field_access (%17,%struct.$2_Point*),0
+(%20,i32) load (%19,i32)
+(%21,i32) <- add (%20,i32),1
+(%19,i32) store (%21,i32)
+branch assigment_inc_count_if_merge_45"];
+	"assigment_inc_count_if_merge_45" [style=filled, shape=box, label="assigment_inc_count_if_merge_45:
 
-branch return_24"];
-"header_23" -> "entry_25";
-"entry_25" -> "local_return_26";
-"local_return_26" -> "end_function_destructor_28";
-"dummy_27" -> "end_function_destructor_28";
-"end_function_destructor_28" -> "end_function_destructor_if_cond_29";
-"end_function_destructor_if_cond_29" -> "end_function_destructor_if_body_30";
-"end_function_destructor_if_cond_29" -> "end_function_destructor_if_merge_31";
-"end_function_destructor_if_body_30" -> "end_function_destructor_if_merge_31";
-"end_function_destructor_if_merge_31" -> "return_24";
+branch assigment_destructor_if_cond_46"];
+	"assigment_destructor_if_cond_46" [style=filled, shape=box, label="assigment_destructor_if_cond_46:
+(%22,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%23,i1) <- ne (%22,%struct.$2_Point*),null
+branch (%23,i1) assigment_destructor_if_body_47,assigment_destructor_if_merge_48"];
+	"assigment_destructor_if_body_47" [style=filled, shape=box, label="assigment_destructor_if_body_47:
+ <- call $_destructor_1,(%22,%struct.$2_Point*)
+branch assigment_destructor_if_merge_48"];
+	"assigment_destructor_if_merge_48" [style=filled, shape=box, label="assigment_destructor_if_merge_48:
+($10_p,%struct.$2_Point*) store null
+branch assigment_inc_count_if_cond_49"];
+	"assigment_inc_count_if_cond_49" [style=filled, shape=box, label="assigment_inc_count_if_cond_49:
+(%24,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%25,i1) <- ne (%24,%struct.$2_Point*),null
+branch (%25,i1) assigment_inc_count_if_body_50,assigment_inc_count_if_merge_51"];
+	"assigment_inc_count_if_body_50" [style=filled, shape=box, label="assigment_inc_count_if_body_50:
+(%26,i32) <- field_access (%24,%struct.$2_Point*),0
+(%27,i32) load (%26,i32)
+(%28,i32) <- add (%27,i32),1
+(%26,i32) store (%28,i32)
+branch assigment_inc_count_if_merge_51"];
+	"assigment_inc_count_if_merge_51" [style=filled, shape=box, label="assigment_inc_count_if_merge_51:
+
+branch assigment_destructor_if_cond_52"];
+	"assigment_destructor_if_cond_52" [style=filled, shape=box, label="assigment_destructor_if_cond_52:
+(%29,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%30,i1) <- ne (%29,%struct.$2_Point*),null
+branch (%30,i1) assigment_destructor_if_body_53,assigment_destructor_if_merge_54"];
+	"assigment_destructor_if_body_53" [style=filled, shape=box, label="assigment_destructor_if_body_53:
+ <- call $_destructor_1,(%29,%struct.$2_Point*)
+branch assigment_destructor_if_merge_54"];
+	"assigment_destructor_if_merge_54" [style=filled, shape=box, label="assigment_destructor_if_merge_54:
+(%31,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+($11_c,%struct.$2_Point*) store (%31,%struct.$2_Point*)
+branch assigment_inc_count_if_cond_55"];
+	"assigment_inc_count_if_cond_55" [style=filled, shape=box, label="assigment_inc_count_if_cond_55:
+(%32,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%33,i1) <- ne (%32,%struct.$2_Point*),null
+branch (%33,i1) assigment_inc_count_if_body_56,assigment_inc_count_if_merge_57"];
+	"assigment_inc_count_if_body_56" [style=filled, shape=box, label="assigment_inc_count_if_body_56:
+(%34,i32) <- field_access (%32,%struct.$2_Point*),0
+(%35,i32) load (%34,i32)
+(%36,i32) <- add (%35,i32),1
+(%34,i32) store (%36,i32)
+branch assigment_inc_count_if_merge_57"];
+	"assigment_inc_count_if_merge_57" [style=filled, shape=box, label="assigment_inc_count_if_merge_57:
+($12_i,i32) alloc 
+($12_i,i32) store 0
+branch while_condition_58"];
+	"while_condition_58" [style=filled, shape=box, label="while_condition_58:
+(%37,i32) load ($12_i,i32)
+(%38,i1) <- lt (%37,i32),100000
+branch (%38,i1) while_body_60,merge_59"];
+	"merge_59" [style=filled, shape=box, label="merge_59:
+
+branch while_merge_73"];
+	"while_body_60" [style=filled, shape=box, label="while_body_60:
+
+branch assigment_destructor_if_cond_61"];
+	"assigment_destructor_if_cond_61" [style=filled, shape=box, label="assigment_destructor_if_cond_61:
+(%39,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%40,i1) <- ne (%39,%struct.$2_Point*),null
+branch (%40,i1) assigment_destructor_if_body_62,assigment_destructor_if_merge_63"];
+	"assigment_destructor_if_body_62" [style=filled, shape=box, label="assigment_destructor_if_body_62:
+ <- call $_destructor_1,(%39,%struct.$2_Point*)
+branch assigment_destructor_if_merge_63"];
+	"assigment_destructor_if_merge_63" [style=filled, shape=box, label="assigment_destructor_if_merge_63:
+(%41,%struct.$2_Point*) <- call $_constructor_1,1,2
+($10_p,%struct.$2_Point*) store (%41,%struct.$2_Point*)
+branch assigment_inc_count_if_cond_64"];
+	"assigment_inc_count_if_cond_64" [style=filled, shape=box, label="assigment_inc_count_if_cond_64:
+(%42,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%43,i1) <- ne (%42,%struct.$2_Point*),null
+branch (%43,i1) assigment_inc_count_if_body_65,assigment_inc_count_if_merge_66"];
+	"assigment_inc_count_if_body_65" [style=filled, shape=box, label="assigment_inc_count_if_body_65:
+(%44,i32) <- field_access (%42,%struct.$2_Point*),0
+(%45,i32) load (%44,i32)
+(%46,i32) <- add (%45,i32),1
+(%44,i32) store (%46,i32)
+branch assigment_inc_count_if_merge_66"];
+	"assigment_inc_count_if_merge_66" [style=filled, shape=box, label="assigment_inc_count_if_merge_66:
+
+branch assigment_destructor_if_cond_67"];
+	"assigment_destructor_if_cond_67" [style=filled, shape=box, label="assigment_destructor_if_cond_67:
+(%47,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%48,i1) <- ne (%47,%struct.$2_Point*),null
+branch (%48,i1) assigment_destructor_if_body_68,assigment_destructor_if_merge_69"];
+	"assigment_destructor_if_body_68" [style=filled, shape=box, label="assigment_destructor_if_body_68:
+ <- call $_destructor_1,(%47,%struct.$2_Point*)
+branch assigment_destructor_if_merge_69"];
+	"assigment_destructor_if_merge_69" [style=filled, shape=box, label="assigment_destructor_if_merge_69:
+(%49,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+($11_c,%struct.$2_Point*) store (%49,%struct.$2_Point*)
+branch assigment_inc_count_if_cond_70"];
+	"assigment_inc_count_if_cond_70" [style=filled, shape=box, label="assigment_inc_count_if_cond_70:
+(%50,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%51,i1) <- ne (%50,%struct.$2_Point*),null
+branch (%51,i1) assigment_inc_count_if_body_71,assigment_inc_count_if_merge_72"];
+	"assigment_inc_count_if_body_71" [style=filled, shape=box, label="assigment_inc_count_if_body_71:
+(%52,i32) <- field_access (%50,%struct.$2_Point*),0
+(%53,i32) load (%52,i32)
+(%54,i32) <- add (%53,i32),1
+(%52,i32) store (%54,i32)
+branch assigment_inc_count_if_merge_72"];
+	"assigment_inc_count_if_merge_72" [style=filled, shape=box, label="assigment_inc_count_if_merge_72:
+(%55,i32) load ($12_i,i32)
+(%56,i32) <- add (%55,i32),1
+($12_i,i32) store (%56,i32)
+branch while_condition_58"];
+	"while_merge_73" [style=filled, shape=box, label="while_merge_73:
+
+branch local_return_74"];
+	"local_return_74" [style=filled, shape=box, label="local_return_74:
+($$_ret_value_1,i32) store 0
+branch end_function_destructor_76"];
+	"dummy_75" [style=filled, shape=box, label="dummy_75:
+
+branch end_function_destructor_76"];
+	"end_function_destructor_76" [style=filled, shape=box, label="end_function_destructor_76:
+
+branch end_function_destructor_if_cond_77"];
+	"end_function_destructor_if_cond_77" [style=filled, shape=box, label="end_function_destructor_if_cond_77:
+(%57,%struct.$2_Point*) load ($11_c,%struct.$2_Point*)
+(%58,i1) <- ne (%57,%struct.$2_Point*),null
+branch (%58,i1) end_function_destructor_if_body_78,end_function_destructor_if_merge_79"];
+	"end_function_destructor_if_body_78" [style=filled, shape=box, label="end_function_destructor_if_body_78:
+ <- call $_destructor_1,(%57,%struct.$2_Point*)
+branch end_function_destructor_if_merge_79"];
+	"end_function_destructor_if_merge_79" [style=filled, shape=box, label="end_function_destructor_if_merge_79:
+
+branch end_function_destructor_if_cond_80"];
+	"end_function_destructor_if_cond_80" [style=filled, shape=box, label="end_function_destructor_if_cond_80:
+(%59,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%60,i1) <- ne (%59,%struct.$2_Point*),null
+branch (%60,i1) end_function_destructor_if_body_81,end_function_destructor_if_merge_82"];
+	"end_function_destructor_if_body_81" [style=filled, shape=box, label="end_function_destructor_if_body_81:
+ <- call $_destructor_1,(%59,%struct.$2_Point*)
+branch end_function_destructor_if_merge_82"];
+	"end_function_destructor_if_merge_82" [style=filled, shape=box, label="end_function_destructor_if_merge_82:
+
+branch return_32"];
+"header_31" -> "entry_33";
+"entry_33" -> "declaration_inc_count_if_cond_34";
+"declaration_inc_count_if_cond_34" -> "declaration_inc_count_if_body_35";
+"declaration_inc_count_if_cond_34" -> "declaration_inc_count_if_merge_36";
+"declaration_inc_count_if_body_35" -> "declaration_inc_count_if_merge_36";
+"declaration_inc_count_if_merge_36" -> "declaration_inc_count_if_cond_37";
+"declaration_inc_count_if_cond_37" -> "declaration_inc_count_if_body_38";
+"declaration_inc_count_if_cond_37" -> "declaration_inc_count_if_merge_39";
+"declaration_inc_count_if_body_38" -> "declaration_inc_count_if_merge_39";
+"declaration_inc_count_if_merge_39" -> "assigment_destructor_if_cond_40";
+"assigment_destructor_if_cond_40" -> "assigment_destructor_if_body_41";
+"assigment_destructor_if_cond_40" -> "assigment_destructor_if_merge_42";
+"assigment_destructor_if_body_41" -> "assigment_destructor_if_merge_42";
+"assigment_destructor_if_merge_42" -> "assigment_inc_count_if_cond_43";
+"assigment_inc_count_if_cond_43" -> "assigment_inc_count_if_body_44";
+"assigment_inc_count_if_cond_43" -> "assigment_inc_count_if_merge_45";
+"assigment_inc_count_if_body_44" -> "assigment_inc_count_if_merge_45";
+"assigment_inc_count_if_merge_45" -> "assigment_destructor_if_cond_46";
+"assigment_destructor_if_cond_46" -> "assigment_destructor_if_body_47";
+"assigment_destructor_if_cond_46" -> "assigment_destructor_if_merge_48";
+"assigment_destructor_if_body_47" -> "assigment_destructor_if_merge_48";
+"assigment_destructor_if_merge_48" -> "assigment_inc_count_if_cond_49";
+"assigment_inc_count_if_cond_49" -> "assigment_inc_count_if_body_50";
+"assigment_inc_count_if_cond_49" -> "assigment_inc_count_if_merge_51";
+"assigment_inc_count_if_body_50" -> "assigment_inc_count_if_merge_51";
+"assigment_inc_count_if_merge_51" -> "assigment_destructor_if_cond_52";
+"assigment_destructor_if_cond_52" -> "assigment_destructor_if_body_53";
+"assigment_destructor_if_cond_52" -> "assigment_destructor_if_merge_54";
+"assigment_destructor_if_body_53" -> "assigment_destructor_if_merge_54";
+"assigment_destructor_if_merge_54" -> "assigment_inc_count_if_cond_55";
+"assigment_inc_count_if_cond_55" -> "assigment_inc_count_if_body_56";
+"assigment_inc_count_if_cond_55" -> "assigment_inc_count_if_merge_57";
+"assigment_inc_count_if_body_56" -> "assigment_inc_count_if_merge_57";
+"assigment_inc_count_if_merge_57" -> "while_condition_58";
+"while_condition_58" -> "while_body_60";
+"while_condition_58" -> "merge_59";
+"merge_59" -> "while_merge_73";
+"while_body_60" -> "assigment_destructor_if_cond_61";
+"assigment_destructor_if_cond_61" -> "assigment_destructor_if_body_62";
+"assigment_destructor_if_cond_61" -> "assigment_destructor_if_merge_63";
+"assigment_destructor_if_body_62" -> "assigment_destructor_if_merge_63";
+"assigment_destructor_if_merge_63" -> "assigment_inc_count_if_cond_64";
+"assigment_inc_count_if_cond_64" -> "assigment_inc_count_if_body_65";
+"assigment_inc_count_if_cond_64" -> "assigment_inc_count_if_merge_66";
+"assigment_inc_count_if_body_65" -> "assigment_inc_count_if_merge_66";
+"assigment_inc_count_if_merge_66" -> "assigment_destructor_if_cond_67";
+"assigment_destructor_if_cond_67" -> "assigment_destructor_if_body_68";
+"assigment_destructor_if_cond_67" -> "assigment_destructor_if_merge_69";
+"assigment_destructor_if_body_68" -> "assigment_destructor_if_merge_69";
+"assigment_destructor_if_merge_69" -> "assigment_inc_count_if_cond_70";
+"assigment_inc_count_if_cond_70" -> "assigment_inc_count_if_body_71";
+"assigment_inc_count_if_cond_70" -> "assigment_inc_count_if_merge_72";
+"assigment_inc_count_if_body_71" -> "assigment_inc_count_if_merge_72";
+"assigment_inc_count_if_merge_72" -> "while_condition_58";
+"while_merge_73" -> "local_return_74";
+"local_return_74" -> "end_function_destructor_76";
+"dummy_75" -> "end_function_destructor_76";
+"end_function_destructor_76" -> "end_function_destructor_if_cond_77";
+"end_function_destructor_if_cond_77" -> "end_function_destructor_if_body_78";
+"end_function_destructor_if_cond_77" -> "end_function_destructor_if_merge_79";
+"end_function_destructor_if_body_78" -> "end_function_destructor_if_merge_79";
+"end_function_destructor_if_merge_79" -> "end_function_destructor_if_cond_80";
+"end_function_destructor_if_cond_80" -> "end_function_destructor_if_body_81";
+"end_function_destructor_if_cond_80" -> "end_function_destructor_if_merge_82";
+"end_function_destructor_if_body_81" -> "end_function_destructor_if_merge_82";
+"end_function_destructor_if_merge_82" -> "return_32";
+
+	"header_83" [style=filled, shape=box, label="header_83:
+($7_c,i32) alloc 
+($7_c,i32) store (%0,i32)
+($$_ret_value_2,%struct.$0_Coord*) alloc 
+($$_this_value_3,%struct.$0_Coord*) alloc 
+(%1,i64*) <- struct_allocation i64*,12
+(%2,%struct.$0_Coord*) <- cast (%1,i64*)
+($$_this_value_3,%struct.$0_Coord*) store (%2,%struct.$0_Coord*)
+($$_ret_value_2,%struct.$0_Coord*) store (%2,%struct.$0_Coord*)
+(%3,%struct.$0_Coord*) load ($$_this_value_3,%struct.$0_Coord*)
+(%4,i32) <- field_access (%3,%struct.$0_Coord*),0
+(%4,i32) store 0
+(%5,i32) <- field_access (%3,%struct.$0_Coord*),1
+(%5,i32) store 0
+(%6,i32) <- field_access (%3,%struct.$0_Coord*),2
+(%6,i32) store 0
+branch entry_85"];
+	"return_84" [style=filled, shape=box, label="return_84:
+(%7,%struct.$0_Coord*) load ($$_ret_value_2,%struct.$0_Coord*)
+return (%7,%struct.$0_Coord*)"];
+	"entry_85" [style=filled, shape=box, label="entry_85:
+(%8,%struct.$0_Coord*) load ($$_this_value_3,%struct.$0_Coord*)
+(%9,i32) <- field_access (%8,%struct.$0_Coord*),2
+(%10,i32) load ($7_c,i32)
+(%9,i32) store (%10,i32)
+branch end_function_destructor_86"];
+	"end_function_destructor_86" [style=filled, shape=box, label="end_function_destructor_86:
+
+branch return_84"];
+"header_83" -> "entry_85";
+"entry_85" -> "end_function_destructor_86";
+"end_function_destructor_86" -> "return_84";
 
 
 

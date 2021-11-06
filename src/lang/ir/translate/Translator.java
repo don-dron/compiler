@@ -506,6 +506,8 @@ public class Translator {
                 );
                 function.getCurrentBlock().addCommand(storeRet);
 
+                StructType structType = (StructType) pointerStructType.getType();
+
                 Command thisAccess = new Command(
                         createTempVariable(type),
                         LOAD,
@@ -513,33 +515,30 @@ public class Translator {
                 );
                 function.getCurrentBlock().addCommand(thisAccess);
 
-                Command countAccess = new Command(
-                        createTempVariable(INT_32),
-                        FIELD_ACCESS,
-                        List.of(thisAccess.getResult(), new IntValue(0))
-                );
-                function.getCurrentBlock().addCommand(countAccess);
+                for (int i = 0; i < structType.getTypes().size(); i++) {
+                    Command fieldAccess = new Command(
+                            createTempVariable(structType.getTypes().get(i).getType()),
+                            FIELD_ACCESS,
+                            List.of(thisAccess.getResult(), new IntValue(i))
+                    );
+                    function.getCurrentBlock().addCommand(fieldAccess);
 
-                Command zeroCount = new Command(
-                        countAccess.getResult(),
-                        STORE,
-                        List.of(new IntValue(0))
-                );
-                function.getCurrentBlock().addCommand(zeroCount);
-
-                Command typeHashAccess = new Command(
-                        createTempVariable(INT_32),
-                        FIELD_ACCESS,
-                        List.of(thisAccess.getResult(), new IntValue(1))
-                );
-                function.getCurrentBlock().addCommand(typeHashAccess);
-
-                Command typeHashWrite = new Command(
-                        typeHashAccess.getResult(),
-                        STORE,
-                        List.of(new IntValue(0))
-                );
-                function.getCurrentBlock().addCommand(typeHashWrite);
+                    if (structType.getTypes().get(i).getType() instanceof PointerType) {
+                        Command writeCommand = new Command(
+                                fieldAccess.getResult(),
+                                STORE,
+                                List.of(new NullValue(fieldAccess.getResult().getType()))
+                        );
+                        function.getCurrentBlock().addCommand(writeCommand);
+                    } else {
+                        Command writeCommand = new Command(
+                                fieldAccess.getResult(),
+                                STORE,
+                                List.of(fieldAccess.getResult().getType() == INT_8 ? new CharValue((char) 0) : new IntValue(0))
+                        );
+                        function.getCurrentBlock().addCommand(writeCommand);
+                    }
+                }
             }
 
             returnBlock = function.appendBlock("return");
@@ -981,6 +980,87 @@ public class Translator {
             Value value = translateExpression(function, node.getExpressionNode());
             BasicBlock current = function.getCurrentBlock();
             current.addCommand(new Command(variableValue, STORE, List.of(value)));
+
+            if (variableValue.getType() instanceof PointerType) {
+                PointerType pointerType = (PointerType) variableValue.getType();
+
+                BasicBlock last = function.getCurrentBlock();
+                BasicBlock ifCond = function.appendBlock("declaration_inc_count_if_cond");
+                createBranch(last, ifCond);
+
+                Command forDelete = new Command(
+                        createTempVariable(pointerType),
+                        LOAD,
+                        List.of(variableValue)
+                );
+                ifCond.addCommand(forDelete);
+
+                Command condition = new Command(
+                        createTempVariable(INT_1),
+                        NE,
+                        List.of(forDelete.getResult(), new NullValue(pointerType.getType()))
+                );
+
+                ifCond.addCommand(condition);
+
+                BasicBlock ifBody = function.appendBlock("declaration_inc_count_if_body");
+
+                Command load = new Command(
+                        createTempVariable(pointerType),
+                        LOAD,
+                        List.of(variableValue)
+                );
+                function.getCurrentBlock().addCommand(load);
+
+                Command counter = new Command(
+                        createTempVariable(INT_32),
+                        FIELD_ACCESS,
+                        List.of(load.getResult(), new IntValue(0)));
+                function.getCurrentBlock().addCommand(counter);
+
+                Command loadCount = new Command(
+                        createTempVariable(INT_32),
+                        LOAD,
+                        List.of(counter.getResult())
+                );
+                function.getCurrentBlock().addCommand(loadCount);
+
+                Command inc = new Command(
+                        createTempVariable(INT_32),
+                        ADD,
+                        List.of(loadCount.getResult(), new IntValue(1))
+                );
+                function.getCurrentBlock().addCommand(inc);
+
+                Command storeCounter = new Command(
+                        counter.getResult(),
+                        STORE,
+                        List.of(inc.getResult())
+                );
+                function.getCurrentBlock().addCommand(storeCounter);
+
+                BasicBlock ifMerge = function.appendBlock("declaration_inc_count_if_merge");
+                createBranch(ifBody, ifMerge);
+
+
+                createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+            }
+        } else {
+            if (variableValue.getType() instanceof PointerType) {
+                Command command = new Command(
+                        variableValue,
+                        STORE,
+                        List.of(new NullValue(variableValue.getType()))
+                );
+                function.getCurrentBlock().addCommand(command);
+            } else {
+                Command command = new Command(
+                        variableValue,
+                        STORE,
+                        List.of(variableValue.getType() == INT_8 ? new CharValue((char) 0) : new IntValue(0))
+                );
+                function.getCurrentBlock().addCommand(command);
+            }
         }
     }
 
@@ -1932,6 +2012,54 @@ public class Translator {
     }
 
     private Value translateAssigmentExpression(Function function, AssigmentExpressionNode expressionNode) {
+        Type mt = matchType(expressionNode.getResultType());
+        if (mt instanceof PointerType) {
+            PointerType pointerType = (PointerType) mt;
+
+            BasicBlock last = function.getCurrentBlock();
+            BasicBlock ifCond = function.appendBlock("assigment_destructor_if_cond");
+            createBranch(last, ifCond);
+
+            Value fieldAccess = translateLeftValue(function, expressionNode.getLeft());
+
+            Command load = new Command(
+                    createTempVariable(pointerType),
+                    LOAD,
+                    List.of(fieldAccess)
+            );
+            function.getCurrentBlock().addCommand(load);
+
+            Command condition = new Command(
+                    createTempVariable(INT_1),
+                    NE,
+                    List.of(load.getResult(), new NullValue(pointerType.getType()))
+            );
+
+            ifCond.addCommand(condition);
+
+            BasicBlock ifBody = function.appendBlock("assigment_destructor_if_body");
+
+            Command destructorCall = new Command(
+                    null,
+                    CALL,
+                    List.of(destructors.get(
+                            structToDestructors.get(
+                                    classes.entrySet().stream()
+                                            .filter(e -> e.getValue().equals(pointerType.getType()))
+                                            .map(Map.Entry::getKey)
+                                            .findFirst()
+                                            .get()
+                            )), load.getResult())
+            );
+            ifBody.addCommand(destructorCall);
+
+            BasicBlock ifMerge = function.appendBlock("assigment_destructor_if_merge");
+            createBranch(ifBody, ifMerge);
+
+
+            createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+        }
+
         Value left = translateLeftValue(function, expressionNode.getLeft());
         Value right = translateExpression(function, expressionNode.getRight());
 
@@ -1939,6 +2067,66 @@ public class Translator {
 
         BasicBlock current = function.getCurrentBlock();
         current.addCommand(command);
+
+        if (mt instanceof PointerType) {
+            PointerType pointerType = (PointerType) mt;
+
+            BasicBlock last = function.getCurrentBlock();
+            BasicBlock ifCond = function.appendBlock("assigment_inc_count_if_cond");
+            createBranch(last, ifCond);
+
+            Value fieldAccess = translateLeftValue(function, expressionNode.getLeft());
+
+            Command load = new Command(
+                    createTempVariable(pointerType),
+                    LOAD,
+                    List.of(fieldAccess)
+            );
+            function.getCurrentBlock().addCommand(load);
+
+            Command condition = new Command(
+                    createTempVariable(INT_1),
+                    NE,
+                    List.of(load.getResult(), new NullValue(pointerType.getType()))
+            );
+
+            ifCond.addCommand(condition);
+
+            BasicBlock ifBody = function.appendBlock("assigment_inc_count_if_body");
+
+            Command counter = new Command(
+                    createTempVariable(INT_32),
+                    FIELD_ACCESS,
+                    List.of(load.getResult(), new IntValue(0)));
+            function.getCurrentBlock().addCommand(counter);
+
+            Command loadCount = new Command(
+                    createTempVariable(INT_32),
+                    LOAD,
+                    List.of(counter.getResult())
+            );
+            function.getCurrentBlock().addCommand(loadCount);
+
+            Command inc = new Command(
+                    createTempVariable(INT_32),
+                    ADD,
+                    List.of(loadCount.getResult(), new IntValue(1))
+            );
+            function.getCurrentBlock().addCommand(inc);
+
+            Command storeCounter = new Command(
+                    counter.getResult(),
+                    STORE,
+                    List.of(inc.getResult())
+            );
+            function.getCurrentBlock().addCommand(storeCounter);
+
+            BasicBlock ifMerge = function.appendBlock("assigment_inc_count_if_merge");
+            createBranch(ifBody, ifMerge);
+
+
+            createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+        }
 
         return command.getResult();
     }
