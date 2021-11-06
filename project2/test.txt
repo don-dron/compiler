@@ -52,6 +52,10 @@
 (String s1, String s2) String concat ->
     int l1 = s1.getLength()
     int l2 = s2.getLength()
+
+    println(toString(l1))
+    println(toString(l2))
+
     char[] buff = new char[l1 + l2]
 
     char[] b1 = s1.getBytes()

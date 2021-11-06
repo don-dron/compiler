@@ -2,35 +2,18 @@ package lang.ir.translate;
 
 import lang.ast.*;
 import lang.ast.expression.*;
-import lang.ast.expression.binary.AdditiveExpressionNode;
-import lang.ast.expression.binary.AssigmentExpressionNode;
-import lang.ast.expression.binary.EqualityExpressionNode;
-import lang.ast.expression.binary.LogicalAndExpressionNode;
-import lang.ast.expression.binary.LogicalOrExpressionNode;
-import lang.ast.expression.binary.MultiplicativeExpressionNode;
-import lang.ast.expression.binary.RelationalExpressionNode;
+import lang.ast.expression.binary.*;
 import lang.ast.expression.consts.*;
-import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
-import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
-import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixDecrementSubtractionExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixIncrementAdditiveExpressionNode;
-import lang.ast.expression.unary.postfix.PostfixIncrementMultiplicativeExpressionNode;
+import lang.ast.expression.unary.postfix.*;
 import lang.ast.expression.unary.prefix.CastExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixDecrementSubtractionExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementAdditiveExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionNode;
 import lang.ast.statement.*;
-import lang.ir.*;
 import lang.ir.Module;
-import lang.lexer.Token;
-import org.checkerframework.common.returnsreceiver.qual.This;
+import lang.ir.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,6 +26,8 @@ public class Translator {
     private int THIS_COUNT = 0;
     private int RET_COUNT = 0;
     private int CONSTRUCTOR_COUNT = 0;
+    private int REF_COUNTER_COUNT = 0;
+    private int TYPE_COUNTER_COUNT = 0;
     private int TEMP_VARIABLE_COUNT = 0;
     private int ARRAY_SIZE_COUNT = 0;
 
@@ -160,6 +145,9 @@ public class Translator {
     private void translateClass(ClassStatementNode cl) {
         List<DeclarationStatementNode> fields = cl.getFields();
         List<VariableValue> values = new ArrayList<>();
+
+        values.add(new VariableValue("$$_counter_" + REF_COUNTER_COUNT++, INT_32));
+        values.add(new VariableValue("$$_type_" + TYPE_COUNTER_COUNT++, INT_32));
 
         for (DeclarationStatementNode field : fields) {
             VariableValue variableValue = new VariableValue(
@@ -765,7 +753,7 @@ public class Translator {
         Type type = matchType(expressionNode.getTypeNode());
         Value value = translateExpression(function, expressionNode.getExpressionNode());
 
-        if(value.getType().getSize() < type.getSize()) {
+        if (value.getType().getSize() < type.getSize()) {
             Command command = new Command(createTempVariable(type), SEXT, List.of(value));
             function.getCurrentBlock().addCommand(command);
             return command.getResult();
@@ -1428,7 +1416,7 @@ public class Translator {
         Command struct = new Command(
                 createTempVariable(new PointerType(INT_8)),
                 FIELD_ACCESS,
-                List.of(castCommand.getResult(), new IntValue(0)));
+                List.of(castCommand.getResult(), new IntValue(2)));
 
         BasicBlock current = function.getCurrentBlock();
         current.addCommand(struct);
@@ -1454,7 +1442,7 @@ public class Translator {
         Command structSize = new Command(
                 createTempVariable(INT_32),
                 FIELD_ACCESS,
-                List.of(castCommand.getResult(), new IntValue(1)));
+                List.of(castCommand.getResult(), new IntValue(3)));
 
         current = function.getCurrentBlock();
         current.addCommand(structSize);

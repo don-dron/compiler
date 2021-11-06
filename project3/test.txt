@@ -15,7 +15,6 @@ class String
 
 () int main ->
     String str1 = "Hello"
-    str1.bytes = null
 
     return 5
 
