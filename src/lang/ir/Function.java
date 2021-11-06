@@ -7,6 +7,7 @@ public class Function implements Value {
     private final List<BasicBlock> blocks;
     private final String name;
     private final boolean systemFunction;
+    private final List<VariableValue> destructors;
     private BasicBlock currentBlock;
     private BasicBlock returnBlock;
     private Value returnValue;
@@ -22,6 +23,7 @@ public class Function implements Value {
         this.name = name;
         this.systemFunction = systemFunction;
         blocks = new ArrayList<>();
+        destructors = new ArrayList<>();
     }
 
     public boolean isSystemFunction() {
@@ -95,5 +97,13 @@ public class Function implements Value {
 
     public VariableValue getThisValue() {
         return thisValue;
+    }
+
+    public void addDestructor(VariableValue expressionNode) {
+        this.destructors.add(0, expressionNode);
+    }
+
+    public List<VariableValue> getDestructors() {
+        return destructors;
     }
 }

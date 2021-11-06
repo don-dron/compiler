@@ -1,0 +1,25 @@
+
+class Coord
+    int c
+
+    (int c) ->
+        this.c = c
+
+class Point
+    Coord coord
+    int x
+    int y
+
+    (int x, int y) ->
+        this.coord = new Coord(4)
+
+        this.x = x + 3
+        this.y = y + 5
+
+
+() int main ->
+    Point p = new Point(1, 2)
+    int a = p.x + p.y + p.coord.c
+
+    return a
+

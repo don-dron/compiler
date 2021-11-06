@@ -1,496 +1,215 @@
 digraph G {
+	"header_15" [style=filled, shape=box, label="header_15:
+($7_c,i32) alloc 
+($7_c,i32) store (%0,i32)
+($$_ret_value_0,%struct.$0_Coord*) alloc 
+($$_this_value_2,%struct.$0_Coord*) alloc 
+(%1,i64*) <- struct_allocation i64*,12
+(%2,%struct.$0_Coord*) <- cast (%1,i64*)
+($$_this_value_2,%struct.$0_Coord*) store (%2,%struct.$0_Coord*)
+($$_ret_value_0,%struct.$0_Coord*) store (%2,%struct.$0_Coord*)
+(%3,%struct.$0_Coord*) load ($$_this_value_2,%struct.$0_Coord*)
+(%4,i32) <- field_access (%3,%struct.$0_Coord*),0
+(%4,i32) store 0
+(%5,i32) <- field_access (%3,%struct.$0_Coord*),1
+(%5,i32) store 0
+branch entry_17"];
+	"return_16" [style=filled, shape=box, label="return_16:
+(%6,%struct.$0_Coord*) load ($$_ret_value_0,%struct.$0_Coord*)
+return (%6,%struct.$0_Coord*)"];
+	"entry_17" [style=filled, shape=box, label="entry_17:
+(%7,%struct.$0_Coord*) load ($$_this_value_2,%struct.$0_Coord*)
+(%8,i32) <- field_access (%7,%struct.$0_Coord*),2
+(%9,i32) load ($7_c,i32)
+(%8,i32) store (%9,i32)
+branch end_function_destructor_18"];
+	"end_function_destructor_18" [style=filled, shape=box, label="end_function_destructor_18:
+
+branch return_16"];
+"header_15" -> "entry_17";
+"entry_17" -> "end_function_destructor_18";
+"end_function_destructor_18" -> "return_16";
+
+	"header_19" [style=filled, shape=box, label="header_19:
+($8_x,i32) alloc 
+($8_x,i32) store (%0,i32)
+($9_y,i32) alloc 
+($9_y,i32) store (%1,i32)
+($$_ret_value_1,%struct.$2_Point*) alloc 
+($$_this_value_3,%struct.$2_Point*) alloc 
+(%2,i64*) <- struct_allocation i64*,24
+(%3,%struct.$2_Point*) <- cast (%2,i64*)
+($$_this_value_3,%struct.$2_Point*) store (%3,%struct.$2_Point*)
+($$_ret_value_1,%struct.$2_Point*) store (%3,%struct.$2_Point*)
+(%4,%struct.$2_Point*) load ($$_this_value_3,%struct.$2_Point*)
+(%5,i32) <- field_access (%4,%struct.$2_Point*),0
+(%5,i32) store 0
+(%6,i32) <- field_access (%4,%struct.$2_Point*),1
+(%6,i32) store 0
+branch entry_21"];
+	"return_20" [style=filled, shape=box, label="return_20:
+(%7,%struct.$2_Point*) load ($$_ret_value_1,%struct.$2_Point*)
+return (%7,%struct.$2_Point*)"];
+	"entry_21" [style=filled, shape=box, label="entry_21:
+(%8,%struct.$2_Point*) load ($$_this_value_3,%struct.$2_Point*)
+(%9,%struct.$0_Coord*) <- field_access (%8,%struct.$2_Point*),2
+(%10,%struct.$0_Coord*) <- call $_constructor_0,4
+(%9,%struct.$0_Coord*) store (%10,%struct.$0_Coord*)
+(%11,%struct.$2_Point*) load ($$_this_value_3,%struct.$2_Point*)
+(%12,i32) <- field_access (%11,%struct.$2_Point*),3
+(%13,i32) load ($8_x,i32)
+(%14,i32) <- add (%13,i32),3
+(%12,i32) store (%14,i32)
+(%15,%struct.$2_Point*) load ($$_this_value_3,%struct.$2_Point*)
+(%16,i32) <- field_access (%15,%struct.$2_Point*),4
+(%17,i32) load ($9_y,i32)
+(%18,i32) <- add (%17,i32),5
+(%16,i32) store (%18,i32)
+branch end_function_destructor_22"];
+	"end_function_destructor_22" [style=filled, shape=box, label="end_function_destructor_22:
+
+branch return_20"];
+"header_19" -> "entry_21";
+"entry_21" -> "end_function_destructor_22";
+"end_function_destructor_22" -> "return_20";
+
+	"header_23" [style=filled, shape=box, label="header_23:
+($$_ret_value_2,i32) alloc 
+branch entry_25"];
+	"return_24" [style=filled, shape=box, label="return_24:
+(%0,i32) load ($$_ret_value_2,i32)
+return (%0,i32)"];
+	"entry_25" [style=filled, shape=box, label="entry_25:
+($10_p,%struct.$2_Point*) alloc 
+(%1,%struct.$2_Point*) <- call $_constructor_1,1,2
+($10_p,%struct.$2_Point*) store (%1,%struct.$2_Point*)
+($11_a,i32) alloc 
+(%2,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%3,i32) <- field_access (%2,%struct.$2_Point*),3
+(%4,i32) load (%3,i32)
+(%5,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%6,i32) <- field_access (%5,%struct.$2_Point*),4
+(%7,i32) load (%6,i32)
+(%8,i32) <- add (%4,i32),(%7,i32)
+(%9,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%10,%struct.$0_Coord*) <- field_access (%9,%struct.$2_Point*),2
+(%11,%struct.$0_Coord*) load (%10,%struct.$0_Coord*)
+(%12,i32) <- field_access (%11,%struct.$0_Coord*),2
+(%13,i32) load (%12,i32)
+(%14,i32) <- add (%8,i32),(%13,i32)
+($11_a,i32) store (%14,i32)
+branch local_return_26"];
+	"local_return_26" [style=filled, shape=box, label="local_return_26:
+(%15,i32) load ($11_a,i32)
+($$_ret_value_2,i32) store (%15,i32)
+branch end_function_destructor_28"];
+	"dummy_27" [style=filled, shape=box, label="dummy_27:
+
+branch end_function_destructor_28"];
+	"end_function_destructor_28" [style=filled, shape=box, label="end_function_destructor_28:
+
+branch end_function_destructor_if_cond_29"];
+	"end_function_destructor_if_cond_29" [style=filled, shape=box, label="end_function_destructor_if_cond_29:
+(%16,%struct.$2_Point*) load ($10_p,%struct.$2_Point*)
+(%17,i1) <- ne (%16,%struct.$2_Point*),null
+branch (%17,i1) end_function_destructor_if_body_30,end_function_destructor_if_merge_31"];
+	"end_function_destructor_if_body_30" [style=filled, shape=box, label="end_function_destructor_if_body_30:
+ <- call $_destructor_1,(%16,%struct.$2_Point*)
+branch end_function_destructor_if_merge_31"];
+	"end_function_destructor_if_merge_31" [style=filled, shape=box, label="end_function_destructor_if_merge_31:
+
+branch return_24"];
+"header_23" -> "entry_25";
+"entry_25" -> "local_return_26";
+"local_return_26" -> "end_function_destructor_28";
+"dummy_27" -> "end_function_destructor_28";
+"end_function_destructor_28" -> "end_function_destructor_if_cond_29";
+"end_function_destructor_if_cond_29" -> "end_function_destructor_if_body_30";
+"end_function_destructor_if_cond_29" -> "end_function_destructor_if_merge_31";
+"end_function_destructor_if_body_30" -> "end_function_destructor_if_merge_31";
+"end_function_destructor_if_merge_31" -> "return_24";
+
+
+
+
+
+
 	"header_0" [style=filled, shape=box, label="header_0:
-($12_arr,i32*) alloc 
-($12_arr,i32*) store (%0,i32*)
-($13_length,i32) alloc 
-($13_length,i32) store (%1,i32)
+($$_this_value_0,%struct.$0_Coord*) alloc 
+($$_this_value_0,%struct.$0_Coord*) store (%0,%struct.$0_Coord*)
 branch entry_2"];
 	"return_1" [style=filled, shape=box, label="return_1:
 
 return"];
 	"entry_2" [style=filled, shape=box, label="entry_2:
-($14_index,i32) alloc 
-($14_index,i32) store 0
-branch while_condition_3"];
-	"while_condition_3" [style=filled, shape=box, label="while_condition_3:
-(%2,i32) load ($14_index,i32)
-(%3,i32) load ($13_length,i32)
-(%4,i32) <- div (%3,i32),2
-(%5,i1) <- lt (%2,i32),(%4,i32)
-branch (%5,i1) while_body_5,merge_4"];
-	"merge_4" [style=filled, shape=box, label="merge_4:
+(%1,%struct.$0_Coord*) load ($$_this_value_0,%struct.$0_Coord*)
+(%2,i32) <- field_access (%1,%struct.$0_Coord*),0
+(%3,i32) load (%2,i32),0
+(%4,i32) <- sub (%3,i32),1
+(%2,i32) store (%4,i32)
+branch destructor_if_cond_3"];
+	"destructor_if_cond_3" [style=filled, shape=box, label="destructor_if_cond_3:
+(%5,i1) <- le (%4,i32),0
+branch (%5,i1) destructor_if_body_4,return_1"];
+	"destructor_if_body_4" [style=filled, shape=box, label="destructor_if_body_4:
 
-branch while_merge_6"];
-	"while_body_5" [style=filled, shape=box, label="while_body_5:
-($15_c,i32) alloc 
-(%6,i32*) load ($12_arr,i32*)
-(%7,i32) load ($14_index,i32)
-(%8,i32) <- array_access (%6,i32*),(%7,i32)
-(%9,i32) load (%8,i32)
-($15_c,i32) store (%9,i32)
-(%10,i32*) load ($12_arr,i32*)
-(%11,i32) load ($14_index,i32)
-(%12,i32) <- array_left_access (%10,i32*),(%11,i32)
-(%13,i32*) load ($12_arr,i32*)
-(%14,i32) load ($13_length,i32)
-(%15,i32) load ($14_index,i32)
-(%16,i32) <- sub (%14,i32),(%15,i32)
-(%17,i32) <- sub (%16,i32),1
-(%18,i32) <- array_access (%13,i32*),(%17,i32)
-(%19,i32) load (%18,i32)
-(%12,i32) store (%19,i32)
-(%20,i32*) load ($12_arr,i32*)
-(%21,i32) load ($13_length,i32)
-(%22,i32) load ($14_index,i32)
-(%23,i32) <- sub (%21,i32),(%22,i32)
-(%24,i32) <- sub (%23,i32),1
-(%25,i32) <- array_left_access (%20,i32*),(%24,i32)
-(%26,i32) load ($15_c,i32)
-(%25,i32) store (%26,i32)
-(%27,i32) load ($14_index,i32)
-(%28,i32) <- add (%27,i32),1
-($14_index,i32) store (%28,i32)
-branch while_condition_3"];
-	"while_merge_6" [style=filled, shape=box, label="while_merge_6:
-
+branch end_function_destructor_5"];
+	"end_function_destructor_5" [style=filled, shape=box, label="end_function_destructor_5:
+(%6,i32*) <- cast (%1,%struct.$0_Coord*)
+ <- struct free (%6,i32*)
 branch return_1"];
 "header_0" -> "entry_2";
-"entry_2" -> "while_condition_3";
-"while_condition_3" -> "while_body_5";
-"while_condition_3" -> "merge_4";
-"merge_4" -> "while_merge_6";
-"while_body_5" -> "while_condition_3";
+"entry_2" -> "destructor_if_cond_3";
+"destructor_if_cond_3" -> "destructor_if_body_4";
+"destructor_if_cond_3" -> "return_1";
+"destructor_if_body_4" -> "end_function_destructor_5";
+"end_function_destructor_5" -> "return_1";
 
-	"header_7" [style=filled, shape=box, label="header_7:
-($16_num,i32) alloc 
-($16_num,i32) store (%0,i32)
-branch entry_9"];
-	"return_8" [style=filled, shape=box, label="return_8:
-
-return"];
-	"entry_9" [style=filled, shape=box, label="entry_9:
-
-branch if_condition_10"];
-	"if_condition_10" [style=filled, shape=box, label="if_condition_10:
-(%1,i32) load ($16_num,i32)
-(%2,i1) <- eq (%1,i32),0
-branch (%2,i1) if_then_11,if_else_14"];
-	"if_then_11" [style=filled, shape=box, label="if_then_11:
-(%3,i32) <- call putchar,48
-branch local_return_12"];
-	"local_return_12" [style=filled, shape=box, label="local_return_12:
-
-branch return_8"];
-	"dummy_13" [style=filled, shape=box, label="dummy_13:
-
-branch merge_15"];
-	"if_else_14" [style=filled, shape=box, label="if_else_14:
-
-branch merge_15"];
-	"merge_15" [style=filled, shape=box, label="merge_15:
-($17_buffer,i32*) alloc 
-($array_0,i32*) alloc 
-($size_0,i32) alloc 
-($alloc_iterator_0,i32) alloc 
-($array_access_0,i32*) alloc 
-($alloc_iterator_0,i32) store 0
-($size_0,i32) store 16
-($alloc_iterator_0,i32) store 0
-(%4,i32) load ($size_0,i32)
-(%5,i32) <- mul 4,(%4,i32)
-(%6,i64*) <- array_allocation i64*,(%5,i32)
-(%7,i32*) <- cast (%6,i64*)
-($array_0,i32*) store (%7,i32*)
-($array_access_0,i32*) store (%7,i32*)
-branch alloc_condition_16"];
-	"alloc_condition_16" [style=filled, shape=box, label="alloc_condition_16:
-(%8,i32) load ($size_0,i32)
-(%9,i32) load ($alloc_iterator_0,i32)
-(%10,i1) <- lt (%9,i32),(%8,i32)
-branch (%10,i1) alloc_body_17,alloc_merge_18"];
-	"alloc_body_17" [style=filled, shape=box, label="alloc_body_17:
-(%11,i32*) load ($array_access_0,i32*)
-(%12,i32) load ($alloc_iterator_0,i32)
-(%13,i32) <- array_access (%11,i32*),(%12,i32)
-(%13,i32) store 0
-(%14,i32) load ($alloc_iterator_0,i32)
-(%15,i32) <- add (%14,i32),1
-($alloc_iterator_0,i32) store (%15,i32)
-branch alloc_condition_16"];
-	"alloc_merge_18" [style=filled, shape=box, label="alloc_merge_18:
-(%16,i32*) load ($array_0,i32*)
-($17_buffer,i32*) store (%16,i32*)
-($18_i,i32) alloc 
-($18_i,i32) store 0
-($19_cur,i32) alloc 
-(%17,i32) load ($16_num,i32)
-($19_cur,i32) store (%17,i32)
-branch while_condition_19"];
-	"while_condition_19" [style=filled, shape=box, label="while_condition_19:
-(%18,i32) load ($19_cur,i32)
-(%19,i1) <- ne (%18,i32),0
-branch (%19,i1) while_body_21,merge_20"];
-	"merge_20" [style=filled, shape=box, label="merge_20:
-
-branch while_merge_22"];
-	"while_body_21" [style=filled, shape=box, label="while_body_21:
-(%20,i32*) load ($17_buffer,i32*)
-(%21,i32) load ($18_i,i32)
-(%22,i32) <- array_left_access (%20,i32*),(%21,i32)
-(%23,i32) load ($19_cur,i32)
-(%24,i32) <- mod (%23,i32),10
-(%25,i32) <- add (%24,i32),48
-(%22,i32) store (%25,i32)
-(%26,i32) load ($19_cur,i32)
-(%27,i32) <- div (%26,i32),10
-($19_cur,i32) store (%27,i32)
-(%28,i32) load ($18_i,i32)
-(%29,i32) <- add (%28,i32),1
-($18_i,i32) store (%29,i32)
-branch while_condition_19"];
-	"while_merge_22" [style=filled, shape=box, label="while_merge_22:
-(%30,i32*) load ($17_buffer,i32*)
-(%31,i32) load ($18_i,i32)
- <- call $10_reverseArray,(%30,i32*),(%31,i32)
-($20_j,i32) alloc 
-($20_j,i32) store 0
-branch while_condition_23"];
-	"while_condition_23" [style=filled, shape=box, label="while_condition_23:
-(%32,i32) load ($20_j,i32)
-(%33,i32) load ($18_i,i32)
-(%34,i1) <- lt (%32,i32),(%33,i32)
-branch (%34,i1) while_body_25,merge_24"];
-	"merge_24" [style=filled, shape=box, label="merge_24:
-
-branch while_merge_26"];
-	"while_body_25" [style=filled, shape=box, label="while_body_25:
-(%35,i32*) load ($17_buffer,i32*)
-(%36,i32) load ($20_j,i32)
-(%37,i32) <- array_access (%35,i32*),(%36,i32)
-(%38,i32) load (%37,i32)
-(%39,i32) <- call putchar,(%38,i32)
-(%40,i32) load ($20_j,i32)
-(%41,i32) <- add (%40,i32),1
-($20_j,i32) store (%41,i32)
-branch while_condition_23"];
-	"while_merge_26" [style=filled, shape=box, label="while_merge_26:
-
-branch return_8"];
-"header_7" -> "entry_9";
-"entry_9" -> "if_condition_10";
-"if_condition_10" -> "if_then_11";
-"if_condition_10" -> "if_else_14";
-"if_then_11" -> "local_return_12";
-"local_return_12" -> "return_8";
-"dummy_13" -> "merge_15";
-"if_else_14" -> "merge_15";
-"merge_15" -> "alloc_condition_16";
-"alloc_condition_16" -> "alloc_body_17";
-"alloc_condition_16" -> "alloc_merge_18";
-"alloc_body_17" -> "alloc_condition_16";
-"alloc_merge_18" -> "while_condition_19";
-"while_condition_19" -> "while_body_21";
-"while_condition_19" -> "merge_20";
-"merge_20" -> "while_merge_22";
-"while_body_21" -> "while_condition_19";
-"while_merge_22" -> "while_condition_23";
-"while_condition_23" -> "while_body_25";
-"while_condition_23" -> "merge_24";
-"merge_24" -> "while_merge_26";
-"while_body_25" -> "while_condition_23";
-
-	"header_27" [style=filled, shape=box, label="header_27:
-($$_ret_value_0,i32) alloc 
-branch entry_29"];
-	"return_28" [style=filled, shape=box, label="return_28:
-(%0,i32) load ($$_ret_value_0,i32)
-return (%0,i32)"];
-	"entry_29" [style=filled, shape=box, label="entry_29:
-($26_i1,i32) alloc 
-($26_i1,i32) store 0
-($27_i2,i32) alloc 
-($27_i2,i32) store 0
-($28_size1,i32) alloc 
-($28_size1,i32) store 4
-($29_size2,i32) alloc 
-($29_size2,i32) store 4
-($30_array,%struct.$0_Point***) alloc 
-($array_1,%struct.$0_Point***) alloc 
-($size_1,i32) alloc 
-($alloc_iterator_1,i32) alloc 
-($array_access_1,%struct.$0_Point***) alloc 
-($alloc_iterator_1,i32) store 0
-(%1,i32) load ($28_size1,i32)
-($size_1,i32) store (%1,i32)
-($size_2,i32) alloc 
-($alloc_iterator_2,i32) alloc 
-($array_access_2,%struct.$0_Point**) alloc 
-($alloc_iterator_2,i32) store 0
-(%2,i32) load ($29_size2,i32)
-($size_2,i32) store (%2,i32)
-($alloc_iterator_1,i32) store 0
-(%3,i32) load ($size_1,i32)
-(%4,i32) <- mul 8,(%3,i32)
-(%5,i64*) <- array_allocation i64*,(%4,i32)
-(%6,%struct.$0_Point***) <- cast (%5,i64*)
-($array_1,%struct.$0_Point***) store (%6,%struct.$0_Point***)
-($array_access_1,%struct.$0_Point***) store (%6,%struct.$0_Point***)
-branch alloc_condition_30"];
-	"alloc_condition_30" [style=filled, shape=box, label="alloc_condition_30:
-(%7,i32) load ($size_1,i32)
-(%8,i32) load ($alloc_iterator_1,i32)
-(%9,i1) <- lt (%8,i32),(%7,i32)
-branch (%9,i1) alloc_body_31,alloc_merge_35"];
-	"alloc_body_31" [style=filled, shape=box, label="alloc_body_31:
-(%10,%struct.$0_Point***) load ($array_access_1,%struct.$0_Point***)
-(%11,i32) load ($alloc_iterator_1,i32)
-(%12,%struct.$0_Point**) <- array_access (%10,%struct.$0_Point***),(%11,i32)
-($alloc_iterator_2,i32) store 0
-(%13,i32) load ($size_2,i32)
-(%14,i32) <- mul 8,(%13,i32)
-(%15,i64*) <- array_allocation i64*,(%14,i32)
-(%16,%struct.$0_Point**) <- cast (%15,i64*)
-(%12,%struct.$0_Point**) store (%16,%struct.$0_Point**)
-($array_access_2,%struct.$0_Point**) store (%16,%struct.$0_Point**)
-branch alloc_condition_32"];
-	"alloc_condition_32" [style=filled, shape=box, label="alloc_condition_32:
-(%17,i32) load ($size_2,i32)
-(%18,i32) load ($alloc_iterator_2,i32)
-(%19,i1) <- lt (%18,i32),(%17,i32)
-branch (%19,i1) alloc_body_33,alloc_merge_34"];
-	"alloc_body_33" [style=filled, shape=box, label="alloc_body_33:
-(%20,%struct.$0_Point**) load ($array_access_2,%struct.$0_Point**)
-(%21,i32) load ($alloc_iterator_2,i32)
-(%22,%struct.$0_Point*) <- array_access (%20,%struct.$0_Point**),(%21,i32)
-(%22,%struct.$0_Point*) store null
-(%23,i32) load ($alloc_iterator_2,i32)
-(%24,i32) <- add (%23,i32),1
-($alloc_iterator_2,i32) store (%24,i32)
-branch alloc_condition_32"];
-	"alloc_merge_34" [style=filled, shape=box, label="alloc_merge_34:
-(%25,i32) load ($alloc_iterator_1,i32)
-(%26,i32) <- add (%25,i32),1
-($alloc_iterator_1,i32) store (%26,i32)
-branch alloc_condition_30"];
-	"alloc_merge_35" [style=filled, shape=box, label="alloc_merge_35:
-(%27,%struct.$0_Point***) load ($array_1,%struct.$0_Point***)
-($30_array,%struct.$0_Point***) store (%27,%struct.$0_Point***)
-branch while_condition_36"];
-	"while_condition_36" [style=filled, shape=box, label="while_condition_36:
-(%28,i32) load ($26_i1,i32)
-(%29,i32) load ($28_size1,i32)
-(%30,i1) <- lt (%28,i32),(%29,i32)
-branch (%30,i1) while_body_38,merge_37"];
-	"merge_37" [style=filled, shape=box, label="merge_37:
-
-branch while_merge_43"];
-	"while_body_38" [style=filled, shape=box, label="while_body_38:
-($27_i2,i32) store 0
-branch while_condition_39"];
-	"while_condition_39" [style=filled, shape=box, label="while_condition_39:
-(%31,i32) load ($27_i2,i32)
-(%32,i32) load ($29_size2,i32)
-(%33,i1) <- lt (%31,i32),(%32,i32)
-branch (%33,i1) while_body_41,merge_40"];
-	"merge_40" [style=filled, shape=box, label="merge_40:
-
-branch while_merge_42"];
-	"while_body_41" [style=filled, shape=box, label="while_body_41:
-(%34,%struct.$0_Point***) load ($30_array,%struct.$0_Point***)
-(%35,i32) load ($26_i1,i32)
-(%36,%struct.$0_Point**) <- array_access (%34,%struct.$0_Point***),(%35,i32)
-(%37,%struct.$0_Point**) load (%36,%struct.$0_Point**)
-(%38,i32) load ($27_i2,i32)
-(%39,%struct.$0_Point*) <- array_left_access (%37,%struct.$0_Point**),(%38,i32)
-(%40,i32) load ($26_i1,i32)
-(%41,i32) load ($27_i2,i32)
-(%42,%struct.$0_Point*) <- call $_constructor_0,(%40,i32),(%41,i32)
-(%39,%struct.$0_Point*) store (%42,%struct.$0_Point*)
-(%43,%struct.$0_Point***) load ($30_array,%struct.$0_Point***)
-(%44,i32) load ($26_i1,i32)
-(%45,%struct.$0_Point**) <- array_access (%43,%struct.$0_Point***),(%44,i32)
-(%46,%struct.$0_Point**) load (%45,%struct.$0_Point**)
-(%47,i32) load ($27_i2,i32)
-(%48,%struct.$0_Point*) <- array_access (%46,%struct.$0_Point**),(%47,i32)
-(%49,%struct.$0_Point*) load (%48,%struct.$0_Point*)
-(%50,i32) <- field_access (%49,%struct.$0_Point*),2
-(%51,i32) load (%50,i32)
- <- call $9_printNumber,(%51,i32)
-(%52,i32) <- call putchar,32
-(%53,%struct.$0_Point***) load ($30_array,%struct.$0_Point***)
-(%54,i32) load ($26_i1,i32)
-(%55,%struct.$0_Point**) <- array_access (%53,%struct.$0_Point***),(%54,i32)
-(%56,%struct.$0_Point**) load (%55,%struct.$0_Point**)
-(%57,i32) load ($27_i2,i32)
-(%58,%struct.$0_Point*) <- array_access (%56,%struct.$0_Point**),(%57,i32)
-(%59,%struct.$0_Point*) load (%58,%struct.$0_Point*)
-(%60,i32) <- field_access (%59,%struct.$0_Point*),3
-(%61,i32) load (%60,i32)
- <- call $9_printNumber,(%61,i32)
-(%62,i32) <- call putchar,10
-(%63,i32) load ($27_i2,i32)
-(%64,i32) <- add (%63,i32),1
-($27_i2,i32) store (%64,i32)
-branch while_condition_39"];
-	"while_merge_42" [style=filled, shape=box, label="while_merge_42:
-(%65,i32) load ($26_i1,i32)
-(%66,i32) <- add (%65,i32),1
-($26_i1,i32) store (%66,i32)
-branch while_condition_36"];
-	"while_merge_43" [style=filled, shape=box, label="while_merge_43:
-
-branch local_return_44"];
-	"local_return_44" [style=filled, shape=box, label="local_return_44:
-(%67,%struct.$0_Point***) load ($30_array,%struct.$0_Point***)
-(%68,%struct.$0_Point**) <- array_access (%67,%struct.$0_Point***),2
-(%69,%struct.$0_Point**) load (%68,%struct.$0_Point**)
-(%70,%struct.$0_Point*) <- array_access (%69,%struct.$0_Point**),2
-(%71,%struct.$0_Point*) load (%70,%struct.$0_Point*)
-(%72,%struct.$0_Point***) load ($30_array,%struct.$0_Point***)
-(%73,i32) load ($28_size1,i32)
-(%74,i32) <- sub (%73,i32),1
-(%75,%struct.$0_Point**) <- array_access (%72,%struct.$0_Point***),(%74,i32)
-(%76,%struct.$0_Point**) load (%75,%struct.$0_Point**)
-(%77,i32) load ($29_size2,i32)
-(%78,i32) <- sub (%77,i32),1
-(%79,%struct.$0_Point*) <- array_access (%76,%struct.$0_Point**),(%78,i32)
-(%80,%struct.$0_Point*) load (%79,%struct.$0_Point*)
-(%81,i32) <- call $7_scalar,(%71,%struct.$0_Point*),(%80,%struct.$0_Point*)
-($$_ret_value_0,i32) store (%81,i32)
-branch return_28"];
-	"dummy_45" [style=filled, shape=box, label="dummy_45:
-
-branch return_28"];
-"header_27" -> "entry_29";
-"entry_29" -> "alloc_condition_30";
-"alloc_condition_30" -> "alloc_body_31";
-"alloc_condition_30" -> "alloc_merge_35";
-"alloc_body_31" -> "alloc_condition_32";
-"alloc_condition_32" -> "alloc_body_33";
-"alloc_condition_32" -> "alloc_merge_34";
-"alloc_body_33" -> "alloc_condition_32";
-"alloc_merge_34" -> "alloc_condition_30";
-"alloc_merge_35" -> "while_condition_36";
-"while_condition_36" -> "while_body_38";
-"while_condition_36" -> "merge_37";
-"merge_37" -> "while_merge_43";
-"while_body_38" -> "while_condition_39";
-"while_condition_39" -> "while_body_41";
-"while_condition_39" -> "merge_40";
-"merge_40" -> "while_merge_42";
-"while_body_41" -> "while_condition_39";
-"while_merge_42" -> "while_condition_36";
-"while_merge_43" -> "local_return_44";
-"local_return_44" -> "return_28";
-
-	"header_46" [style=filled, shape=box, label="header_46:
-($21_p1,%struct.$0_Point*) alloc 
-($21_p1,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-($22_p2,%struct.$0_Point*) alloc 
-($22_p2,%struct.$0_Point*) store (%1,%struct.$0_Point*)
-($$_ret_value_1,i32) alloc 
-branch entry_48"];
-	"return_47" [style=filled, shape=box, label="return_47:
-(%2,i32) load ($$_ret_value_1,i32)
-return (%2,i32)"];
-	"entry_48" [style=filled, shape=box, label="entry_48:
-
-branch local_return_49"];
-	"local_return_49" [style=filled, shape=box, label="local_return_49:
-(%3,%struct.$0_Point*) load ($21_p1,%struct.$0_Point*)
-(%4,i32) <- field_access (%3,%struct.$0_Point*),2
-(%5,i32) load (%4,i32)
-(%6,%struct.$0_Point*) load ($22_p2,%struct.$0_Point*)
-(%7,i32) <- field_access (%6,%struct.$0_Point*),2
-(%8,i32) load (%7,i32)
-(%9,i32) <- mul (%5,i32),(%8,i32)
-(%10,%struct.$0_Point*) load ($21_p1,%struct.$0_Point*)
-(%11,i32) <- field_access (%10,%struct.$0_Point*),3
-(%12,i32) load (%11,i32)
-(%13,%struct.$0_Point*) load ($22_p2,%struct.$0_Point*)
-(%14,i32) <- field_access (%13,%struct.$0_Point*),3
-(%15,i32) load (%14,i32)
-(%16,i32) <- mul (%12,i32),(%15,i32)
-(%17,i32) <- add (%9,i32),(%16,i32)
-($$_ret_value_1,i32) store (%17,i32)
-branch return_47"];
-	"dummy_50" [style=filled, shape=box, label="dummy_50:
-
-branch return_47"];
-"header_46" -> "entry_48";
-"entry_48" -> "local_return_49";
-"local_return_49" -> "return_47";
-
-	"header_51" [style=filled, shape=box, label="header_51:
-($23_x,i32) alloc 
-($23_x,i32) store (%0,i32)
-($24_y,i32) alloc 
-($24_y,i32) store (%1,i32)
-($$_ret_value_2,%struct.$0_Point*) alloc 
-($$_this_value_0,%struct.$0_Point*) alloc 
-(%2,i64*) <- struct_allocation i64*,16
-(%3,%struct.$0_Point*) <- cast (%2,i64*)
-($$_this_value_0,%struct.$0_Point*) store (%3,%struct.$0_Point*)
-($$_ret_value_2,%struct.$0_Point*) store (%3,%struct.$0_Point*)
-branch entry_53"];
-	"return_52" [style=filled, shape=box, label="return_52:
-(%4,%struct.$0_Point*) load ($$_ret_value_2,%struct.$0_Point*)
-return (%4,%struct.$0_Point*)"];
-	"entry_53" [style=filled, shape=box, label="entry_53:
-(%5,%struct.$0_Point*) load ($$_this_value_0,%struct.$0_Point*)
-(%6,i32) <- field_access (%5,%struct.$0_Point*),2
-(%7,i32) load ($23_x,i32)
-(%6,i32) store (%7,i32)
-(%8,%struct.$0_Point*) load ($$_this_value_0,%struct.$0_Point*)
-(%9,i32) <- field_access (%8,%struct.$0_Point*),3
-(%10,i32) load ($24_y,i32)
-(%9,i32) store (%10,i32)
-branch return_52"];
-"header_51" -> "entry_53";
-
-	"header_54" [style=filled, shape=box, label="header_54:
-($$_this_value_1,%struct.$0_Point*) alloc 
-($$_this_value_1,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-($$_ret_value_3,i32) alloc 
-branch entry_56"];
-	"return_55" [style=filled, shape=box, label="return_55:
-(%1,i32) load ($$_ret_value_3,i32)
-return (%1,i32)"];
-	"entry_56" [style=filled, shape=box, label="entry_56:
-
-branch local_return_57"];
-	"local_return_57" [style=filled, shape=box, label="local_return_57:
-(%2,%struct.$0_Point*) load ($$_this_value_1,%struct.$0_Point*)
-(%3,i32) <- field_access (%2,%struct.$0_Point*),2
-(%4,i32) load (%3,i32)
-($$_ret_value_3,i32) store (%4,i32)
-branch return_55"];
-	"dummy_58" [style=filled, shape=box, label="dummy_58:
-
-branch return_55"];
-"header_54" -> "entry_56";
-"entry_56" -> "local_return_57";
-"local_return_57" -> "return_55";
-
-	"header_59" [style=filled, shape=box, label="header_59:
-($$_this_value_2,%struct.$0_Point*) alloc 
-($$_this_value_2,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-($25_x,i32) alloc 
-($25_x,i32) store (%1,i32)
-branch entry_61"];
-	"return_60" [style=filled, shape=box, label="return_60:
+	"header_6" [style=filled, shape=box, label="header_6:
+($$_this_value_1,%struct.$2_Point*) alloc 
+($$_this_value_1,%struct.$2_Point*) store (%0,%struct.$2_Point*)
+branch entry_8"];
+	"return_7" [style=filled, shape=box, label="return_7:
 
 return"];
-	"entry_61" [style=filled, shape=box, label="entry_61:
-(%2,%struct.$0_Point*) load ($$_this_value_2,%struct.$0_Point*)
-(%3,i32) <- field_access (%2,%struct.$0_Point*),2
-(%4,i32) load ($25_x,i32)
-(%3,i32) store (%4,i32)
-branch return_60"];
-"header_59" -> "entry_61";
+	"entry_8" [style=filled, shape=box, label="entry_8:
+(%1,%struct.$2_Point*) load ($$_this_value_1,%struct.$2_Point*)
+(%2,i32) <- field_access (%1,%struct.$2_Point*),0
+(%3,i32) load (%2,i32),0
+(%4,i32) <- sub (%3,i32),1
+(%2,i32) store (%4,i32)
+branch destructor_if_cond_9"];
+	"destructor_if_cond_9" [style=filled, shape=box, label="destructor_if_cond_9:
+(%5,i1) <- le (%4,i32),0
+branch (%5,i1) destructor_if_body_10,return_7"];
+	"destructor_if_body_10" [style=filled, shape=box, label="destructor_if_body_10:
 
+branch end_function_destructor_11"];
+	"end_function_destructor_11" [style=filled, shape=box, label="end_function_destructor_11:
 
-
-
+branch end_function_destructor_if_cond_12"];
+	"end_function_destructor_if_cond_12" [style=filled, shape=box, label="end_function_destructor_if_cond_12:
+(%6,%struct.$2_Point*) load ($$_this_value_1,%struct.$2_Point*)
+(%7,%struct.$0_Coord*) <- field_access (%6,%struct.$2_Point*),2
+(%8,%struct.$0_Coord*) load (%7,%struct.$0_Coord*)
+(%9,i1) <- ne (%8,%struct.$0_Coord*),null
+branch (%9,i1) end_function_destructor_if_body_13,end_function_destructor_if_merge_14"];
+	"end_function_destructor_if_body_13" [style=filled, shape=box, label="end_function_destructor_if_body_13:
+ <- call $_destructor_0,(%8,%struct.$0_Coord*)
+branch end_function_destructor_if_merge_14"];
+	"end_function_destructor_if_merge_14" [style=filled, shape=box, label="end_function_destructor_if_merge_14:
+(%10,i32*) <- cast (%1,%struct.$2_Point*)
+ <- struct free (%10,i32*)
+branch return_7"];
+"header_6" -> "entry_8";
+"entry_8" -> "destructor_if_cond_9";
+"destructor_if_cond_9" -> "destructor_if_body_10";
+"destructor_if_cond_9" -> "return_7";
+"destructor_if_body_10" -> "end_function_destructor_11";
+"end_function_destructor_11" -> "end_function_destructor_if_cond_12";
+"end_function_destructor_if_cond_12" -> "end_function_destructor_if_body_13";
+"end_function_destructor_if_cond_12" -> "end_function_destructor_if_merge_14";
+"end_function_destructor_if_body_13" -> "end_function_destructor_if_merge_14";
+"end_function_destructor_if_merge_14" -> "return_7";
 
 }

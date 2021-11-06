@@ -31,6 +31,9 @@ public class StructType extends Type {
 
     @Override
     public int getSize() {
-        return values.stream().map(v -> v.getType().getSize()).reduce(Integer::sum).orElseThrow();
+        return values.stream()
+                .map(v -> v.getType().getSize())
+                .reduce(Integer::sum)
+                .orElseThrow();
     }
 }
