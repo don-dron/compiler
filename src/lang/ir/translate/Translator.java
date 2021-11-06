@@ -321,34 +321,7 @@ public class Translator {
                 );
                 deleteFieldIfCond.addCommand(forDelete);
 
-                Command deleteFieldCondition = new Command(
-                        createTempVariable(INT_1),
-                        NE,
-                        List.of(forDelete.getResult(), new NullValue(allocated.getType()))
-                );
-                deleteFieldIfCond.addCommand(deleteFieldCondition);
-
-                BasicBlock deleteFieldIfBody = function.appendBlock("end_function_destructor_if_body");
-
-                Command destructorCall = new Command(
-                        null,
-                        CALL,
-                        List.of(destructors.get(
-                                structToDestructors.get(
-                                        classes.entrySet().stream()
-                                                .filter(e -> e.getValue().equals(pointerType.getType()))
-                                                .map(Map.Entry::getKey)
-                                                .findFirst()
-                                                .get()
-                                )), forDelete.getResult())
-                );
-                deleteFieldIfBody.addCommand(destructorCall);
-
-                BasicBlock ifMerge = function.appendBlock("end_function_destructor_if_merge");
-                createBranch(deleteFieldIfBody, ifMerge);
-
-
-                createConditionalBranch(deleteFieldIfCond, deleteFieldCondition.getResult(), deleteFieldIfBody, ifMerge);
+                addDestructorCall(function, (PointerType) forDelete.getResult().getType(), forDelete.getResult());
             }
         }
 
@@ -588,48 +561,15 @@ public class Translator {
 
         for (VariableValue allocated : function.getDestructors()) {
             if (allocated.getType() instanceof PointerType) {
-                PointerType pointerType = (PointerType) allocated.getType();
-
-                BasicBlock last = function.getCurrentBlock();
-                BasicBlock ifCond = function.appendBlock("end_function_destructor_if_cond");
-                createBranch(last, ifCond);
 
                 Command forDelete = new Command(
                         createTempVariable(allocated.getType()),
                         LOAD,
                         List.of(allocated)
                 );
-                ifCond.addCommand(forDelete);
+                function.getCurrentBlock().addCommand(forDelete);
 
-                Command condition = new Command(
-                        createTempVariable(INT_1),
-                        NE,
-                        List.of(forDelete.getResult(), new NullValue(allocated.getType()))
-                );
-
-                ifCond.addCommand(condition);
-
-                BasicBlock ifBody = function.appendBlock("end_function_destructor_if_body");
-
-                Command destructorCall = new Command(
-                        null,
-                        CALL,
-                        List.of(destructors.get(
-                                structToDestructors.get(
-                                        classes.entrySet().stream()
-                                                .filter(e -> e.getValue().equals(pointerType.getType()))
-                                                .map(Map.Entry::getKey)
-                                                .findFirst()
-                                                .get()
-                                )), forDelete.getResult())
-                );
-                ifBody.addCommand(destructorCall);
-
-                BasicBlock ifMerge = function.appendBlock("end_function_destructor_if_merge");
-                createBranch(ifBody, ifMerge);
-
-
-                createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+                addDestructorCall(function, (PointerType) forDelete.getResult().getType(), forDelete.getResult());
             }
         }
 
@@ -960,6 +900,41 @@ public class Translator {
         createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
     }
 
+    private void addDestructorCall(Function function, PointerType pointerType, Value value) {
+        BasicBlock last = function.getCurrentBlock();
+        BasicBlock ifCond = function.appendBlock("delete_left_if_cond");
+        createBranch(last, ifCond);
+
+        Command condition = new Command(
+                createTempVariable(INT_1),
+                NE,
+                List.of(value, new NullValue(pointerType.getType()))
+        );
+
+        ifCond.addCommand(condition);
+
+        BasicBlock ifBody = function.appendBlock("delete_left_if_body");
+
+        Command destructorCall = new Command(
+                null,
+                CALL,
+                List.of(destructors.get(
+                        structToDestructors.get(
+                                classes.entrySet().stream()
+                                        .filter(e -> e.getValue().equals(pointerType.getType()))
+                                        .map(Map.Entry::getKey)
+                                        .findFirst()
+                                        .get()
+                        )), value)
+        );
+        ifBody.addCommand(destructorCall);
+
+        BasicBlock ifMerge = function.appendBlock("delete_left_if_merge");
+        createBranch(ifBody, ifMerge);
+
+        createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+    }
+
     private void translateExpressionStatement(Function function, ExpressionStatementNode node) {
         if (node.getExpressionNode() instanceof FunctionCallExpressionNode) {
             FunctionCallExpressionNode expressionNode = (FunctionCallExpressionNode) node.getExpressionNode();
@@ -992,6 +967,10 @@ public class Translator {
                             Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
                     BasicBlock current = function.getCurrentBlock();
                     current.addCommand(command);
+
+                    if (command.getResult() != null && command.getResult().getType() instanceof PointerType) {
+                        addDestructorCall(function, (PointerType) command.getResult().getType(), command.getResult());
+                    }
                 } else {
                     Command command = new Command(null, CALL,
                             Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
@@ -1020,6 +999,10 @@ public class Translator {
                             Stream.concat(Stream.of(functionValue), values.stream()).collect(Collectors.toList()));
                     BasicBlock current = function.getCurrentBlock();
                     current.addCommand(command);
+
+                    if (command.getResult() != null && command.getResult().getType() instanceof PointerType) {
+                        addDestructorCall(function, (PointerType) command.getResult().getType(), command.getResult());
+                    }
                 } else {
                     Command command = new Command(
                             functionValue.getType() == null || functionValue.getType().equals(VOID)
@@ -1181,12 +1164,16 @@ public class Translator {
         if (node.getExpressionNode() != null) {
             Value value = translateExpression(function, node.getExpressionNode());
 
+            if (value.getType() instanceof PointerType) {
+//                translateObjectIncCount(function, value, (PointerType) value.getType());
+            }
+
             Command storeReturn = new Command(
                     function.getReturnValue(),
                     STORE,
                     List.of(value)
             );
-            returnBlock.addCommand(storeReturn);
+            function.getCurrentBlock().addCommand(storeReturn);
         }
 
         createBranch(function.getCurrentBlock(), function.getReturnBlock());
@@ -2125,40 +2112,7 @@ public class Translator {
         current.addCommand(command);
 
         if (mt instanceof PointerType) {
-            PointerType pointerType = (PointerType) mt;
-
-            BasicBlock last = function.getCurrentBlock();
-            BasicBlock ifCond = function.appendBlock("delete_left_if_cond");
-            createBranch(last, ifCond);
-
-            Command condition = new Command(
-                    createTempVariable(INT_1),
-                    NE,
-                    List.of(saveLeft, new NullValue(pointerType.getType()))
-            );
-
-            ifCond.addCommand(condition);
-
-            BasicBlock ifBody = function.appendBlock("delete_left_if_body");
-
-            Command destructorCall = new Command(
-                    null,
-                    CALL,
-                    List.of(destructors.get(
-                            structToDestructors.get(
-                                    classes.entrySet().stream()
-                                            .filter(e -> e.getValue().equals(pointerType.getType()))
-                                            .map(Map.Entry::getKey)
-                                            .findFirst()
-                                            .get()
-                            )), saveLeft)
-            );
-            ifBody.addCommand(destructorCall);
-
-            BasicBlock ifMerge = function.appendBlock("delete_left_if_merge");
-            createBranch(ifBody, ifMerge);
-
-            createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+            addDestructorCall(function, (PointerType) saveLeft.getType(), saveLeft);
         }
 
         if (mt instanceof PointerType) {

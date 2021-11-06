@@ -14,9 +14,19 @@ class Point
     return new Point(p.x + 1, p.y +1 )
 
 (Point p) Point incrementPoint1 ->
-    if p == null
-        return new Point(3, 2)
-    return new Point(p.x + 1, p.y +1 )
+    Point c = null
+
+    Point a = null
+    Point b = null
+    Point k = null
+
+    c = new Point(p.x + 1, p.y +1 )
+    a = b
+    b = c
+    k = c
+    a = c
+
+    return c
 
 () int main ->
     Point p = new Point(1, 2)
@@ -36,13 +46,16 @@ class Point
         p = null
         c = null
 
-        c = incrementPoint1(new Point(i-10,i-20))
+        c = incrementPoint1(new Point(i-10,i-8))
 
         incrementPoint1(c)
 
         c = incrementPoint(c)
 
         incrementPoint(c)
+
+        p = c
+        p = incrementPoint(p)
 
         p = c
         i++
