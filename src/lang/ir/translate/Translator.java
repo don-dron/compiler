@@ -750,7 +750,8 @@ public class Translator {
                         .map(exp -> {
                             Value v = translateExpression(function, exp);
 
-                            if (v.getType() instanceof PointerType) {
+                            if (v.getType() instanceof PointerType
+                                    && (((PointerType) v.getType()).getType() instanceof StructType)) {
                                 translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                             }
                             return v;
@@ -961,7 +962,7 @@ public class Translator {
             Command inc = new Command(
                     createTempVariable(INT_32),
                     ADD,
-                    List.of(oneLoadCount.getResult(), new IntValue(reverse ? 2  : 1))
+                    List.of(oneLoadCount.getResult(), new IntValue(reverse ? 2 : 1))
             );
             function.getCurrentBlock().addCommand(inc);
 
@@ -1015,6 +1016,16 @@ public class Translator {
 
 
     private void addDestructorCall(Function function, PointerType pointerType, Value value) {
+        String nameDestructor = classes.entrySet().stream()
+                .filter(e -> e.getValue().equals(pointerType.getType()))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+
+        if (nameDestructor == null) {
+            return;
+        }
+
         BasicBlock last = function.getCurrentBlock();
         BasicBlock ifCond = function.appendBlock("delete_left_if_cond");
         createBranch(last, ifCond);
@@ -1034,11 +1045,7 @@ public class Translator {
                 CALL,
                 List.of(destructors.get(
                         structToDestructors.get(
-                                classes.entrySet().stream()
-                                        .filter(e -> e.getValue().equals(pointerType.getType()))
-                                        .map(Map.Entry::getKey)
-                                        .findFirst()
-                                        .get()
+                                nameDestructor
                         )), value)
         );
         ifBody.addCommand(destructorCall);
@@ -1068,7 +1075,8 @@ public class Translator {
                                 .map(exp -> {
                                     Value v = translateExpression(function, exp);
 
-                                    if (v.getType() instanceof PointerType) {
+                                    if (v.getType() instanceof PointerType
+                                            && (((PointerType) v.getType()).getType() instanceof StructType)) {
                                         translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                                     }
                                     return v;
@@ -1101,7 +1109,8 @@ public class Translator {
                                 .map(exp -> {
                                     Value v = translateExpression(function, exp);
 
-                                    if (v.getType() instanceof PointerType) {
+                                    if (v.getType() instanceof PointerType
+                                            && (((PointerType) v.getType()).getType() instanceof StructType)) {
                                         translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                                     }
                                     return v;
@@ -1151,7 +1160,8 @@ public class Translator {
             BasicBlock current = function.getCurrentBlock();
             current.addCommand(new Command(variableValue, STORE, List.of(value)));
 
-            if (variableValue.getType() instanceof PointerType) {
+            if (variableValue.getType() instanceof PointerType
+                    && (((PointerType) variableValue.getType()).getType() instanceof StructType)) {
                 PointerType pointerType = (PointerType) variableValue.getType();
 
                 BasicBlock last = function.getCurrentBlock();
@@ -1648,7 +1658,8 @@ public class Translator {
                             .map(exp -> {
                                 Value v = translateExpression(function, exp);
 
-                                if (v.getType() instanceof PointerType) {
+                                if (v.getType() instanceof PointerType
+                                        && (((PointerType) v.getType()).getType() instanceof StructType)) {
                                     translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                                 }
                                 return v;
@@ -1675,7 +1686,8 @@ public class Translator {
                             .map(exp -> {
                                 Value v = translateExpression(function, exp);
 
-                                if (v.getType() instanceof PointerType) {
+                                if (v.getType() instanceof PointerType
+                                        && (((PointerType) v.getType()).getType() instanceof StructType)) {
                                     translateObjectIncCountCall(function, v, (PointerType) v.getType(), true);
                                 }
                                 return v;
@@ -2230,7 +2242,8 @@ public class Translator {
         BasicBlock current = function.getCurrentBlock();
         current.addCommand(command);
 
-        if (mt instanceof PointerType) {
+        if (mt instanceof PointerType
+                && (mt.getType() instanceof StructType)) {
             PointerType pointerType = (PointerType) mt;
 
             Value fieldAccess = translateLeftValue(function, expressionNode.getLeft());
@@ -2245,7 +2258,8 @@ public class Translator {
             translateObjectIncCount(function, load.getResult(), pointerType);
         }
 
-        if (mt instanceof PointerType) {
+        if (mt instanceof PointerType
+                && (mt.getType() instanceof StructType)) {
             addDestructorCall(function, (PointerType) saveLeft.getType(), saveLeft);
         }
 

@@ -14,12 +14,10 @@
         index++
 
 (int num) String toString ->
-    if num == 0
-        return "0"
-
     char[] buffer = new char[16]
 
-
+    if num == 0
+        return "0"
 
     int i = 0
     int cur = num
@@ -35,13 +33,15 @@
 
 
 (String s) void println ->
+    char[] bytes = null
+
     if s == null
         println("null")
         return
 
     int i = 0
     int l = s.getLength()
-    char[] bytes = s.getBytes()
+    bytes = s.getBytes()
 
     while i < l
         int c = <int>bytes[i]

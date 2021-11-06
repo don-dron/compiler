@@ -413,7 +413,7 @@ public class SemanticAnalysis {
             TypeNode typeNode = node.getExpressionNode().getResultType();
             node.getExpressionNode().resultType = node.getTypeNode();
 
-            if (node.getTypeNode() instanceof ObjectTypeNode &&
+            if ((node.getTypeNode() instanceof ObjectTypeNode || node.getTypeNode() instanceof ArrayTypeNode ) &&
                     node.getExpressionNode() instanceof NullConstantExpressionNode) {
                 node.getExpressionNode().resultType = node.getTypeNode();
                 return;

@@ -15,13 +15,16 @@ class String
         index++
 
 (int num) void printNumber ->
+    int[] buffer = new int[16]
+
+    int i = 0
+    int j = 0
+
     if num == 0
         putchar(48)
         return
 
-    int[] buffer = new int[16]
 
-    int i = 0
     int cur = num
 
     while cur != 0
@@ -30,8 +33,6 @@ class String
         i++
 
     reverseArray(buffer, i)
-
-    int j = 0
 
     while j < i
         putchar(buffer[j])
