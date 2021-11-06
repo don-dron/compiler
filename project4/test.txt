@@ -40,9 +40,7 @@ class Point
     while i < 10
         p = new Point(i,i+1)
 
-        c = incrementPoint(new Point(i-10,i-20))
         c = p
-        incrementPoint(c)
         p = null
         c = null
 
@@ -57,7 +55,6 @@ class Point
         p = c
         p = incrementPoint(p)
 
-        p = c
         i++
 
     return p.x + p.y

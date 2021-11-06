@@ -17,7 +17,35 @@ class Point
 
 () int main ->
     Point p = new Point(1, 2)
+    Point s = null
+
+
+    p = null
+    p = p
+
+    p = new Point(1, 2)
+    p = p
+
+    p = incrementPoint1(p)
+    p = p
+
+    p = incrementPoint1(incrementPoint1(incrementPoint1(incrementPoint1(new Point(3, 4)))))
+    p = p
+
+    p = incrementPoint1(incrementPoint1(incrementPoint1(incrementPoint1(null))))
+    p = p
+
+
+    s = new Point(1, 2)
+
+    s = incrementPoint1(p)
+
+    s = incrementPoint1(incrementPoint1(incrementPoint1(incrementPoint1(new Point(3, 4)))))
+
+    s = incrementPoint1(incrementPoint1(incrementPoint1(incrementPoint1(null))))
+
     incrementPoint1(p)
+    incrementPoint1(new Point(3, 4))
 
     return p.x + p.y
 
