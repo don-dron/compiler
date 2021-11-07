@@ -301,7 +301,8 @@ public class Translator {
 
         StructType structType = classes.get(classStatementNode.getIdentifierNode().getName());
         for (VariableValue allocated : structType.getTypes()) {
-            if (allocated.getType() instanceof PointerType) {
+            if (allocated.getType() instanceof PointerType
+                    && (allocated.getType().getType() instanceof StructType)) {
                 PointerType pointerType = (PointerType) allocated.getType();
 
                 BasicBlock last = function.getCurrentBlock();
@@ -593,7 +594,8 @@ public class Translator {
 
     private void addDestructorsList(Function function, List<VariableValue> destructors) {
         for (VariableValue allocated : destructors) {
-            if (allocated.getType() instanceof PointerType) {
+            if (allocated.getType() instanceof PointerType
+                    && (allocated.getType().getType() instanceof StructType)) {
 
                 Command forDelete = new Command(
                         createTempVariable(allocated.getType()),
