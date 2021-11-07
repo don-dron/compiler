@@ -1,0 +1,154 @@
+
+class Point
+    int x
+    int y
+    Point a
+
+    (int x, int y) ->
+        this.x = x
+        this.y = y
+        this.a = null
+
+    (int x, int y, Point a) ->
+        this.x = x
+        this.y = y
+        this.a = a
+
+        Point z = null
+        this.a = z
+
+() Point f ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+    return new Point(1, 1 )
+
+() Point f1 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 , a)
+    return b
+
+() Point f2 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 , a)
+    return new Point(new Point(1, f().x).x, new Point(1, new Point(1,1).y).y)
+
+() Point f3 ->
+    Point a = f()
+    Point b = new Point(1, 1 )
+    return a
+
+() Point f4 ->
+    Point a = f()
+    Point b = new Point(1, 1)
+    return f()
+
+(Point p) Point f5 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+    return p
+
+(Point p) Point f6 ->
+    Point k = null
+    Point a = new Point(1, 1, p)
+    Point b = new Point(1, 1 ,  p)
+    Point c = new Point(1, 1 ,  p)
+    return a
+
+(Point p) Point f7 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+
+    f5(p).x
+    f5(p).y
+
+    return new Point(new Point(p.x, f().x).x, new Point(1, p.y).y)
+
+(Point p) Point f8 ->
+    Point a = f()
+    Point b = p
+    return a
+
+(Point p, int k) Point f9 ->
+    Point a = f()
+    Point b = new Point(1, 1 )
+    return p
+
+() int main ->
+    int a = 0
+
+    Point p = new Point(1, 2)
+    p = new Point(1, 2)
+    a = a + p.x + p.y
+
+    p = f5(p)
+
+    f()
+    f1()
+    f2()
+    f3()
+    f4()
+    f5(p)
+    f6(p)
+    f7(p)
+    f8(p)
+    f9(p, 4)
+
+    f().x
+    f1().x
+    f2().x
+    f3().x
+    f4().x
+    f5(p).x
+    f6(p).x
+    f7(p).x
+    f8(p).x
+    f9(p, 9).x
+    new Point(2,2)
+
+
+    p = f8(f8(f8(p)))
+    f8(f8(f8(p)))
+
+    f7(f5(f6(p)))
+    p = f7(f5(f6(p)))
+
+    p = f()
+    a = a + p.x + p.y
+
+    p = f1()
+    a = a + p.x + p.y
+
+    p = f2()
+    a = a + p.x + p.y
+
+    p = f3()
+    a = a + p.x + p.y
+
+    p = f4()
+    a = a + p.x + p.y
+
+    p = f5(p)
+    a = a + p.x + p.y + new Point(2,2).x
+
+    new Point(2,2).x
+
+    p = f6(new Point(2,2))
+    a = a + p.x + p.y
+
+    p = f7(p)
+    a = a + p.x + p.y
+
+    p = null
+    p = new Point(3,4)
+
+    p = f8(p)
+    a = a + p.x + p.y
+
+    p = f9(p, new Point(2,2).x)
+    a = a + p.x + p.y
+
+    new Point(2,2) == null ? 1 : 0
+    f8(p) == null ? 1 : 0
+
+    return a
+

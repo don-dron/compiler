@@ -2,11 +2,8 @@ package lang.semantic;
 
 import lang.ast.AstNode;
 import lang.ast.ParameterNode;
-import lang.ast.statement.ClassStatementNode;
-import lang.ast.statement.DeclarationStatementNode;
-import lang.ast.statement.FunctionDefinitionNode;
-import lang.ast.statement.InterfaceStatementNode;
-import lang.ast.statement.StatementNode;
+import lang.ast.statement.*;
+import lang.ir.VariableValue;
 
 import java.util.ArrayList;
 import java.util.List;

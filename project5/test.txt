@@ -19,13 +19,7 @@ class Point
     Point p = new Point(1, 2)
     Point s = null
 
-    p = null
-    p = p
-
-    p = new Point(1, 2)
-    p = p
-
-    p = incrementPoint(p)
+    incrementPoint1(p).x
 
     return p.x + p.y
 
