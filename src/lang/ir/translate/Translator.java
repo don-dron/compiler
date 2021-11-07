@@ -1082,11 +1082,7 @@ public class Translator {
                 NE,
                 List.of(fieldAccess, new NullValue(pointerType.getType()))
         );
-
         function.getCurrentBlock().addCommand(condition);
-        last = function.getCurrentBlock();
-
-        BasicBlock nextCond = function.appendBlock("temp_cond");
 
         Command counter = new Command(
                 createTempVariable(INT_32),
@@ -1103,44 +1099,19 @@ public class Translator {
 
         Command condition2 = new Command(
                 createTempVariable(INT_1),
-                EQ,
+                NE,
                 List.of(loadCount.getResult(), new IntValue(0))
         );
         function.getCurrentBlock().addCommand(condition2);
 
+        Command condition3 = new Command(
+                createTempVariable(INT_1),
+                AND,
+                List.of(condition.getResult(), condition2.getResult())
+        );
+        function.getCurrentBlock().addCommand(condition3);
 
-        BasicBlock nextBody = function.appendBlock("temp_body");
-
-        {
-            Command oneCounter = new Command(
-                    createTempVariable(INT_32),
-                    FIELD_ACCESS,
-                    List.of(fieldAccess, new IntValue(0)));
-            function.getCurrentBlock().addCommand(oneCounter);
-
-            Command oneLoadCount = new Command(
-                    createTempVariable(INT_32),
-                    LOAD,
-                    List.of(oneCounter.getResult())
-            );
-            function.getCurrentBlock().addCommand(oneLoadCount);
-
-            Command inc = new Command(
-                    createTempVariable(INT_32),
-                    returnExit ? ADD : SUB,
-                    List.of(oneLoadCount.getResult(), new IntValue(0))
-            );
-            function.getCurrentBlock().addCommand(inc);
-
-            Command storeCounter = new Command(
-                    oneCounter.getResult(),
-                    STORE,
-                    List.of(inc.getResult())
-            );
-            function.getCurrentBlock().addCommand(storeCounter);
-        }
-
-        BasicBlock nextElse = function.appendBlock("else_temp");
+        BasicBlock body = function.appendBlock("body");
 
         {
             Command twoCounter = new Command(
@@ -1172,12 +1143,8 @@ public class Translator {
         }
 
         BasicBlock ifMerge = function.appendBlock("temp_merge");
-
-        createBranch(nextElse, ifMerge);
-        createBranch(nextBody, ifMerge);
-
-        createConditionalBranch(nextCond, condition2.getResult(), nextBody, nextElse);
-        createConditionalBranch(ifCond, condition.getResult(), nextCond, ifMerge);
+        createBranch(body, ifMerge);
+        createConditionalBranch(ifCond, condition3.getResult(), body, ifMerge);
     }
 
 
