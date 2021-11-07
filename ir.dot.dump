@@ -1,1456 +1,1671 @@
 digraph G {
-	"header_6" [style=filled, shape=box, label="header_6:
+	"header_7" [style=filled, shape=box, label="header_7:
 ($$_ret_value_0,%struct.$0_Point*) alloc 
-branch entry_13"];
-	"return_7" [style=filled, shape=box, label="return_7:
+branch entry_14"];
+	"return_8" [style=filled, shape=box, label="return_8:
 (%0,%struct.$0_Point*) load ($$_ret_value_0,%struct.$0_Point*)
-branch start_cond_8"];
-	"start_cond_8" [style=filled, shape=box, label="start_cond_8:
+branch start_cond_9"];
+	"start_cond_9" [style=filled, shape=box, label="start_cond_9:
 (%1,i1) <- ne (%0,%struct.$0_Point*),null
-branch (%1,i1) temp_cond_9,temp_merge_12"];
-	"temp_cond_9" [style=filled, shape=box, label="temp_cond_9:
+branch (%1,i1) temp_cond_10,temp_merge_13"];
+	"temp_cond_10" [style=filled, shape=box, label="temp_cond_10:
 (%2,i32) <- field_access (%0,%struct.$0_Point*),0
 (%3,i32) load (%2,i32)
 (%4,i1) <- eq (%3,i32),0
-branch (%4,i1) temp_body_10,else_temp_11"];
-	"temp_body_10" [style=filled, shape=box, label="temp_body_10:
+branch (%4,i1) temp_body_11,else_temp_12"];
+	"temp_body_11" [style=filled, shape=box, label="temp_body_11:
 (%5,i32) <- field_access (%0,%struct.$0_Point*),0
 (%6,i32) load (%5,i32)
 (%7,i32) <- sub (%6,i32),0
 (%5,i32) store (%7,i32)
-branch temp_merge_12"];
-	"else_temp_11" [style=filled, shape=box, label="else_temp_11:
+branch temp_merge_13"];
+	"else_temp_12" [style=filled, shape=box, label="else_temp_12:
 (%8,i32) <- field_access (%0,%struct.$0_Point*),0
 (%9,i32) load (%8,i32)
 (%10,i32) <- sub (%9,i32),1
 (%8,i32) store (%10,i32)
-branch temp_merge_12"];
-	"temp_merge_12" [style=filled, shape=box, label="temp_merge_12:
+branch temp_merge_13"];
+	"temp_merge_13" [style=filled, shape=box, label="temp_merge_13:
 
 return (%0,%struct.$0_Point*)"];
-	"entry_13" [style=filled, shape=box, label="entry_13:
-($22_a,%struct.$0_Point*) alloc 
-(%11,%struct.$0_Point*) <- call $13_f
-($22_a,%struct.$0_Point*) store (%11,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_14"];
-	"declaration_inc_count_if_cond_14" [style=filled, shape=box, label="declaration_inc_count_if_cond_14:
-(%12,%struct.$0_Point*) load ($22_a,%struct.$0_Point*)
-(%13,i1) <- ne (%12,%struct.$0_Point*),null
-branch (%13,i1) declaration_inc_count_if_body_15,declaration_inc_count_if_merge_16"];
-	"declaration_inc_count_if_body_15" [style=filled, shape=box, label="declaration_inc_count_if_body_15:
-(%14,%struct.$0_Point*) load ($22_a,%struct.$0_Point*)
-(%15,i32) <- field_access (%14,%struct.$0_Point*),0
-(%16,i32) load (%15,i32)
-(%17,i32) <- add (%16,i32),1
-(%15,i32) store (%17,i32)
-branch declaration_inc_count_if_merge_16"];
-	"declaration_inc_count_if_merge_16" [style=filled, shape=box, label="declaration_inc_count_if_merge_16:
-($23_b,%struct.$0_Point*) alloc 
-(%18,%struct.$0_Point*) <- call $_constructor_0,1,1
-($23_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_17"];
-	"declaration_inc_count_if_cond_17" [style=filled, shape=box, label="declaration_inc_count_if_cond_17:
-(%19,%struct.$0_Point*) load ($23_b,%struct.$0_Point*)
-(%20,i1) <- ne (%19,%struct.$0_Point*),null
-branch (%20,i1) declaration_inc_count_if_body_18,declaration_inc_count_if_merge_19"];
-	"declaration_inc_count_if_body_18" [style=filled, shape=box, label="declaration_inc_count_if_body_18:
-(%21,%struct.$0_Point*) load ($23_b,%struct.$0_Point*)
-(%22,i32) <- field_access (%21,%struct.$0_Point*),0
-(%23,i32) load (%22,i32)
-(%24,i32) <- add (%23,i32),1
-(%22,i32) store (%24,i32)
-branch declaration_inc_count_if_merge_19"];
-	"declaration_inc_count_if_merge_19" [style=filled, shape=box, label="declaration_inc_count_if_merge_19:
-
-branch local_return_20"];
-	"local_return_20" [style=filled, shape=box, label="local_return_20:
-(%25,%struct.$0_Point*) load ($22_a,%struct.$0_Point*)
-branch start_cond_21"];
-	"start_cond_21" [style=filled, shape=box, label="start_cond_21:
-(%26,i1) <- ne (%25,%struct.$0_Point*),null
-branch (%26,i1) temp_cond_22,temp_merge_25"];
-	"temp_cond_22" [style=filled, shape=box, label="temp_cond_22:
-(%27,i32) <- field_access (%25,%struct.$0_Point*),0
-(%28,i32) load (%27,i32)
-(%29,i1) <- eq (%28,i32),0
-branch (%29,i1) temp_body_23,else_temp_24"];
-	"temp_body_23" [style=filled, shape=box, label="temp_body_23:
-(%30,i32) <- field_access (%25,%struct.$0_Point*),0
-(%31,i32) load (%30,i32)
-(%32,i32) <- add (%31,i32),0
-(%30,i32) store (%32,i32)
-branch temp_merge_25"];
-	"else_temp_24" [style=filled, shape=box, label="else_temp_24:
-(%33,i32) <- field_access (%25,%struct.$0_Point*),0
-(%34,i32) load (%33,i32)
-(%35,i32) <- add (%34,i32),1
-(%33,i32) store (%35,i32)
-branch temp_merge_25"];
-	"temp_merge_25" [style=filled, shape=box, label="temp_merge_25:
-($$_ret_value_0,%struct.$0_Point*) store (%25,%struct.$0_Point*)
-branch end_function_destructor_27"];
-	"dummy_26" [style=filled, shape=box, label="dummy_26:
-
-branch end_function_destructor_27"];
-	"end_function_destructor_27" [style=filled, shape=box, label="end_function_destructor_27:
-(%36,%struct.$0_Point*) load ($23_b,%struct.$0_Point*)
-branch delete_left_if_cond_28"];
-	"delete_left_if_cond_28" [style=filled, shape=box, label="delete_left_if_cond_28:
-(%37,i1) <- ne (%36,%struct.$0_Point*),null
-branch (%37,i1) delete_left_if_body_29,delete_left_if_merge_30"];
-	"delete_left_if_body_29" [style=filled, shape=box, label="delete_left_if_body_29:
- <- call $_destructor_0,(%36,%struct.$0_Point*)
-branch delete_left_if_merge_30"];
-	"delete_left_if_merge_30" [style=filled, shape=box, label="delete_left_if_merge_30:
-(%38,%struct.$0_Point*) load ($22_a,%struct.$0_Point*)
-branch delete_left_if_cond_31"];
-	"delete_left_if_cond_31" [style=filled, shape=box, label="delete_left_if_cond_31:
-(%39,i1) <- ne (%38,%struct.$0_Point*),null
-branch (%39,i1) delete_left_if_body_32,delete_left_if_merge_33"];
-	"delete_left_if_body_32" [style=filled, shape=box, label="delete_left_if_body_32:
- <- call $_destructor_0,(%38,%struct.$0_Point*)
-branch delete_left_if_merge_33"];
-	"delete_left_if_merge_33" [style=filled, shape=box, label="delete_left_if_merge_33:
-
-branch return_7"];
-"header_6" -> "entry_13";
-"return_7" -> "start_cond_8";
-"start_cond_8" -> "temp_cond_9";
-"start_cond_8" -> "temp_merge_12";
-"temp_cond_9" -> "temp_body_10";
-"temp_cond_9" -> "else_temp_11";
-"temp_body_10" -> "temp_merge_12";
-"else_temp_11" -> "temp_merge_12";
-"entry_13" -> "declaration_inc_count_if_cond_14";
-"declaration_inc_count_if_cond_14" -> "declaration_inc_count_if_body_15";
-"declaration_inc_count_if_cond_14" -> "declaration_inc_count_if_merge_16";
-"declaration_inc_count_if_body_15" -> "declaration_inc_count_if_merge_16";
-"declaration_inc_count_if_merge_16" -> "declaration_inc_count_if_cond_17";
-"declaration_inc_count_if_cond_17" -> "declaration_inc_count_if_body_18";
-"declaration_inc_count_if_cond_17" -> "declaration_inc_count_if_merge_19";
-"declaration_inc_count_if_body_18" -> "declaration_inc_count_if_merge_19";
-"declaration_inc_count_if_merge_19" -> "local_return_20";
-"local_return_20" -> "start_cond_21";
-"start_cond_21" -> "temp_cond_22";
-"start_cond_21" -> "temp_merge_25";
-"temp_cond_22" -> "temp_body_23";
-"temp_cond_22" -> "else_temp_24";
-"temp_body_23" -> "temp_merge_25";
-"else_temp_24" -> "temp_merge_25";
-"temp_merge_25" -> "end_function_destructor_27";
-"dummy_26" -> "end_function_destructor_27";
-"end_function_destructor_27" -> "delete_left_if_cond_28";
-"delete_left_if_cond_28" -> "delete_left_if_body_29";
-"delete_left_if_cond_28" -> "delete_left_if_merge_30";
-"delete_left_if_body_29" -> "delete_left_if_merge_30";
-"delete_left_if_merge_30" -> "delete_left_if_cond_31";
-"delete_left_if_cond_31" -> "delete_left_if_body_32";
-"delete_left_if_cond_31" -> "delete_left_if_merge_33";
-"delete_left_if_body_32" -> "delete_left_if_merge_33";
-"delete_left_if_merge_33" -> "return_7";
-
-	"header_34" [style=filled, shape=box, label="header_34:
-($$_ret_value_1,%struct.$0_Point*) alloc 
-branch entry_41"];
-	"return_35" [style=filled, shape=box, label="return_35:
-(%0,%struct.$0_Point*) load ($$_ret_value_1,%struct.$0_Point*)
-branch start_cond_36"];
-	"start_cond_36" [style=filled, shape=box, label="start_cond_36:
-(%1,i1) <- ne (%0,%struct.$0_Point*),null
-branch (%1,i1) temp_cond_37,temp_merge_40"];
-	"temp_cond_37" [style=filled, shape=box, label="temp_cond_37:
-(%2,i32) <- field_access (%0,%struct.$0_Point*),0
-(%3,i32) load (%2,i32)
-(%4,i1) <- eq (%3,i32),0
-branch (%4,i1) temp_body_38,else_temp_39"];
-	"temp_body_38" [style=filled, shape=box, label="temp_body_38:
-(%5,i32) <- field_access (%0,%struct.$0_Point*),0
-(%6,i32) load (%5,i32)
-(%7,i32) <- sub (%6,i32),0
-(%5,i32) store (%7,i32)
-branch temp_merge_40"];
-	"else_temp_39" [style=filled, shape=box, label="else_temp_39:
-(%8,i32) <- field_access (%0,%struct.$0_Point*),0
-(%9,i32) load (%8,i32)
-(%10,i32) <- sub (%9,i32),1
-(%8,i32) store (%10,i32)
-branch temp_merge_40"];
-	"temp_merge_40" [style=filled, shape=box, label="temp_merge_40:
-
-return (%0,%struct.$0_Point*)"];
-	"entry_41" [style=filled, shape=box, label="entry_41:
+	"entry_14" [style=filled, shape=box, label="entry_14:
 ($20_a,%struct.$0_Point*) alloc 
 (%11,%struct.$0_Point*) <- call $_constructor_0,1,1
 ($20_a,%struct.$0_Point*) store (%11,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_42"];
-	"declaration_inc_count_if_cond_42" [style=filled, shape=box, label="declaration_inc_count_if_cond_42:
+branch declaration_inc_count_if_cond_15"];
+	"declaration_inc_count_if_cond_15" [style=filled, shape=box, label="declaration_inc_count_if_cond_15:
 (%12,%struct.$0_Point*) load ($20_a,%struct.$0_Point*)
 (%13,i1) <- ne (%12,%struct.$0_Point*),null
-branch (%13,i1) declaration_inc_count_if_body_43,declaration_inc_count_if_merge_44"];
-	"declaration_inc_count_if_body_43" [style=filled, shape=box, label="declaration_inc_count_if_body_43:
+branch (%13,i1) declaration_inc_count_if_body_16,declaration_inc_count_if_merge_17"];
+	"declaration_inc_count_if_body_16" [style=filled, shape=box, label="declaration_inc_count_if_body_16:
 (%14,%struct.$0_Point*) load ($20_a,%struct.$0_Point*)
 (%15,i32) <- field_access (%14,%struct.$0_Point*),0
 (%16,i32) load (%15,i32)
 (%17,i32) <- add (%16,i32),1
 (%15,i32) store (%17,i32)
-branch declaration_inc_count_if_merge_44"];
-	"declaration_inc_count_if_merge_44" [style=filled, shape=box, label="declaration_inc_count_if_merge_44:
+branch declaration_inc_count_if_merge_17"];
+	"declaration_inc_count_if_merge_17" [style=filled, shape=box, label="declaration_inc_count_if_merge_17:
 ($21_b,%struct.$0_Point*) alloc 
 (%18,%struct.$0_Point*) <- call $_constructor_0,1,1
 ($21_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_45"];
-	"declaration_inc_count_if_cond_45" [style=filled, shape=box, label="declaration_inc_count_if_cond_45:
+branch declaration_inc_count_if_cond_18"];
+	"declaration_inc_count_if_cond_18" [style=filled, shape=box, label="declaration_inc_count_if_cond_18:
 (%19,%struct.$0_Point*) load ($21_b,%struct.$0_Point*)
 (%20,i1) <- ne (%19,%struct.$0_Point*),null
-branch (%20,i1) declaration_inc_count_if_body_46,declaration_inc_count_if_merge_47"];
-	"declaration_inc_count_if_body_46" [style=filled, shape=box, label="declaration_inc_count_if_body_46:
+branch (%20,i1) declaration_inc_count_if_body_19,declaration_inc_count_if_merge_20"];
+	"declaration_inc_count_if_body_19" [style=filled, shape=box, label="declaration_inc_count_if_body_19:
 (%21,%struct.$0_Point*) load ($21_b,%struct.$0_Point*)
 (%22,i32) <- field_access (%21,%struct.$0_Point*),0
 (%23,i32) load (%22,i32)
 (%24,i32) <- add (%23,i32),1
 (%22,i32) store (%24,i32)
-branch declaration_inc_count_if_merge_47"];
-	"declaration_inc_count_if_merge_47" [style=filled, shape=box, label="declaration_inc_count_if_merge_47:
+branch declaration_inc_count_if_merge_20"];
+	"declaration_inc_count_if_merge_20" [style=filled, shape=box, label="declaration_inc_count_if_merge_20:
 
-branch local_return_48"];
-	"local_return_48" [style=filled, shape=box, label="local_return_48:
-(%25,%struct.$0_Point*) <- call $13_f
-(%26,i32) <- field_access (%25,%struct.$0_Point*),2
-(%27,i32) load (%26,i32)
-(%28,%struct.$0_Point*) <- call $_constructor_0,1,(%27,i32)
-(%29,i32) <- field_access (%28,%struct.$0_Point*),2
-(%30,i32) load (%29,i32)
-(%31,%struct.$0_Point*) <- call $_constructor_0,1,1
-(%32,i32) <- field_access (%31,%struct.$0_Point*),3
-(%33,i32) load (%32,i32)
-(%34,%struct.$0_Point*) <- call $_constructor_0,1,(%33,i32)
-(%35,i32) <- field_access (%34,%struct.$0_Point*),3
-(%36,i32) load (%35,i32)
-(%37,%struct.$0_Point*) <- call $_constructor_0,(%30,i32),(%36,i32)
-branch start_cond_49"];
-	"start_cond_49" [style=filled, shape=box, label="start_cond_49:
-(%38,i1) <- ne (%37,%struct.$0_Point*),null
-branch (%38,i1) temp_cond_50,temp_merge_53"];
-	"temp_cond_50" [style=filled, shape=box, label="temp_cond_50:
-(%39,i32) <- field_access (%37,%struct.$0_Point*),0
-(%40,i32) load (%39,i32)
-(%41,i1) <- eq (%40,i32),0
-branch (%41,i1) temp_body_51,else_temp_52"];
-	"temp_body_51" [style=filled, shape=box, label="temp_body_51:
-(%42,i32) <- field_access (%37,%struct.$0_Point*),0
-(%43,i32) load (%42,i32)
-(%44,i32) <- add (%43,i32),0
-(%42,i32) store (%44,i32)
-branch temp_merge_53"];
-	"else_temp_52" [style=filled, shape=box, label="else_temp_52:
-(%45,i32) <- field_access (%37,%struct.$0_Point*),0
-(%46,i32) load (%45,i32)
-(%47,i32) <- add (%46,i32),1
-(%45,i32) store (%47,i32)
-branch temp_merge_53"];
-	"temp_merge_53" [style=filled, shape=box, label="temp_merge_53:
-($$_ret_value_1,%struct.$0_Point*) store (%37,%struct.$0_Point*)
-branch end_function_destructor_55"];
-	"dummy_54" [style=filled, shape=box, label="dummy_54:
-
-branch end_function_destructor_55"];
-	"end_function_destructor_55" [style=filled, shape=box, label="end_function_destructor_55:
-(%48,%struct.$0_Point*) load ($21_b,%struct.$0_Point*)
-branch delete_left_if_cond_56"];
-	"delete_left_if_cond_56" [style=filled, shape=box, label="delete_left_if_cond_56:
-(%49,i1) <- ne (%48,%struct.$0_Point*),null
-branch (%49,i1) delete_left_if_body_57,delete_left_if_merge_58"];
-	"delete_left_if_body_57" [style=filled, shape=box, label="delete_left_if_body_57:
- <- call $_destructor_0,(%48,%struct.$0_Point*)
-branch delete_left_if_merge_58"];
-	"delete_left_if_merge_58" [style=filled, shape=box, label="delete_left_if_merge_58:
-(%50,%struct.$0_Point*) load ($20_a,%struct.$0_Point*)
-branch delete_left_if_cond_59"];
-	"delete_left_if_cond_59" [style=filled, shape=box, label="delete_left_if_cond_59:
-(%51,i1) <- ne (%50,%struct.$0_Point*),null
-branch (%51,i1) delete_left_if_body_60,delete_left_if_merge_61"];
-	"delete_left_if_body_60" [style=filled, shape=box, label="delete_left_if_body_60:
- <- call $_destructor_0,(%50,%struct.$0_Point*)
-branch delete_left_if_merge_61"];
-	"delete_left_if_merge_61" [style=filled, shape=box, label="delete_left_if_merge_61:
-
-branch return_35"];
-"header_34" -> "entry_41";
-"return_35" -> "start_cond_36";
-"start_cond_36" -> "temp_cond_37";
-"start_cond_36" -> "temp_merge_40";
-"temp_cond_37" -> "temp_body_38";
-"temp_cond_37" -> "else_temp_39";
-"temp_body_38" -> "temp_merge_40";
-"else_temp_39" -> "temp_merge_40";
-"entry_41" -> "declaration_inc_count_if_cond_42";
-"declaration_inc_count_if_cond_42" -> "declaration_inc_count_if_body_43";
-"declaration_inc_count_if_cond_42" -> "declaration_inc_count_if_merge_44";
-"declaration_inc_count_if_body_43" -> "declaration_inc_count_if_merge_44";
-"declaration_inc_count_if_merge_44" -> "declaration_inc_count_if_cond_45";
-"declaration_inc_count_if_cond_45" -> "declaration_inc_count_if_body_46";
-"declaration_inc_count_if_cond_45" -> "declaration_inc_count_if_merge_47";
-"declaration_inc_count_if_body_46" -> "declaration_inc_count_if_merge_47";
-"declaration_inc_count_if_merge_47" -> "local_return_48";
-"local_return_48" -> "start_cond_49";
-"start_cond_49" -> "temp_cond_50";
-"start_cond_49" -> "temp_merge_53";
-"temp_cond_50" -> "temp_body_51";
-"temp_cond_50" -> "else_temp_52";
-"temp_body_51" -> "temp_merge_53";
-"else_temp_52" -> "temp_merge_53";
-"temp_merge_53" -> "end_function_destructor_55";
-"dummy_54" -> "end_function_destructor_55";
-"end_function_destructor_55" -> "delete_left_if_cond_56";
-"delete_left_if_cond_56" -> "delete_left_if_body_57";
-"delete_left_if_cond_56" -> "delete_left_if_merge_58";
-"delete_left_if_body_57" -> "delete_left_if_merge_58";
-"delete_left_if_merge_58" -> "delete_left_if_cond_59";
-"delete_left_if_cond_59" -> "delete_left_if_body_60";
-"delete_left_if_cond_59" -> "delete_left_if_merge_61";
-"delete_left_if_body_60" -> "delete_left_if_merge_61";
-"delete_left_if_merge_61" -> "return_35";
-
-	"header_62" [style=filled, shape=box, label="header_62:
-($38_p,%struct.$0_Point*) alloc 
-($38_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-($$_ret_value_2,%struct.$0_Point*) alloc 
-branch entry_69"];
-	"return_63" [style=filled, shape=box, label="return_63:
-(%1,%struct.$0_Point*) load ($$_ret_value_2,%struct.$0_Point*)
-branch start_cond_64"];
-	"start_cond_64" [style=filled, shape=box, label="start_cond_64:
-(%2,i1) <- ne (%1,%struct.$0_Point*),null
-branch (%2,i1) temp_cond_65,temp_merge_68"];
-	"temp_cond_65" [style=filled, shape=box, label="temp_cond_65:
-(%3,i32) <- field_access (%1,%struct.$0_Point*),0
-(%4,i32) load (%3,i32)
-(%5,i1) <- eq (%4,i32),0
-branch (%5,i1) temp_body_66,else_temp_67"];
-	"temp_body_66" [style=filled, shape=box, label="temp_body_66:
-(%6,i32) <- field_access (%1,%struct.$0_Point*),0
-(%7,i32) load (%6,i32)
-(%8,i32) <- sub (%7,i32),0
-(%6,i32) store (%8,i32)
-branch temp_merge_68"];
-	"else_temp_67" [style=filled, shape=box, label="else_temp_67:
-(%9,i32) <- field_access (%1,%struct.$0_Point*),0
-(%10,i32) load (%9,i32)
-(%11,i32) <- sub (%10,i32),1
-(%9,i32) store (%11,i32)
-branch temp_merge_68"];
-	"temp_merge_68" [style=filled, shape=box, label="temp_merge_68:
-
-return (%1,%struct.$0_Point*)"];
-	"entry_69" [style=filled, shape=box, label="entry_69:
-($39_a,%struct.$0_Point*) alloc 
-(%12,%struct.$0_Point*) <- call $13_f
-($39_a,%struct.$0_Point*) store (%12,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_70"];
-	"declaration_inc_count_if_cond_70" [style=filled, shape=box, label="declaration_inc_count_if_cond_70:
-(%13,%struct.$0_Point*) load ($39_a,%struct.$0_Point*)
-(%14,i1) <- ne (%13,%struct.$0_Point*),null
-branch (%14,i1) declaration_inc_count_if_body_71,declaration_inc_count_if_merge_72"];
-	"declaration_inc_count_if_body_71" [style=filled, shape=box, label="declaration_inc_count_if_body_71:
-(%15,%struct.$0_Point*) load ($39_a,%struct.$0_Point*)
-(%16,i32) <- field_access (%15,%struct.$0_Point*),0
-(%17,i32) load (%16,i32)
-(%18,i32) <- add (%17,i32),1
-(%16,i32) store (%18,i32)
-branch declaration_inc_count_if_merge_72"];
-	"declaration_inc_count_if_merge_72" [style=filled, shape=box, label="declaration_inc_count_if_merge_72:
-($40_b,%struct.$0_Point*) alloc 
-(%19,%struct.$0_Point*) <- call $_constructor_0,1,1
-($40_b,%struct.$0_Point*) store (%19,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_73"];
-	"declaration_inc_count_if_cond_73" [style=filled, shape=box, label="declaration_inc_count_if_cond_73:
-(%20,%struct.$0_Point*) load ($40_b,%struct.$0_Point*)
-(%21,i1) <- ne (%20,%struct.$0_Point*),null
-branch (%21,i1) declaration_inc_count_if_body_74,declaration_inc_count_if_merge_75"];
-	"declaration_inc_count_if_body_74" [style=filled, shape=box, label="declaration_inc_count_if_body_74:
-(%22,%struct.$0_Point*) load ($40_b,%struct.$0_Point*)
-(%23,i32) <- field_access (%22,%struct.$0_Point*),0
-(%24,i32) load (%23,i32)
-(%25,i32) <- add (%24,i32),1
-(%23,i32) store (%25,i32)
-branch declaration_inc_count_if_merge_75"];
-	"declaration_inc_count_if_merge_75" [style=filled, shape=box, label="declaration_inc_count_if_merge_75:
-
-branch local_return_76"];
-	"local_return_76" [style=filled, shape=box, label="local_return_76:
-(%26,%struct.$0_Point*) load ($38_p,%struct.$0_Point*)
-branch start_cond_77"];
-	"start_cond_77" [style=filled, shape=box, label="start_cond_77:
-(%27,i1) <- ne (%26,%struct.$0_Point*),null
-branch (%27,i1) temp_cond_78,temp_merge_81"];
-	"temp_cond_78" [style=filled, shape=box, label="temp_cond_78:
-(%28,i32) <- field_access (%26,%struct.$0_Point*),0
-(%29,i32) load (%28,i32)
-(%30,i1) <- eq (%29,i32),0
-branch (%30,i1) temp_body_79,else_temp_80"];
-	"temp_body_79" [style=filled, shape=box, label="temp_body_79:
-(%31,i32) <- field_access (%26,%struct.$0_Point*),0
-(%32,i32) load (%31,i32)
-(%33,i32) <- add (%32,i32),0
-(%31,i32) store (%33,i32)
-branch temp_merge_81"];
-	"else_temp_80" [style=filled, shape=box, label="else_temp_80:
-(%34,i32) <- field_access (%26,%struct.$0_Point*),0
-(%35,i32) load (%34,i32)
-(%36,i32) <- add (%35,i32),1
-(%34,i32) store (%36,i32)
-branch temp_merge_81"];
-	"temp_merge_81" [style=filled, shape=box, label="temp_merge_81:
-($$_ret_value_2,%struct.$0_Point*) store (%26,%struct.$0_Point*)
-branch end_function_destructor_83"];
-	"dummy_82" [style=filled, shape=box, label="dummy_82:
-
-branch end_function_destructor_83"];
-	"end_function_destructor_83" [style=filled, shape=box, label="end_function_destructor_83:
-(%37,%struct.$0_Point*) load ($40_b,%struct.$0_Point*)
-branch delete_left_if_cond_84"];
-	"delete_left_if_cond_84" [style=filled, shape=box, label="delete_left_if_cond_84:
-(%38,i1) <- ne (%37,%struct.$0_Point*),null
-branch (%38,i1) delete_left_if_body_85,delete_left_if_merge_86"];
-	"delete_left_if_body_85" [style=filled, shape=box, label="delete_left_if_body_85:
- <- call $_destructor_0,(%37,%struct.$0_Point*)
-branch delete_left_if_merge_86"];
-	"delete_left_if_merge_86" [style=filled, shape=box, label="delete_left_if_merge_86:
-(%39,%struct.$0_Point*) load ($39_a,%struct.$0_Point*)
-branch delete_left_if_cond_87"];
-	"delete_left_if_cond_87" [style=filled, shape=box, label="delete_left_if_cond_87:
-(%40,i1) <- ne (%39,%struct.$0_Point*),null
-branch (%40,i1) delete_left_if_body_88,delete_left_if_merge_89"];
-	"delete_left_if_body_88" [style=filled, shape=box, label="delete_left_if_body_88:
- <- call $_destructor_0,(%39,%struct.$0_Point*)
-branch delete_left_if_merge_89"];
-	"delete_left_if_merge_89" [style=filled, shape=box, label="delete_left_if_merge_89:
-(%41,%struct.$0_Point*) load ($38_p,%struct.$0_Point*)
-branch delete_left_if_cond_90"];
-	"delete_left_if_cond_90" [style=filled, shape=box, label="delete_left_if_cond_90:
-(%42,i1) <- ne (%41,%struct.$0_Point*),null
-branch (%42,i1) delete_left_if_body_91,delete_left_if_merge_92"];
-	"delete_left_if_body_91" [style=filled, shape=box, label="delete_left_if_body_91:
- <- call $_destructor_0,(%41,%struct.$0_Point*)
-branch delete_left_if_merge_92"];
-	"delete_left_if_merge_92" [style=filled, shape=box, label="delete_left_if_merge_92:
-
-branch return_63"];
-"header_62" -> "entry_69";
-"return_63" -> "start_cond_64";
-"start_cond_64" -> "temp_cond_65";
-"start_cond_64" -> "temp_merge_68";
-"temp_cond_65" -> "temp_body_66";
-"temp_cond_65" -> "else_temp_67";
-"temp_body_66" -> "temp_merge_68";
-"else_temp_67" -> "temp_merge_68";
-"entry_69" -> "declaration_inc_count_if_cond_70";
-"declaration_inc_count_if_cond_70" -> "declaration_inc_count_if_body_71";
-"declaration_inc_count_if_cond_70" -> "declaration_inc_count_if_merge_72";
-"declaration_inc_count_if_body_71" -> "declaration_inc_count_if_merge_72";
-"declaration_inc_count_if_merge_72" -> "declaration_inc_count_if_cond_73";
-"declaration_inc_count_if_cond_73" -> "declaration_inc_count_if_body_74";
-"declaration_inc_count_if_cond_73" -> "declaration_inc_count_if_merge_75";
-"declaration_inc_count_if_body_74" -> "declaration_inc_count_if_merge_75";
-"declaration_inc_count_if_merge_75" -> "local_return_76";
-"local_return_76" -> "start_cond_77";
-"start_cond_77" -> "temp_cond_78";
-"start_cond_77" -> "temp_merge_81";
-"temp_cond_78" -> "temp_body_79";
-"temp_cond_78" -> "else_temp_80";
-"temp_body_79" -> "temp_merge_81";
-"else_temp_80" -> "temp_merge_81";
-"temp_merge_81" -> "end_function_destructor_83";
-"dummy_82" -> "end_function_destructor_83";
-"end_function_destructor_83" -> "delete_left_if_cond_84";
-"delete_left_if_cond_84" -> "delete_left_if_body_85";
-"delete_left_if_cond_84" -> "delete_left_if_merge_86";
-"delete_left_if_body_85" -> "delete_left_if_merge_86";
-"delete_left_if_merge_86" -> "delete_left_if_cond_87";
-"delete_left_if_cond_87" -> "delete_left_if_body_88";
-"delete_left_if_cond_87" -> "delete_left_if_merge_89";
-"delete_left_if_body_88" -> "delete_left_if_merge_89";
-"delete_left_if_merge_89" -> "delete_left_if_cond_90";
-"delete_left_if_cond_90" -> "delete_left_if_body_91";
-"delete_left_if_cond_90" -> "delete_left_if_merge_92";
-"delete_left_if_body_91" -> "delete_left_if_merge_92";
-"delete_left_if_merge_92" -> "return_63";
-
-	"header_93" [style=filled, shape=box, label="header_93:
-($$_ret_value_3,%struct.$0_Point*) alloc 
-branch entry_100"];
-	"return_94" [style=filled, shape=box, label="return_94:
-(%0,%struct.$0_Point*) load ($$_ret_value_3,%struct.$0_Point*)
-branch start_cond_95"];
-	"start_cond_95" [style=filled, shape=box, label="start_cond_95:
-(%1,i1) <- ne (%0,%struct.$0_Point*),null
-branch (%1,i1) temp_cond_96,temp_merge_99"];
-	"temp_cond_96" [style=filled, shape=box, label="temp_cond_96:
-(%2,i32) <- field_access (%0,%struct.$0_Point*),0
-(%3,i32) load (%2,i32)
-(%4,i1) <- eq (%3,i32),0
-branch (%4,i1) temp_body_97,else_temp_98"];
-	"temp_body_97" [style=filled, shape=box, label="temp_body_97:
-(%5,i32) <- field_access (%0,%struct.$0_Point*),0
-(%6,i32) load (%5,i32)
-(%7,i32) <- sub (%6,i32),0
-(%5,i32) store (%7,i32)
-branch temp_merge_99"];
-	"else_temp_98" [style=filled, shape=box, label="else_temp_98:
-(%8,i32) <- field_access (%0,%struct.$0_Point*),0
-(%9,i32) load (%8,i32)
-(%10,i32) <- sub (%9,i32),1
-(%8,i32) store (%10,i32)
-branch temp_merge_99"];
-	"temp_merge_99" [style=filled, shape=box, label="temp_merge_99:
-
-return (%0,%struct.$0_Point*)"];
-	"entry_100" [style=filled, shape=box, label="entry_100:
-($24_a,%struct.$0_Point*) alloc 
-(%11,%struct.$0_Point*) <- call $13_f
-($24_a,%struct.$0_Point*) store (%11,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_101"];
-	"declaration_inc_count_if_cond_101" [style=filled, shape=box, label="declaration_inc_count_if_cond_101:
-(%12,%struct.$0_Point*) load ($24_a,%struct.$0_Point*)
-(%13,i1) <- ne (%12,%struct.$0_Point*),null
-branch (%13,i1) declaration_inc_count_if_body_102,declaration_inc_count_if_merge_103"];
-	"declaration_inc_count_if_body_102" [style=filled, shape=box, label="declaration_inc_count_if_body_102:
-(%14,%struct.$0_Point*) load ($24_a,%struct.$0_Point*)
-(%15,i32) <- field_access (%14,%struct.$0_Point*),0
-(%16,i32) load (%15,i32)
-(%17,i32) <- add (%16,i32),1
-(%15,i32) store (%17,i32)
-branch declaration_inc_count_if_merge_103"];
-	"declaration_inc_count_if_merge_103" [style=filled, shape=box, label="declaration_inc_count_if_merge_103:
-($25_b,%struct.$0_Point*) alloc 
-(%18,%struct.$0_Point*) <- call $_constructor_0,1,1
-($25_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_104"];
-	"declaration_inc_count_if_cond_104" [style=filled, shape=box, label="declaration_inc_count_if_cond_104:
-(%19,%struct.$0_Point*) load ($25_b,%struct.$0_Point*)
-(%20,i1) <- ne (%19,%struct.$0_Point*),null
-branch (%20,i1) declaration_inc_count_if_body_105,declaration_inc_count_if_merge_106"];
-	"declaration_inc_count_if_body_105" [style=filled, shape=box, label="declaration_inc_count_if_body_105:
-(%21,%struct.$0_Point*) load ($25_b,%struct.$0_Point*)
-(%22,i32) <- field_access (%21,%struct.$0_Point*),0
-(%23,i32) load (%22,i32)
-(%24,i32) <- add (%23,i32),1
-(%22,i32) store (%24,i32)
-branch declaration_inc_count_if_merge_106"];
-	"declaration_inc_count_if_merge_106" [style=filled, shape=box, label="declaration_inc_count_if_merge_106:
-
-branch local_return_107"];
-	"local_return_107" [style=filled, shape=box, label="local_return_107:
-(%25,%struct.$0_Point*) <- call $13_f
-branch start_cond_108"];
-	"start_cond_108" [style=filled, shape=box, label="start_cond_108:
+branch local_return_21"];
+	"local_return_21" [style=filled, shape=box, label="local_return_21:
+(%25,%struct.$0_Point*) load ($20_a,%struct.$0_Point*)
+branch start_cond_22"];
+	"start_cond_22" [style=filled, shape=box, label="start_cond_22:
 (%26,i1) <- ne (%25,%struct.$0_Point*),null
-branch (%26,i1) temp_cond_109,temp_merge_112"];
-	"temp_cond_109" [style=filled, shape=box, label="temp_cond_109:
+branch (%26,i1) temp_cond_23,temp_merge_26"];
+	"temp_cond_23" [style=filled, shape=box, label="temp_cond_23:
 (%27,i32) <- field_access (%25,%struct.$0_Point*),0
 (%28,i32) load (%27,i32)
 (%29,i1) <- eq (%28,i32),0
-branch (%29,i1) temp_body_110,else_temp_111"];
-	"temp_body_110" [style=filled, shape=box, label="temp_body_110:
+branch (%29,i1) temp_body_24,else_temp_25"];
+	"temp_body_24" [style=filled, shape=box, label="temp_body_24:
 (%30,i32) <- field_access (%25,%struct.$0_Point*),0
 (%31,i32) load (%30,i32)
 (%32,i32) <- add (%31,i32),0
 (%30,i32) store (%32,i32)
-branch temp_merge_112"];
-	"else_temp_111" [style=filled, shape=box, label="else_temp_111:
+branch temp_merge_26"];
+	"else_temp_25" [style=filled, shape=box, label="else_temp_25:
 (%33,i32) <- field_access (%25,%struct.$0_Point*),0
 (%34,i32) load (%33,i32)
 (%35,i32) <- add (%34,i32),1
 (%33,i32) store (%35,i32)
-branch temp_merge_112"];
-	"temp_merge_112" [style=filled, shape=box, label="temp_merge_112:
-($$_ret_value_3,%struct.$0_Point*) store (%25,%struct.$0_Point*)
-branch end_function_destructor_114"];
-	"dummy_113" [style=filled, shape=box, label="dummy_113:
+branch temp_merge_26"];
+	"temp_merge_26" [style=filled, shape=box, label="temp_merge_26:
+($$_ret_value_0,%struct.$0_Point*) store (%25,%struct.$0_Point*)
+branch end_function_destructor_28"];
+	"dummy_27" [style=filled, shape=box, label="dummy_27:
 
-branch end_function_destructor_114"];
-	"end_function_destructor_114" [style=filled, shape=box, label="end_function_destructor_114:
-(%36,%struct.$0_Point*) load ($25_b,%struct.$0_Point*)
-branch delete_left_if_cond_115"];
-	"delete_left_if_cond_115" [style=filled, shape=box, label="delete_left_if_cond_115:
-(%37,i1) <- ne (%36,%struct.$0_Point*),null
-branch (%37,i1) delete_left_if_body_116,delete_left_if_merge_117"];
-	"delete_left_if_body_116" [style=filled, shape=box, label="delete_left_if_body_116:
+branch end_function_destructor_28"];
+	"end_function_destructor_28" [style=filled, shape=box, label="end_function_destructor_28:
+(%36,%struct.$0_Point*) load ($21_b,%struct.$0_Point*)
  <- call $_destructor_0,(%36,%struct.$0_Point*)
-branch delete_left_if_merge_117"];
-	"delete_left_if_merge_117" [style=filled, shape=box, label="delete_left_if_merge_117:
-(%38,%struct.$0_Point*) load ($24_a,%struct.$0_Point*)
-branch delete_left_if_cond_118"];
-	"delete_left_if_cond_118" [style=filled, shape=box, label="delete_left_if_cond_118:
-(%39,i1) <- ne (%38,%struct.$0_Point*),null
-branch (%39,i1) delete_left_if_body_119,delete_left_if_merge_120"];
-	"delete_left_if_body_119" [style=filled, shape=box, label="delete_left_if_body_119:
- <- call $_destructor_0,(%38,%struct.$0_Point*)
-branch delete_left_if_merge_120"];
-	"delete_left_if_merge_120" [style=filled, shape=box, label="delete_left_if_merge_120:
+(%37,%struct.$0_Point*) load ($20_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%37,%struct.$0_Point*)
+branch return_8"];
+"header_7" -> "entry_14";
+"return_8" -> "start_cond_9";
+"start_cond_9" -> "temp_cond_10";
+"start_cond_9" -> "temp_merge_13";
+"temp_cond_10" -> "temp_body_11";
+"temp_cond_10" -> "else_temp_12";
+"temp_body_11" -> "temp_merge_13";
+"else_temp_12" -> "temp_merge_13";
+"entry_14" -> "declaration_inc_count_if_cond_15";
+"declaration_inc_count_if_cond_15" -> "declaration_inc_count_if_body_16";
+"declaration_inc_count_if_cond_15" -> "declaration_inc_count_if_merge_17";
+"declaration_inc_count_if_body_16" -> "declaration_inc_count_if_merge_17";
+"declaration_inc_count_if_merge_17" -> "declaration_inc_count_if_cond_18";
+"declaration_inc_count_if_cond_18" -> "declaration_inc_count_if_body_19";
+"declaration_inc_count_if_cond_18" -> "declaration_inc_count_if_merge_20";
+"declaration_inc_count_if_body_19" -> "declaration_inc_count_if_merge_20";
+"declaration_inc_count_if_merge_20" -> "local_return_21";
+"local_return_21" -> "start_cond_22";
+"start_cond_22" -> "temp_cond_23";
+"start_cond_22" -> "temp_merge_26";
+"temp_cond_23" -> "temp_body_24";
+"temp_cond_23" -> "else_temp_25";
+"temp_body_24" -> "temp_merge_26";
+"else_temp_25" -> "temp_merge_26";
+"temp_merge_26" -> "end_function_destructor_28";
+"dummy_27" -> "end_function_destructor_28";
+"end_function_destructor_28" -> "return_8";
 
-branch return_94"];
-"header_93" -> "entry_100";
-"return_94" -> "start_cond_95";
-"start_cond_95" -> "temp_cond_96";
-"start_cond_95" -> "temp_merge_99";
-"temp_cond_96" -> "temp_body_97";
-"temp_cond_96" -> "else_temp_98";
-"temp_body_97" -> "temp_merge_99";
-"else_temp_98" -> "temp_merge_99";
-"entry_100" -> "declaration_inc_count_if_cond_101";
-"declaration_inc_count_if_cond_101" -> "declaration_inc_count_if_body_102";
-"declaration_inc_count_if_cond_101" -> "declaration_inc_count_if_merge_103";
-"declaration_inc_count_if_body_102" -> "declaration_inc_count_if_merge_103";
-"declaration_inc_count_if_merge_103" -> "declaration_inc_count_if_cond_104";
-"declaration_inc_count_if_cond_104" -> "declaration_inc_count_if_body_105";
-"declaration_inc_count_if_cond_104" -> "declaration_inc_count_if_merge_106";
-"declaration_inc_count_if_body_105" -> "declaration_inc_count_if_merge_106";
-"declaration_inc_count_if_merge_106" -> "local_return_107";
-"local_return_107" -> "start_cond_108";
-"start_cond_108" -> "temp_cond_109";
-"start_cond_108" -> "temp_merge_112";
-"temp_cond_109" -> "temp_body_110";
-"temp_cond_109" -> "else_temp_111";
-"temp_body_110" -> "temp_merge_112";
-"else_temp_111" -> "temp_merge_112";
-"temp_merge_112" -> "end_function_destructor_114";
-"dummy_113" -> "end_function_destructor_114";
-"end_function_destructor_114" -> "delete_left_if_cond_115";
-"delete_left_if_cond_115" -> "delete_left_if_body_116";
-"delete_left_if_cond_115" -> "delete_left_if_merge_117";
-"delete_left_if_body_116" -> "delete_left_if_merge_117";
-"delete_left_if_merge_117" -> "delete_left_if_cond_118";
-"delete_left_if_cond_118" -> "delete_left_if_body_119";
-"delete_left_if_cond_118" -> "delete_left_if_merge_120";
-"delete_left_if_body_119" -> "delete_left_if_merge_120";
-"delete_left_if_merge_120" -> "return_94";
-
-	"header_121" [style=filled, shape=box, label="header_121:
-($$_ret_value_4,%struct.$0_Point*) alloc 
-branch entry_128"];
-	"return_122" [style=filled, shape=box, label="return_122:
-(%0,%struct.$0_Point*) load ($$_ret_value_4,%struct.$0_Point*)
-branch start_cond_123"];
-	"start_cond_123" [style=filled, shape=box, label="start_cond_123:
+	"header_29" [style=filled, shape=box, label="header_29:
+($$_ret_value_1,%struct.$0_Point*) alloc 
+branch entry_36"];
+	"return_30" [style=filled, shape=box, label="return_30:
+(%0,%struct.$0_Point*) load ($$_ret_value_1,%struct.$0_Point*)
+branch start_cond_31"];
+	"start_cond_31" [style=filled, shape=box, label="start_cond_31:
 (%1,i1) <- ne (%0,%struct.$0_Point*),null
-branch (%1,i1) temp_cond_124,temp_merge_127"];
-	"temp_cond_124" [style=filled, shape=box, label="temp_cond_124:
+branch (%1,i1) temp_cond_32,temp_merge_35"];
+	"temp_cond_32" [style=filled, shape=box, label="temp_cond_32:
 (%2,i32) <- field_access (%0,%struct.$0_Point*),0
 (%3,i32) load (%2,i32)
 (%4,i1) <- eq (%3,i32),0
-branch (%4,i1) temp_body_125,else_temp_126"];
-	"temp_body_125" [style=filled, shape=box, label="temp_body_125:
+branch (%4,i1) temp_body_33,else_temp_34"];
+	"temp_body_33" [style=filled, shape=box, label="temp_body_33:
 (%5,i32) <- field_access (%0,%struct.$0_Point*),0
 (%6,i32) load (%5,i32)
 (%7,i32) <- sub (%6,i32),0
 (%5,i32) store (%7,i32)
-branch temp_merge_127"];
-	"else_temp_126" [style=filled, shape=box, label="else_temp_126:
+branch temp_merge_35"];
+	"else_temp_34" [style=filled, shape=box, label="else_temp_34:
 (%8,i32) <- field_access (%0,%struct.$0_Point*),0
 (%9,i32) load (%8,i32)
 (%10,i32) <- sub (%9,i32),1
 (%8,i32) store (%10,i32)
-branch temp_merge_127"];
-	"temp_merge_127" [style=filled, shape=box, label="temp_merge_127:
+branch temp_merge_35"];
+	"temp_merge_35" [style=filled, shape=box, label="temp_merge_35:
 
 return (%0,%struct.$0_Point*)"];
-	"entry_128" [style=filled, shape=box, label="entry_128:
-($16_a,%struct.$0_Point*) alloc 
-(%11,%struct.$0_Point*) <- call $_constructor_0,1,1
-($16_a,%struct.$0_Point*) store (%11,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_129"];
-	"declaration_inc_count_if_cond_129" [style=filled, shape=box, label="declaration_inc_count_if_cond_129:
-(%12,%struct.$0_Point*) load ($16_a,%struct.$0_Point*)
-(%13,i1) <- ne (%12,%struct.$0_Point*),null
-branch (%13,i1) declaration_inc_count_if_body_130,declaration_inc_count_if_merge_131"];
-	"declaration_inc_count_if_body_130" [style=filled, shape=box, label="declaration_inc_count_if_body_130:
-(%14,%struct.$0_Point*) load ($16_a,%struct.$0_Point*)
-(%15,i32) <- field_access (%14,%struct.$0_Point*),0
-(%16,i32) load (%15,i32)
-(%17,i32) <- add (%16,i32),1
-(%15,i32) store (%17,i32)
-branch declaration_inc_count_if_merge_131"];
-	"declaration_inc_count_if_merge_131" [style=filled, shape=box, label="declaration_inc_count_if_merge_131:
-($17_b,%struct.$0_Point*) alloc 
-(%18,%struct.$0_Point*) <- call $_constructor_0,1,1
-($17_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_132"];
-	"declaration_inc_count_if_cond_132" [style=filled, shape=box, label="declaration_inc_count_if_cond_132:
-(%19,%struct.$0_Point*) load ($17_b,%struct.$0_Point*)
-(%20,i1) <- ne (%19,%struct.$0_Point*),null
-branch (%20,i1) declaration_inc_count_if_body_133,declaration_inc_count_if_merge_134"];
-	"declaration_inc_count_if_body_133" [style=filled, shape=box, label="declaration_inc_count_if_body_133:
-(%21,%struct.$0_Point*) load ($17_b,%struct.$0_Point*)
-(%22,i32) <- field_access (%21,%struct.$0_Point*),0
-(%23,i32) load (%22,i32)
-(%24,i32) <- add (%23,i32),1
-(%22,i32) store (%24,i32)
-branch declaration_inc_count_if_merge_134"];
-	"declaration_inc_count_if_merge_134" [style=filled, shape=box, label="declaration_inc_count_if_merge_134:
-
-branch local_return_135"];
-	"local_return_135" [style=filled, shape=box, label="local_return_135:
-(%25,%struct.$0_Point*) <- call $_constructor_0,1,1
-branch start_cond_136"];
-	"start_cond_136" [style=filled, shape=box, label="start_cond_136:
-(%26,i1) <- ne (%25,%struct.$0_Point*),null
-branch (%26,i1) temp_cond_137,temp_merge_140"];
-	"temp_cond_137" [style=filled, shape=box, label="temp_cond_137:
-(%27,i32) <- field_access (%25,%struct.$0_Point*),0
-(%28,i32) load (%27,i32)
-(%29,i1) <- eq (%28,i32),0
-branch (%29,i1) temp_body_138,else_temp_139"];
-	"temp_body_138" [style=filled, shape=box, label="temp_body_138:
-(%30,i32) <- field_access (%25,%struct.$0_Point*),0
-(%31,i32) load (%30,i32)
-(%32,i32) <- add (%31,i32),0
-(%30,i32) store (%32,i32)
-branch temp_merge_140"];
-	"else_temp_139" [style=filled, shape=box, label="else_temp_139:
-(%33,i32) <- field_access (%25,%struct.$0_Point*),0
-(%34,i32) load (%33,i32)
-(%35,i32) <- add (%34,i32),1
-(%33,i32) store (%35,i32)
-branch temp_merge_140"];
-	"temp_merge_140" [style=filled, shape=box, label="temp_merge_140:
-($$_ret_value_4,%struct.$0_Point*) store (%25,%struct.$0_Point*)
-branch end_function_destructor_142"];
-	"dummy_141" [style=filled, shape=box, label="dummy_141:
-
-branch end_function_destructor_142"];
-	"end_function_destructor_142" [style=filled, shape=box, label="end_function_destructor_142:
-(%36,%struct.$0_Point*) load ($17_b,%struct.$0_Point*)
-branch delete_left_if_cond_143"];
-	"delete_left_if_cond_143" [style=filled, shape=box, label="delete_left_if_cond_143:
-(%37,i1) <- ne (%36,%struct.$0_Point*),null
-branch (%37,i1) delete_left_if_body_144,delete_left_if_merge_145"];
-	"delete_left_if_body_144" [style=filled, shape=box, label="delete_left_if_body_144:
- <- call $_destructor_0,(%36,%struct.$0_Point*)
-branch delete_left_if_merge_145"];
-	"delete_left_if_merge_145" [style=filled, shape=box, label="delete_left_if_merge_145:
-(%38,%struct.$0_Point*) load ($16_a,%struct.$0_Point*)
-branch delete_left_if_cond_146"];
-	"delete_left_if_cond_146" [style=filled, shape=box, label="delete_left_if_cond_146:
-(%39,i1) <- ne (%38,%struct.$0_Point*),null
-branch (%39,i1) delete_left_if_body_147,delete_left_if_merge_148"];
-	"delete_left_if_body_147" [style=filled, shape=box, label="delete_left_if_body_147:
- <- call $_destructor_0,(%38,%struct.$0_Point*)
-branch delete_left_if_merge_148"];
-	"delete_left_if_merge_148" [style=filled, shape=box, label="delete_left_if_merge_148:
-
-branch return_122"];
-"header_121" -> "entry_128";
-"return_122" -> "start_cond_123";
-"start_cond_123" -> "temp_cond_124";
-"start_cond_123" -> "temp_merge_127";
-"temp_cond_124" -> "temp_body_125";
-"temp_cond_124" -> "else_temp_126";
-"temp_body_125" -> "temp_merge_127";
-"else_temp_126" -> "temp_merge_127";
-"entry_128" -> "declaration_inc_count_if_cond_129";
-"declaration_inc_count_if_cond_129" -> "declaration_inc_count_if_body_130";
-"declaration_inc_count_if_cond_129" -> "declaration_inc_count_if_merge_131";
-"declaration_inc_count_if_body_130" -> "declaration_inc_count_if_merge_131";
-"declaration_inc_count_if_merge_131" -> "declaration_inc_count_if_cond_132";
-"declaration_inc_count_if_cond_132" -> "declaration_inc_count_if_body_133";
-"declaration_inc_count_if_cond_132" -> "declaration_inc_count_if_merge_134";
-"declaration_inc_count_if_body_133" -> "declaration_inc_count_if_merge_134";
-"declaration_inc_count_if_merge_134" -> "local_return_135";
-"local_return_135" -> "start_cond_136";
-"start_cond_136" -> "temp_cond_137";
-"start_cond_136" -> "temp_merge_140";
-"temp_cond_137" -> "temp_body_138";
-"temp_cond_137" -> "else_temp_139";
-"temp_body_138" -> "temp_merge_140";
-"else_temp_139" -> "temp_merge_140";
-"temp_merge_140" -> "end_function_destructor_142";
-"dummy_141" -> "end_function_destructor_142";
-"end_function_destructor_142" -> "delete_left_if_cond_143";
-"delete_left_if_cond_143" -> "delete_left_if_body_144";
-"delete_left_if_cond_143" -> "delete_left_if_merge_145";
-"delete_left_if_body_144" -> "delete_left_if_merge_145";
-"delete_left_if_merge_145" -> "delete_left_if_cond_146";
-"delete_left_if_cond_146" -> "delete_left_if_body_147";
-"delete_left_if_cond_146" -> "delete_left_if_merge_148";
-"delete_left_if_body_147" -> "delete_left_if_merge_148";
-"delete_left_if_merge_148" -> "return_122";
-
-	"header_149" [style=filled, shape=box, label="header_149:
-($29_p,%struct.$0_Point*) alloc 
-($29_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-($$_ret_value_5,%struct.$0_Point*) alloc 
-branch entry_156"];
-	"return_150" [style=filled, shape=box, label="return_150:
-(%1,%struct.$0_Point*) load ($$_ret_value_5,%struct.$0_Point*)
-branch start_cond_151"];
-	"start_cond_151" [style=filled, shape=box, label="start_cond_151:
-(%2,i1) <- ne (%1,%struct.$0_Point*),null
-branch (%2,i1) temp_cond_152,temp_merge_155"];
-	"temp_cond_152" [style=filled, shape=box, label="temp_cond_152:
-(%3,i32) <- field_access (%1,%struct.$0_Point*),0
-(%4,i32) load (%3,i32)
-(%5,i1) <- eq (%4,i32),0
-branch (%5,i1) temp_body_153,else_temp_154"];
-	"temp_body_153" [style=filled, shape=box, label="temp_body_153:
-(%6,i32) <- field_access (%1,%struct.$0_Point*),0
-(%7,i32) load (%6,i32)
-(%8,i32) <- sub (%7,i32),0
-(%6,i32) store (%8,i32)
-branch temp_merge_155"];
-	"else_temp_154" [style=filled, shape=box, label="else_temp_154:
-(%9,i32) <- field_access (%1,%struct.$0_Point*),0
-(%10,i32) load (%9,i32)
-(%11,i32) <- sub (%10,i32),1
-(%9,i32) store (%11,i32)
-branch temp_merge_155"];
-	"temp_merge_155" [style=filled, shape=box, label="temp_merge_155:
-
-return (%1,%struct.$0_Point*)"];
-	"entry_156" [style=filled, shape=box, label="entry_156:
-($30_a,%struct.$0_Point*) alloc 
-(%12,%struct.$0_Point*) <- call $_constructor_0,1,1
-($30_a,%struct.$0_Point*) store (%12,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_157"];
-	"declaration_inc_count_if_cond_157" [style=filled, shape=box, label="declaration_inc_count_if_cond_157:
-(%13,%struct.$0_Point*) load ($30_a,%struct.$0_Point*)
-(%14,i1) <- ne (%13,%struct.$0_Point*),null
-branch (%14,i1) declaration_inc_count_if_body_158,declaration_inc_count_if_merge_159"];
-	"declaration_inc_count_if_body_158" [style=filled, shape=box, label="declaration_inc_count_if_body_158:
-(%15,%struct.$0_Point*) load ($30_a,%struct.$0_Point*)
-(%16,i32) <- field_access (%15,%struct.$0_Point*),0
-(%17,i32) load (%16,i32)
-(%18,i32) <- add (%17,i32),1
-(%16,i32) store (%18,i32)
-branch declaration_inc_count_if_merge_159"];
-	"declaration_inc_count_if_merge_159" [style=filled, shape=box, label="declaration_inc_count_if_merge_159:
-($31_b,%struct.$0_Point*) alloc 
-(%19,%struct.$0_Point*) <- call $_constructor_0,1,1
-($31_b,%struct.$0_Point*) store (%19,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_160"];
-	"declaration_inc_count_if_cond_160" [style=filled, shape=box, label="declaration_inc_count_if_cond_160:
-(%20,%struct.$0_Point*) load ($31_b,%struct.$0_Point*)
-(%21,i1) <- ne (%20,%struct.$0_Point*),null
-branch (%21,i1) declaration_inc_count_if_body_161,declaration_inc_count_if_merge_162"];
-	"declaration_inc_count_if_body_161" [style=filled, shape=box, label="declaration_inc_count_if_body_161:
-(%22,%struct.$0_Point*) load ($31_b,%struct.$0_Point*)
-(%23,i32) <- field_access (%22,%struct.$0_Point*),0
-(%24,i32) load (%23,i32)
-(%25,i32) <- add (%24,i32),1
-(%23,i32) store (%25,i32)
-branch declaration_inc_count_if_merge_162"];
-	"declaration_inc_count_if_merge_162" [style=filled, shape=box, label="declaration_inc_count_if_merge_162:
-
-branch local_return_163"];
-	"local_return_163" [style=filled, shape=box, label="local_return_163:
-(%26,%struct.$0_Point*) load ($30_a,%struct.$0_Point*)
-branch start_cond_164"];
-	"start_cond_164" [style=filled, shape=box, label="start_cond_164:
-(%27,i1) <- ne (%26,%struct.$0_Point*),null
-branch (%27,i1) temp_cond_165,temp_merge_168"];
-	"temp_cond_165" [style=filled, shape=box, label="temp_cond_165:
-(%28,i32) <- field_access (%26,%struct.$0_Point*),0
-(%29,i32) load (%28,i32)
-(%30,i1) <- eq (%29,i32),0
-branch (%30,i1) temp_body_166,else_temp_167"];
-	"temp_body_166" [style=filled, shape=box, label="temp_body_166:
-(%31,i32) <- field_access (%26,%struct.$0_Point*),0
-(%32,i32) load (%31,i32)
-(%33,i32) <- add (%32,i32),0
-(%31,i32) store (%33,i32)
-branch temp_merge_168"];
-	"else_temp_167" [style=filled, shape=box, label="else_temp_167:
-(%34,i32) <- field_access (%26,%struct.$0_Point*),0
-(%35,i32) load (%34,i32)
-(%36,i32) <- add (%35,i32),1
-(%34,i32) store (%36,i32)
-branch temp_merge_168"];
-	"temp_merge_168" [style=filled, shape=box, label="temp_merge_168:
-($$_ret_value_5,%struct.$0_Point*) store (%26,%struct.$0_Point*)
-branch end_function_destructor_170"];
-	"dummy_169" [style=filled, shape=box, label="dummy_169:
-
-branch end_function_destructor_170"];
-	"end_function_destructor_170" [style=filled, shape=box, label="end_function_destructor_170:
-(%37,%struct.$0_Point*) load ($31_b,%struct.$0_Point*)
-branch delete_left_if_cond_171"];
-	"delete_left_if_cond_171" [style=filled, shape=box, label="delete_left_if_cond_171:
-(%38,i1) <- ne (%37,%struct.$0_Point*),null
-branch (%38,i1) delete_left_if_body_172,delete_left_if_merge_173"];
-	"delete_left_if_body_172" [style=filled, shape=box, label="delete_left_if_body_172:
- <- call $_destructor_0,(%37,%struct.$0_Point*)
-branch delete_left_if_merge_173"];
-	"delete_left_if_merge_173" [style=filled, shape=box, label="delete_left_if_merge_173:
-(%39,%struct.$0_Point*) load ($30_a,%struct.$0_Point*)
-branch delete_left_if_cond_174"];
-	"delete_left_if_cond_174" [style=filled, shape=box, label="delete_left_if_cond_174:
-(%40,i1) <- ne (%39,%struct.$0_Point*),null
-branch (%40,i1) delete_left_if_body_175,delete_left_if_merge_176"];
-	"delete_left_if_body_175" [style=filled, shape=box, label="delete_left_if_body_175:
- <- call $_destructor_0,(%39,%struct.$0_Point*)
-branch delete_left_if_merge_176"];
-	"delete_left_if_merge_176" [style=filled, shape=box, label="delete_left_if_merge_176:
-(%41,%struct.$0_Point*) load ($29_p,%struct.$0_Point*)
-branch delete_left_if_cond_177"];
-	"delete_left_if_cond_177" [style=filled, shape=box, label="delete_left_if_cond_177:
-(%42,i1) <- ne (%41,%struct.$0_Point*),null
-branch (%42,i1) delete_left_if_body_178,delete_left_if_merge_179"];
-	"delete_left_if_body_178" [style=filled, shape=box, label="delete_left_if_body_178:
- <- call $_destructor_0,(%41,%struct.$0_Point*)
-branch delete_left_if_merge_179"];
-	"delete_left_if_merge_179" [style=filled, shape=box, label="delete_left_if_merge_179:
-
-branch return_150"];
-"header_149" -> "entry_156";
-"return_150" -> "start_cond_151";
-"start_cond_151" -> "temp_cond_152";
-"start_cond_151" -> "temp_merge_155";
-"temp_cond_152" -> "temp_body_153";
-"temp_cond_152" -> "else_temp_154";
-"temp_body_153" -> "temp_merge_155";
-"else_temp_154" -> "temp_merge_155";
-"entry_156" -> "declaration_inc_count_if_cond_157";
-"declaration_inc_count_if_cond_157" -> "declaration_inc_count_if_body_158";
-"declaration_inc_count_if_cond_157" -> "declaration_inc_count_if_merge_159";
-"declaration_inc_count_if_body_158" -> "declaration_inc_count_if_merge_159";
-"declaration_inc_count_if_merge_159" -> "declaration_inc_count_if_cond_160";
-"declaration_inc_count_if_cond_160" -> "declaration_inc_count_if_body_161";
-"declaration_inc_count_if_cond_160" -> "declaration_inc_count_if_merge_162";
-"declaration_inc_count_if_body_161" -> "declaration_inc_count_if_merge_162";
-"declaration_inc_count_if_merge_162" -> "local_return_163";
-"local_return_163" -> "start_cond_164";
-"start_cond_164" -> "temp_cond_165";
-"start_cond_164" -> "temp_merge_168";
-"temp_cond_165" -> "temp_body_166";
-"temp_cond_165" -> "else_temp_167";
-"temp_body_166" -> "temp_merge_168";
-"else_temp_167" -> "temp_merge_168";
-"temp_merge_168" -> "end_function_destructor_170";
-"dummy_169" -> "end_function_destructor_170";
-"end_function_destructor_170" -> "delete_left_if_cond_171";
-"delete_left_if_cond_171" -> "delete_left_if_body_172";
-"delete_left_if_cond_171" -> "delete_left_if_merge_173";
-"delete_left_if_body_172" -> "delete_left_if_merge_173";
-"delete_left_if_merge_173" -> "delete_left_if_cond_174";
-"delete_left_if_cond_174" -> "delete_left_if_body_175";
-"delete_left_if_cond_174" -> "delete_left_if_merge_176";
-"delete_left_if_body_175" -> "delete_left_if_merge_176";
-"delete_left_if_merge_176" -> "delete_left_if_cond_177";
-"delete_left_if_cond_177" -> "delete_left_if_body_178";
-"delete_left_if_cond_177" -> "delete_left_if_merge_179";
-"delete_left_if_body_178" -> "delete_left_if_merge_179";
-"delete_left_if_merge_179" -> "return_150";
-
-	"header_180" [style=filled, shape=box, label="header_180:
-($14_x,i32) alloc 
-($14_x,i32) store (%0,i32)
-($15_y,i32) alloc 
-($15_y,i32) store (%1,i32)
-($$_ret_value_6,%struct.$0_Point*) alloc 
-($$_this_value_1,%struct.$0_Point*) alloc 
-(%2,i64*) <- struct_allocation i64*,16
-(%3,%struct.$0_Point*) <- cast (%2,i64*)
-($$_this_value_1,%struct.$0_Point*) store (%3,%struct.$0_Point*)
-($$_ret_value_6,%struct.$0_Point*) store (%3,%struct.$0_Point*)
-(%4,%struct.$0_Point*) load ($$_this_value_1,%struct.$0_Point*)
-(%5,i32) <- field_access (%4,%struct.$0_Point*),0
-(%5,i32) store 0
-(%6,i32) <- field_access (%4,%struct.$0_Point*),1
-(%6,i32) store 0
-(%7,i32) <- field_access (%4,%struct.$0_Point*),2
-(%7,i32) store 0
-(%8,i32) <- field_access (%4,%struct.$0_Point*),3
-(%8,i32) store 0
-branch entry_187"];
-	"return_181" [style=filled, shape=box, label="return_181:
-(%9,%struct.$0_Point*) load ($$_ret_value_6,%struct.$0_Point*)
-branch start_cond_182"];
-	"start_cond_182" [style=filled, shape=box, label="start_cond_182:
-(%10,i1) <- ne (%9,%struct.$0_Point*),null
-branch (%10,i1) temp_cond_183,temp_merge_186"];
-	"temp_cond_183" [style=filled, shape=box, label="temp_cond_183:
-(%11,i32) <- field_access (%9,%struct.$0_Point*),0
-(%12,i32) load (%11,i32)
-(%13,i1) <- eq (%12,i32),0
-branch (%13,i1) temp_body_184,else_temp_185"];
-	"temp_body_184" [style=filled, shape=box, label="temp_body_184:
-(%14,i32) <- field_access (%9,%struct.$0_Point*),0
-(%15,i32) load (%14,i32)
-(%16,i32) <- sub (%15,i32),0
-(%14,i32) store (%16,i32)
-branch temp_merge_186"];
-	"else_temp_185" [style=filled, shape=box, label="else_temp_185:
-(%17,i32) <- field_access (%9,%struct.$0_Point*),0
-(%18,i32) load (%17,i32)
-(%19,i32) <- sub (%18,i32),1
-(%17,i32) store (%19,i32)
-branch temp_merge_186"];
-	"temp_merge_186" [style=filled, shape=box, label="temp_merge_186:
-
-return (%9,%struct.$0_Point*)"];
-	"entry_187" [style=filled, shape=box, label="entry_187:
-(%20,%struct.$0_Point*) load ($$_this_value_1,%struct.$0_Point*)
-(%21,i32) <- field_access (%20,%struct.$0_Point*),2
-(%22,i32) load ($14_x,i32)
-(%21,i32) store (%22,i32)
-(%23,%struct.$0_Point*) load ($$_this_value_1,%struct.$0_Point*)
-(%24,i32) <- field_access (%23,%struct.$0_Point*),3
-(%25,i32) load ($15_y,i32)
-(%24,i32) store (%25,i32)
-branch end_function_destructor_188"];
-	"end_function_destructor_188" [style=filled, shape=box, label="end_function_destructor_188:
-
-branch return_181"];
-"header_180" -> "entry_187";
-"return_181" -> "start_cond_182";
-"start_cond_182" -> "temp_cond_183";
-"start_cond_182" -> "temp_merge_186";
-"temp_cond_183" -> "temp_body_184";
-"temp_cond_183" -> "else_temp_185";
-"temp_body_184" -> "temp_merge_186";
-"else_temp_185" -> "temp_merge_186";
-"entry_187" -> "end_function_destructor_188";
-"end_function_destructor_188" -> "return_181";
-
-	"header_189" [style=filled, shape=box, label="header_189:
-($35_p,%struct.$0_Point*) alloc 
-($35_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-($$_ret_value_7,%struct.$0_Point*) alloc 
-branch entry_196"];
-	"return_190" [style=filled, shape=box, label="return_190:
-(%1,%struct.$0_Point*) load ($$_ret_value_7,%struct.$0_Point*)
-branch start_cond_191"];
-	"start_cond_191" [style=filled, shape=box, label="start_cond_191:
-(%2,i1) <- ne (%1,%struct.$0_Point*),null
-branch (%2,i1) temp_cond_192,temp_merge_195"];
-	"temp_cond_192" [style=filled, shape=box, label="temp_cond_192:
-(%3,i32) <- field_access (%1,%struct.$0_Point*),0
-(%4,i32) load (%3,i32)
-(%5,i1) <- eq (%4,i32),0
-branch (%5,i1) temp_body_193,else_temp_194"];
-	"temp_body_193" [style=filled, shape=box, label="temp_body_193:
-(%6,i32) <- field_access (%1,%struct.$0_Point*),0
-(%7,i32) load (%6,i32)
-(%8,i32) <- sub (%7,i32),0
-(%6,i32) store (%8,i32)
-branch temp_merge_195"];
-	"else_temp_194" [style=filled, shape=box, label="else_temp_194:
-(%9,i32) <- field_access (%1,%struct.$0_Point*),0
-(%10,i32) load (%9,i32)
-(%11,i32) <- sub (%10,i32),1
-(%9,i32) store (%11,i32)
-branch temp_merge_195"];
-	"temp_merge_195" [style=filled, shape=box, label="temp_merge_195:
-
-return (%1,%struct.$0_Point*)"];
-	"entry_196" [style=filled, shape=box, label="entry_196:
-($36_a,%struct.$0_Point*) alloc 
-(%12,%struct.$0_Point*) <- call $13_f
-($36_a,%struct.$0_Point*) store (%12,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_197"];
-	"declaration_inc_count_if_cond_197" [style=filled, shape=box, label="declaration_inc_count_if_cond_197:
-(%13,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
-(%14,i1) <- ne (%13,%struct.$0_Point*),null
-branch (%14,i1) declaration_inc_count_if_body_198,declaration_inc_count_if_merge_199"];
-	"declaration_inc_count_if_body_198" [style=filled, shape=box, label="declaration_inc_count_if_body_198:
-(%15,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
-(%16,i32) <- field_access (%15,%struct.$0_Point*),0
-(%17,i32) load (%16,i32)
-(%18,i32) <- add (%17,i32),1
-(%16,i32) store (%18,i32)
-branch declaration_inc_count_if_merge_199"];
-	"declaration_inc_count_if_merge_199" [style=filled, shape=box, label="declaration_inc_count_if_merge_199:
-($37_b,%struct.$0_Point*) alloc 
-(%19,%struct.$0_Point*) load ($35_p,%struct.$0_Point*)
-($37_b,%struct.$0_Point*) store (%19,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_200"];
-	"declaration_inc_count_if_cond_200" [style=filled, shape=box, label="declaration_inc_count_if_cond_200:
-(%20,%struct.$0_Point*) load ($37_b,%struct.$0_Point*)
-(%21,i1) <- ne (%20,%struct.$0_Point*),null
-branch (%21,i1) declaration_inc_count_if_body_201,declaration_inc_count_if_merge_202"];
-	"declaration_inc_count_if_body_201" [style=filled, shape=box, label="declaration_inc_count_if_body_201:
-(%22,%struct.$0_Point*) load ($37_b,%struct.$0_Point*)
-(%23,i32) <- field_access (%22,%struct.$0_Point*),0
-(%24,i32) load (%23,i32)
-(%25,i32) <- add (%24,i32),1
-(%23,i32) store (%25,i32)
-branch declaration_inc_count_if_merge_202"];
-	"declaration_inc_count_if_merge_202" [style=filled, shape=box, label="declaration_inc_count_if_merge_202:
-
-branch local_return_203"];
-	"local_return_203" [style=filled, shape=box, label="local_return_203:
-(%26,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
-branch start_cond_204"];
-	"start_cond_204" [style=filled, shape=box, label="start_cond_204:
-(%27,i1) <- ne (%26,%struct.$0_Point*),null
-branch (%27,i1) temp_cond_205,temp_merge_208"];
-	"temp_cond_205" [style=filled, shape=box, label="temp_cond_205:
-(%28,i32) <- field_access (%26,%struct.$0_Point*),0
-(%29,i32) load (%28,i32)
-(%30,i1) <- eq (%29,i32),0
-branch (%30,i1) temp_body_206,else_temp_207"];
-	"temp_body_206" [style=filled, shape=box, label="temp_body_206:
-(%31,i32) <- field_access (%26,%struct.$0_Point*),0
-(%32,i32) load (%31,i32)
-(%33,i32) <- add (%32,i32),0
-(%31,i32) store (%33,i32)
-branch temp_merge_208"];
-	"else_temp_207" [style=filled, shape=box, label="else_temp_207:
-(%34,i32) <- field_access (%26,%struct.$0_Point*),0
-(%35,i32) load (%34,i32)
-(%36,i32) <- add (%35,i32),1
-(%34,i32) store (%36,i32)
-branch temp_merge_208"];
-	"temp_merge_208" [style=filled, shape=box, label="temp_merge_208:
-($$_ret_value_7,%struct.$0_Point*) store (%26,%struct.$0_Point*)
-branch end_function_destructor_210"];
-	"dummy_209" [style=filled, shape=box, label="dummy_209:
-
-branch end_function_destructor_210"];
-	"end_function_destructor_210" [style=filled, shape=box, label="end_function_destructor_210:
-(%37,%struct.$0_Point*) load ($37_b,%struct.$0_Point*)
-branch delete_left_if_cond_211"];
-	"delete_left_if_cond_211" [style=filled, shape=box, label="delete_left_if_cond_211:
-(%38,i1) <- ne (%37,%struct.$0_Point*),null
-branch (%38,i1) delete_left_if_body_212,delete_left_if_merge_213"];
-	"delete_left_if_body_212" [style=filled, shape=box, label="delete_left_if_body_212:
- <- call $_destructor_0,(%37,%struct.$0_Point*)
-branch delete_left_if_merge_213"];
-	"delete_left_if_merge_213" [style=filled, shape=box, label="delete_left_if_merge_213:
-(%39,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
-branch delete_left_if_cond_214"];
-	"delete_left_if_cond_214" [style=filled, shape=box, label="delete_left_if_cond_214:
-(%40,i1) <- ne (%39,%struct.$0_Point*),null
-branch (%40,i1) delete_left_if_body_215,delete_left_if_merge_216"];
-	"delete_left_if_body_215" [style=filled, shape=box, label="delete_left_if_body_215:
- <- call $_destructor_0,(%39,%struct.$0_Point*)
-branch delete_left_if_merge_216"];
-	"delete_left_if_merge_216" [style=filled, shape=box, label="delete_left_if_merge_216:
-(%41,%struct.$0_Point*) load ($35_p,%struct.$0_Point*)
-branch delete_left_if_cond_217"];
-	"delete_left_if_cond_217" [style=filled, shape=box, label="delete_left_if_cond_217:
-(%42,i1) <- ne (%41,%struct.$0_Point*),null
-branch (%42,i1) delete_left_if_body_218,delete_left_if_merge_219"];
-	"delete_left_if_body_218" [style=filled, shape=box, label="delete_left_if_body_218:
- <- call $_destructor_0,(%41,%struct.$0_Point*)
-branch delete_left_if_merge_219"];
-	"delete_left_if_merge_219" [style=filled, shape=box, label="delete_left_if_merge_219:
-
-branch return_190"];
-"header_189" -> "entry_196";
-"return_190" -> "start_cond_191";
-"start_cond_191" -> "temp_cond_192";
-"start_cond_191" -> "temp_merge_195";
-"temp_cond_192" -> "temp_body_193";
-"temp_cond_192" -> "else_temp_194";
-"temp_body_193" -> "temp_merge_195";
-"else_temp_194" -> "temp_merge_195";
-"entry_196" -> "declaration_inc_count_if_cond_197";
-"declaration_inc_count_if_cond_197" -> "declaration_inc_count_if_body_198";
-"declaration_inc_count_if_cond_197" -> "declaration_inc_count_if_merge_199";
-"declaration_inc_count_if_body_198" -> "declaration_inc_count_if_merge_199";
-"declaration_inc_count_if_merge_199" -> "declaration_inc_count_if_cond_200";
-"declaration_inc_count_if_cond_200" -> "declaration_inc_count_if_body_201";
-"declaration_inc_count_if_cond_200" -> "declaration_inc_count_if_merge_202";
-"declaration_inc_count_if_body_201" -> "declaration_inc_count_if_merge_202";
-"declaration_inc_count_if_merge_202" -> "local_return_203";
-"local_return_203" -> "start_cond_204";
-"start_cond_204" -> "temp_cond_205";
-"start_cond_204" -> "temp_merge_208";
-"temp_cond_205" -> "temp_body_206";
-"temp_cond_205" -> "else_temp_207";
-"temp_body_206" -> "temp_merge_208";
-"else_temp_207" -> "temp_merge_208";
-"temp_merge_208" -> "end_function_destructor_210";
-"dummy_209" -> "end_function_destructor_210";
-"end_function_destructor_210" -> "delete_left_if_cond_211";
-"delete_left_if_cond_211" -> "delete_left_if_body_212";
-"delete_left_if_cond_211" -> "delete_left_if_merge_213";
-"delete_left_if_body_212" -> "delete_left_if_merge_213";
-"delete_left_if_merge_213" -> "delete_left_if_cond_214";
-"delete_left_if_cond_214" -> "delete_left_if_body_215";
-"delete_left_if_cond_214" -> "delete_left_if_merge_216";
-"delete_left_if_body_215" -> "delete_left_if_merge_216";
-"delete_left_if_merge_216" -> "delete_left_if_cond_217";
-"delete_left_if_cond_217" -> "delete_left_if_body_218";
-"delete_left_if_cond_217" -> "delete_left_if_merge_219";
-"delete_left_if_body_218" -> "delete_left_if_merge_219";
-"delete_left_if_merge_219" -> "return_190";
-
-	"header_220" [style=filled, shape=box, label="header_220:
-($$_ret_value_8,%struct.$0_Point*) alloc 
-branch entry_227"];
-	"return_221" [style=filled, shape=box, label="return_221:
-(%0,%struct.$0_Point*) load ($$_ret_value_8,%struct.$0_Point*)
-branch start_cond_222"];
-	"start_cond_222" [style=filled, shape=box, label="start_cond_222:
-(%1,i1) <- ne (%0,%struct.$0_Point*),null
-branch (%1,i1) temp_cond_223,temp_merge_226"];
-	"temp_cond_223" [style=filled, shape=box, label="temp_cond_223:
-(%2,i32) <- field_access (%0,%struct.$0_Point*),0
-(%3,i32) load (%2,i32)
-(%4,i1) <- eq (%3,i32),0
-branch (%4,i1) temp_body_224,else_temp_225"];
-	"temp_body_224" [style=filled, shape=box, label="temp_body_224:
-(%5,i32) <- field_access (%0,%struct.$0_Point*),0
-(%6,i32) load (%5,i32)
-(%7,i32) <- sub (%6,i32),0
-(%5,i32) store (%7,i32)
-branch temp_merge_226"];
-	"else_temp_225" [style=filled, shape=box, label="else_temp_225:
-(%8,i32) <- field_access (%0,%struct.$0_Point*),0
-(%9,i32) load (%8,i32)
-(%10,i32) <- sub (%9,i32),1
-(%8,i32) store (%10,i32)
-branch temp_merge_226"];
-	"temp_merge_226" [style=filled, shape=box, label="temp_merge_226:
-
-return (%0,%struct.$0_Point*)"];
-	"entry_227" [style=filled, shape=box, label="entry_227:
+	"entry_36" [style=filled, shape=box, label="entry_36:
 ($18_a,%struct.$0_Point*) alloc 
 (%11,%struct.$0_Point*) <- call $_constructor_0,1,1
 ($18_a,%struct.$0_Point*) store (%11,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_228"];
-	"declaration_inc_count_if_cond_228" [style=filled, shape=box, label="declaration_inc_count_if_cond_228:
+branch declaration_inc_count_if_cond_37"];
+	"declaration_inc_count_if_cond_37" [style=filled, shape=box, label="declaration_inc_count_if_cond_37:
 (%12,%struct.$0_Point*) load ($18_a,%struct.$0_Point*)
 (%13,i1) <- ne (%12,%struct.$0_Point*),null
-branch (%13,i1) declaration_inc_count_if_body_229,declaration_inc_count_if_merge_230"];
-	"declaration_inc_count_if_body_229" [style=filled, shape=box, label="declaration_inc_count_if_body_229:
+branch (%13,i1) declaration_inc_count_if_body_38,declaration_inc_count_if_merge_39"];
+	"declaration_inc_count_if_body_38" [style=filled, shape=box, label="declaration_inc_count_if_body_38:
 (%14,%struct.$0_Point*) load ($18_a,%struct.$0_Point*)
 (%15,i32) <- field_access (%14,%struct.$0_Point*),0
 (%16,i32) load (%15,i32)
 (%17,i32) <- add (%16,i32),1
 (%15,i32) store (%17,i32)
-branch declaration_inc_count_if_merge_230"];
-	"declaration_inc_count_if_merge_230" [style=filled, shape=box, label="declaration_inc_count_if_merge_230:
+branch declaration_inc_count_if_merge_39"];
+	"declaration_inc_count_if_merge_39" [style=filled, shape=box, label="declaration_inc_count_if_merge_39:
 ($19_b,%struct.$0_Point*) alloc 
 (%18,%struct.$0_Point*) <- call $_constructor_0,1,1
 ($19_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_231"];
-	"declaration_inc_count_if_cond_231" [style=filled, shape=box, label="declaration_inc_count_if_cond_231:
+branch declaration_inc_count_if_cond_40"];
+	"declaration_inc_count_if_cond_40" [style=filled, shape=box, label="declaration_inc_count_if_cond_40:
 (%19,%struct.$0_Point*) load ($19_b,%struct.$0_Point*)
 (%20,i1) <- ne (%19,%struct.$0_Point*),null
-branch (%20,i1) declaration_inc_count_if_body_232,declaration_inc_count_if_merge_233"];
-	"declaration_inc_count_if_body_232" [style=filled, shape=box, label="declaration_inc_count_if_body_232:
+branch (%20,i1) declaration_inc_count_if_body_41,declaration_inc_count_if_merge_42"];
+	"declaration_inc_count_if_body_41" [style=filled, shape=box, label="declaration_inc_count_if_body_41:
 (%21,%struct.$0_Point*) load ($19_b,%struct.$0_Point*)
 (%22,i32) <- field_access (%21,%struct.$0_Point*),0
 (%23,i32) load (%22,i32)
 (%24,i32) <- add (%23,i32),1
 (%22,i32) store (%24,i32)
-branch declaration_inc_count_if_merge_233"];
-	"declaration_inc_count_if_merge_233" [style=filled, shape=box, label="declaration_inc_count_if_merge_233:
+branch declaration_inc_count_if_merge_42"];
+	"declaration_inc_count_if_merge_42" [style=filled, shape=box, label="declaration_inc_count_if_merge_42:
 
-branch local_return_234"];
-	"local_return_234" [style=filled, shape=box, label="local_return_234:
+branch local_return_43"];
+	"local_return_43" [style=filled, shape=box, label="local_return_43:
 (%25,%struct.$0_Point*) load ($19_b,%struct.$0_Point*)
-branch start_cond_235"];
-	"start_cond_235" [style=filled, shape=box, label="start_cond_235:
+branch start_cond_44"];
+	"start_cond_44" [style=filled, shape=box, label="start_cond_44:
 (%26,i1) <- ne (%25,%struct.$0_Point*),null
-branch (%26,i1) temp_cond_236,temp_merge_239"];
-	"temp_cond_236" [style=filled, shape=box, label="temp_cond_236:
+branch (%26,i1) temp_cond_45,temp_merge_48"];
+	"temp_cond_45" [style=filled, shape=box, label="temp_cond_45:
 (%27,i32) <- field_access (%25,%struct.$0_Point*),0
 (%28,i32) load (%27,i32)
 (%29,i1) <- eq (%28,i32),0
-branch (%29,i1) temp_body_237,else_temp_238"];
-	"temp_body_237" [style=filled, shape=box, label="temp_body_237:
+branch (%29,i1) temp_body_46,else_temp_47"];
+	"temp_body_46" [style=filled, shape=box, label="temp_body_46:
 (%30,i32) <- field_access (%25,%struct.$0_Point*),0
 (%31,i32) load (%30,i32)
 (%32,i32) <- add (%31,i32),0
 (%30,i32) store (%32,i32)
-branch temp_merge_239"];
-	"else_temp_238" [style=filled, shape=box, label="else_temp_238:
+branch temp_merge_48"];
+	"else_temp_47" [style=filled, shape=box, label="else_temp_47:
 (%33,i32) <- field_access (%25,%struct.$0_Point*),0
 (%34,i32) load (%33,i32)
 (%35,i32) <- add (%34,i32),1
 (%33,i32) store (%35,i32)
-branch temp_merge_239"];
-	"temp_merge_239" [style=filled, shape=box, label="temp_merge_239:
-($$_ret_value_8,%struct.$0_Point*) store (%25,%struct.$0_Point*)
-branch end_function_destructor_241"];
-	"dummy_240" [style=filled, shape=box, label="dummy_240:
+branch temp_merge_48"];
+	"temp_merge_48" [style=filled, shape=box, label="temp_merge_48:
+($$_ret_value_1,%struct.$0_Point*) store (%25,%struct.$0_Point*)
+branch end_function_destructor_50"];
+	"dummy_49" [style=filled, shape=box, label="dummy_49:
 
-branch end_function_destructor_241"];
-	"end_function_destructor_241" [style=filled, shape=box, label="end_function_destructor_241:
+branch end_function_destructor_50"];
+	"end_function_destructor_50" [style=filled, shape=box, label="end_function_destructor_50:
 (%36,%struct.$0_Point*) load ($19_b,%struct.$0_Point*)
-branch delete_left_if_cond_242"];
-	"delete_left_if_cond_242" [style=filled, shape=box, label="delete_left_if_cond_242:
-(%37,i1) <- ne (%36,%struct.$0_Point*),null
-branch (%37,i1) delete_left_if_body_243,delete_left_if_merge_244"];
-	"delete_left_if_body_243" [style=filled, shape=box, label="delete_left_if_body_243:
  <- call $_destructor_0,(%36,%struct.$0_Point*)
-branch delete_left_if_merge_244"];
-	"delete_left_if_merge_244" [style=filled, shape=box, label="delete_left_if_merge_244:
-(%38,%struct.$0_Point*) load ($18_a,%struct.$0_Point*)
-branch delete_left_if_cond_245"];
-	"delete_left_if_cond_245" [style=filled, shape=box, label="delete_left_if_cond_245:
-(%39,i1) <- ne (%38,%struct.$0_Point*),null
-branch (%39,i1) delete_left_if_body_246,delete_left_if_merge_247"];
-	"delete_left_if_body_246" [style=filled, shape=box, label="delete_left_if_body_246:
- <- call $_destructor_0,(%38,%struct.$0_Point*)
-branch delete_left_if_merge_247"];
-	"delete_left_if_merge_247" [style=filled, shape=box, label="delete_left_if_merge_247:
+(%37,%struct.$0_Point*) load ($18_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%37,%struct.$0_Point*)
+branch return_30"];
+"header_29" -> "entry_36";
+"return_30" -> "start_cond_31";
+"start_cond_31" -> "temp_cond_32";
+"start_cond_31" -> "temp_merge_35";
+"temp_cond_32" -> "temp_body_33";
+"temp_cond_32" -> "else_temp_34";
+"temp_body_33" -> "temp_merge_35";
+"else_temp_34" -> "temp_merge_35";
+"entry_36" -> "declaration_inc_count_if_cond_37";
+"declaration_inc_count_if_cond_37" -> "declaration_inc_count_if_body_38";
+"declaration_inc_count_if_cond_37" -> "declaration_inc_count_if_merge_39";
+"declaration_inc_count_if_body_38" -> "declaration_inc_count_if_merge_39";
+"declaration_inc_count_if_merge_39" -> "declaration_inc_count_if_cond_40";
+"declaration_inc_count_if_cond_40" -> "declaration_inc_count_if_body_41";
+"declaration_inc_count_if_cond_40" -> "declaration_inc_count_if_merge_42";
+"declaration_inc_count_if_body_41" -> "declaration_inc_count_if_merge_42";
+"declaration_inc_count_if_merge_42" -> "local_return_43";
+"local_return_43" -> "start_cond_44";
+"start_cond_44" -> "temp_cond_45";
+"start_cond_44" -> "temp_merge_48";
+"temp_cond_45" -> "temp_body_46";
+"temp_cond_45" -> "else_temp_47";
+"temp_body_46" -> "temp_merge_48";
+"else_temp_47" -> "temp_merge_48";
+"temp_merge_48" -> "end_function_destructor_50";
+"dummy_49" -> "end_function_destructor_50";
+"end_function_destructor_50" -> "return_30";
 
-branch return_221"];
-"header_220" -> "entry_227";
-"return_221" -> "start_cond_222";
-"start_cond_222" -> "temp_cond_223";
-"start_cond_222" -> "temp_merge_226";
-"temp_cond_223" -> "temp_body_224";
-"temp_cond_223" -> "else_temp_225";
-"temp_body_224" -> "temp_merge_226";
-"else_temp_225" -> "temp_merge_226";
-"entry_227" -> "declaration_inc_count_if_cond_228";
-"declaration_inc_count_if_cond_228" -> "declaration_inc_count_if_body_229";
-"declaration_inc_count_if_cond_228" -> "declaration_inc_count_if_merge_230";
-"declaration_inc_count_if_body_229" -> "declaration_inc_count_if_merge_230";
-"declaration_inc_count_if_merge_230" -> "declaration_inc_count_if_cond_231";
-"declaration_inc_count_if_cond_231" -> "declaration_inc_count_if_body_232";
-"declaration_inc_count_if_cond_231" -> "declaration_inc_count_if_merge_233";
-"declaration_inc_count_if_body_232" -> "declaration_inc_count_if_merge_233";
-"declaration_inc_count_if_merge_233" -> "local_return_234";
-"local_return_234" -> "start_cond_235";
-"start_cond_235" -> "temp_cond_236";
-"start_cond_235" -> "temp_merge_239";
-"temp_cond_236" -> "temp_body_237";
-"temp_cond_236" -> "else_temp_238";
-"temp_body_237" -> "temp_merge_239";
-"else_temp_238" -> "temp_merge_239";
-"temp_merge_239" -> "end_function_destructor_241";
-"dummy_240" -> "end_function_destructor_241";
-"end_function_destructor_241" -> "delete_left_if_cond_242";
-"delete_left_if_cond_242" -> "delete_left_if_body_243";
-"delete_left_if_cond_242" -> "delete_left_if_merge_244";
-"delete_left_if_body_243" -> "delete_left_if_merge_244";
-"delete_left_if_merge_244" -> "delete_left_if_cond_245";
-"delete_left_if_cond_245" -> "delete_left_if_body_246";
-"delete_left_if_cond_245" -> "delete_left_if_merge_247";
-"delete_left_if_body_246" -> "delete_left_if_merge_247";
-"delete_left_if_merge_247" -> "return_221";
-
-	"header_248" [style=filled, shape=box, label="header_248:
-($26_p,%struct.$0_Point*) alloc 
-($26_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-($$_ret_value_9,%struct.$0_Point*) alloc 
-branch entry_255"];
-	"return_249" [style=filled, shape=box, label="return_249:
-(%1,%struct.$0_Point*) load ($$_ret_value_9,%struct.$0_Point*)
-branch start_cond_250"];
-	"start_cond_250" [style=filled, shape=box, label="start_cond_250:
+	"header_51" [style=filled, shape=box, label="header_51:
+($35_p,%struct.$0_Point*) alloc 
+($35_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($$_ret_value_2,%struct.$0_Point*) alloc 
+branch entry_58"];
+	"return_52" [style=filled, shape=box, label="return_52:
+(%1,%struct.$0_Point*) load ($$_ret_value_2,%struct.$0_Point*)
+branch start_cond_53"];
+	"start_cond_53" [style=filled, shape=box, label="start_cond_53:
 (%2,i1) <- ne (%1,%struct.$0_Point*),null
-branch (%2,i1) temp_cond_251,temp_merge_254"];
-	"temp_cond_251" [style=filled, shape=box, label="temp_cond_251:
+branch (%2,i1) temp_cond_54,temp_merge_57"];
+	"temp_cond_54" [style=filled, shape=box, label="temp_cond_54:
 (%3,i32) <- field_access (%1,%struct.$0_Point*),0
 (%4,i32) load (%3,i32)
 (%5,i1) <- eq (%4,i32),0
-branch (%5,i1) temp_body_252,else_temp_253"];
-	"temp_body_252" [style=filled, shape=box, label="temp_body_252:
+branch (%5,i1) temp_body_55,else_temp_56"];
+	"temp_body_55" [style=filled, shape=box, label="temp_body_55:
 (%6,i32) <- field_access (%1,%struct.$0_Point*),0
 (%7,i32) load (%6,i32)
 (%8,i32) <- sub (%7,i32),0
 (%6,i32) store (%8,i32)
-branch temp_merge_254"];
-	"else_temp_253" [style=filled, shape=box, label="else_temp_253:
+branch temp_merge_57"];
+	"else_temp_56" [style=filled, shape=box, label="else_temp_56:
 (%9,i32) <- field_access (%1,%struct.$0_Point*),0
 (%10,i32) load (%9,i32)
 (%11,i32) <- sub (%10,i32),1
 (%9,i32) store (%11,i32)
-branch temp_merge_254"];
-	"temp_merge_254" [style=filled, shape=box, label="temp_merge_254:
+branch temp_merge_57"];
+	"temp_merge_57" [style=filled, shape=box, label="temp_merge_57:
 
 return (%1,%struct.$0_Point*)"];
-	"entry_255" [style=filled, shape=box, label="entry_255:
+	"entry_58" [style=filled, shape=box, label="entry_58:
+($36_a,%struct.$0_Point*) alloc 
+(%12,%struct.$0_Point*) <- call $13_f
+($36_a,%struct.$0_Point*) store (%12,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_59"];
+	"declaration_inc_count_if_cond_59" [style=filled, shape=box, label="declaration_inc_count_if_cond_59:
+(%13,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
+(%14,i1) <- ne (%13,%struct.$0_Point*),null
+branch (%14,i1) declaration_inc_count_if_body_60,declaration_inc_count_if_merge_61"];
+	"declaration_inc_count_if_body_60" [style=filled, shape=box, label="declaration_inc_count_if_body_60:
+(%15,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
+(%16,i32) <- field_access (%15,%struct.$0_Point*),0
+(%17,i32) load (%16,i32)
+(%18,i32) <- add (%17,i32),1
+(%16,i32) store (%18,i32)
+branch declaration_inc_count_if_merge_61"];
+	"declaration_inc_count_if_merge_61" [style=filled, shape=box, label="declaration_inc_count_if_merge_61:
+($37_b,%struct.$0_Point*) alloc 
+(%19,%struct.$0_Point*) load ($35_p,%struct.$0_Point*)
+($37_b,%struct.$0_Point*) store (%19,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_62"];
+	"declaration_inc_count_if_cond_62" [style=filled, shape=box, label="declaration_inc_count_if_cond_62:
+(%20,%struct.$0_Point*) load ($37_b,%struct.$0_Point*)
+(%21,i1) <- ne (%20,%struct.$0_Point*),null
+branch (%21,i1) declaration_inc_count_if_body_63,declaration_inc_count_if_merge_64"];
+	"declaration_inc_count_if_body_63" [style=filled, shape=box, label="declaration_inc_count_if_body_63:
+(%22,%struct.$0_Point*) load ($37_b,%struct.$0_Point*)
+(%23,i32) <- field_access (%22,%struct.$0_Point*),0
+(%24,i32) load (%23,i32)
+(%25,i32) <- add (%24,i32),1
+(%23,i32) store (%25,i32)
+branch declaration_inc_count_if_merge_64"];
+	"declaration_inc_count_if_merge_64" [style=filled, shape=box, label="declaration_inc_count_if_merge_64:
+
+branch local_return_65"];
+	"local_return_65" [style=filled, shape=box, label="local_return_65:
+(%26,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
+branch start_cond_66"];
+	"start_cond_66" [style=filled, shape=box, label="start_cond_66:
+(%27,i1) <- ne (%26,%struct.$0_Point*),null
+branch (%27,i1) temp_cond_67,temp_merge_70"];
+	"temp_cond_67" [style=filled, shape=box, label="temp_cond_67:
+(%28,i32) <- field_access (%26,%struct.$0_Point*),0
+(%29,i32) load (%28,i32)
+(%30,i1) <- eq (%29,i32),0
+branch (%30,i1) temp_body_68,else_temp_69"];
+	"temp_body_68" [style=filled, shape=box, label="temp_body_68:
+(%31,i32) <- field_access (%26,%struct.$0_Point*),0
+(%32,i32) load (%31,i32)
+(%33,i32) <- add (%32,i32),0
+(%31,i32) store (%33,i32)
+branch temp_merge_70"];
+	"else_temp_69" [style=filled, shape=box, label="else_temp_69:
+(%34,i32) <- field_access (%26,%struct.$0_Point*),0
+(%35,i32) load (%34,i32)
+(%36,i32) <- add (%35,i32),1
+(%34,i32) store (%36,i32)
+branch temp_merge_70"];
+	"temp_merge_70" [style=filled, shape=box, label="temp_merge_70:
+($$_ret_value_2,%struct.$0_Point*) store (%26,%struct.$0_Point*)
+branch end_function_destructor_72"];
+	"dummy_71" [style=filled, shape=box, label="dummy_71:
+
+branch end_function_destructor_72"];
+	"end_function_destructor_72" [style=filled, shape=box, label="end_function_destructor_72:
+(%37,%struct.$0_Point*) load ($37_b,%struct.$0_Point*)
+ <- call $_destructor_0,(%37,%struct.$0_Point*)
+(%38,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%38,%struct.$0_Point*)
+(%39,%struct.$0_Point*) load ($35_p,%struct.$0_Point*)
+ <- call $_destructor_0,(%39,%struct.$0_Point*)
+branch return_52"];
+"header_51" -> "entry_58";
+"return_52" -> "start_cond_53";
+"start_cond_53" -> "temp_cond_54";
+"start_cond_53" -> "temp_merge_57";
+"temp_cond_54" -> "temp_body_55";
+"temp_cond_54" -> "else_temp_56";
+"temp_body_55" -> "temp_merge_57";
+"else_temp_56" -> "temp_merge_57";
+"entry_58" -> "declaration_inc_count_if_cond_59";
+"declaration_inc_count_if_cond_59" -> "declaration_inc_count_if_body_60";
+"declaration_inc_count_if_cond_59" -> "declaration_inc_count_if_merge_61";
+"declaration_inc_count_if_body_60" -> "declaration_inc_count_if_merge_61";
+"declaration_inc_count_if_merge_61" -> "declaration_inc_count_if_cond_62";
+"declaration_inc_count_if_cond_62" -> "declaration_inc_count_if_body_63";
+"declaration_inc_count_if_cond_62" -> "declaration_inc_count_if_merge_64";
+"declaration_inc_count_if_body_63" -> "declaration_inc_count_if_merge_64";
+"declaration_inc_count_if_merge_64" -> "local_return_65";
+"local_return_65" -> "start_cond_66";
+"start_cond_66" -> "temp_cond_67";
+"start_cond_66" -> "temp_merge_70";
+"temp_cond_67" -> "temp_body_68";
+"temp_cond_67" -> "else_temp_69";
+"temp_body_68" -> "temp_merge_70";
+"else_temp_69" -> "temp_merge_70";
+"temp_merge_70" -> "end_function_destructor_72";
+"dummy_71" -> "end_function_destructor_72";
+"end_function_destructor_72" -> "return_52";
+
+	"header_73" [style=filled, shape=box, label="header_73:
+($$_ret_value_3,i32) alloc 
+branch entry_75"];
+	"return_74" [style=filled, shape=box, label="return_74:
+(%0,i32) load ($$_ret_value_3,i32)
+return (%0,i32)"];
+	"entry_75" [style=filled, shape=box, label="entry_75:
+($42_a,i32) alloc 
+($42_a,i32) store 0
+($43_p,%struct.$0_Point*) alloc 
+(%1,%struct.$0_Point*) <- call $_constructor_0,1,2
+($43_p,%struct.$0_Point*) store (%1,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_76"];
+	"declaration_inc_count_if_cond_76" [style=filled, shape=box, label="declaration_inc_count_if_cond_76:
+(%2,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%3,i1) <- ne (%2,%struct.$0_Point*),null
+branch (%3,i1) declaration_inc_count_if_body_77,declaration_inc_count_if_merge_78"];
+	"declaration_inc_count_if_body_77" [style=filled, shape=box, label="declaration_inc_count_if_body_77:
+(%4,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%5,i32) <- field_access (%4,%struct.$0_Point*),0
+(%6,i32) load (%5,i32)
+(%7,i32) <- add (%6,i32),1
+(%5,i32) store (%7,i32)
+branch declaration_inc_count_if_merge_78"];
+	"declaration_inc_count_if_merge_78" [style=filled, shape=box, label="declaration_inc_count_if_merge_78:
+(%8,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%9,%struct.$0_Point*) <- call $_constructor_0,1,2
+($43_p,%struct.$0_Point*) store (%9,%struct.$0_Point*)
+(%10,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_79"];
+	"assigment_inc_count_if_cond_79" [style=filled, shape=box, label="assigment_inc_count_if_cond_79:
+(%11,i1) <- ne (%10,%struct.$0_Point*),null
+branch (%11,i1) assigment_inc_count_if_body_80,assigment_inc_count_if_merge_81"];
+	"assigment_inc_count_if_body_80" [style=filled, shape=box, label="assigment_inc_count_if_body_80:
+(%12,i32) <- field_access (%10,%struct.$0_Point*),0
+(%13,i32) load (%12,i32)
+(%14,i32) <- add (%13,i32),1
+(%12,i32) store (%14,i32)
+branch assigment_inc_count_if_merge_81"];
+	"assigment_inc_count_if_merge_81" [style=filled, shape=box, label="assigment_inc_count_if_merge_81:
+ <- call $_destructor_0,(%8,%struct.$0_Point*)
+(%15,i32) load ($42_a,i32)
+(%16,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%17,i32) <- field_access (%16,%struct.$0_Point*),2
+(%18,i32) load (%17,i32)
+(%19,i32) <- add (%15,i32),(%18,i32)
+(%20,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%21,i32) <- field_access (%20,%struct.$0_Point*),3
+(%22,i32) load (%21,i32)
+(%23,i32) <- add (%19,i32),(%22,i32)
+($42_a,i32) store (%23,i32)
+(%24,%struct.$0_Point*) <- call $13_f
+(%25,%struct.$0_Point*) <- call $7_f1
+(%26,%struct.$0_Point*) <- call $12_f2
+(%27,%struct.$0_Point*) <- call $11_f3
+(%28,%struct.$0_Point*) <- call $5_f4
+(%29,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_82"];
+	"assigment_inc_count_if_cond_82" [style=filled, shape=box, label="assigment_inc_count_if_cond_82:
+(%30,i1) <- ne (%29,%struct.$0_Point*),null
+branch (%30,i1) assigment_inc_count_if_body_83,assigment_inc_count_if_merge_84"];
+	"assigment_inc_count_if_body_83" [style=filled, shape=box, label="assigment_inc_count_if_body_83:
+(%31,i32) <- field_access (%29,%struct.$0_Point*),0
+(%32,i32) load (%31,i32)
+(%33,i32) <- add (%32,i32),1
+(%31,i32) store (%33,i32)
+branch assigment_inc_count_if_merge_84"];
+	"assigment_inc_count_if_merge_84" [style=filled, shape=box, label="assigment_inc_count_if_merge_84:
+(%34,%struct.$0_Point*) <- call $6_f5,(%29,%struct.$0_Point*)
+(%35,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_85"];
+	"assigment_inc_count_if_cond_85" [style=filled, shape=box, label="assigment_inc_count_if_cond_85:
+(%36,i1) <- ne (%35,%struct.$0_Point*),null
+branch (%36,i1) assigment_inc_count_if_body_86,assigment_inc_count_if_merge_87"];
+	"assigment_inc_count_if_body_86" [style=filled, shape=box, label="assigment_inc_count_if_body_86:
+(%37,i32) <- field_access (%35,%struct.$0_Point*),0
+(%38,i32) load (%37,i32)
+(%39,i32) <- add (%38,i32),1
+(%37,i32) store (%39,i32)
+branch assigment_inc_count_if_merge_87"];
+	"assigment_inc_count_if_merge_87" [style=filled, shape=box, label="assigment_inc_count_if_merge_87:
+(%40,%struct.$0_Point*) <- call $3_f6,(%35,%struct.$0_Point*)
+(%41,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_88"];
+	"assigment_inc_count_if_cond_88" [style=filled, shape=box, label="assigment_inc_count_if_cond_88:
+(%42,i1) <- ne (%41,%struct.$0_Point*),null
+branch (%42,i1) assigment_inc_count_if_body_89,assigment_inc_count_if_merge_90"];
+	"assigment_inc_count_if_body_89" [style=filled, shape=box, label="assigment_inc_count_if_body_89:
+(%43,i32) <- field_access (%41,%struct.$0_Point*),0
+(%44,i32) load (%43,i32)
+(%45,i32) <- add (%44,i32),1
+(%43,i32) store (%45,i32)
+branch assigment_inc_count_if_merge_90"];
+	"assigment_inc_count_if_merge_90" [style=filled, shape=box, label="assigment_inc_count_if_merge_90:
+(%46,%struct.$0_Point*) <- call $10_f7,(%41,%struct.$0_Point*)
+(%47,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_91"];
+	"assigment_inc_count_if_cond_91" [style=filled, shape=box, label="assigment_inc_count_if_cond_91:
+(%48,i1) <- ne (%47,%struct.$0_Point*),null
+branch (%48,i1) assigment_inc_count_if_body_92,assigment_inc_count_if_merge_93"];
+	"assigment_inc_count_if_body_92" [style=filled, shape=box, label="assigment_inc_count_if_body_92:
+(%49,i32) <- field_access (%47,%struct.$0_Point*),0
+(%50,i32) load (%49,i32)
+(%51,i32) <- add (%50,i32),1
+(%49,i32) store (%51,i32)
+branch assigment_inc_count_if_merge_93"];
+	"assigment_inc_count_if_merge_93" [style=filled, shape=box, label="assigment_inc_count_if_merge_93:
+(%52,%struct.$0_Point*) <- call $4_f8,(%47,%struct.$0_Point*)
+(%53,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_94"];
+	"assigment_inc_count_if_cond_94" [style=filled, shape=box, label="assigment_inc_count_if_cond_94:
+(%54,i1) <- ne (%53,%struct.$0_Point*),null
+branch (%54,i1) assigment_inc_count_if_body_95,assigment_inc_count_if_merge_96"];
+	"assigment_inc_count_if_body_95" [style=filled, shape=box, label="assigment_inc_count_if_body_95:
+(%55,i32) <- field_access (%53,%struct.$0_Point*),0
+(%56,i32) load (%55,i32)
+(%57,i32) <- add (%56,i32),1
+(%55,i32) store (%57,i32)
+branch assigment_inc_count_if_merge_96"];
+	"assigment_inc_count_if_merge_96" [style=filled, shape=box, label="assigment_inc_count_if_merge_96:
+(%58,%struct.$0_Point*) <- call $8_f9,(%53,%struct.$0_Point*),4
+(%59,%struct.$0_Point*) <- call $13_f
+(%60,i32) <- field_access (%59,%struct.$0_Point*),2
+(%61,i32) load (%60,i32)
+(%62,%struct.$0_Point*) <- call $7_f1
+(%63,i32) <- field_access (%62,%struct.$0_Point*),2
+(%64,i32) load (%63,i32)
+(%65,%struct.$0_Point*) <- call $12_f2
+(%66,i32) <- field_access (%65,%struct.$0_Point*),2
+(%67,i32) load (%66,i32)
+(%68,%struct.$0_Point*) <- call $11_f3
+(%69,i32) <- field_access (%68,%struct.$0_Point*),2
+(%70,i32) load (%69,i32)
+(%71,%struct.$0_Point*) <- call $5_f4
+(%72,i32) <- field_access (%71,%struct.$0_Point*),2
+(%73,i32) load (%72,i32)
+(%74,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_97"];
+	"assigment_inc_count_if_cond_97" [style=filled, shape=box, label="assigment_inc_count_if_cond_97:
+(%75,i1) <- ne (%74,%struct.$0_Point*),null
+branch (%75,i1) assigment_inc_count_if_body_98,assigment_inc_count_if_merge_99"];
+	"assigment_inc_count_if_body_98" [style=filled, shape=box, label="assigment_inc_count_if_body_98:
+(%76,i32) <- field_access (%74,%struct.$0_Point*),0
+(%77,i32) load (%76,i32)
+(%78,i32) <- add (%77,i32),1
+(%76,i32) store (%78,i32)
+branch assigment_inc_count_if_merge_99"];
+	"assigment_inc_count_if_merge_99" [style=filled, shape=box, label="assigment_inc_count_if_merge_99:
+(%79,%struct.$0_Point*) <- call $6_f5,(%74,%struct.$0_Point*)
+(%80,i32) <- field_access (%79,%struct.$0_Point*),2
+(%81,i32) load (%80,i32)
+(%82,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_100"];
+	"assigment_inc_count_if_cond_100" [style=filled, shape=box, label="assigment_inc_count_if_cond_100:
+(%83,i1) <- ne (%82,%struct.$0_Point*),null
+branch (%83,i1) assigment_inc_count_if_body_101,assigment_inc_count_if_merge_102"];
+	"assigment_inc_count_if_body_101" [style=filled, shape=box, label="assigment_inc_count_if_body_101:
+(%84,i32) <- field_access (%82,%struct.$0_Point*),0
+(%85,i32) load (%84,i32)
+(%86,i32) <- add (%85,i32),1
+(%84,i32) store (%86,i32)
+branch assigment_inc_count_if_merge_102"];
+	"assigment_inc_count_if_merge_102" [style=filled, shape=box, label="assigment_inc_count_if_merge_102:
+(%87,%struct.$0_Point*) <- call $3_f6,(%82,%struct.$0_Point*)
+(%88,i32) <- field_access (%87,%struct.$0_Point*),2
+(%89,i32) load (%88,i32)
+(%90,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_103"];
+	"assigment_inc_count_if_cond_103" [style=filled, shape=box, label="assigment_inc_count_if_cond_103:
+(%91,i1) <- ne (%90,%struct.$0_Point*),null
+branch (%91,i1) assigment_inc_count_if_body_104,assigment_inc_count_if_merge_105"];
+	"assigment_inc_count_if_body_104" [style=filled, shape=box, label="assigment_inc_count_if_body_104:
+(%92,i32) <- field_access (%90,%struct.$0_Point*),0
+(%93,i32) load (%92,i32)
+(%94,i32) <- add (%93,i32),1
+(%92,i32) store (%94,i32)
+branch assigment_inc_count_if_merge_105"];
+	"assigment_inc_count_if_merge_105" [style=filled, shape=box, label="assigment_inc_count_if_merge_105:
+(%95,%struct.$0_Point*) <- call $10_f7,(%90,%struct.$0_Point*)
+(%96,i32) <- field_access (%95,%struct.$0_Point*),2
+(%97,i32) load (%96,i32)
+(%98,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_106"];
+	"assigment_inc_count_if_cond_106" [style=filled, shape=box, label="assigment_inc_count_if_cond_106:
+(%99,i1) <- ne (%98,%struct.$0_Point*),null
+branch (%99,i1) assigment_inc_count_if_body_107,assigment_inc_count_if_merge_108"];
+	"assigment_inc_count_if_body_107" [style=filled, shape=box, label="assigment_inc_count_if_body_107:
+(%100,i32) <- field_access (%98,%struct.$0_Point*),0
+(%101,i32) load (%100,i32)
+(%102,i32) <- add (%101,i32),1
+(%100,i32) store (%102,i32)
+branch assigment_inc_count_if_merge_108"];
+	"assigment_inc_count_if_merge_108" [style=filled, shape=box, label="assigment_inc_count_if_merge_108:
+(%103,%struct.$0_Point*) <- call $4_f8,(%98,%struct.$0_Point*)
+(%104,i32) <- field_access (%103,%struct.$0_Point*),2
+(%105,i32) load (%104,i32)
+(%106,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_109"];
+	"assigment_inc_count_if_cond_109" [style=filled, shape=box, label="assigment_inc_count_if_cond_109:
+(%107,i1) <- ne (%106,%struct.$0_Point*),null
+branch (%107,i1) assigment_inc_count_if_body_110,assigment_inc_count_if_merge_111"];
+	"assigment_inc_count_if_body_110" [style=filled, shape=box, label="assigment_inc_count_if_body_110:
+(%108,i32) <- field_access (%106,%struct.$0_Point*),0
+(%109,i32) load (%108,i32)
+(%110,i32) <- add (%109,i32),1
+(%108,i32) store (%110,i32)
+branch assigment_inc_count_if_merge_111"];
+	"assigment_inc_count_if_merge_111" [style=filled, shape=box, label="assigment_inc_count_if_merge_111:
+(%111,%struct.$0_Point*) <- call $8_f9,(%106,%struct.$0_Point*),9
+(%112,i32) <- field_access (%111,%struct.$0_Point*),2
+(%113,i32) load (%112,i32)
+(%114,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%115,%struct.$0_Point*) <- call $13_f
+($43_p,%struct.$0_Point*) store (%115,%struct.$0_Point*)
+(%116,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_112"];
+	"assigment_inc_count_if_cond_112" [style=filled, shape=box, label="assigment_inc_count_if_cond_112:
+(%117,i1) <- ne (%116,%struct.$0_Point*),null
+branch (%117,i1) assigment_inc_count_if_body_113,assigment_inc_count_if_merge_114"];
+	"assigment_inc_count_if_body_113" [style=filled, shape=box, label="assigment_inc_count_if_body_113:
+(%118,i32) <- field_access (%116,%struct.$0_Point*),0
+(%119,i32) load (%118,i32)
+(%120,i32) <- add (%119,i32),1
+(%118,i32) store (%120,i32)
+branch assigment_inc_count_if_merge_114"];
+	"assigment_inc_count_if_merge_114" [style=filled, shape=box, label="assigment_inc_count_if_merge_114:
+ <- call $_destructor_0,(%114,%struct.$0_Point*)
+(%121,i32) load ($42_a,i32)
+(%122,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%123,i32) <- field_access (%122,%struct.$0_Point*),2
+(%124,i32) load (%123,i32)
+(%125,i32) <- add (%121,i32),(%124,i32)
+(%126,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%127,i32) <- field_access (%126,%struct.$0_Point*),3
+(%128,i32) load (%127,i32)
+(%129,i32) <- add (%125,i32),(%128,i32)
+($42_a,i32) store (%129,i32)
+(%130,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%131,%struct.$0_Point*) <- call $7_f1
+($43_p,%struct.$0_Point*) store (%131,%struct.$0_Point*)
+(%132,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_115"];
+	"assigment_inc_count_if_cond_115" [style=filled, shape=box, label="assigment_inc_count_if_cond_115:
+(%133,i1) <- ne (%132,%struct.$0_Point*),null
+branch (%133,i1) assigment_inc_count_if_body_116,assigment_inc_count_if_merge_117"];
+	"assigment_inc_count_if_body_116" [style=filled, shape=box, label="assigment_inc_count_if_body_116:
+(%134,i32) <- field_access (%132,%struct.$0_Point*),0
+(%135,i32) load (%134,i32)
+(%136,i32) <- add (%135,i32),1
+(%134,i32) store (%136,i32)
+branch assigment_inc_count_if_merge_117"];
+	"assigment_inc_count_if_merge_117" [style=filled, shape=box, label="assigment_inc_count_if_merge_117:
+ <- call $_destructor_0,(%130,%struct.$0_Point*)
+(%137,i32) load ($42_a,i32)
+(%138,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%139,i32) <- field_access (%138,%struct.$0_Point*),2
+(%140,i32) load (%139,i32)
+(%141,i32) <- add (%137,i32),(%140,i32)
+(%142,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%143,i32) <- field_access (%142,%struct.$0_Point*),3
+(%144,i32) load (%143,i32)
+(%145,i32) <- add (%141,i32),(%144,i32)
+($42_a,i32) store (%145,i32)
+(%146,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%147,%struct.$0_Point*) <- call $12_f2
+($43_p,%struct.$0_Point*) store (%147,%struct.$0_Point*)
+(%148,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_118"];
+	"assigment_inc_count_if_cond_118" [style=filled, shape=box, label="assigment_inc_count_if_cond_118:
+(%149,i1) <- ne (%148,%struct.$0_Point*),null
+branch (%149,i1) assigment_inc_count_if_body_119,assigment_inc_count_if_merge_120"];
+	"assigment_inc_count_if_body_119" [style=filled, shape=box, label="assigment_inc_count_if_body_119:
+(%150,i32) <- field_access (%148,%struct.$0_Point*),0
+(%151,i32) load (%150,i32)
+(%152,i32) <- add (%151,i32),1
+(%150,i32) store (%152,i32)
+branch assigment_inc_count_if_merge_120"];
+	"assigment_inc_count_if_merge_120" [style=filled, shape=box, label="assigment_inc_count_if_merge_120:
+ <- call $_destructor_0,(%146,%struct.$0_Point*)
+(%153,i32) load ($42_a,i32)
+(%154,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%155,i32) <- field_access (%154,%struct.$0_Point*),2
+(%156,i32) load (%155,i32)
+(%157,i32) <- add (%153,i32),(%156,i32)
+(%158,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%159,i32) <- field_access (%158,%struct.$0_Point*),3
+(%160,i32) load (%159,i32)
+(%161,i32) <- add (%157,i32),(%160,i32)
+($42_a,i32) store (%161,i32)
+(%162,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%163,%struct.$0_Point*) <- call $11_f3
+($43_p,%struct.$0_Point*) store (%163,%struct.$0_Point*)
+(%164,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_121"];
+	"assigment_inc_count_if_cond_121" [style=filled, shape=box, label="assigment_inc_count_if_cond_121:
+(%165,i1) <- ne (%164,%struct.$0_Point*),null
+branch (%165,i1) assigment_inc_count_if_body_122,assigment_inc_count_if_merge_123"];
+	"assigment_inc_count_if_body_122" [style=filled, shape=box, label="assigment_inc_count_if_body_122:
+(%166,i32) <- field_access (%164,%struct.$0_Point*),0
+(%167,i32) load (%166,i32)
+(%168,i32) <- add (%167,i32),1
+(%166,i32) store (%168,i32)
+branch assigment_inc_count_if_merge_123"];
+	"assigment_inc_count_if_merge_123" [style=filled, shape=box, label="assigment_inc_count_if_merge_123:
+ <- call $_destructor_0,(%162,%struct.$0_Point*)
+(%169,i32) load ($42_a,i32)
+(%170,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%171,i32) <- field_access (%170,%struct.$0_Point*),2
+(%172,i32) load (%171,i32)
+(%173,i32) <- add (%169,i32),(%172,i32)
+(%174,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%175,i32) <- field_access (%174,%struct.$0_Point*),3
+(%176,i32) load (%175,i32)
+(%177,i32) <- add (%173,i32),(%176,i32)
+($42_a,i32) store (%177,i32)
+(%178,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%179,%struct.$0_Point*) <- call $5_f4
+($43_p,%struct.$0_Point*) store (%179,%struct.$0_Point*)
+(%180,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_124"];
+	"assigment_inc_count_if_cond_124" [style=filled, shape=box, label="assigment_inc_count_if_cond_124:
+(%181,i1) <- ne (%180,%struct.$0_Point*),null
+branch (%181,i1) assigment_inc_count_if_body_125,assigment_inc_count_if_merge_126"];
+	"assigment_inc_count_if_body_125" [style=filled, shape=box, label="assigment_inc_count_if_body_125:
+(%182,i32) <- field_access (%180,%struct.$0_Point*),0
+(%183,i32) load (%182,i32)
+(%184,i32) <- add (%183,i32),1
+(%182,i32) store (%184,i32)
+branch assigment_inc_count_if_merge_126"];
+	"assigment_inc_count_if_merge_126" [style=filled, shape=box, label="assigment_inc_count_if_merge_126:
+ <- call $_destructor_0,(%178,%struct.$0_Point*)
+(%185,i32) load ($42_a,i32)
+(%186,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%187,i32) <- field_access (%186,%struct.$0_Point*),2
+(%188,i32) load (%187,i32)
+(%189,i32) <- add (%185,i32),(%188,i32)
+(%190,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%191,i32) <- field_access (%190,%struct.$0_Point*),3
+(%192,i32) load (%191,i32)
+(%193,i32) <- add (%189,i32),(%192,i32)
+($42_a,i32) store (%193,i32)
+(%194,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%195,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_127"];
+	"assigment_inc_count_if_cond_127" [style=filled, shape=box, label="assigment_inc_count_if_cond_127:
+(%196,i1) <- ne (%195,%struct.$0_Point*),null
+branch (%196,i1) assigment_inc_count_if_body_128,assigment_inc_count_if_merge_129"];
+	"assigment_inc_count_if_body_128" [style=filled, shape=box, label="assigment_inc_count_if_body_128:
+(%197,i32) <- field_access (%195,%struct.$0_Point*),0
+(%198,i32) load (%197,i32)
+(%199,i32) <- add (%198,i32),1
+(%197,i32) store (%199,i32)
+branch assigment_inc_count_if_merge_129"];
+	"assigment_inc_count_if_merge_129" [style=filled, shape=box, label="assigment_inc_count_if_merge_129:
+(%200,%struct.$0_Point*) <- call $6_f5,(%195,%struct.$0_Point*)
+($43_p,%struct.$0_Point*) store (%200,%struct.$0_Point*)
+(%201,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_130"];
+	"assigment_inc_count_if_cond_130" [style=filled, shape=box, label="assigment_inc_count_if_cond_130:
+(%202,i1) <- ne (%201,%struct.$0_Point*),null
+branch (%202,i1) assigment_inc_count_if_body_131,assigment_inc_count_if_merge_132"];
+	"assigment_inc_count_if_body_131" [style=filled, shape=box, label="assigment_inc_count_if_body_131:
+(%203,i32) <- field_access (%201,%struct.$0_Point*),0
+(%204,i32) load (%203,i32)
+(%205,i32) <- add (%204,i32),1
+(%203,i32) store (%205,i32)
+branch assigment_inc_count_if_merge_132"];
+	"assigment_inc_count_if_merge_132" [style=filled, shape=box, label="assigment_inc_count_if_merge_132:
+ <- call $_destructor_0,(%194,%struct.$0_Point*)
+(%206,i32) load ($42_a,i32)
+(%207,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%208,i32) <- field_access (%207,%struct.$0_Point*),2
+(%209,i32) load (%208,i32)
+(%210,i32) <- add (%206,i32),(%209,i32)
+(%211,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%212,i32) <- field_access (%211,%struct.$0_Point*),3
+(%213,i32) load (%212,i32)
+(%214,i32) <- add (%210,i32),(%213,i32)
+(%215,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%216,i32) <- field_access (%215,%struct.$0_Point*),2
+(%217,i32) load (%216,i32)
+(%218,i32) <- add (%214,i32),(%217,i32)
+($42_a,i32) store (%218,i32)
+(%219,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%220,i32) <- field_access (%219,%struct.$0_Point*),2
+(%221,i32) load (%220,i32)
+(%222,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%223,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%224,%struct.$0_Point*) <- call $_constructor_0,2,2
+branch assigment_inc_count_if_cond_133"];
+	"assigment_inc_count_if_cond_133" [style=filled, shape=box, label="assigment_inc_count_if_cond_133:
+(%225,i1) <- ne (%224,%struct.$0_Point*),null
+branch (%225,i1) assigment_inc_count_if_body_134,assigment_inc_count_if_merge_135"];
+	"assigment_inc_count_if_body_134" [style=filled, shape=box, label="assigment_inc_count_if_body_134:
+(%226,i32) <- field_access (%224,%struct.$0_Point*),0
+(%227,i32) load (%226,i32)
+(%228,i32) <- add (%227,i32),1
+(%226,i32) store (%228,i32)
+branch assigment_inc_count_if_merge_135"];
+	"assigment_inc_count_if_merge_135" [style=filled, shape=box, label="assigment_inc_count_if_merge_135:
+(%229,%struct.$0_Point*) <- call $3_f6,(%224,%struct.$0_Point*)
+($43_p,%struct.$0_Point*) store (%229,%struct.$0_Point*)
+(%230,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_136"];
+	"assigment_inc_count_if_cond_136" [style=filled, shape=box, label="assigment_inc_count_if_cond_136:
+(%231,i1) <- ne (%230,%struct.$0_Point*),null
+branch (%231,i1) assigment_inc_count_if_body_137,assigment_inc_count_if_merge_138"];
+	"assigment_inc_count_if_body_137" [style=filled, shape=box, label="assigment_inc_count_if_body_137:
+(%232,i32) <- field_access (%230,%struct.$0_Point*),0
+(%233,i32) load (%232,i32)
+(%234,i32) <- add (%233,i32),1
+(%232,i32) store (%234,i32)
+branch assigment_inc_count_if_merge_138"];
+	"assigment_inc_count_if_merge_138" [style=filled, shape=box, label="assigment_inc_count_if_merge_138:
+ <- call $_destructor_0,(%223,%struct.$0_Point*)
+(%235,i32) load ($42_a,i32)
+(%236,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%237,i32) <- field_access (%236,%struct.$0_Point*),2
+(%238,i32) load (%237,i32)
+(%239,i32) <- add (%235,i32),(%238,i32)
+(%240,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%241,i32) <- field_access (%240,%struct.$0_Point*),3
+(%242,i32) load (%241,i32)
+(%243,i32) <- add (%239,i32),(%242,i32)
+($42_a,i32) store (%243,i32)
+(%244,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%245,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_139"];
+	"assigment_inc_count_if_cond_139" [style=filled, shape=box, label="assigment_inc_count_if_cond_139:
+(%246,i1) <- ne (%245,%struct.$0_Point*),null
+branch (%246,i1) assigment_inc_count_if_body_140,assigment_inc_count_if_merge_141"];
+	"assigment_inc_count_if_body_140" [style=filled, shape=box, label="assigment_inc_count_if_body_140:
+(%247,i32) <- field_access (%245,%struct.$0_Point*),0
+(%248,i32) load (%247,i32)
+(%249,i32) <- add (%248,i32),1
+(%247,i32) store (%249,i32)
+branch assigment_inc_count_if_merge_141"];
+	"assigment_inc_count_if_merge_141" [style=filled, shape=box, label="assigment_inc_count_if_merge_141:
+(%250,%struct.$0_Point*) <- call $10_f7,(%245,%struct.$0_Point*)
+($43_p,%struct.$0_Point*) store (%250,%struct.$0_Point*)
+(%251,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_142"];
+	"assigment_inc_count_if_cond_142" [style=filled, shape=box, label="assigment_inc_count_if_cond_142:
+(%252,i1) <- ne (%251,%struct.$0_Point*),null
+branch (%252,i1) assigment_inc_count_if_body_143,assigment_inc_count_if_merge_144"];
+	"assigment_inc_count_if_body_143" [style=filled, shape=box, label="assigment_inc_count_if_body_143:
+(%253,i32) <- field_access (%251,%struct.$0_Point*),0
+(%254,i32) load (%253,i32)
+(%255,i32) <- add (%254,i32),1
+(%253,i32) store (%255,i32)
+branch assigment_inc_count_if_merge_144"];
+	"assigment_inc_count_if_merge_144" [style=filled, shape=box, label="assigment_inc_count_if_merge_144:
+ <- call $_destructor_0,(%244,%struct.$0_Point*)
+(%256,i32) load ($42_a,i32)
+(%257,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%258,i32) <- field_access (%257,%struct.$0_Point*),2
+(%259,i32) load (%258,i32)
+(%260,i32) <- add (%256,i32),(%259,i32)
+(%261,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%262,i32) <- field_access (%261,%struct.$0_Point*),3
+(%263,i32) load (%262,i32)
+(%264,i32) <- add (%260,i32),(%263,i32)
+($42_a,i32) store (%264,i32)
+(%265,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%266,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_145"];
+	"assigment_inc_count_if_cond_145" [style=filled, shape=box, label="assigment_inc_count_if_cond_145:
+(%267,i1) <- ne (%266,%struct.$0_Point*),null
+branch (%267,i1) assigment_inc_count_if_body_146,assigment_inc_count_if_merge_147"];
+	"assigment_inc_count_if_body_146" [style=filled, shape=box, label="assigment_inc_count_if_body_146:
+(%268,i32) <- field_access (%266,%struct.$0_Point*),0
+(%269,i32) load (%268,i32)
+(%270,i32) <- add (%269,i32),1
+(%268,i32) store (%270,i32)
+branch assigment_inc_count_if_merge_147"];
+	"assigment_inc_count_if_merge_147" [style=filled, shape=box, label="assigment_inc_count_if_merge_147:
+(%271,%struct.$0_Point*) <- call $4_f8,(%266,%struct.$0_Point*)
+($43_p,%struct.$0_Point*) store (%271,%struct.$0_Point*)
+(%272,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_148"];
+	"assigment_inc_count_if_cond_148" [style=filled, shape=box, label="assigment_inc_count_if_cond_148:
+(%273,i1) <- ne (%272,%struct.$0_Point*),null
+branch (%273,i1) assigment_inc_count_if_body_149,assigment_inc_count_if_merge_150"];
+	"assigment_inc_count_if_body_149" [style=filled, shape=box, label="assigment_inc_count_if_body_149:
+(%274,i32) <- field_access (%272,%struct.$0_Point*),0
+(%275,i32) load (%274,i32)
+(%276,i32) <- add (%275,i32),1
+(%274,i32) store (%276,i32)
+branch assigment_inc_count_if_merge_150"];
+	"assigment_inc_count_if_merge_150" [style=filled, shape=box, label="assigment_inc_count_if_merge_150:
+ <- call $_destructor_0,(%265,%struct.$0_Point*)
+(%277,i32) load ($42_a,i32)
+(%278,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%279,i32) <- field_access (%278,%struct.$0_Point*),2
+(%280,i32) load (%279,i32)
+(%281,i32) <- add (%277,i32),(%280,i32)
+(%282,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%283,i32) <- field_access (%282,%struct.$0_Point*),3
+(%284,i32) load (%283,i32)
+(%285,i32) <- add (%281,i32),(%284,i32)
+($42_a,i32) store (%285,i32)
+(%286,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%287,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_151"];
+	"assigment_inc_count_if_cond_151" [style=filled, shape=box, label="assigment_inc_count_if_cond_151:
+(%288,i1) <- ne (%287,%struct.$0_Point*),null
+branch (%288,i1) assigment_inc_count_if_body_152,assigment_inc_count_if_merge_153"];
+	"assigment_inc_count_if_body_152" [style=filled, shape=box, label="assigment_inc_count_if_body_152:
+(%289,i32) <- field_access (%287,%struct.$0_Point*),0
+(%290,i32) load (%289,i32)
+(%291,i32) <- add (%290,i32),1
+(%289,i32) store (%291,i32)
+branch assigment_inc_count_if_merge_153"];
+	"assigment_inc_count_if_merge_153" [style=filled, shape=box, label="assigment_inc_count_if_merge_153:
+(%292,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%293,i32) <- field_access (%292,%struct.$0_Point*),2
+(%294,i32) load (%293,i32)
+(%295,%struct.$0_Point*) <- call $8_f9,(%287,%struct.$0_Point*),(%294,i32)
+($43_p,%struct.$0_Point*) store (%295,%struct.$0_Point*)
+(%296,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+branch assigment_inc_count_if_cond_154"];
+	"assigment_inc_count_if_cond_154" [style=filled, shape=box, label="assigment_inc_count_if_cond_154:
+(%297,i1) <- ne (%296,%struct.$0_Point*),null
+branch (%297,i1) assigment_inc_count_if_body_155,assigment_inc_count_if_merge_156"];
+	"assigment_inc_count_if_body_155" [style=filled, shape=box, label="assigment_inc_count_if_body_155:
+(%298,i32) <- field_access (%296,%struct.$0_Point*),0
+(%299,i32) load (%298,i32)
+(%300,i32) <- add (%299,i32),1
+(%298,i32) store (%300,i32)
+branch assigment_inc_count_if_merge_156"];
+	"assigment_inc_count_if_merge_156" [style=filled, shape=box, label="assigment_inc_count_if_merge_156:
+ <- call $_destructor_0,(%286,%struct.$0_Point*)
+(%301,i32) load ($42_a,i32)
+(%302,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%303,i32) <- field_access (%302,%struct.$0_Point*),2
+(%304,i32) load (%303,i32)
+(%305,i32) <- add (%301,i32),(%304,i32)
+(%306,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+(%307,i32) <- field_access (%306,%struct.$0_Point*),3
+(%308,i32) load (%307,i32)
+(%309,i32) <- add (%305,i32),(%308,i32)
+($42_a,i32) store (%309,i32)
+branch local_return_157"];
+	"local_return_157" [style=filled, shape=box, label="local_return_157:
+(%310,i32) load ($42_a,i32)
+($$_ret_value_3,i32) store (%310,i32)
+branch end_function_destructor_159"];
+	"dummy_158" [style=filled, shape=box, label="dummy_158:
+
+branch end_function_destructor_159"];
+	"end_function_destructor_159" [style=filled, shape=box, label="end_function_destructor_159:
+(%311,%struct.$0_Point*) load ($43_p,%struct.$0_Point*)
+ <- call $_destructor_0,(%311,%struct.$0_Point*)
+branch return_74"];
+"header_73" -> "entry_75";
+"entry_75" -> "declaration_inc_count_if_cond_76";
+"declaration_inc_count_if_cond_76" -> "declaration_inc_count_if_body_77";
+"declaration_inc_count_if_cond_76" -> "declaration_inc_count_if_merge_78";
+"declaration_inc_count_if_body_77" -> "declaration_inc_count_if_merge_78";
+"declaration_inc_count_if_merge_78" -> "assigment_inc_count_if_cond_79";
+"assigment_inc_count_if_cond_79" -> "assigment_inc_count_if_body_80";
+"assigment_inc_count_if_cond_79" -> "assigment_inc_count_if_merge_81";
+"assigment_inc_count_if_body_80" -> "assigment_inc_count_if_merge_81";
+"assigment_inc_count_if_merge_81" -> "assigment_inc_count_if_cond_82";
+"assigment_inc_count_if_cond_82" -> "assigment_inc_count_if_body_83";
+"assigment_inc_count_if_cond_82" -> "assigment_inc_count_if_merge_84";
+"assigment_inc_count_if_body_83" -> "assigment_inc_count_if_merge_84";
+"assigment_inc_count_if_merge_84" -> "assigment_inc_count_if_cond_85";
+"assigment_inc_count_if_cond_85" -> "assigment_inc_count_if_body_86";
+"assigment_inc_count_if_cond_85" -> "assigment_inc_count_if_merge_87";
+"assigment_inc_count_if_body_86" -> "assigment_inc_count_if_merge_87";
+"assigment_inc_count_if_merge_87" -> "assigment_inc_count_if_cond_88";
+"assigment_inc_count_if_cond_88" -> "assigment_inc_count_if_body_89";
+"assigment_inc_count_if_cond_88" -> "assigment_inc_count_if_merge_90";
+"assigment_inc_count_if_body_89" -> "assigment_inc_count_if_merge_90";
+"assigment_inc_count_if_merge_90" -> "assigment_inc_count_if_cond_91";
+"assigment_inc_count_if_cond_91" -> "assigment_inc_count_if_body_92";
+"assigment_inc_count_if_cond_91" -> "assigment_inc_count_if_merge_93";
+"assigment_inc_count_if_body_92" -> "assigment_inc_count_if_merge_93";
+"assigment_inc_count_if_merge_93" -> "assigment_inc_count_if_cond_94";
+"assigment_inc_count_if_cond_94" -> "assigment_inc_count_if_body_95";
+"assigment_inc_count_if_cond_94" -> "assigment_inc_count_if_merge_96";
+"assigment_inc_count_if_body_95" -> "assigment_inc_count_if_merge_96";
+"assigment_inc_count_if_merge_96" -> "assigment_inc_count_if_cond_97";
+"assigment_inc_count_if_cond_97" -> "assigment_inc_count_if_body_98";
+"assigment_inc_count_if_cond_97" -> "assigment_inc_count_if_merge_99";
+"assigment_inc_count_if_body_98" -> "assigment_inc_count_if_merge_99";
+"assigment_inc_count_if_merge_99" -> "assigment_inc_count_if_cond_100";
+"assigment_inc_count_if_cond_100" -> "assigment_inc_count_if_body_101";
+"assigment_inc_count_if_cond_100" -> "assigment_inc_count_if_merge_102";
+"assigment_inc_count_if_body_101" -> "assigment_inc_count_if_merge_102";
+"assigment_inc_count_if_merge_102" -> "assigment_inc_count_if_cond_103";
+"assigment_inc_count_if_cond_103" -> "assigment_inc_count_if_body_104";
+"assigment_inc_count_if_cond_103" -> "assigment_inc_count_if_merge_105";
+"assigment_inc_count_if_body_104" -> "assigment_inc_count_if_merge_105";
+"assigment_inc_count_if_merge_105" -> "assigment_inc_count_if_cond_106";
+"assigment_inc_count_if_cond_106" -> "assigment_inc_count_if_body_107";
+"assigment_inc_count_if_cond_106" -> "assigment_inc_count_if_merge_108";
+"assigment_inc_count_if_body_107" -> "assigment_inc_count_if_merge_108";
+"assigment_inc_count_if_merge_108" -> "assigment_inc_count_if_cond_109";
+"assigment_inc_count_if_cond_109" -> "assigment_inc_count_if_body_110";
+"assigment_inc_count_if_cond_109" -> "assigment_inc_count_if_merge_111";
+"assigment_inc_count_if_body_110" -> "assigment_inc_count_if_merge_111";
+"assigment_inc_count_if_merge_111" -> "assigment_inc_count_if_cond_112";
+"assigment_inc_count_if_cond_112" -> "assigment_inc_count_if_body_113";
+"assigment_inc_count_if_cond_112" -> "assigment_inc_count_if_merge_114";
+"assigment_inc_count_if_body_113" -> "assigment_inc_count_if_merge_114";
+"assigment_inc_count_if_merge_114" -> "assigment_inc_count_if_cond_115";
+"assigment_inc_count_if_cond_115" -> "assigment_inc_count_if_body_116";
+"assigment_inc_count_if_cond_115" -> "assigment_inc_count_if_merge_117";
+"assigment_inc_count_if_body_116" -> "assigment_inc_count_if_merge_117";
+"assigment_inc_count_if_merge_117" -> "assigment_inc_count_if_cond_118";
+"assigment_inc_count_if_cond_118" -> "assigment_inc_count_if_body_119";
+"assigment_inc_count_if_cond_118" -> "assigment_inc_count_if_merge_120";
+"assigment_inc_count_if_body_119" -> "assigment_inc_count_if_merge_120";
+"assigment_inc_count_if_merge_120" -> "assigment_inc_count_if_cond_121";
+"assigment_inc_count_if_cond_121" -> "assigment_inc_count_if_body_122";
+"assigment_inc_count_if_cond_121" -> "assigment_inc_count_if_merge_123";
+"assigment_inc_count_if_body_122" -> "assigment_inc_count_if_merge_123";
+"assigment_inc_count_if_merge_123" -> "assigment_inc_count_if_cond_124";
+"assigment_inc_count_if_cond_124" -> "assigment_inc_count_if_body_125";
+"assigment_inc_count_if_cond_124" -> "assigment_inc_count_if_merge_126";
+"assigment_inc_count_if_body_125" -> "assigment_inc_count_if_merge_126";
+"assigment_inc_count_if_merge_126" -> "assigment_inc_count_if_cond_127";
+"assigment_inc_count_if_cond_127" -> "assigment_inc_count_if_body_128";
+"assigment_inc_count_if_cond_127" -> "assigment_inc_count_if_merge_129";
+"assigment_inc_count_if_body_128" -> "assigment_inc_count_if_merge_129";
+"assigment_inc_count_if_merge_129" -> "assigment_inc_count_if_cond_130";
+"assigment_inc_count_if_cond_130" -> "assigment_inc_count_if_body_131";
+"assigment_inc_count_if_cond_130" -> "assigment_inc_count_if_merge_132";
+"assigment_inc_count_if_body_131" -> "assigment_inc_count_if_merge_132";
+"assigment_inc_count_if_merge_132" -> "assigment_inc_count_if_cond_133";
+"assigment_inc_count_if_cond_133" -> "assigment_inc_count_if_body_134";
+"assigment_inc_count_if_cond_133" -> "assigment_inc_count_if_merge_135";
+"assigment_inc_count_if_body_134" -> "assigment_inc_count_if_merge_135";
+"assigment_inc_count_if_merge_135" -> "assigment_inc_count_if_cond_136";
+"assigment_inc_count_if_cond_136" -> "assigment_inc_count_if_body_137";
+"assigment_inc_count_if_cond_136" -> "assigment_inc_count_if_merge_138";
+"assigment_inc_count_if_body_137" -> "assigment_inc_count_if_merge_138";
+"assigment_inc_count_if_merge_138" -> "assigment_inc_count_if_cond_139";
+"assigment_inc_count_if_cond_139" -> "assigment_inc_count_if_body_140";
+"assigment_inc_count_if_cond_139" -> "assigment_inc_count_if_merge_141";
+"assigment_inc_count_if_body_140" -> "assigment_inc_count_if_merge_141";
+"assigment_inc_count_if_merge_141" -> "assigment_inc_count_if_cond_142";
+"assigment_inc_count_if_cond_142" -> "assigment_inc_count_if_body_143";
+"assigment_inc_count_if_cond_142" -> "assigment_inc_count_if_merge_144";
+"assigment_inc_count_if_body_143" -> "assigment_inc_count_if_merge_144";
+"assigment_inc_count_if_merge_144" -> "assigment_inc_count_if_cond_145";
+"assigment_inc_count_if_cond_145" -> "assigment_inc_count_if_body_146";
+"assigment_inc_count_if_cond_145" -> "assigment_inc_count_if_merge_147";
+"assigment_inc_count_if_body_146" -> "assigment_inc_count_if_merge_147";
+"assigment_inc_count_if_merge_147" -> "assigment_inc_count_if_cond_148";
+"assigment_inc_count_if_cond_148" -> "assigment_inc_count_if_body_149";
+"assigment_inc_count_if_cond_148" -> "assigment_inc_count_if_merge_150";
+"assigment_inc_count_if_body_149" -> "assigment_inc_count_if_merge_150";
+"assigment_inc_count_if_merge_150" -> "assigment_inc_count_if_cond_151";
+"assigment_inc_count_if_cond_151" -> "assigment_inc_count_if_body_152";
+"assigment_inc_count_if_cond_151" -> "assigment_inc_count_if_merge_153";
+"assigment_inc_count_if_body_152" -> "assigment_inc_count_if_merge_153";
+"assigment_inc_count_if_merge_153" -> "assigment_inc_count_if_cond_154";
+"assigment_inc_count_if_cond_154" -> "assigment_inc_count_if_body_155";
+"assigment_inc_count_if_cond_154" -> "assigment_inc_count_if_merge_156";
+"assigment_inc_count_if_body_155" -> "assigment_inc_count_if_merge_156";
+"assigment_inc_count_if_merge_156" -> "local_return_157";
+"local_return_157" -> "end_function_destructor_159";
+"dummy_158" -> "end_function_destructor_159";
+"end_function_destructor_159" -> "return_74";
+
+	"header_160" [style=filled, shape=box, label="header_160:
+($$_ret_value_4,%struct.$0_Point*) alloc 
+branch entry_167"];
+	"return_161" [style=filled, shape=box, label="return_161:
+(%0,%struct.$0_Point*) load ($$_ret_value_4,%struct.$0_Point*)
+branch start_cond_162"];
+	"start_cond_162" [style=filled, shape=box, label="start_cond_162:
+(%1,i1) <- ne (%0,%struct.$0_Point*),null
+branch (%1,i1) temp_cond_163,temp_merge_166"];
+	"temp_cond_163" [style=filled, shape=box, label="temp_cond_163:
+(%2,i32) <- field_access (%0,%struct.$0_Point*),0
+(%3,i32) load (%2,i32)
+(%4,i1) <- eq (%3,i32),0
+branch (%4,i1) temp_body_164,else_temp_165"];
+	"temp_body_164" [style=filled, shape=box, label="temp_body_164:
+(%5,i32) <- field_access (%0,%struct.$0_Point*),0
+(%6,i32) load (%5,i32)
+(%7,i32) <- sub (%6,i32),0
+(%5,i32) store (%7,i32)
+branch temp_merge_166"];
+	"else_temp_165" [style=filled, shape=box, label="else_temp_165:
+(%8,i32) <- field_access (%0,%struct.$0_Point*),0
+(%9,i32) load (%8,i32)
+(%10,i32) <- sub (%9,i32),1
+(%8,i32) store (%10,i32)
+branch temp_merge_166"];
+	"temp_merge_166" [style=filled, shape=box, label="temp_merge_166:
+
+return (%0,%struct.$0_Point*)"];
+	"entry_167" [style=filled, shape=box, label="entry_167:
+($22_a,%struct.$0_Point*) alloc 
+(%11,%struct.$0_Point*) <- call $13_f
+($22_a,%struct.$0_Point*) store (%11,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_168"];
+	"declaration_inc_count_if_cond_168" [style=filled, shape=box, label="declaration_inc_count_if_cond_168:
+(%12,%struct.$0_Point*) load ($22_a,%struct.$0_Point*)
+(%13,i1) <- ne (%12,%struct.$0_Point*),null
+branch (%13,i1) declaration_inc_count_if_body_169,declaration_inc_count_if_merge_170"];
+	"declaration_inc_count_if_body_169" [style=filled, shape=box, label="declaration_inc_count_if_body_169:
+(%14,%struct.$0_Point*) load ($22_a,%struct.$0_Point*)
+(%15,i32) <- field_access (%14,%struct.$0_Point*),0
+(%16,i32) load (%15,i32)
+(%17,i32) <- add (%16,i32),1
+(%15,i32) store (%17,i32)
+branch declaration_inc_count_if_merge_170"];
+	"declaration_inc_count_if_merge_170" [style=filled, shape=box, label="declaration_inc_count_if_merge_170:
+($23_b,%struct.$0_Point*) alloc 
+(%18,%struct.$0_Point*) <- call $_constructor_0,1,1
+($23_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_171"];
+	"declaration_inc_count_if_cond_171" [style=filled, shape=box, label="declaration_inc_count_if_cond_171:
+(%19,%struct.$0_Point*) load ($23_b,%struct.$0_Point*)
+(%20,i1) <- ne (%19,%struct.$0_Point*),null
+branch (%20,i1) declaration_inc_count_if_body_172,declaration_inc_count_if_merge_173"];
+	"declaration_inc_count_if_body_172" [style=filled, shape=box, label="declaration_inc_count_if_body_172:
+(%21,%struct.$0_Point*) load ($23_b,%struct.$0_Point*)
+(%22,i32) <- field_access (%21,%struct.$0_Point*),0
+(%23,i32) load (%22,i32)
+(%24,i32) <- add (%23,i32),1
+(%22,i32) store (%24,i32)
+branch declaration_inc_count_if_merge_173"];
+	"declaration_inc_count_if_merge_173" [style=filled, shape=box, label="declaration_inc_count_if_merge_173:
+
+branch local_return_174"];
+	"local_return_174" [style=filled, shape=box, label="local_return_174:
+(%25,%struct.$0_Point*) load ($22_a,%struct.$0_Point*)
+branch start_cond_175"];
+	"start_cond_175" [style=filled, shape=box, label="start_cond_175:
+(%26,i1) <- ne (%25,%struct.$0_Point*),null
+branch (%26,i1) temp_cond_176,temp_merge_179"];
+	"temp_cond_176" [style=filled, shape=box, label="temp_cond_176:
+(%27,i32) <- field_access (%25,%struct.$0_Point*),0
+(%28,i32) load (%27,i32)
+(%29,i1) <- eq (%28,i32),0
+branch (%29,i1) temp_body_177,else_temp_178"];
+	"temp_body_177" [style=filled, shape=box, label="temp_body_177:
+(%30,i32) <- field_access (%25,%struct.$0_Point*),0
+(%31,i32) load (%30,i32)
+(%32,i32) <- add (%31,i32),0
+(%30,i32) store (%32,i32)
+branch temp_merge_179"];
+	"else_temp_178" [style=filled, shape=box, label="else_temp_178:
+(%33,i32) <- field_access (%25,%struct.$0_Point*),0
+(%34,i32) load (%33,i32)
+(%35,i32) <- add (%34,i32),1
+(%33,i32) store (%35,i32)
+branch temp_merge_179"];
+	"temp_merge_179" [style=filled, shape=box, label="temp_merge_179:
+($$_ret_value_4,%struct.$0_Point*) store (%25,%struct.$0_Point*)
+branch end_function_destructor_181"];
+	"dummy_180" [style=filled, shape=box, label="dummy_180:
+
+branch end_function_destructor_181"];
+	"end_function_destructor_181" [style=filled, shape=box, label="end_function_destructor_181:
+(%36,%struct.$0_Point*) load ($23_b,%struct.$0_Point*)
+ <- call $_destructor_0,(%36,%struct.$0_Point*)
+(%37,%struct.$0_Point*) load ($22_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%37,%struct.$0_Point*)
+branch return_161"];
+"header_160" -> "entry_167";
+"return_161" -> "start_cond_162";
+"start_cond_162" -> "temp_cond_163";
+"start_cond_162" -> "temp_merge_166";
+"temp_cond_163" -> "temp_body_164";
+"temp_cond_163" -> "else_temp_165";
+"temp_body_164" -> "temp_merge_166";
+"else_temp_165" -> "temp_merge_166";
+"entry_167" -> "declaration_inc_count_if_cond_168";
+"declaration_inc_count_if_cond_168" -> "declaration_inc_count_if_body_169";
+"declaration_inc_count_if_cond_168" -> "declaration_inc_count_if_merge_170";
+"declaration_inc_count_if_body_169" -> "declaration_inc_count_if_merge_170";
+"declaration_inc_count_if_merge_170" -> "declaration_inc_count_if_cond_171";
+"declaration_inc_count_if_cond_171" -> "declaration_inc_count_if_body_172";
+"declaration_inc_count_if_cond_171" -> "declaration_inc_count_if_merge_173";
+"declaration_inc_count_if_body_172" -> "declaration_inc_count_if_merge_173";
+"declaration_inc_count_if_merge_173" -> "local_return_174";
+"local_return_174" -> "start_cond_175";
+"start_cond_175" -> "temp_cond_176";
+"start_cond_175" -> "temp_merge_179";
+"temp_cond_176" -> "temp_body_177";
+"temp_cond_176" -> "else_temp_178";
+"temp_body_177" -> "temp_merge_179";
+"else_temp_178" -> "temp_merge_179";
+"temp_merge_179" -> "end_function_destructor_181";
+"dummy_180" -> "end_function_destructor_181";
+"end_function_destructor_181" -> "return_161";
+
+	"header_182" [style=filled, shape=box, label="header_182:
+($26_p,%struct.$0_Point*) alloc 
+($26_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($$_ret_value_5,%struct.$0_Point*) alloc 
+branch entry_189"];
+	"return_183" [style=filled, shape=box, label="return_183:
+(%1,%struct.$0_Point*) load ($$_ret_value_5,%struct.$0_Point*)
+branch start_cond_184"];
+	"start_cond_184" [style=filled, shape=box, label="start_cond_184:
+(%2,i1) <- ne (%1,%struct.$0_Point*),null
+branch (%2,i1) temp_cond_185,temp_merge_188"];
+	"temp_cond_185" [style=filled, shape=box, label="temp_cond_185:
+(%3,i32) <- field_access (%1,%struct.$0_Point*),0
+(%4,i32) load (%3,i32)
+(%5,i1) <- eq (%4,i32),0
+branch (%5,i1) temp_body_186,else_temp_187"];
+	"temp_body_186" [style=filled, shape=box, label="temp_body_186:
+(%6,i32) <- field_access (%1,%struct.$0_Point*),0
+(%7,i32) load (%6,i32)
+(%8,i32) <- sub (%7,i32),0
+(%6,i32) store (%8,i32)
+branch temp_merge_188"];
+	"else_temp_187" [style=filled, shape=box, label="else_temp_187:
+(%9,i32) <- field_access (%1,%struct.$0_Point*),0
+(%10,i32) load (%9,i32)
+(%11,i32) <- sub (%10,i32),1
+(%9,i32) store (%11,i32)
+branch temp_merge_188"];
+	"temp_merge_188" [style=filled, shape=box, label="temp_merge_188:
+
+return (%1,%struct.$0_Point*)"];
+	"entry_189" [style=filled, shape=box, label="entry_189:
 ($27_a,%struct.$0_Point*) alloc 
 (%12,%struct.$0_Point*) <- call $_constructor_0,1,1
 ($27_a,%struct.$0_Point*) store (%12,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_256"];
-	"declaration_inc_count_if_cond_256" [style=filled, shape=box, label="declaration_inc_count_if_cond_256:
+branch declaration_inc_count_if_cond_190"];
+	"declaration_inc_count_if_cond_190" [style=filled, shape=box, label="declaration_inc_count_if_cond_190:
 (%13,%struct.$0_Point*) load ($27_a,%struct.$0_Point*)
 (%14,i1) <- ne (%13,%struct.$0_Point*),null
-branch (%14,i1) declaration_inc_count_if_body_257,declaration_inc_count_if_merge_258"];
-	"declaration_inc_count_if_body_257" [style=filled, shape=box, label="declaration_inc_count_if_body_257:
+branch (%14,i1) declaration_inc_count_if_body_191,declaration_inc_count_if_merge_192"];
+	"declaration_inc_count_if_body_191" [style=filled, shape=box, label="declaration_inc_count_if_body_191:
 (%15,%struct.$0_Point*) load ($27_a,%struct.$0_Point*)
 (%16,i32) <- field_access (%15,%struct.$0_Point*),0
 (%17,i32) load (%16,i32)
 (%18,i32) <- add (%17,i32),1
 (%16,i32) store (%18,i32)
-branch declaration_inc_count_if_merge_258"];
-	"declaration_inc_count_if_merge_258" [style=filled, shape=box, label="declaration_inc_count_if_merge_258:
+branch declaration_inc_count_if_merge_192"];
+	"declaration_inc_count_if_merge_192" [style=filled, shape=box, label="declaration_inc_count_if_merge_192:
 ($28_b,%struct.$0_Point*) alloc 
 (%19,%struct.$0_Point*) <- call $_constructor_0,1,1
 ($28_b,%struct.$0_Point*) store (%19,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_259"];
-	"declaration_inc_count_if_cond_259" [style=filled, shape=box, label="declaration_inc_count_if_cond_259:
+branch declaration_inc_count_if_cond_193"];
+	"declaration_inc_count_if_cond_193" [style=filled, shape=box, label="declaration_inc_count_if_cond_193:
 (%20,%struct.$0_Point*) load ($28_b,%struct.$0_Point*)
 (%21,i1) <- ne (%20,%struct.$0_Point*),null
-branch (%21,i1) declaration_inc_count_if_body_260,declaration_inc_count_if_merge_261"];
-	"declaration_inc_count_if_body_260" [style=filled, shape=box, label="declaration_inc_count_if_body_260:
+branch (%21,i1) declaration_inc_count_if_body_194,declaration_inc_count_if_merge_195"];
+	"declaration_inc_count_if_body_194" [style=filled, shape=box, label="declaration_inc_count_if_body_194:
 (%22,%struct.$0_Point*) load ($28_b,%struct.$0_Point*)
 (%23,i32) <- field_access (%22,%struct.$0_Point*),0
 (%24,i32) load (%23,i32)
 (%25,i32) <- add (%24,i32),1
 (%23,i32) store (%25,i32)
+branch declaration_inc_count_if_merge_195"];
+	"declaration_inc_count_if_merge_195" [style=filled, shape=box, label="declaration_inc_count_if_merge_195:
+
+branch local_return_196"];
+	"local_return_196" [style=filled, shape=box, label="local_return_196:
+(%26,%struct.$0_Point*) load ($26_p,%struct.$0_Point*)
+branch start_cond_197"];
+	"start_cond_197" [style=filled, shape=box, label="start_cond_197:
+(%27,i1) <- ne (%26,%struct.$0_Point*),null
+branch (%27,i1) temp_cond_198,temp_merge_201"];
+	"temp_cond_198" [style=filled, shape=box, label="temp_cond_198:
+(%28,i32) <- field_access (%26,%struct.$0_Point*),0
+(%29,i32) load (%28,i32)
+(%30,i1) <- eq (%29,i32),0
+branch (%30,i1) temp_body_199,else_temp_200"];
+	"temp_body_199" [style=filled, shape=box, label="temp_body_199:
+(%31,i32) <- field_access (%26,%struct.$0_Point*),0
+(%32,i32) load (%31,i32)
+(%33,i32) <- add (%32,i32),0
+(%31,i32) store (%33,i32)
+branch temp_merge_201"];
+	"else_temp_200" [style=filled, shape=box, label="else_temp_200:
+(%34,i32) <- field_access (%26,%struct.$0_Point*),0
+(%35,i32) load (%34,i32)
+(%36,i32) <- add (%35,i32),1
+(%34,i32) store (%36,i32)
+branch temp_merge_201"];
+	"temp_merge_201" [style=filled, shape=box, label="temp_merge_201:
+($$_ret_value_5,%struct.$0_Point*) store (%26,%struct.$0_Point*)
+branch end_function_destructor_203"];
+	"dummy_202" [style=filled, shape=box, label="dummy_202:
+
+branch end_function_destructor_203"];
+	"end_function_destructor_203" [style=filled, shape=box, label="end_function_destructor_203:
+(%37,%struct.$0_Point*) load ($28_b,%struct.$0_Point*)
+ <- call $_destructor_0,(%37,%struct.$0_Point*)
+(%38,%struct.$0_Point*) load ($27_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%38,%struct.$0_Point*)
+(%39,%struct.$0_Point*) load ($26_p,%struct.$0_Point*)
+ <- call $_destructor_0,(%39,%struct.$0_Point*)
+branch return_183"];
+"header_182" -> "entry_189";
+"return_183" -> "start_cond_184";
+"start_cond_184" -> "temp_cond_185";
+"start_cond_184" -> "temp_merge_188";
+"temp_cond_185" -> "temp_body_186";
+"temp_cond_185" -> "else_temp_187";
+"temp_body_186" -> "temp_merge_188";
+"else_temp_187" -> "temp_merge_188";
+"entry_189" -> "declaration_inc_count_if_cond_190";
+"declaration_inc_count_if_cond_190" -> "declaration_inc_count_if_body_191";
+"declaration_inc_count_if_cond_190" -> "declaration_inc_count_if_merge_192";
+"declaration_inc_count_if_body_191" -> "declaration_inc_count_if_merge_192";
+"declaration_inc_count_if_merge_192" -> "declaration_inc_count_if_cond_193";
+"declaration_inc_count_if_cond_193" -> "declaration_inc_count_if_body_194";
+"declaration_inc_count_if_cond_193" -> "declaration_inc_count_if_merge_195";
+"declaration_inc_count_if_body_194" -> "declaration_inc_count_if_merge_195";
+"declaration_inc_count_if_merge_195" -> "local_return_196";
+"local_return_196" -> "start_cond_197";
+"start_cond_197" -> "temp_cond_198";
+"start_cond_197" -> "temp_merge_201";
+"temp_cond_198" -> "temp_body_199";
+"temp_cond_198" -> "else_temp_200";
+"temp_body_199" -> "temp_merge_201";
+"else_temp_200" -> "temp_merge_201";
+"temp_merge_201" -> "end_function_destructor_203";
+"dummy_202" -> "end_function_destructor_203";
+"end_function_destructor_203" -> "return_183";
+
+	"header_204" [style=filled, shape=box, label="header_204:
+($32_p,%struct.$0_Point*) alloc 
+($32_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($$_ret_value_6,%struct.$0_Point*) alloc 
+branch entry_211"];
+	"return_205" [style=filled, shape=box, label="return_205:
+(%1,%struct.$0_Point*) load ($$_ret_value_6,%struct.$0_Point*)
+branch start_cond_206"];
+	"start_cond_206" [style=filled, shape=box, label="start_cond_206:
+(%2,i1) <- ne (%1,%struct.$0_Point*),null
+branch (%2,i1) temp_cond_207,temp_merge_210"];
+	"temp_cond_207" [style=filled, shape=box, label="temp_cond_207:
+(%3,i32) <- field_access (%1,%struct.$0_Point*),0
+(%4,i32) load (%3,i32)
+(%5,i1) <- eq (%4,i32),0
+branch (%5,i1) temp_body_208,else_temp_209"];
+	"temp_body_208" [style=filled, shape=box, label="temp_body_208:
+(%6,i32) <- field_access (%1,%struct.$0_Point*),0
+(%7,i32) load (%6,i32)
+(%8,i32) <- sub (%7,i32),0
+(%6,i32) store (%8,i32)
+branch temp_merge_210"];
+	"else_temp_209" [style=filled, shape=box, label="else_temp_209:
+(%9,i32) <- field_access (%1,%struct.$0_Point*),0
+(%10,i32) load (%9,i32)
+(%11,i32) <- sub (%10,i32),1
+(%9,i32) store (%11,i32)
+branch temp_merge_210"];
+	"temp_merge_210" [style=filled, shape=box, label="temp_merge_210:
+
+return (%1,%struct.$0_Point*)"];
+	"entry_211" [style=filled, shape=box, label="entry_211:
+($33_a,%struct.$0_Point*) alloc 
+(%12,%struct.$0_Point*) <- call $_constructor_0,1,1
+($33_a,%struct.$0_Point*) store (%12,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_212"];
+	"declaration_inc_count_if_cond_212" [style=filled, shape=box, label="declaration_inc_count_if_cond_212:
+(%13,%struct.$0_Point*) load ($33_a,%struct.$0_Point*)
+(%14,i1) <- ne (%13,%struct.$0_Point*),null
+branch (%14,i1) declaration_inc_count_if_body_213,declaration_inc_count_if_merge_214"];
+	"declaration_inc_count_if_body_213" [style=filled, shape=box, label="declaration_inc_count_if_body_213:
+(%15,%struct.$0_Point*) load ($33_a,%struct.$0_Point*)
+(%16,i32) <- field_access (%15,%struct.$0_Point*),0
+(%17,i32) load (%16,i32)
+(%18,i32) <- add (%17,i32),1
+(%16,i32) store (%18,i32)
+branch declaration_inc_count_if_merge_214"];
+	"declaration_inc_count_if_merge_214" [style=filled, shape=box, label="declaration_inc_count_if_merge_214:
+($34_b,%struct.$0_Point*) alloc 
+(%19,%struct.$0_Point*) <- call $_constructor_0,1,1
+($34_b,%struct.$0_Point*) store (%19,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_215"];
+	"declaration_inc_count_if_cond_215" [style=filled, shape=box, label="declaration_inc_count_if_cond_215:
+(%20,%struct.$0_Point*) load ($34_b,%struct.$0_Point*)
+(%21,i1) <- ne (%20,%struct.$0_Point*),null
+branch (%21,i1) declaration_inc_count_if_body_216,declaration_inc_count_if_merge_217"];
+	"declaration_inc_count_if_body_216" [style=filled, shape=box, label="declaration_inc_count_if_body_216:
+(%22,%struct.$0_Point*) load ($34_b,%struct.$0_Point*)
+(%23,i32) <- field_access (%22,%struct.$0_Point*),0
+(%24,i32) load (%23,i32)
+(%25,i32) <- add (%24,i32),1
+(%23,i32) store (%25,i32)
+branch declaration_inc_count_if_merge_217"];
+	"declaration_inc_count_if_merge_217" [style=filled, shape=box, label="declaration_inc_count_if_merge_217:
+
+branch local_return_218"];
+	"local_return_218" [style=filled, shape=box, label="local_return_218:
+(%26,%struct.$0_Point*) load ($33_a,%struct.$0_Point*)
+branch start_cond_219"];
+	"start_cond_219" [style=filled, shape=box, label="start_cond_219:
+(%27,i1) <- ne (%26,%struct.$0_Point*),null
+branch (%27,i1) temp_cond_220,temp_merge_223"];
+	"temp_cond_220" [style=filled, shape=box, label="temp_cond_220:
+(%28,i32) <- field_access (%26,%struct.$0_Point*),0
+(%29,i32) load (%28,i32)
+(%30,i1) <- eq (%29,i32),0
+branch (%30,i1) temp_body_221,else_temp_222"];
+	"temp_body_221" [style=filled, shape=box, label="temp_body_221:
+(%31,i32) <- field_access (%26,%struct.$0_Point*),0
+(%32,i32) load (%31,i32)
+(%33,i32) <- add (%32,i32),0
+(%31,i32) store (%33,i32)
+branch temp_merge_223"];
+	"else_temp_222" [style=filled, shape=box, label="else_temp_222:
+(%34,i32) <- field_access (%26,%struct.$0_Point*),0
+(%35,i32) load (%34,i32)
+(%36,i32) <- add (%35,i32),1
+(%34,i32) store (%36,i32)
+branch temp_merge_223"];
+	"temp_merge_223" [style=filled, shape=box, label="temp_merge_223:
+($$_ret_value_6,%struct.$0_Point*) store (%26,%struct.$0_Point*)
+branch end_function_destructor_225"];
+	"dummy_224" [style=filled, shape=box, label="dummy_224:
+
+branch end_function_destructor_225"];
+	"end_function_destructor_225" [style=filled, shape=box, label="end_function_destructor_225:
+(%37,%struct.$0_Point*) load ($34_b,%struct.$0_Point*)
+ <- call $_destructor_0,(%37,%struct.$0_Point*)
+(%38,%struct.$0_Point*) load ($33_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%38,%struct.$0_Point*)
+(%39,%struct.$0_Point*) load ($32_p,%struct.$0_Point*)
+ <- call $_destructor_0,(%39,%struct.$0_Point*)
+branch return_205"];
+"header_204" -> "entry_211";
+"return_205" -> "start_cond_206";
+"start_cond_206" -> "temp_cond_207";
+"start_cond_206" -> "temp_merge_210";
+"temp_cond_207" -> "temp_body_208";
+"temp_cond_207" -> "else_temp_209";
+"temp_body_208" -> "temp_merge_210";
+"else_temp_209" -> "temp_merge_210";
+"entry_211" -> "declaration_inc_count_if_cond_212";
+"declaration_inc_count_if_cond_212" -> "declaration_inc_count_if_body_213";
+"declaration_inc_count_if_cond_212" -> "declaration_inc_count_if_merge_214";
+"declaration_inc_count_if_body_213" -> "declaration_inc_count_if_merge_214";
+"declaration_inc_count_if_merge_214" -> "declaration_inc_count_if_cond_215";
+"declaration_inc_count_if_cond_215" -> "declaration_inc_count_if_body_216";
+"declaration_inc_count_if_cond_215" -> "declaration_inc_count_if_merge_217";
+"declaration_inc_count_if_body_216" -> "declaration_inc_count_if_merge_217";
+"declaration_inc_count_if_merge_217" -> "local_return_218";
+"local_return_218" -> "start_cond_219";
+"start_cond_219" -> "temp_cond_220";
+"start_cond_219" -> "temp_merge_223";
+"temp_cond_220" -> "temp_body_221";
+"temp_cond_220" -> "else_temp_222";
+"temp_body_221" -> "temp_merge_223";
+"else_temp_222" -> "temp_merge_223";
+"temp_merge_223" -> "end_function_destructor_225";
+"dummy_224" -> "end_function_destructor_225";
+"end_function_destructor_225" -> "return_205";
+
+	"header_226" [style=filled, shape=box, label="header_226:
+($$_ret_value_7,%struct.$0_Point*) alloc 
+branch entry_233"];
+	"return_227" [style=filled, shape=box, label="return_227:
+(%0,%struct.$0_Point*) load ($$_ret_value_7,%struct.$0_Point*)
+branch start_cond_228"];
+	"start_cond_228" [style=filled, shape=box, label="start_cond_228:
+(%1,i1) <- ne (%0,%struct.$0_Point*),null
+branch (%1,i1) temp_cond_229,temp_merge_232"];
+	"temp_cond_229" [style=filled, shape=box, label="temp_cond_229:
+(%2,i32) <- field_access (%0,%struct.$0_Point*),0
+(%3,i32) load (%2,i32)
+(%4,i1) <- eq (%3,i32),0
+branch (%4,i1) temp_body_230,else_temp_231"];
+	"temp_body_230" [style=filled, shape=box, label="temp_body_230:
+(%5,i32) <- field_access (%0,%struct.$0_Point*),0
+(%6,i32) load (%5,i32)
+(%7,i32) <- sub (%6,i32),0
+(%5,i32) store (%7,i32)
+branch temp_merge_232"];
+	"else_temp_231" [style=filled, shape=box, label="else_temp_231:
+(%8,i32) <- field_access (%0,%struct.$0_Point*),0
+(%9,i32) load (%8,i32)
+(%10,i32) <- sub (%9,i32),1
+(%8,i32) store (%10,i32)
+branch temp_merge_232"];
+	"temp_merge_232" [style=filled, shape=box, label="temp_merge_232:
+
+return (%0,%struct.$0_Point*)"];
+	"entry_233" [style=filled, shape=box, label="entry_233:
+($16_a,%struct.$0_Point*) alloc 
+(%11,%struct.$0_Point*) <- call $_constructor_0,1,1
+($16_a,%struct.$0_Point*) store (%11,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_234"];
+	"declaration_inc_count_if_cond_234" [style=filled, shape=box, label="declaration_inc_count_if_cond_234:
+(%12,%struct.$0_Point*) load ($16_a,%struct.$0_Point*)
+(%13,i1) <- ne (%12,%struct.$0_Point*),null
+branch (%13,i1) declaration_inc_count_if_body_235,declaration_inc_count_if_merge_236"];
+	"declaration_inc_count_if_body_235" [style=filled, shape=box, label="declaration_inc_count_if_body_235:
+(%14,%struct.$0_Point*) load ($16_a,%struct.$0_Point*)
+(%15,i32) <- field_access (%14,%struct.$0_Point*),0
+(%16,i32) load (%15,i32)
+(%17,i32) <- add (%16,i32),1
+(%15,i32) store (%17,i32)
+branch declaration_inc_count_if_merge_236"];
+	"declaration_inc_count_if_merge_236" [style=filled, shape=box, label="declaration_inc_count_if_merge_236:
+($17_b,%struct.$0_Point*) alloc 
+(%18,%struct.$0_Point*) <- call $_constructor_0,1,1
+($17_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_237"];
+	"declaration_inc_count_if_cond_237" [style=filled, shape=box, label="declaration_inc_count_if_cond_237:
+(%19,%struct.$0_Point*) load ($17_b,%struct.$0_Point*)
+(%20,i1) <- ne (%19,%struct.$0_Point*),null
+branch (%20,i1) declaration_inc_count_if_body_238,declaration_inc_count_if_merge_239"];
+	"declaration_inc_count_if_body_238" [style=filled, shape=box, label="declaration_inc_count_if_body_238:
+(%21,%struct.$0_Point*) load ($17_b,%struct.$0_Point*)
+(%22,i32) <- field_access (%21,%struct.$0_Point*),0
+(%23,i32) load (%22,i32)
+(%24,i32) <- add (%23,i32),1
+(%22,i32) store (%24,i32)
+branch declaration_inc_count_if_merge_239"];
+	"declaration_inc_count_if_merge_239" [style=filled, shape=box, label="declaration_inc_count_if_merge_239:
+
+branch local_return_240"];
+	"local_return_240" [style=filled, shape=box, label="local_return_240:
+(%25,%struct.$0_Point*) <- call $_constructor_0,1,1
+branch start_cond_241"];
+	"start_cond_241" [style=filled, shape=box, label="start_cond_241:
+(%26,i1) <- ne (%25,%struct.$0_Point*),null
+branch (%26,i1) temp_cond_242,temp_merge_245"];
+	"temp_cond_242" [style=filled, shape=box, label="temp_cond_242:
+(%27,i32) <- field_access (%25,%struct.$0_Point*),0
+(%28,i32) load (%27,i32)
+(%29,i1) <- eq (%28,i32),0
+branch (%29,i1) temp_body_243,else_temp_244"];
+	"temp_body_243" [style=filled, shape=box, label="temp_body_243:
+(%30,i32) <- field_access (%25,%struct.$0_Point*),0
+(%31,i32) load (%30,i32)
+(%32,i32) <- add (%31,i32),0
+(%30,i32) store (%32,i32)
+branch temp_merge_245"];
+	"else_temp_244" [style=filled, shape=box, label="else_temp_244:
+(%33,i32) <- field_access (%25,%struct.$0_Point*),0
+(%34,i32) load (%33,i32)
+(%35,i32) <- add (%34,i32),1
+(%33,i32) store (%35,i32)
+branch temp_merge_245"];
+	"temp_merge_245" [style=filled, shape=box, label="temp_merge_245:
+($$_ret_value_7,%struct.$0_Point*) store (%25,%struct.$0_Point*)
+branch end_function_destructor_247"];
+	"dummy_246" [style=filled, shape=box, label="dummy_246:
+
+branch end_function_destructor_247"];
+	"end_function_destructor_247" [style=filled, shape=box, label="end_function_destructor_247:
+(%36,%struct.$0_Point*) load ($17_b,%struct.$0_Point*)
+ <- call $_destructor_0,(%36,%struct.$0_Point*)
+(%37,%struct.$0_Point*) load ($16_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%37,%struct.$0_Point*)
+branch return_227"];
+"header_226" -> "entry_233";
+"return_227" -> "start_cond_228";
+"start_cond_228" -> "temp_cond_229";
+"start_cond_228" -> "temp_merge_232";
+"temp_cond_229" -> "temp_body_230";
+"temp_cond_229" -> "else_temp_231";
+"temp_body_230" -> "temp_merge_232";
+"else_temp_231" -> "temp_merge_232";
+"entry_233" -> "declaration_inc_count_if_cond_234";
+"declaration_inc_count_if_cond_234" -> "declaration_inc_count_if_body_235";
+"declaration_inc_count_if_cond_234" -> "declaration_inc_count_if_merge_236";
+"declaration_inc_count_if_body_235" -> "declaration_inc_count_if_merge_236";
+"declaration_inc_count_if_merge_236" -> "declaration_inc_count_if_cond_237";
+"declaration_inc_count_if_cond_237" -> "declaration_inc_count_if_body_238";
+"declaration_inc_count_if_cond_237" -> "declaration_inc_count_if_merge_239";
+"declaration_inc_count_if_body_238" -> "declaration_inc_count_if_merge_239";
+"declaration_inc_count_if_merge_239" -> "local_return_240";
+"local_return_240" -> "start_cond_241";
+"start_cond_241" -> "temp_cond_242";
+"start_cond_241" -> "temp_merge_245";
+"temp_cond_242" -> "temp_body_243";
+"temp_cond_242" -> "else_temp_244";
+"temp_body_243" -> "temp_merge_245";
+"else_temp_244" -> "temp_merge_245";
+"temp_merge_245" -> "end_function_destructor_247";
+"dummy_246" -> "end_function_destructor_247";
+"end_function_destructor_247" -> "return_227";
+
+	"header_248" [style=filled, shape=box, label="header_248:
+($$_ret_value_8,%struct.$0_Point*) alloc 
+branch entry_255"];
+	"return_249" [style=filled, shape=box, label="return_249:
+(%0,%struct.$0_Point*) load ($$_ret_value_8,%struct.$0_Point*)
+branch start_cond_250"];
+	"start_cond_250" [style=filled, shape=box, label="start_cond_250:
+(%1,i1) <- ne (%0,%struct.$0_Point*),null
+branch (%1,i1) temp_cond_251,temp_merge_254"];
+	"temp_cond_251" [style=filled, shape=box, label="temp_cond_251:
+(%2,i32) <- field_access (%0,%struct.$0_Point*),0
+(%3,i32) load (%2,i32)
+(%4,i1) <- eq (%3,i32),0
+branch (%4,i1) temp_body_252,else_temp_253"];
+	"temp_body_252" [style=filled, shape=box, label="temp_body_252:
+(%5,i32) <- field_access (%0,%struct.$0_Point*),0
+(%6,i32) load (%5,i32)
+(%7,i32) <- sub (%6,i32),0
+(%5,i32) store (%7,i32)
+branch temp_merge_254"];
+	"else_temp_253" [style=filled, shape=box, label="else_temp_253:
+(%8,i32) <- field_access (%0,%struct.$0_Point*),0
+(%9,i32) load (%8,i32)
+(%10,i32) <- sub (%9,i32),1
+(%8,i32) store (%10,i32)
+branch temp_merge_254"];
+	"temp_merge_254" [style=filled, shape=box, label="temp_merge_254:
+
+return (%0,%struct.$0_Point*)"];
+	"entry_255" [style=filled, shape=box, label="entry_255:
+($24_a,%struct.$0_Point*) alloc 
+(%11,%struct.$0_Point*) <- call $13_f
+($24_a,%struct.$0_Point*) store (%11,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_256"];
+	"declaration_inc_count_if_cond_256" [style=filled, shape=box, label="declaration_inc_count_if_cond_256:
+(%12,%struct.$0_Point*) load ($24_a,%struct.$0_Point*)
+(%13,i1) <- ne (%12,%struct.$0_Point*),null
+branch (%13,i1) declaration_inc_count_if_body_257,declaration_inc_count_if_merge_258"];
+	"declaration_inc_count_if_body_257" [style=filled, shape=box, label="declaration_inc_count_if_body_257:
+(%14,%struct.$0_Point*) load ($24_a,%struct.$0_Point*)
+(%15,i32) <- field_access (%14,%struct.$0_Point*),0
+(%16,i32) load (%15,i32)
+(%17,i32) <- add (%16,i32),1
+(%15,i32) store (%17,i32)
+branch declaration_inc_count_if_merge_258"];
+	"declaration_inc_count_if_merge_258" [style=filled, shape=box, label="declaration_inc_count_if_merge_258:
+($25_b,%struct.$0_Point*) alloc 
+(%18,%struct.$0_Point*) <- call $_constructor_0,1,1
+($25_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_259"];
+	"declaration_inc_count_if_cond_259" [style=filled, shape=box, label="declaration_inc_count_if_cond_259:
+(%19,%struct.$0_Point*) load ($25_b,%struct.$0_Point*)
+(%20,i1) <- ne (%19,%struct.$0_Point*),null
+branch (%20,i1) declaration_inc_count_if_body_260,declaration_inc_count_if_merge_261"];
+	"declaration_inc_count_if_body_260" [style=filled, shape=box, label="declaration_inc_count_if_body_260:
+(%21,%struct.$0_Point*) load ($25_b,%struct.$0_Point*)
+(%22,i32) <- field_access (%21,%struct.$0_Point*),0
+(%23,i32) load (%22,i32)
+(%24,i32) <- add (%23,i32),1
+(%22,i32) store (%24,i32)
 branch declaration_inc_count_if_merge_261"];
 	"declaration_inc_count_if_merge_261" [style=filled, shape=box, label="declaration_inc_count_if_merge_261:
 
 branch local_return_262"];
 	"local_return_262" [style=filled, shape=box, label="local_return_262:
-(%26,%struct.$0_Point*) load ($26_p,%struct.$0_Point*)
+(%25,%struct.$0_Point*) <- call $13_f
 branch start_cond_263"];
 	"start_cond_263" [style=filled, shape=box, label="start_cond_263:
-(%27,i1) <- ne (%26,%struct.$0_Point*),null
-branch (%27,i1) temp_cond_264,temp_merge_267"];
+(%26,i1) <- ne (%25,%struct.$0_Point*),null
+branch (%26,i1) temp_cond_264,temp_merge_267"];
 	"temp_cond_264" [style=filled, shape=box, label="temp_cond_264:
-(%28,i32) <- field_access (%26,%struct.$0_Point*),0
-(%29,i32) load (%28,i32)
-(%30,i1) <- eq (%29,i32),0
-branch (%30,i1) temp_body_265,else_temp_266"];
+(%27,i32) <- field_access (%25,%struct.$0_Point*),0
+(%28,i32) load (%27,i32)
+(%29,i1) <- eq (%28,i32),0
+branch (%29,i1) temp_body_265,else_temp_266"];
 	"temp_body_265" [style=filled, shape=box, label="temp_body_265:
-(%31,i32) <- field_access (%26,%struct.$0_Point*),0
-(%32,i32) load (%31,i32)
-(%33,i32) <- add (%32,i32),0
-(%31,i32) store (%33,i32)
+(%30,i32) <- field_access (%25,%struct.$0_Point*),0
+(%31,i32) load (%30,i32)
+(%32,i32) <- add (%31,i32),0
+(%30,i32) store (%32,i32)
 branch temp_merge_267"];
 	"else_temp_266" [style=filled, shape=box, label="else_temp_266:
-(%34,i32) <- field_access (%26,%struct.$0_Point*),0
-(%35,i32) load (%34,i32)
-(%36,i32) <- add (%35,i32),1
-(%34,i32) store (%36,i32)
+(%33,i32) <- field_access (%25,%struct.$0_Point*),0
+(%34,i32) load (%33,i32)
+(%35,i32) <- add (%34,i32),1
+(%33,i32) store (%35,i32)
 branch temp_merge_267"];
 	"temp_merge_267" [style=filled, shape=box, label="temp_merge_267:
-($$_ret_value_9,%struct.$0_Point*) store (%26,%struct.$0_Point*)
+($$_ret_value_8,%struct.$0_Point*) store (%25,%struct.$0_Point*)
 branch end_function_destructor_269"];
 	"dummy_268" [style=filled, shape=box, label="dummy_268:
 
 branch end_function_destructor_269"];
 	"end_function_destructor_269" [style=filled, shape=box, label="end_function_destructor_269:
-(%37,%struct.$0_Point*) load ($28_b,%struct.$0_Point*)
-branch delete_left_if_cond_270"];
-	"delete_left_if_cond_270" [style=filled, shape=box, label="delete_left_if_cond_270:
-(%38,i1) <- ne (%37,%struct.$0_Point*),null
-branch (%38,i1) delete_left_if_body_271,delete_left_if_merge_272"];
-	"delete_left_if_body_271" [style=filled, shape=box, label="delete_left_if_body_271:
+(%36,%struct.$0_Point*) load ($25_b,%struct.$0_Point*)
+ <- call $_destructor_0,(%36,%struct.$0_Point*)
+(%37,%struct.$0_Point*) load ($24_a,%struct.$0_Point*)
  <- call $_destructor_0,(%37,%struct.$0_Point*)
-branch delete_left_if_merge_272"];
-	"delete_left_if_merge_272" [style=filled, shape=box, label="delete_left_if_merge_272:
-(%39,%struct.$0_Point*) load ($27_a,%struct.$0_Point*)
-branch delete_left_if_cond_273"];
-	"delete_left_if_cond_273" [style=filled, shape=box, label="delete_left_if_cond_273:
-(%40,i1) <- ne (%39,%struct.$0_Point*),null
-branch (%40,i1) delete_left_if_body_274,delete_left_if_merge_275"];
-	"delete_left_if_body_274" [style=filled, shape=box, label="delete_left_if_body_274:
- <- call $_destructor_0,(%39,%struct.$0_Point*)
-branch delete_left_if_merge_275"];
-	"delete_left_if_merge_275" [style=filled, shape=box, label="delete_left_if_merge_275:
-(%41,%struct.$0_Point*) load ($26_p,%struct.$0_Point*)
-branch delete_left_if_cond_276"];
-	"delete_left_if_cond_276" [style=filled, shape=box, label="delete_left_if_cond_276:
-(%42,i1) <- ne (%41,%struct.$0_Point*),null
-branch (%42,i1) delete_left_if_body_277,delete_left_if_merge_278"];
-	"delete_left_if_body_277" [style=filled, shape=box, label="delete_left_if_body_277:
- <- call $_destructor_0,(%41,%struct.$0_Point*)
-branch delete_left_if_merge_278"];
-	"delete_left_if_merge_278" [style=filled, shape=box, label="delete_left_if_merge_278:
-
 branch return_249"];
 "header_248" -> "entry_255";
 "return_249" -> "start_cond_250";
@@ -1478,436 +1693,342 @@ branch return_249"];
 "else_temp_266" -> "temp_merge_267";
 "temp_merge_267" -> "end_function_destructor_269";
 "dummy_268" -> "end_function_destructor_269";
-"end_function_destructor_269" -> "delete_left_if_cond_270";
-"delete_left_if_cond_270" -> "delete_left_if_body_271";
-"delete_left_if_cond_270" -> "delete_left_if_merge_272";
-"delete_left_if_body_271" -> "delete_left_if_merge_272";
-"delete_left_if_merge_272" -> "delete_left_if_cond_273";
-"delete_left_if_cond_273" -> "delete_left_if_body_274";
-"delete_left_if_cond_273" -> "delete_left_if_merge_275";
-"delete_left_if_body_274" -> "delete_left_if_merge_275";
-"delete_left_if_merge_275" -> "delete_left_if_cond_276";
-"delete_left_if_cond_276" -> "delete_left_if_body_277";
-"delete_left_if_cond_276" -> "delete_left_if_merge_278";
-"delete_left_if_body_277" -> "delete_left_if_merge_278";
-"delete_left_if_merge_278" -> "return_249";
+"end_function_destructor_269" -> "return_249";
 
-	"header_279" [style=filled, shape=box, label="header_279:
-($32_p,%struct.$0_Point*) alloc 
-($32_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-($$_ret_value_10,%struct.$0_Point*) alloc 
-branch entry_286"];
-	"return_280" [style=filled, shape=box, label="return_280:
-(%1,%struct.$0_Point*) load ($$_ret_value_10,%struct.$0_Point*)
-branch start_cond_281"];
-	"start_cond_281" [style=filled, shape=box, label="start_cond_281:
+	"header_270" [style=filled, shape=box, label="header_270:
+($29_p,%struct.$0_Point*) alloc 
+($29_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($$_ret_value_9,%struct.$0_Point*) alloc 
+branch entry_277"];
+	"return_271" [style=filled, shape=box, label="return_271:
+(%1,%struct.$0_Point*) load ($$_ret_value_9,%struct.$0_Point*)
+branch start_cond_272"];
+	"start_cond_272" [style=filled, shape=box, label="start_cond_272:
 (%2,i1) <- ne (%1,%struct.$0_Point*),null
-branch (%2,i1) temp_cond_282,temp_merge_285"];
-	"temp_cond_282" [style=filled, shape=box, label="temp_cond_282:
+branch (%2,i1) temp_cond_273,temp_merge_276"];
+	"temp_cond_273" [style=filled, shape=box, label="temp_cond_273:
 (%3,i32) <- field_access (%1,%struct.$0_Point*),0
 (%4,i32) load (%3,i32)
 (%5,i1) <- eq (%4,i32),0
-branch (%5,i1) temp_body_283,else_temp_284"];
-	"temp_body_283" [style=filled, shape=box, label="temp_body_283:
+branch (%5,i1) temp_body_274,else_temp_275"];
+	"temp_body_274" [style=filled, shape=box, label="temp_body_274:
 (%6,i32) <- field_access (%1,%struct.$0_Point*),0
 (%7,i32) load (%6,i32)
 (%8,i32) <- sub (%7,i32),0
 (%6,i32) store (%8,i32)
-branch temp_merge_285"];
-	"else_temp_284" [style=filled, shape=box, label="else_temp_284:
+branch temp_merge_276"];
+	"else_temp_275" [style=filled, shape=box, label="else_temp_275:
 (%9,i32) <- field_access (%1,%struct.$0_Point*),0
 (%10,i32) load (%9,i32)
 (%11,i32) <- sub (%10,i32),1
 (%9,i32) store (%11,i32)
-branch temp_merge_285"];
-	"temp_merge_285" [style=filled, shape=box, label="temp_merge_285:
+branch temp_merge_276"];
+	"temp_merge_276" [style=filled, shape=box, label="temp_merge_276:
 
 return (%1,%struct.$0_Point*)"];
-	"entry_286" [style=filled, shape=box, label="entry_286:
-($33_a,%struct.$0_Point*) alloc 
+	"entry_277" [style=filled, shape=box, label="entry_277:
+($30_a,%struct.$0_Point*) alloc 
 (%12,%struct.$0_Point*) <- call $_constructor_0,1,1
-($33_a,%struct.$0_Point*) store (%12,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_287"];
-	"declaration_inc_count_if_cond_287" [style=filled, shape=box, label="declaration_inc_count_if_cond_287:
-(%13,%struct.$0_Point*) load ($33_a,%struct.$0_Point*)
+($30_a,%struct.$0_Point*) store (%12,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_278"];
+	"declaration_inc_count_if_cond_278" [style=filled, shape=box, label="declaration_inc_count_if_cond_278:
+(%13,%struct.$0_Point*) load ($30_a,%struct.$0_Point*)
 (%14,i1) <- ne (%13,%struct.$0_Point*),null
-branch (%14,i1) declaration_inc_count_if_body_288,declaration_inc_count_if_merge_289"];
-	"declaration_inc_count_if_body_288" [style=filled, shape=box, label="declaration_inc_count_if_body_288:
-(%15,%struct.$0_Point*) load ($33_a,%struct.$0_Point*)
+branch (%14,i1) declaration_inc_count_if_body_279,declaration_inc_count_if_merge_280"];
+	"declaration_inc_count_if_body_279" [style=filled, shape=box, label="declaration_inc_count_if_body_279:
+(%15,%struct.$0_Point*) load ($30_a,%struct.$0_Point*)
 (%16,i32) <- field_access (%15,%struct.$0_Point*),0
 (%17,i32) load (%16,i32)
 (%18,i32) <- add (%17,i32),1
 (%16,i32) store (%18,i32)
-branch declaration_inc_count_if_merge_289"];
-	"declaration_inc_count_if_merge_289" [style=filled, shape=box, label="declaration_inc_count_if_merge_289:
-($34_b,%struct.$0_Point*) alloc 
+branch declaration_inc_count_if_merge_280"];
+	"declaration_inc_count_if_merge_280" [style=filled, shape=box, label="declaration_inc_count_if_merge_280:
+($31_b,%struct.$0_Point*) alloc 
 (%19,%struct.$0_Point*) <- call $_constructor_0,1,1
-($34_b,%struct.$0_Point*) store (%19,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_290"];
-	"declaration_inc_count_if_cond_290" [style=filled, shape=box, label="declaration_inc_count_if_cond_290:
-(%20,%struct.$0_Point*) load ($34_b,%struct.$0_Point*)
+($31_b,%struct.$0_Point*) store (%19,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_281"];
+	"declaration_inc_count_if_cond_281" [style=filled, shape=box, label="declaration_inc_count_if_cond_281:
+(%20,%struct.$0_Point*) load ($31_b,%struct.$0_Point*)
 (%21,i1) <- ne (%20,%struct.$0_Point*),null
-branch (%21,i1) declaration_inc_count_if_body_291,declaration_inc_count_if_merge_292"];
-	"declaration_inc_count_if_body_291" [style=filled, shape=box, label="declaration_inc_count_if_body_291:
-(%22,%struct.$0_Point*) load ($34_b,%struct.$0_Point*)
+branch (%21,i1) declaration_inc_count_if_body_282,declaration_inc_count_if_merge_283"];
+	"declaration_inc_count_if_body_282" [style=filled, shape=box, label="declaration_inc_count_if_body_282:
+(%22,%struct.$0_Point*) load ($31_b,%struct.$0_Point*)
 (%23,i32) <- field_access (%22,%struct.$0_Point*),0
 (%24,i32) load (%23,i32)
 (%25,i32) <- add (%24,i32),1
 (%23,i32) store (%25,i32)
-branch declaration_inc_count_if_merge_292"];
-	"declaration_inc_count_if_merge_292" [style=filled, shape=box, label="declaration_inc_count_if_merge_292:
+branch declaration_inc_count_if_merge_283"];
+	"declaration_inc_count_if_merge_283" [style=filled, shape=box, label="declaration_inc_count_if_merge_283:
 
-branch local_return_293"];
-	"local_return_293" [style=filled, shape=box, label="local_return_293:
-(%26,%struct.$0_Point*) load ($32_p,%struct.$0_Point*)
-(%27,i32) <- field_access (%26,%struct.$0_Point*),2
-(%28,i32) load (%27,i32)
-(%29,%struct.$0_Point*) <- call $13_f
-(%30,i32) <- field_access (%29,%struct.$0_Point*),2
-(%31,i32) load (%30,i32)
-(%32,%struct.$0_Point*) <- call $_constructor_0,(%28,i32),(%31,i32)
-(%33,i32) <- field_access (%32,%struct.$0_Point*),2
-(%34,i32) load (%33,i32)
-(%35,%struct.$0_Point*) load ($32_p,%struct.$0_Point*)
-(%36,i32) <- field_access (%35,%struct.$0_Point*),3
-(%37,i32) load (%36,i32)
-(%38,%struct.$0_Point*) <- call $_constructor_0,1,(%37,i32)
-(%39,i32) <- field_access (%38,%struct.$0_Point*),3
-(%40,i32) load (%39,i32)
-(%41,%struct.$0_Point*) <- call $_constructor_0,(%34,i32),(%40,i32)
+branch local_return_284"];
+	"local_return_284" [style=filled, shape=box, label="local_return_284:
+(%26,%struct.$0_Point*) load ($30_a,%struct.$0_Point*)
+branch start_cond_285"];
+	"start_cond_285" [style=filled, shape=box, label="start_cond_285:
+(%27,i1) <- ne (%26,%struct.$0_Point*),null
+branch (%27,i1) temp_cond_286,temp_merge_289"];
+	"temp_cond_286" [style=filled, shape=box, label="temp_cond_286:
+(%28,i32) <- field_access (%26,%struct.$0_Point*),0
+(%29,i32) load (%28,i32)
+(%30,i1) <- eq (%29,i32),0
+branch (%30,i1) temp_body_287,else_temp_288"];
+	"temp_body_287" [style=filled, shape=box, label="temp_body_287:
+(%31,i32) <- field_access (%26,%struct.$0_Point*),0
+(%32,i32) load (%31,i32)
+(%33,i32) <- add (%32,i32),0
+(%31,i32) store (%33,i32)
+branch temp_merge_289"];
+	"else_temp_288" [style=filled, shape=box, label="else_temp_288:
+(%34,i32) <- field_access (%26,%struct.$0_Point*),0
+(%35,i32) load (%34,i32)
+(%36,i32) <- add (%35,i32),1
+(%34,i32) store (%36,i32)
+branch temp_merge_289"];
+	"temp_merge_289" [style=filled, shape=box, label="temp_merge_289:
+($$_ret_value_9,%struct.$0_Point*) store (%26,%struct.$0_Point*)
+branch end_function_destructor_291"];
+	"dummy_290" [style=filled, shape=box, label="dummy_290:
+
+branch end_function_destructor_291"];
+	"end_function_destructor_291" [style=filled, shape=box, label="end_function_destructor_291:
+(%37,%struct.$0_Point*) load ($31_b,%struct.$0_Point*)
+ <- call $_destructor_0,(%37,%struct.$0_Point*)
+(%38,%struct.$0_Point*) load ($30_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%38,%struct.$0_Point*)
+(%39,%struct.$0_Point*) load ($29_p,%struct.$0_Point*)
+ <- call $_destructor_0,(%39,%struct.$0_Point*)
+branch return_271"];
+"header_270" -> "entry_277";
+"return_271" -> "start_cond_272";
+"start_cond_272" -> "temp_cond_273";
+"start_cond_272" -> "temp_merge_276";
+"temp_cond_273" -> "temp_body_274";
+"temp_cond_273" -> "else_temp_275";
+"temp_body_274" -> "temp_merge_276";
+"else_temp_275" -> "temp_merge_276";
+"entry_277" -> "declaration_inc_count_if_cond_278";
+"declaration_inc_count_if_cond_278" -> "declaration_inc_count_if_body_279";
+"declaration_inc_count_if_cond_278" -> "declaration_inc_count_if_merge_280";
+"declaration_inc_count_if_body_279" -> "declaration_inc_count_if_merge_280";
+"declaration_inc_count_if_merge_280" -> "declaration_inc_count_if_cond_281";
+"declaration_inc_count_if_cond_281" -> "declaration_inc_count_if_body_282";
+"declaration_inc_count_if_cond_281" -> "declaration_inc_count_if_merge_283";
+"declaration_inc_count_if_body_282" -> "declaration_inc_count_if_merge_283";
+"declaration_inc_count_if_merge_283" -> "local_return_284";
+"local_return_284" -> "start_cond_285";
+"start_cond_285" -> "temp_cond_286";
+"start_cond_285" -> "temp_merge_289";
+"temp_cond_286" -> "temp_body_287";
+"temp_cond_286" -> "else_temp_288";
+"temp_body_287" -> "temp_merge_289";
+"else_temp_288" -> "temp_merge_289";
+"temp_merge_289" -> "end_function_destructor_291";
+"dummy_290" -> "end_function_destructor_291";
+"end_function_destructor_291" -> "return_271";
+
+	"header_292" [style=filled, shape=box, label="header_292:
+($38_p,%struct.$0_Point*) alloc 
+($38_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($39_k,i32) alloc 
+($39_k,i32) store (%1,i32)
+($$_ret_value_10,%struct.$0_Point*) alloc 
+branch entry_299"];
+	"return_293" [style=filled, shape=box, label="return_293:
+(%2,%struct.$0_Point*) load ($$_ret_value_10,%struct.$0_Point*)
 branch start_cond_294"];
 	"start_cond_294" [style=filled, shape=box, label="start_cond_294:
-(%42,i1) <- ne (%41,%struct.$0_Point*),null
-branch (%42,i1) temp_cond_295,temp_merge_298"];
+(%3,i1) <- ne (%2,%struct.$0_Point*),null
+branch (%3,i1) temp_cond_295,temp_merge_298"];
 	"temp_cond_295" [style=filled, shape=box, label="temp_cond_295:
-(%43,i32) <- field_access (%41,%struct.$0_Point*),0
-(%44,i32) load (%43,i32)
-(%45,i1) <- eq (%44,i32),0
-branch (%45,i1) temp_body_296,else_temp_297"];
+(%4,i32) <- field_access (%2,%struct.$0_Point*),0
+(%5,i32) load (%4,i32)
+(%6,i1) <- eq (%5,i32),0
+branch (%6,i1) temp_body_296,else_temp_297"];
 	"temp_body_296" [style=filled, shape=box, label="temp_body_296:
-(%46,i32) <- field_access (%41,%struct.$0_Point*),0
-(%47,i32) load (%46,i32)
-(%48,i32) <- add (%47,i32),0
-(%46,i32) store (%48,i32)
+(%7,i32) <- field_access (%2,%struct.$0_Point*),0
+(%8,i32) load (%7,i32)
+(%9,i32) <- sub (%8,i32),0
+(%7,i32) store (%9,i32)
 branch temp_merge_298"];
 	"else_temp_297" [style=filled, shape=box, label="else_temp_297:
-(%49,i32) <- field_access (%41,%struct.$0_Point*),0
-(%50,i32) load (%49,i32)
-(%51,i32) <- add (%50,i32),1
-(%49,i32) store (%51,i32)
+(%10,i32) <- field_access (%2,%struct.$0_Point*),0
+(%11,i32) load (%10,i32)
+(%12,i32) <- sub (%11,i32),1
+(%10,i32) store (%12,i32)
 branch temp_merge_298"];
 	"temp_merge_298" [style=filled, shape=box, label="temp_merge_298:
-($$_ret_value_10,%struct.$0_Point*) store (%41,%struct.$0_Point*)
-branch end_function_destructor_300"];
-	"dummy_299" [style=filled, shape=box, label="dummy_299:
 
-branch end_function_destructor_300"];
-	"end_function_destructor_300" [style=filled, shape=box, label="end_function_destructor_300:
-(%52,%struct.$0_Point*) load ($34_b,%struct.$0_Point*)
-branch delete_left_if_cond_301"];
-	"delete_left_if_cond_301" [style=filled, shape=box, label="delete_left_if_cond_301:
-(%53,i1) <- ne (%52,%struct.$0_Point*),null
-branch (%53,i1) delete_left_if_body_302,delete_left_if_merge_303"];
-	"delete_left_if_body_302" [style=filled, shape=box, label="delete_left_if_body_302:
- <- call $_destructor_0,(%52,%struct.$0_Point*)
-branch delete_left_if_merge_303"];
-	"delete_left_if_merge_303" [style=filled, shape=box, label="delete_left_if_merge_303:
-(%54,%struct.$0_Point*) load ($33_a,%struct.$0_Point*)
-branch delete_left_if_cond_304"];
-	"delete_left_if_cond_304" [style=filled, shape=box, label="delete_left_if_cond_304:
-(%55,i1) <- ne (%54,%struct.$0_Point*),null
-branch (%55,i1) delete_left_if_body_305,delete_left_if_merge_306"];
-	"delete_left_if_body_305" [style=filled, shape=box, label="delete_left_if_body_305:
- <- call $_destructor_0,(%54,%struct.$0_Point*)
-branch delete_left_if_merge_306"];
-	"delete_left_if_merge_306" [style=filled, shape=box, label="delete_left_if_merge_306:
-(%56,%struct.$0_Point*) load ($32_p,%struct.$0_Point*)
-branch delete_left_if_cond_307"];
-	"delete_left_if_cond_307" [style=filled, shape=box, label="delete_left_if_cond_307:
-(%57,i1) <- ne (%56,%struct.$0_Point*),null
-branch (%57,i1) delete_left_if_body_308,delete_left_if_merge_309"];
-	"delete_left_if_body_308" [style=filled, shape=box, label="delete_left_if_body_308:
- <- call $_destructor_0,(%56,%struct.$0_Point*)
-branch delete_left_if_merge_309"];
-	"delete_left_if_merge_309" [style=filled, shape=box, label="delete_left_if_merge_309:
+return (%2,%struct.$0_Point*)"];
+	"entry_299" [style=filled, shape=box, label="entry_299:
+($40_a,%struct.$0_Point*) alloc 
+(%13,%struct.$0_Point*) <- call $13_f
+($40_a,%struct.$0_Point*) store (%13,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_300"];
+	"declaration_inc_count_if_cond_300" [style=filled, shape=box, label="declaration_inc_count_if_cond_300:
+(%14,%struct.$0_Point*) load ($40_a,%struct.$0_Point*)
+(%15,i1) <- ne (%14,%struct.$0_Point*),null
+branch (%15,i1) declaration_inc_count_if_body_301,declaration_inc_count_if_merge_302"];
+	"declaration_inc_count_if_body_301" [style=filled, shape=box, label="declaration_inc_count_if_body_301:
+(%16,%struct.$0_Point*) load ($40_a,%struct.$0_Point*)
+(%17,i32) <- field_access (%16,%struct.$0_Point*),0
+(%18,i32) load (%17,i32)
+(%19,i32) <- add (%18,i32),1
+(%17,i32) store (%19,i32)
+branch declaration_inc_count_if_merge_302"];
+	"declaration_inc_count_if_merge_302" [style=filled, shape=box, label="declaration_inc_count_if_merge_302:
+($41_b,%struct.$0_Point*) alloc 
+(%20,%struct.$0_Point*) <- call $_constructor_0,1,1
+($41_b,%struct.$0_Point*) store (%20,%struct.$0_Point*)
+branch declaration_inc_count_if_cond_303"];
+	"declaration_inc_count_if_cond_303" [style=filled, shape=box, label="declaration_inc_count_if_cond_303:
+(%21,%struct.$0_Point*) load ($41_b,%struct.$0_Point*)
+(%22,i1) <- ne (%21,%struct.$0_Point*),null
+branch (%22,i1) declaration_inc_count_if_body_304,declaration_inc_count_if_merge_305"];
+	"declaration_inc_count_if_body_304" [style=filled, shape=box, label="declaration_inc_count_if_body_304:
+(%23,%struct.$0_Point*) load ($41_b,%struct.$0_Point*)
+(%24,i32) <- field_access (%23,%struct.$0_Point*),0
+(%25,i32) load (%24,i32)
+(%26,i32) <- add (%25,i32),1
+(%24,i32) store (%26,i32)
+branch declaration_inc_count_if_merge_305"];
+	"declaration_inc_count_if_merge_305" [style=filled, shape=box, label="declaration_inc_count_if_merge_305:
 
-branch return_280"];
-"header_279" -> "entry_286";
-"return_280" -> "start_cond_281";
-"start_cond_281" -> "temp_cond_282";
-"start_cond_281" -> "temp_merge_285";
-"temp_cond_282" -> "temp_body_283";
-"temp_cond_282" -> "else_temp_284";
-"temp_body_283" -> "temp_merge_285";
-"else_temp_284" -> "temp_merge_285";
-"entry_286" -> "declaration_inc_count_if_cond_287";
-"declaration_inc_count_if_cond_287" -> "declaration_inc_count_if_body_288";
-"declaration_inc_count_if_cond_287" -> "declaration_inc_count_if_merge_289";
-"declaration_inc_count_if_body_288" -> "declaration_inc_count_if_merge_289";
-"declaration_inc_count_if_merge_289" -> "declaration_inc_count_if_cond_290";
-"declaration_inc_count_if_cond_290" -> "declaration_inc_count_if_body_291";
-"declaration_inc_count_if_cond_290" -> "declaration_inc_count_if_merge_292";
-"declaration_inc_count_if_body_291" -> "declaration_inc_count_if_merge_292";
-"declaration_inc_count_if_merge_292" -> "local_return_293";
-"local_return_293" -> "start_cond_294";
+branch local_return_306"];
+	"local_return_306" [style=filled, shape=box, label="local_return_306:
+(%27,%struct.$0_Point*) load ($38_p,%struct.$0_Point*)
+branch start_cond_307"];
+	"start_cond_307" [style=filled, shape=box, label="start_cond_307:
+(%28,i1) <- ne (%27,%struct.$0_Point*),null
+branch (%28,i1) temp_cond_308,temp_merge_311"];
+	"temp_cond_308" [style=filled, shape=box, label="temp_cond_308:
+(%29,i32) <- field_access (%27,%struct.$0_Point*),0
+(%30,i32) load (%29,i32)
+(%31,i1) <- eq (%30,i32),0
+branch (%31,i1) temp_body_309,else_temp_310"];
+	"temp_body_309" [style=filled, shape=box, label="temp_body_309:
+(%32,i32) <- field_access (%27,%struct.$0_Point*),0
+(%33,i32) load (%32,i32)
+(%34,i32) <- add (%33,i32),0
+(%32,i32) store (%34,i32)
+branch temp_merge_311"];
+	"else_temp_310" [style=filled, shape=box, label="else_temp_310:
+(%35,i32) <- field_access (%27,%struct.$0_Point*),0
+(%36,i32) load (%35,i32)
+(%37,i32) <- add (%36,i32),1
+(%35,i32) store (%37,i32)
+branch temp_merge_311"];
+	"temp_merge_311" [style=filled, shape=box, label="temp_merge_311:
+($$_ret_value_10,%struct.$0_Point*) store (%27,%struct.$0_Point*)
+branch end_function_destructor_313"];
+	"dummy_312" [style=filled, shape=box, label="dummy_312:
+
+branch end_function_destructor_313"];
+	"end_function_destructor_313" [style=filled, shape=box, label="end_function_destructor_313:
+(%38,%struct.$0_Point*) load ($41_b,%struct.$0_Point*)
+ <- call $_destructor_0,(%38,%struct.$0_Point*)
+(%39,%struct.$0_Point*) load ($40_a,%struct.$0_Point*)
+ <- call $_destructor_0,(%39,%struct.$0_Point*)
+(%40,%struct.$0_Point*) load ($38_p,%struct.$0_Point*)
+ <- call $_destructor_0,(%40,%struct.$0_Point*)
+branch return_293"];
+"header_292" -> "entry_299";
+"return_293" -> "start_cond_294";
 "start_cond_294" -> "temp_cond_295";
 "start_cond_294" -> "temp_merge_298";
 "temp_cond_295" -> "temp_body_296";
 "temp_cond_295" -> "else_temp_297";
 "temp_body_296" -> "temp_merge_298";
 "else_temp_297" -> "temp_merge_298";
-"temp_merge_298" -> "end_function_destructor_300";
-"dummy_299" -> "end_function_destructor_300";
-"end_function_destructor_300" -> "delete_left_if_cond_301";
-"delete_left_if_cond_301" -> "delete_left_if_body_302";
-"delete_left_if_cond_301" -> "delete_left_if_merge_303";
-"delete_left_if_body_302" -> "delete_left_if_merge_303";
-"delete_left_if_merge_303" -> "delete_left_if_cond_304";
-"delete_left_if_cond_304" -> "delete_left_if_body_305";
-"delete_left_if_cond_304" -> "delete_left_if_merge_306";
-"delete_left_if_body_305" -> "delete_left_if_merge_306";
-"delete_left_if_merge_306" -> "delete_left_if_cond_307";
-"delete_left_if_cond_307" -> "delete_left_if_body_308";
-"delete_left_if_cond_307" -> "delete_left_if_merge_309";
-"delete_left_if_body_308" -> "delete_left_if_merge_309";
-"delete_left_if_merge_309" -> "return_280";
+"entry_299" -> "declaration_inc_count_if_cond_300";
+"declaration_inc_count_if_cond_300" -> "declaration_inc_count_if_body_301";
+"declaration_inc_count_if_cond_300" -> "declaration_inc_count_if_merge_302";
+"declaration_inc_count_if_body_301" -> "declaration_inc_count_if_merge_302";
+"declaration_inc_count_if_merge_302" -> "declaration_inc_count_if_cond_303";
+"declaration_inc_count_if_cond_303" -> "declaration_inc_count_if_body_304";
+"declaration_inc_count_if_cond_303" -> "declaration_inc_count_if_merge_305";
+"declaration_inc_count_if_body_304" -> "declaration_inc_count_if_merge_305";
+"declaration_inc_count_if_merge_305" -> "local_return_306";
+"local_return_306" -> "start_cond_307";
+"start_cond_307" -> "temp_cond_308";
+"start_cond_307" -> "temp_merge_311";
+"temp_cond_308" -> "temp_body_309";
+"temp_cond_308" -> "else_temp_310";
+"temp_body_309" -> "temp_merge_311";
+"else_temp_310" -> "temp_merge_311";
+"temp_merge_311" -> "end_function_destructor_313";
+"dummy_312" -> "end_function_destructor_313";
+"end_function_destructor_313" -> "return_293";
 
-	"header_310" [style=filled, shape=box, label="header_310:
-($$_ret_value_11,i32) alloc 
-branch entry_312"];
-	"return_311" [style=filled, shape=box, label="return_311:
-(%0,i32) load ($$_ret_value_11,i32)
-return (%0,i32)"];
-	"entry_312" [style=filled, shape=box, label="entry_312:
-($41_a,i32) alloc 
-($41_a,i32) store 0
-($42_p,%struct.$0_Point*) alloc 
-(%1,%struct.$0_Point*) <- call $_constructor_0,1,2
-($42_p,%struct.$0_Point*) store (%1,%struct.$0_Point*)
-branch declaration_inc_count_if_cond_313"];
-	"declaration_inc_count_if_cond_313" [style=filled, shape=box, label="declaration_inc_count_if_cond_313:
-(%2,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%3,i1) <- ne (%2,%struct.$0_Point*),null
-branch (%3,i1) declaration_inc_count_if_body_314,declaration_inc_count_if_merge_315"];
-	"declaration_inc_count_if_body_314" [style=filled, shape=box, label="declaration_inc_count_if_body_314:
-(%4,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
+	"header_314" [style=filled, shape=box, label="header_314:
+($14_x,i32) alloc 
+($14_x,i32) store (%0,i32)
+($15_y,i32) alloc 
+($15_y,i32) store (%1,i32)
+($$_ret_value_11,%struct.$0_Point*) alloc 
+($$_this_value_1,%struct.$0_Point*) alloc 
+(%2,i64*) <- struct_allocation i64*,16
+(%3,%struct.$0_Point*) <- cast (%2,i64*)
+($$_this_value_1,%struct.$0_Point*) store (%3,%struct.$0_Point*)
+($$_ret_value_11,%struct.$0_Point*) store (%3,%struct.$0_Point*)
+(%4,%struct.$0_Point*) load ($$_this_value_1,%struct.$0_Point*)
 (%5,i32) <- field_access (%4,%struct.$0_Point*),0
-(%6,i32) load (%5,i32)
-(%7,i32) <- add (%6,i32),1
-(%5,i32) store (%7,i32)
-branch declaration_inc_count_if_merge_315"];
-	"declaration_inc_count_if_merge_315" [style=filled, shape=box, label="declaration_inc_count_if_merge_315:
-(%8,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%9,%struct.$0_Point*) <- call $_constructor_0,1,2
-($42_p,%struct.$0_Point*) store (%9,%struct.$0_Point*)
-(%10,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-branch assigment_inc_count_if_cond_316"];
-	"assigment_inc_count_if_cond_316" [style=filled, shape=box, label="assigment_inc_count_if_cond_316:
-(%11,i1) <- ne (%10,%struct.$0_Point*),null
-branch (%11,i1) assigment_inc_count_if_body_317,assigment_inc_count_if_merge_318"];
-	"assigment_inc_count_if_body_317" [style=filled, shape=box, label="assigment_inc_count_if_body_317:
-(%12,i32) <- field_access (%10,%struct.$0_Point*),0
-(%13,i32) load (%12,i32)
-(%14,i32) <- add (%13,i32),1
-(%12,i32) store (%14,i32)
-branch assigment_inc_count_if_merge_318"];
-	"assigment_inc_count_if_merge_318" [style=filled, shape=box, label="assigment_inc_count_if_merge_318:
+(%5,i32) store 0
+(%6,i32) <- field_access (%4,%struct.$0_Point*),1
+(%6,i32) store 0
+(%7,i32) <- field_access (%4,%struct.$0_Point*),2
+(%7,i32) store 0
+(%8,i32) <- field_access (%4,%struct.$0_Point*),3
+(%8,i32) store 0
+branch entry_321"];
+	"return_315" [style=filled, shape=box, label="return_315:
+(%9,%struct.$0_Point*) load ($$_ret_value_11,%struct.$0_Point*)
+branch start_cond_316"];
+	"start_cond_316" [style=filled, shape=box, label="start_cond_316:
+(%10,i1) <- ne (%9,%struct.$0_Point*),null
+branch (%10,i1) temp_cond_317,temp_merge_320"];
+	"temp_cond_317" [style=filled, shape=box, label="temp_cond_317:
+(%11,i32) <- field_access (%9,%struct.$0_Point*),0
+(%12,i32) load (%11,i32)
+(%13,i1) <- eq (%12,i32),0
+branch (%13,i1) temp_body_318,else_temp_319"];
+	"temp_body_318" [style=filled, shape=box, label="temp_body_318:
+(%14,i32) <- field_access (%9,%struct.$0_Point*),0
+(%15,i32) load (%14,i32)
+(%16,i32) <- sub (%15,i32),0
+(%14,i32) store (%16,i32)
+branch temp_merge_320"];
+	"else_temp_319" [style=filled, shape=box, label="else_temp_319:
+(%17,i32) <- field_access (%9,%struct.$0_Point*),0
+(%18,i32) load (%17,i32)
+(%19,i32) <- sub (%18,i32),1
+(%17,i32) store (%19,i32)
+branch temp_merge_320"];
+	"temp_merge_320" [style=filled, shape=box, label="temp_merge_320:
 
-branch delete_left_if_cond_319"];
-	"delete_left_if_cond_319" [style=filled, shape=box, label="delete_left_if_cond_319:
-(%15,i1) <- ne (%8,%struct.$0_Point*),null
-branch (%15,i1) delete_left_if_body_320,delete_left_if_merge_321"];
-	"delete_left_if_body_320" [style=filled, shape=box, label="delete_left_if_body_320:
- <- call $_destructor_0,(%8,%struct.$0_Point*)
-branch delete_left_if_merge_321"];
-	"delete_left_if_merge_321" [style=filled, shape=box, label="delete_left_if_merge_321:
-(%16,i32) load ($41_a,i32)
-(%17,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%18,i32) <- field_access (%17,%struct.$0_Point*),2
-(%19,i32) load (%18,i32)
-(%20,i32) <- add (%16,i32),(%19,i32)
-(%21,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%22,i32) <- field_access (%21,%struct.$0_Point*),3
-(%23,i32) load (%22,i32)
-(%24,i32) <- add (%20,i32),(%23,i32)
-($41_a,i32) store (%24,i32)
-(%25,%struct.$0_Point*) <- call $13_f
-branch delete_left_if_cond_322"];
-	"delete_left_if_cond_322" [style=filled, shape=box, label="delete_left_if_cond_322:
-(%26,i1) <- ne (%25,%struct.$0_Point*),null
-branch (%26,i1) delete_left_if_body_323,delete_left_if_merge_324"];
-	"delete_left_if_body_323" [style=filled, shape=box, label="delete_left_if_body_323:
- <- call $_destructor_0,(%25,%struct.$0_Point*)
-branch delete_left_if_merge_324"];
-	"delete_left_if_merge_324" [style=filled, shape=box, label="delete_left_if_merge_324:
-(%27,%struct.$0_Point*) <- call $7_f1
-branch delete_left_if_cond_325"];
-	"delete_left_if_cond_325" [style=filled, shape=box, label="delete_left_if_cond_325:
-(%28,i1) <- ne (%27,%struct.$0_Point*),null
-branch (%28,i1) delete_left_if_body_326,delete_left_if_merge_327"];
-	"delete_left_if_body_326" [style=filled, shape=box, label="delete_left_if_body_326:
- <- call $_destructor_0,(%27,%struct.$0_Point*)
-branch delete_left_if_merge_327"];
-	"delete_left_if_merge_327" [style=filled, shape=box, label="delete_left_if_merge_327:
-(%29,%struct.$0_Point*) <- call $12_f2
-branch delete_left_if_cond_328"];
-	"delete_left_if_cond_328" [style=filled, shape=box, label="delete_left_if_cond_328:
-(%30,i1) <- ne (%29,%struct.$0_Point*),null
-branch (%30,i1) delete_left_if_body_329,delete_left_if_merge_330"];
-	"delete_left_if_body_329" [style=filled, shape=box, label="delete_left_if_body_329:
- <- call $_destructor_0,(%29,%struct.$0_Point*)
-branch delete_left_if_merge_330"];
-	"delete_left_if_merge_330" [style=filled, shape=box, label="delete_left_if_merge_330:
-(%31,%struct.$0_Point*) <- call $11_f3
-branch delete_left_if_cond_331"];
-	"delete_left_if_cond_331" [style=filled, shape=box, label="delete_left_if_cond_331:
-(%32,i1) <- ne (%31,%struct.$0_Point*),null
-branch (%32,i1) delete_left_if_body_332,delete_left_if_merge_333"];
-	"delete_left_if_body_332" [style=filled, shape=box, label="delete_left_if_body_332:
- <- call $_destructor_0,(%31,%struct.$0_Point*)
-branch delete_left_if_merge_333"];
-	"delete_left_if_merge_333" [style=filled, shape=box, label="delete_left_if_merge_333:
-(%33,%struct.$0_Point*) <- call $5_f4
-branch delete_left_if_cond_334"];
-	"delete_left_if_cond_334" [style=filled, shape=box, label="delete_left_if_cond_334:
-(%34,i1) <- ne (%33,%struct.$0_Point*),null
-branch (%34,i1) delete_left_if_body_335,delete_left_if_merge_336"];
-	"delete_left_if_body_335" [style=filled, shape=box, label="delete_left_if_body_335:
- <- call $_destructor_0,(%33,%struct.$0_Point*)
-branch delete_left_if_merge_336"];
-	"delete_left_if_merge_336" [style=filled, shape=box, label="delete_left_if_merge_336:
-(%35,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%36,%struct.$0_Point*) <- call $6_f5,(%35,%struct.$0_Point*)
-branch delete_left_if_cond_337"];
-	"delete_left_if_cond_337" [style=filled, shape=box, label="delete_left_if_cond_337:
-(%37,i1) <- ne (%36,%struct.$0_Point*),null
-branch (%37,i1) delete_left_if_body_338,delete_left_if_merge_339"];
-	"delete_left_if_body_338" [style=filled, shape=box, label="delete_left_if_body_338:
- <- call $_destructor_0,(%36,%struct.$0_Point*)
-branch delete_left_if_merge_339"];
-	"delete_left_if_merge_339" [style=filled, shape=box, label="delete_left_if_merge_339:
-(%38,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%39,%struct.$0_Point*) <- call $3_f6,(%38,%struct.$0_Point*)
-branch delete_left_if_cond_340"];
-	"delete_left_if_cond_340" [style=filled, shape=box, label="delete_left_if_cond_340:
-(%40,i1) <- ne (%39,%struct.$0_Point*),null
-branch (%40,i1) delete_left_if_body_341,delete_left_if_merge_342"];
-	"delete_left_if_body_341" [style=filled, shape=box, label="delete_left_if_body_341:
- <- call $_destructor_0,(%39,%struct.$0_Point*)
-branch delete_left_if_merge_342"];
-	"delete_left_if_merge_342" [style=filled, shape=box, label="delete_left_if_merge_342:
-(%41,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%42,%struct.$0_Point*) <- call $10_f7,(%41,%struct.$0_Point*)
-branch delete_left_if_cond_343"];
-	"delete_left_if_cond_343" [style=filled, shape=box, label="delete_left_if_cond_343:
-(%43,i1) <- ne (%42,%struct.$0_Point*),null
-branch (%43,i1) delete_left_if_body_344,delete_left_if_merge_345"];
-	"delete_left_if_body_344" [style=filled, shape=box, label="delete_left_if_body_344:
- <- call $_destructor_0,(%42,%struct.$0_Point*)
-branch delete_left_if_merge_345"];
-	"delete_left_if_merge_345" [style=filled, shape=box, label="delete_left_if_merge_345:
-(%44,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%45,%struct.$0_Point*) <- call $4_f8,(%44,%struct.$0_Point*)
-branch delete_left_if_cond_346"];
-	"delete_left_if_cond_346" [style=filled, shape=box, label="delete_left_if_cond_346:
-(%46,i1) <- ne (%45,%struct.$0_Point*),null
-branch (%46,i1) delete_left_if_body_347,delete_left_if_merge_348"];
-	"delete_left_if_body_347" [style=filled, shape=box, label="delete_left_if_body_347:
- <- call $_destructor_0,(%45,%struct.$0_Point*)
-branch delete_left_if_merge_348"];
-	"delete_left_if_merge_348" [style=filled, shape=box, label="delete_left_if_merge_348:
-(%47,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-(%48,%struct.$0_Point*) <- call $8_f9,(%47,%struct.$0_Point*)
-branch delete_left_if_cond_349"];
-	"delete_left_if_cond_349" [style=filled, shape=box, label="delete_left_if_cond_349:
-(%49,i1) <- ne (%48,%struct.$0_Point*),null
-branch (%49,i1) delete_left_if_body_350,delete_left_if_merge_351"];
-	"delete_left_if_body_350" [style=filled, shape=box, label="delete_left_if_body_350:
- <- call $_destructor_0,(%48,%struct.$0_Point*)
-branch delete_left_if_merge_351"];
-	"delete_left_if_merge_351" [style=filled, shape=box, label="delete_left_if_merge_351:
+return (%9,%struct.$0_Point*)"];
+	"entry_321" [style=filled, shape=box, label="entry_321:
+(%20,%struct.$0_Point*) load ($$_this_value_1,%struct.$0_Point*)
+(%21,i32) <- field_access (%20,%struct.$0_Point*),2
+(%22,i32) load ($14_x,i32)
+(%21,i32) store (%22,i32)
+(%23,%struct.$0_Point*) load ($$_this_value_1,%struct.$0_Point*)
+(%24,i32) <- field_access (%23,%struct.$0_Point*),3
+(%25,i32) load ($15_y,i32)
+(%24,i32) store (%25,i32)
+branch end_function_destructor_322"];
+	"end_function_destructor_322" [style=filled, shape=box, label="end_function_destructor_322:
 
-branch local_return_352"];
-	"local_return_352" [style=filled, shape=box, label="local_return_352:
-(%50,i32) load ($41_a,i32)
-($$_ret_value_11,i32) store (%50,i32)
-branch end_function_destructor_354"];
-	"dummy_353" [style=filled, shape=box, label="dummy_353:
-
-branch end_function_destructor_354"];
-	"end_function_destructor_354" [style=filled, shape=box, label="end_function_destructor_354:
-(%51,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
-branch delete_left_if_cond_355"];
-	"delete_left_if_cond_355" [style=filled, shape=box, label="delete_left_if_cond_355:
-(%52,i1) <- ne (%51,%struct.$0_Point*),null
-branch (%52,i1) delete_left_if_body_356,delete_left_if_merge_357"];
-	"delete_left_if_body_356" [style=filled, shape=box, label="delete_left_if_body_356:
- <- call $_destructor_0,(%51,%struct.$0_Point*)
-branch delete_left_if_merge_357"];
-	"delete_left_if_merge_357" [style=filled, shape=box, label="delete_left_if_merge_357:
-
-branch return_311"];
-"header_310" -> "entry_312";
-"entry_312" -> "declaration_inc_count_if_cond_313";
-"declaration_inc_count_if_cond_313" -> "declaration_inc_count_if_body_314";
-"declaration_inc_count_if_cond_313" -> "declaration_inc_count_if_merge_315";
-"declaration_inc_count_if_body_314" -> "declaration_inc_count_if_merge_315";
-"declaration_inc_count_if_merge_315" -> "assigment_inc_count_if_cond_316";
-"assigment_inc_count_if_cond_316" -> "assigment_inc_count_if_body_317";
-"assigment_inc_count_if_cond_316" -> "assigment_inc_count_if_merge_318";
-"assigment_inc_count_if_body_317" -> "assigment_inc_count_if_merge_318";
-"assigment_inc_count_if_merge_318" -> "delete_left_if_cond_319";
-"delete_left_if_cond_319" -> "delete_left_if_body_320";
-"delete_left_if_cond_319" -> "delete_left_if_merge_321";
-"delete_left_if_body_320" -> "delete_left_if_merge_321";
-"delete_left_if_merge_321" -> "delete_left_if_cond_322";
-"delete_left_if_cond_322" -> "delete_left_if_body_323";
-"delete_left_if_cond_322" -> "delete_left_if_merge_324";
-"delete_left_if_body_323" -> "delete_left_if_merge_324";
-"delete_left_if_merge_324" -> "delete_left_if_cond_325";
-"delete_left_if_cond_325" -> "delete_left_if_body_326";
-"delete_left_if_cond_325" -> "delete_left_if_merge_327";
-"delete_left_if_body_326" -> "delete_left_if_merge_327";
-"delete_left_if_merge_327" -> "delete_left_if_cond_328";
-"delete_left_if_cond_328" -> "delete_left_if_body_329";
-"delete_left_if_cond_328" -> "delete_left_if_merge_330";
-"delete_left_if_body_329" -> "delete_left_if_merge_330";
-"delete_left_if_merge_330" -> "delete_left_if_cond_331";
-"delete_left_if_cond_331" -> "delete_left_if_body_332";
-"delete_left_if_cond_331" -> "delete_left_if_merge_333";
-"delete_left_if_body_332" -> "delete_left_if_merge_333";
-"delete_left_if_merge_333" -> "delete_left_if_cond_334";
-"delete_left_if_cond_334" -> "delete_left_if_body_335";
-"delete_left_if_cond_334" -> "delete_left_if_merge_336";
-"delete_left_if_body_335" -> "delete_left_if_merge_336";
-"delete_left_if_merge_336" -> "delete_left_if_cond_337";
-"delete_left_if_cond_337" -> "delete_left_if_body_338";
-"delete_left_if_cond_337" -> "delete_left_if_merge_339";
-"delete_left_if_body_338" -> "delete_left_if_merge_339";
-"delete_left_if_merge_339" -> "delete_left_if_cond_340";
-"delete_left_if_cond_340" -> "delete_left_if_body_341";
-"delete_left_if_cond_340" -> "delete_left_if_merge_342";
-"delete_left_if_body_341" -> "delete_left_if_merge_342";
-"delete_left_if_merge_342" -> "delete_left_if_cond_343";
-"delete_left_if_cond_343" -> "delete_left_if_body_344";
-"delete_left_if_cond_343" -> "delete_left_if_merge_345";
-"delete_left_if_body_344" -> "delete_left_if_merge_345";
-"delete_left_if_merge_345" -> "delete_left_if_cond_346";
-"delete_left_if_cond_346" -> "delete_left_if_body_347";
-"delete_left_if_cond_346" -> "delete_left_if_merge_348";
-"delete_left_if_body_347" -> "delete_left_if_merge_348";
-"delete_left_if_merge_348" -> "delete_left_if_cond_349";
-"delete_left_if_cond_349" -> "delete_left_if_body_350";
-"delete_left_if_cond_349" -> "delete_left_if_merge_351";
-"delete_left_if_body_350" -> "delete_left_if_merge_351";
-"delete_left_if_merge_351" -> "local_return_352";
-"local_return_352" -> "end_function_destructor_354";
-"dummy_353" -> "end_function_destructor_354";
-"end_function_destructor_354" -> "delete_left_if_cond_355";
-"delete_left_if_cond_355" -> "delete_left_if_body_356";
-"delete_left_if_cond_355" -> "delete_left_if_merge_357";
-"delete_left_if_body_356" -> "delete_left_if_merge_357";
-"delete_left_if_merge_357" -> "return_311";
+branch return_315"];
+"header_314" -> "entry_321";
+"return_315" -> "start_cond_316";
+"start_cond_316" -> "temp_cond_317";
+"start_cond_316" -> "temp_merge_320";
+"temp_cond_317" -> "temp_body_318";
+"temp_cond_317" -> "else_temp_319";
+"temp_body_318" -> "temp_merge_320";
+"else_temp_319" -> "temp_merge_320";
+"entry_321" -> "end_function_destructor_322";
+"end_function_destructor_322" -> "return_315";
 
 
 
@@ -1917,32 +2038,38 @@ branch return_311"];
 	"header_0" [style=filled, shape=box, label="header_0:
 ($$_this_value_0,%struct.$0_Point*) alloc 
 ($$_this_value_0,%struct.$0_Point*) store (%0,%struct.$0_Point*)
-branch entry_2"];
+branch check_null_entry_2"];
 	"return_1" [style=filled, shape=box, label="return_1:
 
 return"];
-	"entry_2" [style=filled, shape=box, label="entry_2:
+	"check_null_entry_2" [style=filled, shape=box, label="check_null_entry_2:
 (%1,%struct.$0_Point*) load ($$_this_value_0,%struct.$0_Point*)
-(%2,i32) <- field_access (%1,%struct.$0_Point*),0
-(%3,i32) load (%2,i32),0
-(%4,i32) <- sub (%3,i32),1
-(%2,i32) store (%4,i32)
-branch destructor_if_cond_3"];
-	"destructor_if_cond_3" [style=filled, shape=box, label="destructor_if_cond_3:
-(%5,i1) <- le (%4,i32),0
-branch (%5,i1) destructor_if_body_4,return_1"];
-	"destructor_if_body_4" [style=filled, shape=box, label="destructor_if_body_4:
+(%2,i1) <- ne (%1,%struct.$0_Point*),null
+branch (%2,i1) check_null_body_3,return_1"];
+	"check_null_body_3" [style=filled, shape=box, label="check_null_body_3:
+(%3,%struct.$0_Point*) load ($$_this_value_0,%struct.$0_Point*)
+(%4,i32) <- field_access (%3,%struct.$0_Point*),0
+(%5,i32) load (%4,i32),0
+(%6,i32) <- sub (%5,i32),1
+(%4,i32) store (%6,i32)
+branch destructor_if_cond_4"];
+	"destructor_if_cond_4" [style=filled, shape=box, label="destructor_if_cond_4:
+(%7,i1) <- le (%6,i32),0
+branch (%7,i1) destructor_if_body_5,return_1"];
+	"destructor_if_body_5" [style=filled, shape=box, label="destructor_if_body_5:
 
-branch end_function_destructor_5"];
-	"end_function_destructor_5" [style=filled, shape=box, label="end_function_destructor_5:
-(%6,i32*) <- cast (%1,%struct.$0_Point*)
- <- struct free (%6,i32*)
+branch end_function_destructor_6"];
+	"end_function_destructor_6" [style=filled, shape=box, label="end_function_destructor_6:
+(%8,i32*) <- cast (%3,%struct.$0_Point*)
+ <- struct free (%8,i32*)
 branch return_1"];
-"header_0" -> "entry_2";
-"entry_2" -> "destructor_if_cond_3";
-"destructor_if_cond_3" -> "destructor_if_body_4";
-"destructor_if_cond_3" -> "return_1";
-"destructor_if_body_4" -> "end_function_destructor_5";
-"end_function_destructor_5" -> "return_1";
+"header_0" -> "check_null_entry_2";
+"check_null_entry_2" -> "check_null_body_3";
+"check_null_entry_2" -> "return_1";
+"check_null_body_3" -> "destructor_if_cond_4";
+"destructor_if_cond_4" -> "destructor_if_body_5";
+"destructor_if_cond_4" -> "return_1";
+"destructor_if_body_5" -> "end_function_destructor_6";
+"end_function_destructor_6" -> "return_1";
 
 }

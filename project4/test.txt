@@ -45,6 +45,10 @@ class Point
 (Point p) Point f7 ->
     Point a = new Point(1, 1 )
     Point b = new Point(1, 1 )
+
+    f5(p).x
+    f5(p).y
+
     return new Point(new Point(p.x, f().x).x, new Point(1, p.y).y)
 
 (Point p) Point f8 ->
@@ -52,7 +56,7 @@ class Point
     Point b = p
     return a
 
-(Point p) Point f9 ->
+(Point p, int k) Point f9 ->
     Point a = f()
     Point b = new Point(1, 1 )
     return p
@@ -73,7 +77,7 @@ class Point
     f6(p)
     f7(p)
     f8(p)
-    f9(p)
+    f9(p, 4)
 
     f().x
     f1().x
@@ -84,7 +88,8 @@ class Point
     f6(p).x
     f7(p).x
     f8(p).x
-    f9(p).x
+    f9(p, 9).x
+    new Point(2,2)
 
     p = f()
     a = a + p.x + p.y
@@ -102,9 +107,11 @@ class Point
     a = a + p.x + p.y
 
     p = f5(p)
-    a = a + p.x + p.y
+    a = a + p.x + p.y + new Point(2,2).x
 
-    p = f6(p)
+    new Point(2,2).x
+
+    p = f6(new Point(2,2))
     a = a + p.x + p.y
 
     p = f7(p)
@@ -113,7 +120,7 @@ class Point
     p = f8(p)
     a = a + p.x + p.y
 
-    p = f9(p)
+    p = f9(p, new Point(2,2).x)
     a = a + p.x + p.y
 
     return a
