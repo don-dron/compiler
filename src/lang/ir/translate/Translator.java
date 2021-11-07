@@ -1112,14 +1112,10 @@ public class Translator {
         Value value = translateExpression(function, node.getExpressionNode());
 
         if (value != null
+                && !(node.getExpressionNode() instanceof AssigmentExpressionNode)
                 && value instanceof LocalVariableValue
-                && value.getType() instanceof PointerType) {
-//            Command command = new Command(
-//                    createTempVariable(value.getType()),
-//                    LOAD,
-//                    List.of(value)
-//            );
-//            function.getCurrentBlock().addCommand(command);
+                && value.getType() instanceof PointerType
+                && value.getType().getType() instanceof StructType) {
             translateTempDeadChecker(function, value, (PointerType) value.getType());
         }
     }
@@ -2171,6 +2167,19 @@ public class Translator {
         BasicBlock current = function.getCurrentBlock();
         current.addCommand(command);
 
+        if (leftValue != null
+                && leftValue.getType() instanceof PointerType
+                && leftValue.getType().getType() instanceof StructType) {
+            translateTempDeadChecker(function, leftValue, (PointerType) leftValue.getType());
+        }
+
+        if (rightValue != null
+                && rightValue.getType() instanceof PointerType
+                && rightValue.getType().getType() instanceof StructType) {
+            translateTempDeadChecker(function, rightValue, (PointerType) rightValue.getType());
+        }
+
+
         return command.getResult();
     }
 
@@ -2183,20 +2192,26 @@ public class Translator {
 
         createBranch(last, condition);
 
-        Value resultValue = createTempVariable(matchType(expressionNode.getResultType()));
+        Command alloc = new Command(
+                createTempVariable(matchType(expressionNode.getResultType())),
+                ALLOC,
+                List.of()
+        );
+        function.getCurrentBlock().addCommand(alloc);
+
         Value conditionValue = translateExpression(function, expressionNode.getConditionNode());
         BasicBlock endCondition = function.getCurrentBlock();
 
         thenBlock = function.appendBlock("conditional_then");
         Value firstArg = translateExpression(function, expressionNode.getThenNode());
         BasicBlock endThen = function.getCurrentBlock();
-        Command firstStore = new Command(resultValue, STORE, List.of(firstArg));
+        Command firstStore = new Command(alloc.getResult(), STORE, List.of(firstArg));
         endThen.addCommand(firstStore);
 
         elseBlock = function.appendBlock("conditional_else");
         Value secondArg = translateExpression(function, expressionNode.getElseNode());
         BasicBlock endElse = function.getCurrentBlock();
-        Command secondStore = new Command(resultValue, STORE, List.of(secondArg));
+        Command secondStore = new Command(alloc.getResult(), STORE, List.of(secondArg));
         endElse.addCommand(secondStore);
 
         mergeBlock = function.appendBlock("conditional_result");
@@ -2205,7 +2220,14 @@ public class Translator {
         createBranch(endElse, mergeBlock);
         createConditionalBranch(endCondition, conditionValue, thenBlock, elseBlock);
 
-        return resultValue;
+        Command loadRet = new Command(
+                createTempVariable(alloc.getResult().getType()),
+                LOAD,
+                List.of(alloc.getResult())
+        );
+        function.getCurrentBlock().addCommand(loadRet);
+
+        return loadRet.getResult();
     }
 
     private Value translateAssigmentExpression(Function function, AssigmentExpressionNode expressionNode) {

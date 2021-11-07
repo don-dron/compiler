@@ -29,7 +29,7 @@ class Point
 
 () Point f4 ->
     Point a = f()
-    Point b = new Point(1, 1 )
+    Point b = new Point(1, 1)
     return f()
 
 (Point p) Point f5 ->
@@ -67,6 +67,8 @@ class Point
     Point p = new Point(1, 2)
     p = new Point(1, 2)
     a = a + p.x + p.y
+
+    p = f5(p)
 
     f()
     f1()
@@ -122,6 +124,9 @@ class Point
 
     p = f9(p, new Point(2,2).x)
     a = a + p.x + p.y
+
+    new Point(2,2) == null ? 1 : 0
+    f8(p) == null ? 1 : 0
 
     return a
 
