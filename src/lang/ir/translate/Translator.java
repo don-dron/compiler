@@ -43,6 +43,8 @@ public class Translator {
     private Map<String, String> structToDestructors;
     private final List<Function> predefinedFunctions;
 
+    private final Map<AstNode, List<VariableValue>> currentDestructors;
+
     public Translator(Program program) {
         this.program = program;
         literals = new ArrayList<>();
@@ -53,6 +55,7 @@ public class Translator {
         predefinedFunctions = new ArrayList<>();
         destructors = new HashMap<>();
         structToDestructors = new HashMap<>();
+        currentDestructors = new HashMap<>();
     }
 
     private Function getPutStringFunction() {
@@ -424,7 +427,7 @@ public class Translator {
                     List.of()
             );
 
-            function.addDestructor(variableValue);
+            currentDestructors.computeIfAbsent(functionDefinitionNode, k -> new ArrayList<>()).add(variableValue);
 
             header.addCommand(alloc);
 
@@ -579,8 +582,17 @@ public class Translator {
                     createBranch(bb, destructBlock);
                 });
 
+        addDestructorsList(function,
+                currentDestructors.getOrDefault(functionDefinitionNode, new ArrayList<>()));
+        currentDestructors.remove(functionDefinitionNode);
 
-        for (VariableValue allocated : function.getDestructors()) {
+        createBranch(function.getCurrentBlock(), returnBlock);
+        TEMP_VARIABLE_COUNT = 0;
+        return function;
+    }
+
+    private void addDestructorsList(Function function, List<VariableValue> destructors) {
+        for (VariableValue allocated : destructors) {
             if (allocated.getType() instanceof PointerType) {
 
                 Command forDelete = new Command(
@@ -593,11 +605,6 @@ public class Translator {
                 addDestructorCall(function, (PointerType) forDelete.getResult().getType(), forDelete.getResult());
             }
         }
-
-
-        createBranch(function.getCurrentBlock(), returnBlock);
-        TEMP_VARIABLE_COUNT = 0;
-        return function;
     }
 
     public static String graphVizDebug(Function functionBlock) {
@@ -801,6 +808,9 @@ public class Translator {
 
     private void translateCompound(Function function, CompoundStatementNode node) {
         node.getStatements().forEach(n -> translateStatement(function, n));
+
+        addDestructorsList(function, currentDestructors.getOrDefault(node, new ArrayList<>()));
+        currentDestructors.remove(node);
     }
 
     private void translateContinue(Function function, ContinueStatementNode node) {
@@ -1130,7 +1140,7 @@ public class Translator {
                 List.of()
         );
 
-        function.addDestructor(variableValue);
+        currentDestructors.computeIfAbsent(node.getScope().getOwner(), k -> new ArrayList<>()).add(variableValue);
 
         function.getCurrentBlock().addCommand(alloc);
 
@@ -1279,6 +1289,10 @@ public class Translator {
             );
             function.getCurrentBlock().addCommand(storeReturn);
         }
+
+        addDestructorsList(function, currentDestructors.getOrDefault(node.getScope().getOwner(), new ArrayList<>()));
+        currentDestructors.remove(node.getScope().getOwner());
+
 
         createBranch(function.getCurrentBlock(), function.getReturnBlock());
 

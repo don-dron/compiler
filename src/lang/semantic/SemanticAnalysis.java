@@ -318,7 +318,8 @@ public class SemanticAnalysis {
     }
 
     private void analyseCompound(CompoundStatementNode statementNode, Scope scope) {
-        statementNode.setScope(scope);
+        statementNode.setScope(new Scope(scope));
+        statementNode.getScope().setOwner(statementNode);
 
         List<StatementNode> refactor = new ArrayList<>();
 
@@ -360,8 +361,8 @@ public class SemanticAnalysis {
         statementNode.getStatements().addAll(refactor);
 
         for (StatementNode node : statementNode.getStatements()) {
-            node.setScope(scope);
-            analyseStatement(node, scope);
+            node.setScope(statementNode.getScope());
+            analyseStatement(node, statementNode.getScope());
         }
     }
 

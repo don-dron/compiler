@@ -93,6 +93,13 @@ class Point
     f9(p, 9).x
     new Point(2,2)
 
+
+    p = f8(f8(f8(p)))
+    f8(f8(f8(p)))
+
+    f7(f5(f6(p)))
+    p = f7(f5(f6(p)))
+
     p = f()
     a = a + p.x + p.y
 
