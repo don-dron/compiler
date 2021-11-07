@@ -2,10 +2,20 @@
 class Point
     int x
     int y
+    Point a
 
     (int x, int y) ->
         this.x = x
         this.y = y
+        this.a = null
+
+    (int x, int y, Point a) ->
+        this.x = x
+        this.y = y
+        this.a = a
+
+        Point z = null
+        this.a = z
 
 () Point f ->
     Point a = new Point(1, 1 )
@@ -14,12 +24,12 @@ class Point
 
 () Point f1 ->
     Point a = new Point(1, 1 )
-    Point b = new Point(1, 1 )
+    Point b = new Point(1, 1 , a)
     return b
 
 () Point f2 ->
     Point a = new Point(1, 1 )
-    Point b = new Point(1, 1 )
+    Point b = new Point(1, 1 , a)
     return new Point(new Point(1, f().x).x, new Point(1, new Point(1,1).y).y)
 
 () Point f3 ->
@@ -38,8 +48,10 @@ class Point
     return p
 
 (Point p) Point f6 ->
-    Point a = new Point(1, 1 )
-    Point b = new Point(1, 1 )
+    Point k = null
+    Point a = new Point(1, 1, p)
+    Point b = new Point(1, 1 ,  p)
+    Point c = new Point(1, 1 ,  p)
     return a
 
 (Point p) Point f7 ->

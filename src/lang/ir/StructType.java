@@ -36,4 +36,9 @@ public class StructType extends Type {
                 .reduce(Integer::sum)
                 .orElseThrow();
     }
+
+    public void setValues(List<VariableValue> values) {
+        values.clear();
+        values.addAll(values);
+    }
 }

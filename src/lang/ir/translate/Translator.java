@@ -169,6 +169,12 @@ public class Translator {
         List<DeclarationStatementNode> fields = cl.getFields();
         List<VariableValue> values = new ArrayList<>();
 
+        StructType structType = new StructType(
+                cl.getIdentifierNode().getName(),
+                values);
+
+        classes.put(cl.getIdentifierNode().getName(), structType);
+
         values.add(new VariableValue("$$_counter_" + REF_COUNTER_COUNT++, INT_32));
         values.add(new VariableValue("$$_type_" + TYPE_COUNTER_COUNT++, INT_32));
 
@@ -178,18 +184,14 @@ public class Translator {
                     matchType(field.getTypeNode()));
             values.add(variableValue);
         }
-
-        StructType structType = new StructType(
-                cl.getIdentifierNode().getName(),
-                values);
-
-        classes.put(cl.getIdentifierNode().getName(), structType);
     }
 
     private void translateDestructor(ClassStatementNode classStatementNode) {
         String name = "$_destructor_" + DESTRUCTOR_COUNT++;
 
         Function function = new Function(name);
+        destructors.put(name, function);
+        structToDestructors.put(classStatementNode.getIdentifierNode().getName(), name);
 
         BasicBlock header = function.appendBlock("header");
         List<Type> parameterTypes = new ArrayList<>();
@@ -367,8 +369,6 @@ public class Translator {
         TEMP_VARIABLE_COUNT = 0;
 
         variables.put(name, function);
-        destructors.put(name, function);
-        structToDestructors.put(classStatementNode.getIdentifierNode().getName(), name);
     }
 
 
