@@ -7,37 +7,114 @@ class Point
         this.x = x
         this.y = y
 
-(Point p) Point incrementPoint ->
-    if p == null
-        return new Point(3, 2)
+() Point f ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+    return new Point(1, 1 )
 
-    return new Point(p.x + 1, p.y +1 )
+() Point f1 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+    return b
 
+() Point f2 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+    return new Point(new Point(1, f().x).x, new Point(1, new Point(1,1).y).y)
+
+() Point f3 ->
+    Point a = f()
+    Point b = new Point(1, 1 )
+    return a
+
+() Point f4 ->
+    Point a = f()
+    Point b = new Point(1, 1 )
+    return f()
+
+(Point p) Point f5 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+    return p
+
+(Point p) Point f6 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+    return a
+
+(Point p) Point f7 ->
+    Point a = new Point(1, 1 )
+    Point b = new Point(1, 1 )
+    return new Point(new Point(p.x, f().x).x, new Point(1, p.y).y)
+
+(Point p) Point f8 ->
+    Point a = f()
+    Point b = p
+    return a
+
+(Point p) Point f9 ->
+    Point a = f()
+    Point b = new Point(1, 1 )
+    return p
 
 () int main ->
+    int a = 0
+
     Point p = new Point(1, 2)
-    Point c = null
-    c = p
-    p = null
-    c = p
+    p = new Point(1, 2)
+    a = a + p.x + p.y
 
-    int i = 0
+    f()
+    f1()
+    f2()
+    f3()
+    f4()
+    f5(p)
+    f6(p)
+    f7(p)
+    f8(p)
+    f9(p)
 
-    while i < 100000
-        p = new Point(i,i+1)
+    f().x
+    f1().x
+    f2().x
+    f3().x
+    f4().x
+    f5(p).x
+    f6(p).x
+    f7(p).x
+    f8(p).x
+    f9(p).x
 
-        c = p
-        p = null
-        c = null
+    p = f()
+    a = a + p.x + p.y
 
-        c = incrementPoint(c)
+    p = f1()
+    a = a + p.x + p.y
 
-        incrementPoint(c)
+    p = f2()
+    a = a + p.x + p.y
 
-        p = c
-        p = incrementPoint(p)
+    p = f3()
+    a = a + p.x + p.y
 
-        i++
+    p = f4()
+    a = a + p.x + p.y
 
-    return p.x + p.y
+    p = f5(p)
+    a = a + p.x + p.y
+
+    p = f6(p)
+    a = a + p.x + p.y
+
+    p = f7(p)
+    a = a + p.x + p.y
+
+    p = f8(p)
+    a = a + p.x + p.y
+
+    p = f9(p)
+    a = a + p.x + p.y
+
+    return a
 
