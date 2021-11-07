@@ -43,6 +43,16 @@ public class Translator {
     private Map<String, String> structToDestructors;
     private final List<Function> predefinedFunctions;
 
+    private final StructType commonStruct = new StructType(
+            "$$$_commmon_struct",
+            List.of(
+                    new VariableValue("counter", INT_32),
+                    new VariableValue("struct_type", INT_32)
+            )
+    );
+
+    private final Function addInc = translateCommonAddIncFunction("$$$_add_inc");
+
     private final Map<AstNode, List<VariableValue>> currentDestructors;
 
     public Translator(Program program) {
@@ -105,6 +115,7 @@ public class Translator {
                     variables.put(f.getName(), f);
                 });
 
+        classes.put(commonStruct.getName(), commonStruct);
 
         program.getClasses()
                 .forEach(this::translateClass);
@@ -158,6 +169,7 @@ public class Translator {
                 .collect(Collectors.toList());
         functions.addAll(predefinedFunctions);
         functions.addAll(destructors.values());
+        functions.add(addInc);
 
         return new Module(
                 new ArrayList<>(classes.values()),
@@ -782,7 +794,21 @@ public class Translator {
 
                             if (v.getType() instanceof PointerType
                                     && (((PointerType) v.getType()).getType() instanceof StructType)) {
-                                translateObjectIncCount(function, v, (PointerType) v.getType());
+
+
+                                Command castCommand = new Command(
+                                        createTempVariable(new PointerType(commonStruct)),
+                                        CAST,
+                                        List.of(v)
+                                );
+                                function.getCurrentBlock().addCommand(castCommand);
+
+                                Command copyCall = new Command(
+                                        null,
+                                        CALL,
+                                        List.of(addInc, castCommand.getResult())
+                                );
+                                function.getCurrentBlock().addCommand(copyCall);
                             }
                             return v;
                         })
@@ -883,6 +909,63 @@ public class Translator {
 
     private void translateElse(Function function, ElseStatementNode node) {
         throw new IllegalArgumentException("");
+    }
+
+    private Function translateCommonAddIncFunction(String name) {
+        Function function = new Function(name);
+        BasicBlock header = function.appendBlock("header");
+        List<Type> parameterTypes = new ArrayList<>();
+
+        Type type = new PointerType(commonStruct);
+        parameterTypes.add(type);
+
+        String thisName = "$$_this_value_" + THIS_COUNT++;
+        VariableValue thisValue = new VariableValue(
+                thisName,
+                type
+        );
+
+        function.setThisValue(thisValue);
+        Command alloc = new Command(
+                thisValue,
+                ALLOC,
+                List.of()
+        );
+
+        header.addCommand(alloc);
+
+        Command command = new Command(
+                thisValue,
+                STORE,
+                List.of(createTempVariable(type))
+        );
+
+        header.addCommand(command);
+
+        BasicBlock returnBlock = function.appendBlock("return");
+        returnBlock.setTerminator(new Return(null));
+
+        function.setParameterTypes(parameterTypes);
+        function.setResultType(VOID);
+        function.setReturnBlock(returnBlock);
+
+        BasicBlock entry = function.appendBlock("common_entry");
+        createBranch(header, entry);
+
+        Command commandLoad = new Command(
+                createTempVariable(type),
+                LOAD,
+                List.of(thisValue)
+        );
+
+        function.getCurrentBlock().addCommand(commandLoad);
+        translateObjectIncCount(function, commandLoad.getResult(), (PointerType) type);
+
+        createBranch(function.getCurrentBlock(), returnBlock);
+
+        TEMP_VARIABLE_COUNT = 0;
+
+        return function;
     }
 
     private void translateObjectIncCount(Function function,
@@ -1659,7 +1742,20 @@ public class Translator {
 
                                 if (v.getType() instanceof PointerType
                                         && (((PointerType) v.getType()).getType() instanceof StructType)) {
-                                    translateObjectIncCount(function, v, (PointerType) v.getType());
+
+                                    Command castCommand = new Command(
+                                            createTempVariable(new PointerType(commonStruct)),
+                                            CAST,
+                                            List.of(v)
+                                    );
+                                    function.getCurrentBlock().addCommand(castCommand);
+
+                                    Command copyCall = new Command(
+                                            null,
+                                            CALL,
+                                            List.of(addInc, castCommand.getResult())
+                                    );
+                                    function.getCurrentBlock().addCommand(copyCall);
                                 }
                                 return v;
                             })
@@ -1691,7 +1787,20 @@ public class Translator {
 
                                 if (v.getType() instanceof PointerType
                                         && (((PointerType) v.getType()).getType() instanceof StructType)) {
-                                    translateObjectIncCount(function, v, (PointerType) v.getType());
+
+                                    Command castCommand = new Command(
+                                            createTempVariable(new PointerType(commonStruct)),
+                                            CAST,
+                                            List.of(v)
+                                    );
+                                    function.getCurrentBlock().addCommand(castCommand);
+
+                                    Command copyCall = new Command(
+                                            null,
+                                            CALL,
+                                            List.of(addInc, castCommand.getResult())
+                                    );
+                                    function.getCurrentBlock().addCommand(copyCall);
                                 }
                                 return v;
                             })
@@ -2285,7 +2394,20 @@ public class Translator {
             );
             function.getCurrentBlock().addCommand(load);
 
-            translateObjectIncCount(function, load.getResult(), pointerType);
+
+            Command castCommand = new Command(
+                    createTempVariable(new PointerType(commonStruct)),
+                    CAST,
+                    List.of(load.getResult())
+            );
+            function.getCurrentBlock().addCommand(castCommand);
+
+            Command copyCall = new Command(
+                    null,
+                    CALL,
+                    List.of(addInc, castCommand.getResult())
+            );
+            function.getCurrentBlock().addCommand(copyCall);
         }
 
         if (mt instanceof PointerType
