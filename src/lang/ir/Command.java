@@ -137,6 +137,12 @@ public class Command implements Value {
         } else if (operation == CAST) {
             return result.toLLVM() + " = bitcast " + parameters.get(0).getType().toLLVM() + " " +
                     parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
+        } else if (operation == INTTOPTR) {
+            return result.toLLVM() + " = inttoptr " + parameters.get(0).getType().toLLVM() + " " +
+                    parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
+        } else if (operation == PTRTOINT) {
+            return result.toLLVM() + " = ptrtoint " + parameters.get(0).getType().toLLVM() + " " +
+                    parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
         } else if (operation == TRUNC) {
             return result.toLLVM() + " = trunc " + parameters.get(0).getType().toLLVM() + " " +
                     parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
