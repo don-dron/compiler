@@ -4,6 +4,7 @@ public class PointerType extends Type {
     private final Type type;
 
     public PointerType(Type type) {
+        assert type != null;
         this.type = type;
     }
 

@@ -1,4 +1,39 @@
 
+class A
+    int x
+    int y
+
+    (int x, int y) ->
+        this.x = x
+        this.y = y
+
 () int main ->
-    int[] a = new int[6]
+    A[][] t = new A[5][5]
+
+    int i = 0
+    int j = 0
+
+
+    while i < 5
+        j = 0
+        while j < 5
+            t[i][j] = new A(i, j)
+            j++
+
+        i++
+
+
+    i = 0
+
+    int sum = 0
+
+    while i < 5
+        j = 0
+        while j < 5
+            sum = t[i][j].x * 10 + t[i][j].y
+            j++
+
+        i++
+
     return 0
+

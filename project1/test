@@ -1,9 +1,6 @@
 
 (int c) void putchar
 
-class String
-    int[] bytes
-
 (int[] arr, int length) void reverseArray ->
     int index = 0
 

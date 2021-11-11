@@ -774,6 +774,12 @@ public class SemanticAnalysis {
         ExpressionNode node = castExpressionNode.getExpressionNode();
         analyseExpression(node, parentScope);
 
+        analyseType(castExpressionNode.getTypeNode(), parentScope);
+
+        if (node instanceof NullConstantExpressionNode) {
+            node.resultType = castExpressionNode.getTypeNode();
+        }
+
         castExpressionNode.setResultType(castExpressionNode.getTypeNode());
     }
 

@@ -1,0 +1,17 @@
+
+class A
+    int x
+    int y
+
+    (int x, int y) ->
+        this.x = x
+        this.y = y
+
+() int main ->
+    A[] t = new A[3]
+    t[0] = new A(0,0)
+    t[1] = new A(0,1)
+    t[2] = new A(1,0)
+
+    return 0
+
