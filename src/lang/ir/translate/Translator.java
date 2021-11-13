@@ -22,6 +22,7 @@ import static lang.ir.Type.*;
 
 public class Translator {
     private static final String ARRAY_PREFIX = "$_array_";
+    private static final int ARRAY_CODE = -1;
 
     private final Program program;
     private int LITERAL_COUNT = 0;
@@ -31,11 +32,13 @@ public class Translator {
     private int REF_COUNTER_COUNT = 0;
     private int TYPE_COUNTER_COUNT = 0;
     private int TEMP_VARIABLE_COUNT = 0;
+    private int STRUCT_ID_COUNTER = 0;
     private int TEMP_LEFT_COUNT = 0;
     private int ARRAY_SIZE_COUNT = 0;
     private int DESTRUCTOR_COUNT = 0;
     private int ARRAY_DESTRUCTOR_COUNT = 0;
 
+    private final List<VariableValue> globalVars;
     private final List<StringValue> literals;
     private final Map<String, StructType> classes;
     private final Map<String, Value> variables;
@@ -47,6 +50,15 @@ public class Translator {
     private Map<String, String> arrayDestructors;
     private final List<Function> predefinedFunctions;
 
+    private final StructType commonStruct = new StructType(
+            "$$$_commmon_struct",
+            List.of(
+                    new VariableValue("$$_counter", INT_32),
+                    new VariableValue("$$_struct_type", INT_32)
+            ),
+            0L
+    );
+
     private final StructType commonArray = new StructType(
             "$$$_commmon_array",
             List.of(
@@ -54,31 +66,30 @@ public class Translator {
                     new VariableValue("$$_struct_type", INT_32),
                     new VariableValue("$$_length", INT_32),
                     new VariableValue("$$_dummy", INT_32)
-            )
-    );
-    private final StructType commonStruct = new StructType(
-            "$$$_commmon_struct",
-            List.of(
-                    new VariableValue("$$_counter", INT_32),
-                    new VariableValue("$$_struct_type", INT_32)
-            )
+            ),
+            1L
     );
 
     private final Function addInc = translateCommonAddIncFunction("$$$_add_inc");
 
-    private final Map<AstNode, List<VariableValue>> currentDestructors;
+    private final LinkedHashMap<AstNode, List<VariableValue>> currentDestructors;
+
+    private VariableValue destructorsArray;
+    private Function destructorTemplate;
+    private Function commonDestructor;
 
     public Translator(Program program) {
         this.program = program;
         literals = new ArrayList<>();
-        classes = new HashMap<>();
-        variables = new HashMap<>();
-        whileToConditionBlock = new HashMap<>();
-        whileToMergeBlock = new HashMap<>();
+        classes = new LinkedHashMap<>();
+        variables = new LinkedHashMap<>();
+        whileToConditionBlock = new LinkedHashMap<>();
+        whileToMergeBlock = new LinkedHashMap<>();
         predefinedFunctions = new ArrayList<>();
-        destructors = new HashMap<>();
-        structToDestructors = new HashMap<>();
-        currentDestructors = new HashMap<>();
+        destructors = new LinkedHashMap<>();
+        structToDestructors = new LinkedHashMap<>();
+        currentDestructors = new LinkedHashMap<>();
+        globalVars = new ArrayList<>();
     }
 
     private Function getPutStringFunction() {
@@ -129,25 +140,50 @@ public class Translator {
                 });
 
         classes.put(commonStruct.getName(), commonStruct);
+        STRUCT_ID_COUNTER++;
+
         classes.put(commonArray.getName(), commonArray);
+        STRUCT_ID_COUNTER++;
 
         program.getClasses()
                 .forEach(this::translateClassDeclaration);
         program.getClasses()
                 .forEach(this::translateClassDefinition);
 
+
+        // array with pointer
+
+        // array with primitive
+
+        // for classes
+
+        // common destruct
+        translateCommonDestructorDeclaration();
+
+        // common struct
+        translateCommonStructDestructorDeclaration();
+        translateCommonStructDestructorDefinition();
+
+        // common array
+        translateArrayDestructorDeclaration();
+        translateArrayDestructorDefinition();
+
         program.getClasses()
                 .forEach(this::translateDestructorDeclaration);
-        program.getClasses()
-                .forEach(t -> translateArrayDestructorDeclaration(t, false));
-        translateArrayDestructorDeclaration(null, true);
 
         program.getClasses()
                 .forEach(this::translateDestructorDefinition);
-        program.getClasses()
-                .forEach(t -> translateArrayDestructorDefinition(t, false));
 
-        translateArrayDestructorDefinition(null, true);
+        destructorsArray = new VariableValue(
+                "$$$_destructors_array",
+                new DestructorsArrayType(INT_64,
+                        destructors.size(),
+                        new ArrayList<>(destructors.values())),
+                true
+        );
+        globalVars.add(destructorsArray);
+
+        translateCommonDestructorDefinition();
 
         Map<Function, FunctionDefinitionNode> functionToStatement = program.getFunctions()
                 .stream()
@@ -193,6 +229,7 @@ public class Translator {
                 .stream()
                 .map(entry -> translateFunction(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+        functions.add(commonDestructor);
         functions.addAll(predefinedFunctions);
         functions.addAll(destructors.values());
         functions.add(addInc);
@@ -200,7 +237,8 @@ public class Translator {
         return new Module(
                 new ArrayList<>(classes.values()),
                 functions,
-                literals);
+                literals,
+                globalVars);
     }
 
     private void translateClassDeclaration(ClassStatementNode cl) {
@@ -208,7 +246,8 @@ public class Translator {
 
         StructType structType = new StructType(
                 cl.getIdentifierNode().getName(),
-                values);
+                values,
+                STRUCT_ID_COUNTER++);
 
         classes.put(cl.getIdentifierNode().getName(), structType);
     }
@@ -227,38 +266,28 @@ public class Translator {
         }
     }
 
-    private void translateArrayDestructorDeclaration(ClassStatementNode classStatementNode, boolean isArrayOfArray) {
-        String name = "$_array_destructor_" + ARRAY_DESTRUCTOR_COUNT++;
+    private void translateCommonDestructorDeclaration() {
+        String name = "$_common_destructor";
 
-        Function function = new Function(name);
-        destructors.put(name, function);
-        structToDestructors.put(ARRAY_PREFIX + (isArrayOfArray
-                ? commonArray.getName()
-                : classStatementNode.getIdentifierNode().getName()), name);
+        commonDestructor = new Function(name);
+        List<Type> parameterTypes = new ArrayList<>();
+        Type type = new PointerType(INT_32);
+        parameterTypes.add(type);
+
+        commonDestructor.setParameterTypes(parameterTypes);
+        commonDestructor.setResultType(VOID);
     }
 
-    private void translateArrayDestructorDefinition(ClassStatementNode classStatementNode, boolean isArrayOfArray) {
-        String name = "$_array_destructor_" + ARRAY_DESTRUCTOR_COUNT++;
-
-        Function function = destructors.get(structToDestructors.get(
-                ARRAY_PREFIX + (isArrayOfArray
-                        ? commonArray.getName()
-                        : classStatementNode.getIdentifierNode().getName())
-        ));
-
+    private void translateCommonDestructorDefinition() {
+        Function function = commonDestructor;
         BasicBlock header = function.appendBlock("header");
-        List<Type> parameterTypes = new ArrayList<>();
 
-        Type type = new PointerType(commonArray);
-        Type arrayType = isArrayOfArray
-                ? new PointerType(commonArray)
-                : matchType(new ObjectTypeNode(classStatementNode.getIdentifierNode()));
-        parameterTypes.add(type);
+        Type targetType = new PointerType(commonStruct);
 
         String thisName = "$$_this_value_" + THIS_COUNT++;
         VariableValue thisValue = new VariableValue(
                 thisName,
-                type
+                targetType
         );
         variables.put(thisName, thisValue);
 
@@ -271,27 +300,32 @@ public class Translator {
 
         header.addCommand(alloc);
 
+        Value temp = createTempVariable(new PointerType(INT_32));
+        Command castToArray = new Command(
+                createTempVariable(targetType),
+                CAST,
+                List.of(temp)
+        );
+        header.addCommand(castToArray);
+
         Command command = new Command(
                 thisValue,
                 STORE,
-                List.of(createTempVariable(type))
+                List.of(castToArray.getResult())
         );
-
         header.addCommand(command);
 
         BasicBlock returnBlock = function.appendBlock("return");
         returnBlock.setTerminator(new Return(null));
 
 
-        function.setParameterTypes(parameterTypes);
-        function.setResultType(VOID);
         function.setReturnBlock(returnBlock);
 
         BasicBlock entry = function.appendBlock("check_null_entry");
         createBranch(header, entry);
 
         Command nullLoadObject = new Command(
-                createTempVariable(type),
+                createTempVariable(targetType),
                 LOAD,
                 List.of(thisValue)
         );
@@ -307,7 +341,7 @@ public class Translator {
         BasicBlock nullBody = function.appendBlock("check_null_body");
 
         Command loadObject = new Command(
-                createTempVariable(type),
+                createTempVariable(targetType),
                 LOAD,
                 List.of(thisValue)
         );
@@ -357,117 +391,300 @@ public class Translator {
         BasicBlock destructBlock = function.appendBlock("end_function_destructor");
         createBranch(prev, destructBlock);
 
-        if (arrayType instanceof PointerType) {
-            Command readSize = new Command(
-                    createTempVariable(INT_32),
-                    FIELD_ACCESS,
-                    List.of(loadObject.getResult(), new IntValue(2))
-            );
-            function.getCurrentBlock().addCommand(readSize);
+        Command loadStructId = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(loadObject.getResult(), new IntValue(1))
+        );
+        function.getCurrentBlock().addCommand(loadStructId);
 
-            Command loadSize = new Command(
-                    createTempVariable(INT_32),
-                    LOAD,
-                    List.of(readSize.getResult())
-            );
-            function.getCurrentBlock().addCommand(loadSize);
-
-            Command castForAdd = new Command(
-                    createTempVariable(INT_64),
-                    PTRTOINT,
-                    List.of(loadObject.getResult())
-            );
-            function.getCurrentBlock().addCommand(castForAdd);
-
-            Command withHeaderAccess = new Command(
-                    createTempVariable(INT_64),
-                    ADD,
-                    List.of(castForAdd.getResult(), new IntValue(commonArray.getSize()))
-            );
-            function.getCurrentBlock().addCommand(withHeaderAccess);
-
-            Command castReverse = new Command(
-                    createTempVariable(new PointerType(arrayType)),
-                    INTTOPTR,
-                    List.of(withHeaderAccess.getResult())
-            );
-            function.getCurrentBlock().addCommand(castReverse);
-
-            VariableValue iterator = new VariableValue("$alloc_iterator_" + ARRAY_SIZE_COUNT, INT_32);
-
-            ARRAY_SIZE_COUNT++;
-            Command allocIterator = new Command(
-                    iterator,
-                    ALLOC,
-                    List.of()
-            );
-            function.getCurrentBlock().addCommand(allocIterator);
-
-            Command allocIteratorXor = new Command(
-                    iterator,
-                    STORE,
-                    List.of(new IntValue(0))
-            );
-            function.getCurrentBlock().addCommand(allocIteratorXor);
-
-            prev = function.getCurrentBlock();
-            BasicBlock whileCond = function.appendBlock("array_destructor_cond");
-            createBranch(prev, whileCond);
-
-            Command readIter = new Command(
-                    createTempVariable(INT_32),
-                    LOAD,
-                    List.of(iterator)
-            );
-            function.getCurrentBlock().addCommand(readIter);
-
-            Command cond = new Command(
-                    createTempVariable(INT_1),
-                    LT,
-                    List.of(readIter.getResult(), loadSize.getResult())
-            );
-            function.getCurrentBlock().addCommand(cond);
-
-            BasicBlock whileBody = function.appendBlock("array_destructor_body");
-
-            Command arrayRead = new Command(
-                    createTempVariable(arrayType),
-                    ARRAY_ACCESS,
-                    List.of(castReverse.getResult(), readIter.getResult()));
-            function.getCurrentBlock().addCommand(arrayRead);
-
-            Command load = new Command(
-                    createTempVariable(arrayType),
-                    LOAD,
-                    List.of(arrayRead.getResult())
-            );
-            function.getCurrentBlock().addCommand(load);
-
-            if (!isArrayOfArray) {
-                addDestructorCall(function, (PointerType) arrayType, load.getResult());
-            } else {
-                addArrayDestructorCall(function, (PointerType) arrayType, load.getResult());
-            }
-
-            Command addIter = new Command(
-                    createTempVariable(INT_32),
-                    ADD,
-                    List.of(readIter.getResult(), new IntValue(1))
-            );
-            function.getCurrentBlock().addCommand(addIter);
-
-            Command storeIter = new Command(
-                    iterator,
-                    STORE,
-                    List.of(addIter.getResult())
-            );
-            function.getCurrentBlock().addCommand(storeIter);
+        Command structIdLoad = new Command(
+                createTempVariable(INT_32),
+                LOAD,
+                List.of(loadStructId.getResult())
+        );
+        function.getCurrentBlock().addCommand(structIdLoad);
 
 
-            BasicBlock whileMerge = function.appendBlock("array_destructor_merge");
-            createBranch(whileBody, whileCond);
-            createConditionalBranch(whileCond, cond.getResult(), whileBody, whileMerge);
-        }
+        Command accessFunction = new Command(
+                createTempVariable(new PointerType(destructorTemplate.getFunctionType())),
+                FIELD_ACCESS,
+                List.of(new VariableValue(
+                        destructorsArray.getName(),
+                        new PointerType(destructorsArray.getType()),
+                        destructorsArray.isGlobal()
+                ), structIdLoad.getResult())
+        );
+        function.getCurrentBlock().addCommand(accessFunction);
+
+
+        Command loadFunction = new Command(
+                createTempVariable(new PointerType(destructorTemplate.getFunctionType())),
+                LOAD,
+                List.of(accessFunction.getResult())
+        );
+        function.getCurrentBlock().addCommand(loadFunction);
+
+
+        Command copyCall = new Command(
+                null,
+                CALL,
+                List.of(loadFunction.getResult(), temp)
+        );
+        function.getCurrentBlock().addCommand(copyCall);
+
+        createBranch(function.getCurrentBlock(), returnBlock);
+
+        createConditionalBranch(ifCond, condition2.getResult(), ifBody, returnBlock);
+
+        createConditionalBranch(entry, condition1.getResult(), nullBody, returnBlock);
+
+        TEMP_VARIABLE_COUNT = 0;
+    }
+
+    private void translateCommonStructDestructorDeclaration() {
+        String name = "$_common_struct_destructor_";
+
+        Function function = new Function(name);
+        destructors.put(name, function);
+        variables.put(name, function);
+
+        destructorTemplate = function;
+    }
+
+    private void translateCommonStructDestructorDefinition() {
+        Function function = destructors.get("$_common_struct_destructor_");
+
+        BasicBlock header = function.appendBlock("header");
+        List<Type> parameterTypes = new ArrayList<>();
+
+        Type type = new PointerType(INT_32);
+        parameterTypes.add(type);
+
+        String thisName = "$$_this_value_" + THIS_COUNT++;
+        VariableValue thisValue = new VariableValue(
+                thisName,
+                new PointerType(commonStruct)
+        );
+        variables.put(thisName, thisValue);
+
+        function.setThisValue(thisValue);
+        Command alloc = new Command(
+                thisValue,
+                ALLOC,
+                List.of()
+        );
+
+        header.addCommand(alloc);
+
+        Value temp = createTempVariable(type);
+        Command castToArray = new Command(
+                createTempVariable(new PointerType(commonStruct)),
+                CAST,
+                List.of(temp)
+        );
+        header.addCommand(castToArray);
+
+        Command command = new Command(
+                thisValue,
+                STORE,
+                List.of(castToArray.getResult())
+        );
+        header.addCommand(command);
+
+        BasicBlock returnBlock = function.appendBlock("return");
+        returnBlock.setTerminator(new Return(null));
+
+        function.setParameterTypes(parameterTypes);
+        function.setResultType(VOID);
+        function.setReturnBlock(returnBlock);
+
+        BasicBlock destructBlock = function.appendBlock("_common_array_destructor_start_");
+        createBranch(header, destructBlock);
+
+        Command freeCommand = new Command(
+                null,
+                STRUCT_FREE,
+                List.of(temp)
+        );
+        function.getCurrentBlock().addCommand(freeCommand);
+
+        createBranch(function.getCurrentBlock(), returnBlock);
+
+        TEMP_VARIABLE_COUNT = 0;
+    }
+
+
+    private void translateArrayDestructorDeclaration() {
+        String name = "$_common_array_destructor_";
+
+        Function function = new Function(name);
+        destructors.put(name, function);
+        variables.put(name, function);
+    }
+
+    private void translateArrayDestructorDefinition() {
+        Function function = destructors.get("$_common_array_destructor_");
+
+        BasicBlock header = function.appendBlock("header");
+        List<Type> parameterTypes = new ArrayList<>();
+
+        PointerType type = new PointerType(INT_32);
+        parameterTypes.add(type);
+
+        String thisName = "$$_this_value_" + THIS_COUNT++;
+        VariableValue thisValue = new VariableValue(
+                thisName,
+                new PointerType(commonArray)
+        );
+        variables.put(thisName, thisValue);
+
+        function.setThisValue(thisValue);
+        Command alloc = new Command(
+                thisValue,
+                ALLOC,
+                List.of()
+        );
+
+        header.addCommand(alloc);
+
+        Value temp = createTempVariable(type);
+        Command castToArray = new Command(
+                createTempVariable(new PointerType(commonArray)),
+                CAST,
+                List.of(temp)
+        );
+        header.addCommand(castToArray);
+
+        Command command = new Command(
+                thisValue,
+                STORE,
+                List.of(castToArray.getResult())
+        );
+        header.addCommand(command);
+
+        BasicBlock returnBlock = function.appendBlock("return");
+        returnBlock.setTerminator(new Return(null));
+
+        function.setParameterTypes(parameterTypes);
+        function.setResultType(VOID);
+        function.setReturnBlock(returnBlock);
+
+        BasicBlock destructBlock = function.appendBlock("_common_array_destructor_start_");
+        createBranch(header, destructBlock);
+
+        Command loadObject = new Command(
+                createTempVariable(new PointerType(commonArray)),
+                LOAD,
+                List.of(thisValue)
+        );
+        function.getCurrentBlock().addCommand(loadObject);
+
+        Command readSize = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(loadObject.getResult(), new IntValue(2))
+        );
+        function.getCurrentBlock().addCommand(readSize);
+
+        Command loadSize = new Command(
+                createTempVariable(INT_32),
+                LOAD,
+                List.of(readSize.getResult())
+        );
+        function.getCurrentBlock().addCommand(loadSize);
+
+        Command castForAdd = new Command(
+                createTempVariable(INT_64),
+                PTRTOINT,
+                List.of(loadObject.getResult())
+        );
+        function.getCurrentBlock().addCommand(castForAdd);
+
+        Command withHeaderAccess = new Command(
+                createTempVariable(INT_64),
+                ADD,
+                List.of(castForAdd.getResult(), new IntValue(commonArray.getSize()))
+        );
+        function.getCurrentBlock().addCommand(withHeaderAccess);
+
+        VariableValue iterator = new VariableValue("$alloc_iterator_" + ARRAY_SIZE_COUNT, INT_32);
+
+        ARRAY_SIZE_COUNT++;
+        Command allocIterator = new Command(
+                iterator,
+                ALLOC,
+                List.of()
+        );
+        function.getCurrentBlock().addCommand(allocIterator);
+
+        Command allocIteratorXor = new Command(
+                iterator,
+                STORE,
+                List.of(new IntValue(0))
+        );
+        function.getCurrentBlock().addCommand(allocIteratorXor);
+
+        BasicBlock prev = function.getCurrentBlock();
+        BasicBlock whileCond = function.appendBlock("array_destructor_cond");
+        createBranch(prev, whileCond);
+
+        Command castReverse = new Command(
+                createTempVariable(new PointerType(new PointerType(commonArray))),
+                INTTOPTR,
+                List.of(withHeaderAccess.getResult())
+        );
+        function.getCurrentBlock().addCommand(castReverse);
+
+        Command readIter = new Command(
+                createTempVariable(INT_32),
+                LOAD,
+                List.of(iterator)
+        );
+        function.getCurrentBlock().addCommand(readIter);
+
+        Command cond = new Command(
+                createTempVariable(INT_1),
+                LT,
+                List.of(readIter.getResult(), loadSize.getResult())
+        );
+        function.getCurrentBlock().addCommand(cond);
+
+        BasicBlock whileBody = function.appendBlock("array_destructor_body_1");
+
+        Command arrayRead = new Command(
+                createTempVariable(new PointerType(commonArray)),
+                ARRAY_ACCESS,
+                List.of(castReverse.getResult(), readIter.getResult()));
+        function.getCurrentBlock().addCommand(arrayRead);
+
+        Command load = new Command(
+                createTempVariable(new PointerType(commonArray)),
+                LOAD,
+                List.of(arrayRead.getResult())
+        );
+
+        function.getCurrentBlock().addCommand(load);
+
+        addDestructorCall(function, type, load.getResult());
+        Command addIter = new Command(
+                createTempVariable(INT_32),
+                ADD,
+                List.of(readIter.getResult(), new IntValue(1))
+        );
+        function.getCurrentBlock().addCommand(addIter);
+
+        Command storeIter = new Command(
+                iterator,
+                STORE,
+                List.of(addIter.getResult())
+        );
+        function.getCurrentBlock().addCommand(storeIter);
+
+        BasicBlock whileMerge = function.appendBlock("array_destructor_merge_1");
+        createBranch(whileBody, whileCond);
+        createConditionalBranch(whileCond, cond.getResult(), whileBody, whileMerge);
+
 
         Command castCommand = new Command(
                 createTempVariable(new PointerType(INT_32)),
@@ -485,13 +702,7 @@ public class Translator {
 
         createBranch(function.getCurrentBlock(), returnBlock);
 
-        createConditionalBranch(ifCond, condition2.getResult(), ifBody, returnBlock);
-
-        createConditionalBranch(entry, condition1.getResult(), nullBody, returnBlock);
-
         TEMP_VARIABLE_COUNT = 0;
-
-        variables.put(name, function);
     }
 
     private void translateDestructorDeclaration(ClassStatementNode classStatementNode) {
@@ -503,7 +714,7 @@ public class Translator {
     }
 
     private void translateDestructorDefinition(ClassStatementNode classStatementNode) {
-        String name = "$_destructor_" + DESTRUCTOR_COUNT++;
+        assert classStatementNode != null;
 
         Function function =
                 destructors.get(
@@ -512,13 +723,15 @@ public class Translator {
         BasicBlock header = function.appendBlock("header");
         List<Type> parameterTypes = new ArrayList<>();
 
-        Type type = matchType(new ObjectTypeNode(classStatementNode.getIdentifierNode()));
+        Type type = new PointerType(INT_32);
         parameterTypes.add(type);
 
         String thisName = "$$_this_value_" + THIS_COUNT++;
+        Type targetType = matchType(new ObjectTypeNode(classStatementNode.getIdentifierNode()));
+
         VariableValue thisValue = new VariableValue(
                 thisName,
-                type
+                targetType
         );
         variables.put(thisName, thisValue);
 
@@ -531,12 +744,19 @@ public class Translator {
 
         header.addCommand(alloc);
 
+        Value temp = createTempVariable(type);
+        Command castToArray = new Command(
+                createTempVariable(targetType),
+                CAST,
+                List.of(temp)
+        );
+        header.addCommand(castToArray);
+
         Command command = new Command(
                 thisValue,
                 STORE,
-                List.of(createTempVariable(type))
+                List.of(castToArray.getResult())
         );
-
         header.addCommand(command);
 
         BasicBlock returnBlock = function.appendBlock("return");
@@ -550,69 +770,13 @@ public class Translator {
         BasicBlock entry = function.appendBlock("check_null_entry");
         createBranch(header, entry);
 
-        Command nullLoadObject = new Command(
-                createTempVariable(type),
-                LOAD,
-                List.of(thisValue)
-        );
-        entry.addCommand(nullLoadObject);
-
-        Command condition1 = new Command(
-                createTempVariable(INT_1),
-                NE,
-                List.of(nullLoadObject.getResult(), new NullValue(thisValue.getType()))
-        );
-        entry.addCommand(condition1);
-
-        BasicBlock nullBody = function.appendBlock("check_null_body");
-
         Command loadObject = new Command(
-                createTempVariable(type),
+                createTempVariable(targetType),
                 LOAD,
                 List.of(thisValue)
         );
-        nullBody.addCommand(loadObject);
+        function.getCurrentBlock().addCommand(loadObject);
 
-        Command countAccess = new Command(
-                createTempVariable(INT_32),
-                FIELD_ACCESS,
-                List.of(loadObject.getResult(), new IntValue(0))
-        );
-        nullBody.addCommand(countAccess);
-
-        Command loadCount = new Command(
-                createTempVariable(INT_32),
-                LOAD,
-                List.of(countAccess.getResult(), new IntValue(0))
-        );
-        nullBody.addCommand(loadCount);
-
-        Command decCount = new Command(
-                createTempVariable(INT_32),
-                SUB,
-                List.of(loadCount.getResult(), new IntValue(1))
-        );
-        nullBody.addCommand(decCount);
-
-        Command storeCount = new Command(
-                countAccess.getResult(),
-                STORE,
-                List.of(decCount.getResult())
-        );
-        nullBody.addCommand(storeCount);
-
-        BasicBlock ifCond = function.appendBlock("destructor_if_cond");
-        createBranch(nullBody, ifCond);
-
-        Command condition2 = new Command(
-                createTempVariable(INT_1),
-                LE,
-                List.of(decCount.getResult(), new IntValue(0))
-        );
-
-        ifCond.addCommand(condition2);
-
-        BasicBlock ifBody = function.appendBlock("destructor_if_body");
         BasicBlock prev = function.getCurrentBlock();
         BasicBlock destructBlock = function.appendBlock("end_function_destructor");
         createBranch(prev, destructBlock);
@@ -636,17 +800,10 @@ public class Translator {
                     }
                 }
 
-                Command structLoad = new Command(
-                        createTempVariable(type),
-                        LOAD,
-                        List.of(thisValue)
-                );
-                deleteFieldIfCond.addCommand(structLoad);
-
                 Command fieldAccess = new Command(
                         createTempVariable(allocated.getType()),
                         FIELD_ACCESS,
-                        List.of(structLoad.getResult(), new IntValue(index)));
+                        List.of(loadObject.getResult(), new IntValue(index)));
                 deleteFieldIfCond.addCommand(fieldAccess);
 
                 Command forDelete = new Command(
@@ -656,38 +813,33 @@ public class Translator {
                 );
                 deleteFieldIfCond.addCommand(forDelete);
 
-                if (allocated.getType().getType() instanceof StructType) {
-                    addDestructorCall(function, (PointerType) forDelete.getResult().getType(), forDelete.getResult());
-                } else {
-                    addArrayDestructorCall(function, (PointerType) forDelete.getResult().getType(), forDelete.getResult());
-                }
+                addDestructorCall(function, (PointerType) forDelete.getResult().getType(), forDelete.getResult());
             }
         }
 
+        Command fieldAccess = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(loadObject.getResult(), new IntValue(1)));
+        function.getCurrentBlock().addCommand(fieldAccess);
 
-        Command castCommand = new Command(
-                createTempVariable(new PointerType(INT_32)),
-                CAST,
-                List.of(loadObject.getResult())
+        Command forDelete = new Command(
+                fieldAccess.getResult(),
+                STORE,
+                List.of(new IntValue((int) structType.getStructId()))
         );
-        function.getCurrentBlock().addCommand(castCommand);
+        function.getCurrentBlock().addCommand(forDelete);
 
         Command freeCommand = new Command(
                 null,
                 STRUCT_FREE,
-                List.of(castCommand.getResult())
+                List.of(temp)
         );
         function.getCurrentBlock().addCommand(freeCommand);
 
         createBranch(function.getCurrentBlock(), returnBlock);
 
-        createConditionalBranch(ifCond, condition2.getResult(), ifBody, returnBlock);
-
-        createConditionalBranch(entry, condition1.getResult(), nullBody, returnBlock);
-
         TEMP_VARIABLE_COUNT = 0;
-
-        variables.put(name, function);
     }
 
 
@@ -729,6 +881,7 @@ public class Translator {
 
             header.addCommand(command);
         }
+        currentDestructors.put(functionDefinitionNode, new ArrayList<>());
 
         for (ParameterNode n : functionDefinitionNode
                 .getFunctionNode()
@@ -749,7 +902,7 @@ public class Translator {
             );
 
             if (thisName == null || !variableValue.getName().equals(thisName)) {
-                currentDestructors.computeIfAbsent(functionDefinitionNode, k -> new ArrayList<>()).add(variableValue);
+                currentDestructors.get(functionDefinitionNode).add(variableValue);
             }
 
             header.addCommand(alloc);
@@ -923,13 +1076,8 @@ public class Translator {
                 );
                 function.getCurrentBlock().addCommand(forDelete);
 
-                if (forDelete.getResult().getType().getType() instanceof StructType) {
-                    addDestructorCall(function, (PointerType)
-                            forDelete.getResult().getType(), forDelete.getResult());
-                } else {
-                    addArrayDestructorCall(function, (PointerType)
-                            forDelete.getResult().getType(), forDelete.getResult());
-                }
+                addDestructorCall(function, (PointerType)
+                        forDelete.getResult().getType(), forDelete.getResult());
             }
         }
     }
@@ -1145,6 +1293,8 @@ public class Translator {
     }
 
     private void translateCompound(Function function, CompoundStatementNode node) {
+        currentDestructors.put(node, new ArrayList<>());
+
         node.getStatements().forEach(n -> translateStatement(function, n));
 
         addDestructorsList(function, currentDestructors.getOrDefault(node, new ArrayList<>()));
@@ -1334,24 +1484,31 @@ public class Translator {
                                           Value fieldAccess,
                                           PointerType pointerType) {
         BasicBlock last = function.getCurrentBlock();
-        BasicBlock ifCond = function.appendBlock("check_temp_cond");
+        BasicBlock ifCond = function.appendBlock("check_temp_cond_null");
         createBranch(last, ifCond);
+
+        Command castToCommonStruct = new Command(
+                createTempVariable(new PointerType(commonStruct)),
+                CAST,
+                List.of(fieldAccess)
+        );
+        function.getCurrentBlock().addCommand(castToCommonStruct);
 
         Command condition = new Command(
                 createTempVariable(INT_1),
                 NE,
-                List.of(fieldAccess, new NullValue(pointerType.getType()))
+                List.of(castToCommonStruct.getResult(), new NullValue(pointerType.getType()))
         );
 
         function.getCurrentBlock().addCommand(condition);
         last = function.getCurrentBlock();
 
-        BasicBlock nextCond = function.appendBlock("check_temp_cond");
+        BasicBlock nextCond = function.appendBlock("check_temp_cond_count");
 
         Command counter = new Command(
                 createTempVariable(INT_32),
                 FIELD_ACCESS,
-                List.of(fieldAccess, new IntValue(0)));
+                List.of(castToCommonStruct.getResult(), new IntValue(0)));
         function.getCurrentBlock().addCommand(counter);
 
         Command loadCount = new Command(
@@ -1368,13 +1525,8 @@ public class Translator {
         );
         function.getCurrentBlock().addCommand(condition2);
 
-
         BasicBlock nextBody = function.appendBlock("check_temp_body");
-        if (fieldAccess.getType().getType() instanceof StructType) {
-            addDestructorCall(function, (PointerType) fieldAccess.getType(), fieldAccess);
-        } else {
-            addArrayDestructorCall(function, (PointerType) fieldAccess.getType(), fieldAccess);
-        }
+        addDestructorCall(function, (PointerType) fieldAccess.getType(), castToCommonStruct.getResult());
 
         BasicBlock ifMerge = function.appendBlock("check_temp_merge");
 
@@ -1400,7 +1552,7 @@ public class Translator {
         function.getCurrentBlock().addCommand(condition);
 
         Command castToArray = new Command(
-                createTempVariable(new PointerType(commonArray)),
+                createTempVariable(new PointerType(commonStruct)),
                 CAST,
                 List.of(fieldAccess)
         );
@@ -1471,53 +1623,17 @@ public class Translator {
 
 
     private void addDestructorCall(Function function, PointerType pointerType, Value value) {
-        String nameDestructor = classes.entrySet().stream()
-                .filter(e -> e.getValue().equals(pointerType.getType()))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
-
-        if (nameDestructor == null) {
-            return;
-        }
-
-        Command destructorCall = new Command(
-                null,
-                CALL,
-                List.of(destructors.get(
-                        structToDestructors.get(
-                                nameDestructor
-                        )), value)
-        );
-        function.getCurrentBlock().addCommand(destructorCall);
-    }
-
-    private void addArrayDestructorCall(Function function, PointerType internalType, Value value) {
-        Type pointerType = internalType.getType() instanceof PointerType &&
-                !(internalType.getType().getType() instanceof StructType)
-                ? new PointerType(commonArray)
-                : internalType.getType().getType();
-
-        String nameDestructor = classes.entrySet().stream()
-                .filter(e -> e.getValue().equals(pointerType.getType()))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
-
-        Command castToCommonArray = new Command(
-                createTempVariable(new PointerType(commonArray)),
+        Command castTo32 = new Command(
+                createTempVariable(new PointerType(INT_32)),
                 CAST,
                 List.of(value)
         );
-        function.getCurrentBlock().addCommand(castToCommonArray);
+        function.getCurrentBlock().addCommand(castTo32);
 
         Command destructorCall = new Command(
                 null,
                 CALL,
-                List.of(destructors.get(
-                        structToDestructors.get(
-                                ARRAY_PREFIX + nameDestructor
-                        )), castToCommonArray.getResult())
+                List.of(commonDestructor, castTo32.getResult())
         );
         function.getCurrentBlock().addCommand(destructorCall);
     }
@@ -1543,7 +1659,9 @@ public class Translator {
                 List.of()
         );
 
-        currentDestructors.computeIfAbsent(node.getScope().getOwner(), k -> new ArrayList<>()).add(variableValue);
+        new ArrayList<>(currentDestructors.values())
+                .get(currentDestructors.size() - 1)
+                .add(variableValue);
 
         function.getCurrentBlock().addCommand(alloc);
 
@@ -1639,8 +1757,15 @@ public class Translator {
             function.getCurrentBlock().addCommand(storeReturn);
         }
 
-        addDestructorsList(function, currentDestructors.getOrDefault(node.getScope().getOwner(), new ArrayList<>()));
-        currentDestructors.remove(node.getScope().getOwner());
+        Map.Entry<AstNode, List<VariableValue>> entry = new ArrayList<>(currentDestructors.entrySet())
+                .get(currentDestructors.size() - 1);
+        addDestructorsList(function,
+                currentDestructors.values()
+                        .stream()
+                        .skip(1)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList()));
+        currentDestructors.remove(entry.getKey());
 
 
         createBranch(function.getCurrentBlock(), function.getReturnBlock());
@@ -2224,7 +2349,7 @@ public class Translator {
                 Command typeStore = new Command(
                         typeAccess.getResult(),
                         STORE,
-                        List.of(new IntValue(241))
+                        List.of(new IntValue(type.getType() instanceof PointerType ? 1 : 0))
                 );
                 function.getCurrentBlock().addCommand(typeStore);
             }
@@ -2774,11 +2899,7 @@ public class Translator {
         }
 
         if (mt instanceof PointerType) {
-            if (mt.getType() instanceof StructType) {
-                addDestructorCall(function, (PointerType) saveLeft.getType(), saveLeft);
-            } else {
-                addArrayDestructorCall(function, (PointerType) saveLeft.getType(), saveLeft);
-            }
+            addDestructorCall(function, (PointerType) saveLeft.getType(), saveLeft);
         }
 
         return command.getResult();

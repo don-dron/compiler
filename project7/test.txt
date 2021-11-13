@@ -1,17 +1,25 @@
 
 class A
-    int x
-    int y
+    int b
 
-    (int x, int y) ->
-        this.x = x
-        this.y = y
+    (int c) ->
+        this.b = c
 
 () int main ->
-    A[] t = new A[3]
-    t[0] = new A(0,0)
-    t[1] = new A(0,1)
-    t[2] = new A(1,0)
+    // int[] a = new int[4]
+    // int[][] b = new int[4][5]
+    // int[][][] c = new int[4][5][9]
+    // int[][][][] d = new int[2][4][5][9]
+
+    A[] a = new A[4]
+    A[][] b = new A[4][5]
+    A[][][] c = new A[4][5][9]
+    A[][][][] d = new A[2][4][5][9]
+
+    a[0] = new A(0)
+    b[0][0] = new A(0)
+    c[0][0][0] = new A(0)
+    d[0][0][0][0] = new A(0)
 
     return 0
 

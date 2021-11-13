@@ -5,15 +5,21 @@ import java.util.List;
 public class StructType extends Type {
     private final String name;
     private final List<VariableValue> values;
+    private final long structId;
 
-    public StructType(String name, List<VariableValue> values) {
+    public StructType(String name, List<VariableValue> values, long structId) {
         this.values = values;
         this.name = name;
+        this.structId = structId;
     }
 
     @Override
     public String toLLVM() {
         return "%struct." + name;
+    }
+
+    public long getStructId() {
+        return structId;
     }
 
     @Override

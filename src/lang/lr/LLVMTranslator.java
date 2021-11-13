@@ -1,7 +1,7 @@
 package lang.lr;
 
-import lang.ir.*;
 import lang.ir.Module;
+import lang.ir.*;
 
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -26,6 +26,12 @@ public class LLVMTranslator {
                 .collect(Collectors.joining("\n"))
         );
         builder.append("\n");
+        builder.append(module.getGlobalVars()
+                .stream()
+                .map(this::translateGlobalVar)
+                .collect(Collectors.joining("\n"))
+        );
+        builder.append("\n");
         builder.append(module.getLiterals()
                 .stream()
                 .map(this::translateLiteral)
@@ -39,6 +45,18 @@ public class LLVMTranslator {
                 .collect(Collectors.joining("\n")));
 
         return builder.toString();
+    }
+
+    private String translateGlobalVar(VariableValue value) {
+        if (value.getType() instanceof DestructorsArrayType) {
+            return "@" + value.getName() + " = global " + value.getType().toLLVM()
+                    + "[" + ((DestructorsArrayType) value.getType())
+                    .getValues()
+                    .stream()
+                    .map(v -> "void (i32*)* @" + v.getName())
+                    .collect(Collectors.joining(",")) + "]";
+        }
+        return "@" + value.getName() + " = global " + value.getType().toLLVM();
     }
 
     private String translateStruct(StructType structType) {
@@ -101,7 +119,7 @@ public class LLVMTranslator {
     }
 
     private String translateLiteral(StringValue stringValue) {
-        return  stringValue.getName() + " = private unnamed_addr constant "
+        return stringValue.getName() + " = private unnamed_addr constant "
                 + "[" + (stringValue.getValue().length()) + " x i8" + "] c"
                 + "\"" + stringValue.getValue() + "\"";
     }

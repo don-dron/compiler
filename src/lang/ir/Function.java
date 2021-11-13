@@ -3,7 +3,7 @@ package lang.ir;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Function implements Value {
+public class Function extends Type implements Value {
     private final List<BasicBlock> blocks;
     private final String name;
     private final boolean systemFunction;
@@ -74,6 +74,10 @@ public class Function implements Value {
 
     public Type getType() {
         return resultType;
+    }
+
+    public FunctionType getFunctionType() {
+        return new FunctionType(resultType, parameterTypes);
     }
 
     public void setThisValue(VariableValue thisValue) {

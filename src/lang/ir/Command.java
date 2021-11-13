@@ -124,16 +124,28 @@ public class Command implements Value {
                     parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
         } else if (operation == ARRAY_ACCESS) {
             return result.toLLVM() + " = getelementptr inbounds " +
-                    ((PointerType) parameters.get(0).getType()).getType().toLLVM() + " , "
+                    (parameters.get(0).getType()).getType().toLLVM()
+
+                    + " , "
                     + parameters.get(0).getType().toLLVM() + " " + parameters.get(0).toLLVM() + " , " +
                     parameters.get(1).getType().toLLVM() + " " + parameters.get(1).toLLVM();
         } else if (operation == CALL) {
-            Function function = (Function) parameters.get(0);
-            return (result == null ? "" : (result.toLLVM() + " = ")) + "call " +
-                    (function.getType() == Type.VOID ? "void" : function.getType().toLLVM())
-                    + " @" + parameters.get(0).toLLVM() + "(" +
-                    parameters.stream().skip(1).map(p -> p.getType().toLLVM() + " "
-                            + p.toLLVM()).collect(Collectors.joining(",")) + ")";
+            if (parameters.get(0) instanceof Function) {
+                Function function = (Function) parameters.get(0);
+                return (result == null ? "" : (result.toLLVM() + " = ")) + "call " +
+                        (function.getType() == Type.VOID ? "void" : function.getType().toLLVM())
+                        + " @" + parameters.get(0).toLLVM() + "(" +
+                        parameters.stream().skip(1).map(p -> p.getType().toLLVM() + " "
+                                + p.toLLVM()).collect(Collectors.joining(",")) + ")";
+            } else {
+                FunctionType functionType = (FunctionType)parameters.get(0).getType().getType();
+                return (result == null ? "" : (result.toLLVM() + " = ")) + "call " +
+                        (functionType.getResultType() == Type.VOID
+                                ? "void" : functionType.getResultType().toLLVM())+ " " +
+                        parameters.get(0).toLLVM() + "(" +
+                        parameters.stream().skip(1).map(p -> p.getType().toLLVM() + " "
+                                + p.toLLVM()).collect(Collectors.joining(",")) + ")";
+            }
         } else if (operation == CAST) {
             return result.toLLVM() + " = bitcast " + parameters.get(0).getType().toLLVM() + " " +
                     parameters.get(0).toLLVM() + " to " + result.getType().toLLVM();
