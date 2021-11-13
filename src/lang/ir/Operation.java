@@ -1,6 +1,6 @@
 package lang.ir;
 
-public enum  Operation {
+public enum Operation {
     ALLOC("alloc"),
 
     STORE("store"),
@@ -36,12 +36,14 @@ public enum  Operation {
     CAST("<- cast"),
     TRUNC("<- trunc"),
     SEXT("<- sext"),
+    INTTOPTR("<- inttoptr"),
+    PTRTOINT("<- ptrtoint"),
 
     STORE_TO_POINTER("<- store_ptr");
 
     private final String print;
 
-    Operation(String  print) {
+    Operation(String print) {
         this.print = print;
     }
 

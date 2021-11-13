@@ -1,0 +1,20 @@
+
+class A
+    int b
+
+    (int c) ->
+        this.b = c
+
+() int main ->
+    A[] a = new A[4]
+
+    if a != null
+        if a[0] != null
+            return 1
+        else
+            a[0] = new A(0)
+
+        return 2
+
+    return 0
+

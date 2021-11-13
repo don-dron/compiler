@@ -19,7 +19,7 @@ public class Optimizer {
     }
 
     private void optimizeFunction(Function function) {
-//        removeEmptyBlocks(function);
+        removeEmptyBlocks(function);
     }
 
     private void removeEmptyBlocks(Function function) {
@@ -40,6 +40,7 @@ public class Optimizer {
                         b.getOutput().remove(e);
                         Branch emptyBranch = ((Branch) branch.getTarget().getTerminator());
                         b.setTerminator(emptyBranch);
+                        b.getOutput().add(emptyBranch.getTarget());
                     }
                 } else if (terminator instanceof ConditionalBranch) {
                     ConditionalBranch conditionalBranch = (ConditionalBranch) terminator;
