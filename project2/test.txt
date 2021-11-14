@@ -53,9 +53,6 @@
     int l1 = s1.getLength()
     int l2 = s2.getLength()
 
-    println(toString(l1))
-    println(toString(l2))
-
     char[] buff = new char[l1 + l2]
 
     char[] b1 = s1.getBytes()
@@ -102,13 +99,7 @@ class String
     println(str2)
 
     String cnct = concat(str1, str2)
-    println(null)
-    println(toString(str1.getLength()))
-    println(toString(str2.length))
-    println(toString(cnct.length))
     println(cnct)
-
-    str1.bytes = null
 
     return 0
 
