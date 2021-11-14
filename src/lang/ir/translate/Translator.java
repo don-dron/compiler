@@ -13,6 +13,7 @@ import lang.ast.statement.*;
 import lang.ir.Module;
 import lang.ir.*;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -247,7 +248,7 @@ public class Translator {
         StructType structType = new StructType(
                 cl.getIdentifierNode().getName(),
                 values,
-                STRUCT_ID_COUNTER++);
+                ++STRUCT_ID_COUNTER);
 
         classes.put(cl.getIdentifierNode().getName(), structType);
     }
@@ -324,120 +325,157 @@ public class Translator {
         BasicBlock entry = function.appendBlock("check_null_entry");
         createBranch(header, entry);
 
-        Command nullLoadObject = new Command(
-                createTempVariable(targetType),
-                LOAD,
-                List.of(thisValue)
-        );
-        entry.addCommand(nullLoadObject);
+        {
+            Command nullLoadObject = new Command(
+                    createTempVariable(targetType),
+                    LOAD,
+                    List.of(thisValue)
+            );
+            entry.addCommand(nullLoadObject);
 
-        Command condition1 = new Command(
-                createTempVariable(INT_1),
-                NE,
-                List.of(nullLoadObject.getResult(), new NullValue(thisValue.getType()))
-        );
-        entry.addCommand(condition1);
+            Command condition1 = new Command(
+                    createTempVariable(INT_1),
+                    NE,
+                    List.of(nullLoadObject.getResult(), new NullValue(thisValue.getType()))
+            );
+            entry.addCommand(condition1);
 
-        BasicBlock nullBody = function.appendBlock("check_null_body");
+            BasicBlock deletableCond = function.appendBlock("check_deletable_Cond");
 
-        Command loadObject = new Command(
-                createTempVariable(targetType),
-                LOAD,
-                List.of(thisValue)
-        );
-        nullBody.addCommand(loadObject);
+            Command isDeletable = new Command(
+                    createTempVariable(INT_32),
+                    FIELD_ACCESS,
+                    List.of(nullLoadObject.getResult(), new IntValue(1))
+            );
+            function.getCurrentBlock().addCommand(isDeletable);
 
-        Command countAccess = new Command(
-                createTempVariable(INT_32),
-                FIELD_ACCESS,
-                List.of(loadObject.getResult(), new IntValue(0))
-        );
-        nullBody.addCommand(countAccess);
+            Command isDeletableLoad = new Command(
+                    createTempVariable(INT_32),
+                    LOAD,
+                    List.of(isDeletable.getResult())
+            );
+            function.getCurrentBlock().addCommand(isDeletableLoad);
 
-        Command loadCount = new Command(
-                createTempVariable(INT_32),
-                LOAD,
-                List.of(countAccess.getResult())
-        );
-        nullBody.addCommand(loadCount);
+            Command condition3 = new Command(
+                    createTempVariable(INT_1),
+                    NE,
+                    List.of(isDeletableLoad.getResult(), new IntValue(0))
+            );
+            function.getCurrentBlock().addCommand(condition3);
 
-        Command decCount = new Command(
-                createTempVariable(INT_32),
-                SUB,
-                List.of(loadCount.getResult(), new IntValue(1))
-        );
-        nullBody.addCommand(decCount);
+            {
+                BasicBlock nullBody = function.appendBlock("check_null_body");
 
-        Command storeCount = new Command(
-                countAccess.getResult(),
-                STORE,
-                List.of(decCount.getResult())
-        );
-        nullBody.addCommand(storeCount);
+                {
+                    Command loadObject = new Command(
+                            createTempVariable(targetType),
+                            LOAD,
+                            List.of(thisValue)
+                    );
+                    nullBody.addCommand(loadObject);
 
-        BasicBlock ifCond = function.appendBlock("destructor_if_cond");
-        createBranch(nullBody, ifCond);
+                    Command countAccess = new Command(
+                            createTempVariable(INT_32),
+                            FIELD_ACCESS,
+                            List.of(loadObject.getResult(), new IntValue(0))
+                    );
+                    nullBody.addCommand(countAccess);
 
-        Command condition2 = new Command(
-                createTempVariable(INT_1),
-                LE,
-                List.of(decCount.getResult(), new IntValue(0))
-        );
+                    Command loadCount = new Command(
+                            createTempVariable(INT_32),
+                            LOAD,
+                            List.of(countAccess.getResult())
+                    );
+                    nullBody.addCommand(loadCount);
 
-        ifCond.addCommand(condition2);
+                    Command decCount = new Command(
+                            createTempVariable(INT_32),
+                            SUB,
+                            List.of(loadCount.getResult(), new IntValue(1))
+                    );
+                    nullBody.addCommand(decCount);
 
-        BasicBlock ifBody = function.appendBlock("destructor_if_body");
-        BasicBlock prev = function.getCurrentBlock();
-        BasicBlock destructBlock = function.appendBlock("end_function_destructor");
-        createBranch(prev, destructBlock);
+                    Command storeCount = new Command(
+                            countAccess.getResult(),
+                            STORE,
+                            List.of(decCount.getResult())
+                    );
+                    nullBody.addCommand(storeCount);
 
-        Command loadStructId = new Command(
-                createTempVariable(INT_32),
-                FIELD_ACCESS,
-                List.of(loadObject.getResult(), new IntValue(1))
-        );
-        function.getCurrentBlock().addCommand(loadStructId);
+                    BasicBlock ifCond = function.appendBlock("destructor_if_cond");
+                    createBranch(nullBody, ifCond);
 
-        Command structIdLoad = new Command(
-                createTempVariable(INT_32),
-                LOAD,
-                List.of(loadStructId.getResult())
-        );
-        function.getCurrentBlock().addCommand(structIdLoad);
+                    Command condition2 = new Command(
+                            createTempVariable(INT_1),
+                            LE,
+                            List.of(decCount.getResult(), new IntValue(0))
+                    );
+
+                    ifCond.addCommand(condition2);
+
+                    BasicBlock ifBody = function.appendBlock("destructor_if_body");
+                    BasicBlock prev = function.getCurrentBlock();
+                    BasicBlock destructBlock = function.appendBlock("end_function_destructor");
+                    createBranch(prev, destructBlock);
+
+                    Command loadStructId = new Command(
+                            createTempVariable(INT_32),
+                            FIELD_ACCESS,
+                            List.of(loadObject.getResult(), new IntValue(1))
+                    );
+                    function.getCurrentBlock().addCommand(loadStructId);
+
+                    Command structIdLoad = new Command(
+                            createTempVariable(INT_32),
+                            LOAD,
+                            List.of(loadStructId.getResult())
+                    );
+                    function.getCurrentBlock().addCommand(structIdLoad);
+
+                    Command structMinus = new Command(
+                            createTempVariable(INT_32),
+                            SUB,
+                            List.of(structIdLoad.getResult(), new IntValue(1))
+                    );
+                    function.getCurrentBlock().addCommand(structMinus);
+
+                    Command accessFunction = new Command(
+                            createTempVariable(new PointerType(destructorTemplate.getFunctionType())),
+                            FIELD_ACCESS,
+                            List.of(new VariableValue(
+                                    destructorsArray.getName(),
+                                    new PointerType(destructorsArray.getType()),
+                                    destructorsArray.isGlobal()
+                            ), structMinus.getResult())
+                    );
+                    function.getCurrentBlock().addCommand(accessFunction);
 
 
-        Command accessFunction = new Command(
-                createTempVariable(new PointerType(destructorTemplate.getFunctionType())),
-                FIELD_ACCESS,
-                List.of(new VariableValue(
-                        destructorsArray.getName(),
-                        new PointerType(destructorsArray.getType()),
-                        destructorsArray.isGlobal()
-                ), structIdLoad.getResult())
-        );
-        function.getCurrentBlock().addCommand(accessFunction);
+                    Command loadFunction = new Command(
+                            createTempVariable(new PointerType(destructorTemplate.getFunctionType())),
+                            LOAD,
+                            List.of(accessFunction.getResult())
+                    );
+                    function.getCurrentBlock().addCommand(loadFunction);
 
 
-        Command loadFunction = new Command(
-                createTempVariable(new PointerType(destructorTemplate.getFunctionType())),
-                LOAD,
-                List.of(accessFunction.getResult())
-        );
-        function.getCurrentBlock().addCommand(loadFunction);
+                    Command copyCall = new Command(
+                            null,
+                            CALL,
+                            List.of(loadFunction.getResult(), temp)
+                    );
+                    function.getCurrentBlock().addCommand(copyCall);
 
+                    createConditionalBranch(ifCond, condition2.getResult(), ifBody, returnBlock);
+                }
 
-        Command copyCall = new Command(
-                null,
-                CALL,
-                List.of(loadFunction.getResult(), temp)
-        );
-        function.getCurrentBlock().addCommand(copyCall);
+                createConditionalBranch(deletableCond, condition3.getResult(), nullBody, returnBlock);
+            }
+
+            createConditionalBranch(entry, condition1.getResult(), deletableCond, returnBlock);
+        }
 
         createBranch(function.getCurrentBlock(), returnBlock);
-
-        createConditionalBranch(ifCond, condition2.getResult(), ifBody, returnBlock);
-
-        createConditionalBranch(entry, condition1.getResult(), nullBody, returnBlock);
 
         TEMP_VARIABLE_COUNT = 0;
     }
@@ -817,18 +855,6 @@ public class Translator {
             }
         }
 
-        Command fieldAccess = new Command(
-                createTempVariable(INT_32),
-                FIELD_ACCESS,
-                List.of(loadObject.getResult(), new IntValue(1)));
-        function.getCurrentBlock().addCommand(fieldAccess);
-
-        Command forDelete = new Command(
-                fieldAccess.getResult(),
-                STORE,
-                List.of(new IntValue((int) structType.getStructId()))
-        );
-        function.getCurrentBlock().addCommand(forDelete);
 
         Command freeCommand = new Command(
                 null,
@@ -1010,6 +1036,19 @@ public class Translator {
                         function.getCurrentBlock().addCommand(writeCommand);
                     }
                 }
+
+                Command fieldAccess = new Command(
+                        createTempVariable(INT_32),
+                        FIELD_ACCESS,
+                        List.of(castCommand.getResult(), new IntValue(1)));
+                function.getCurrentBlock().addCommand(fieldAccess);
+
+                Command forDelete = new Command(
+                        fieldAccess.getResult(),
+                        STORE,
+                        List.of(new IntValue((int) structType.getStructId()))
+                );
+                function.getCurrentBlock().addCommand(forDelete);
             }
 
             returnBlock = function.appendBlock("return");
@@ -1082,10 +1121,12 @@ public class Translator {
         }
     }
 
-    public static String graphVizDebug(Function functionBlock) {
+    public static String graphVizDebug(Function functionBlock, Integer clusterId) {
         StringBuilder s = new StringBuilder();
+
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
-            String body = basicBlock.getName() + ":\n" +
+            String body = basicBlock.getName()
+                    + ":\n" +
                     basicBlock.getCommands()
                             .stream()
                             .map(Objects::toString)
@@ -1103,9 +1144,21 @@ public class Translator {
                     .append("];\n");
         }
 
+        s
+                .append("\n")
+                .append("\tsubgraph")
+                .append(" ")
+                .append("cluster_" + (clusterId == null ? 0 : clusterId))
+                .append(" ")
+                .append("{\n")
+                .append("\t\tstyle=filled;\n")
+                .append("\t\tcolor=lightgrey;\n")
+                .append("\t\tnode [style=filled,color=white];\n")
+                .append("\t\tlabel = \"" + functionBlock.getName() + "\";\n");
+
         for (BasicBlock basicBlock : functionBlock.getBlocks()) {
             for (BasicBlock other : basicBlock.getOutput()) {
-                s.append("\"")
+                s.append("\t\t\"")
                         .append(basicBlock.getName())
                         .append("\"")
                         .append(" -> ")
@@ -1114,6 +1167,8 @@ public class Translator {
                         .append("\";\n");
             }
         }
+
+        s.append("\t}");
 
         return s.toString();
     }
@@ -1441,8 +1496,34 @@ public class Translator {
                 NE,
                 List.of(fieldAccess, new NullValue(pointerType.getType()))
         );
-
         ifCond.addCommand(condition);
+
+        Command type = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(fieldAccess, new IntValue(1)));
+        function.getCurrentBlock().addCommand(type);
+
+        Command loadType = new Command(
+                createTempVariable(INT_32),
+                LOAD,
+                List.of(type.getResult())
+        );
+        function.getCurrentBlock().addCommand(loadType);
+
+        Command condition4 = new Command(
+                createTempVariable(INT_1),
+                NE,
+                List.of(loadType.getResult(), new IntValue(0))
+        );
+        function.getCurrentBlock().addCommand(condition4);
+
+        Command condAll = new Command(
+                createTempVariable(INT_1),
+                AND,
+                List.of(condition.getResult(), condition4.getResult())
+        );
+        function.getCurrentBlock().addCommand(condAll);
 
         BasicBlock ifBody = function.appendBlock("assigment_inc_count_if_body");
 
@@ -1475,9 +1556,7 @@ public class Translator {
 
         BasicBlock ifMerge = function.appendBlock("assigment_inc_count_if_merge");
         createBranch(ifBody, ifMerge);
-
-
-        createConditionalBranch(ifCond, condition.getResult(), ifBody, ifMerge);
+        createConditionalBranch(ifCond, condAll.getResult(), ifBody, ifMerge);
     }
 
     private void translateTempDeadChecker(Function function,
@@ -1578,12 +1657,39 @@ public class Translator {
         );
         function.getCurrentBlock().addCommand(condition2);
 
+        Command type = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(castToArray.getResult(), new IntValue(1)));
+        function.getCurrentBlock().addCommand(type);
+
+        Command loadType = new Command(
+                createTempVariable(INT_32),
+                LOAD,
+                List.of(type.getResult())
+        );
+        function.getCurrentBlock().addCommand(loadType);
+
+        Command condition4 = new Command(
+                createTempVariable(INT_1),
+                NE,
+                List.of(loadType.getResult(), new IntValue(0))
+        );
+        function.getCurrentBlock().addCommand(condition4);
+
         Command condition3 = new Command(
                 createTempVariable(INT_1),
                 AND,
                 List.of(condition.getResult(), condition2.getResult())
         );
         function.getCurrentBlock().addCommand(condition3);
+
+        Command condAll = new Command(
+                createTempVariable(INT_1),
+                AND,
+                List.of(condition3.getResult(), condition4.getResult())
+        );
+        function.getCurrentBlock().addCommand(condAll);
 
         BasicBlock body = function.appendBlock("body");
 
@@ -1618,7 +1724,7 @@ public class Translator {
 
         BasicBlock ifMerge = function.appendBlock("temp_merge");
         createBranch(body, ifMerge);
-        createConditionalBranch(ifCond, condition3.getResult(), body, ifMerge);
+        createConditionalBranch(ifCond, condAll.getResult(), body, ifMerge);
     }
 
 
@@ -1678,9 +1784,12 @@ public class Translator {
                 );
                 function.getCurrentBlock().addCommand(castToCommon);
 
-                if (variableValue.getType() instanceof PointerType) {
-                    translateObjectIncCount(function, castToCommon.getResult(), (PointerType) variableValue.getType());
-                }
+                Command copyCall = new Command(
+                        null,
+                        CALL,
+                        List.of(addInc, castToCommon.getResult())
+                );
+                function.getCurrentBlock().addCommand(copyCall);
             }
         } else {
             if (variableValue.getType() instanceof PointerType) {
@@ -2349,7 +2458,7 @@ public class Translator {
                 Command typeStore = new Command(
                         typeAccess.getResult(),
                         STORE,
-                        List.of(new IntValue(type.getType() instanceof PointerType ? 1 : 0))
+                        List.of(new IntValue(type.getType() instanceof PointerType ? 2 : 1))
                 );
                 function.getCurrentBlock().addCommand(typeStore);
             }
@@ -2626,7 +2735,23 @@ public class Translator {
         BasicBlock current = function.getCurrentBlock();
         current.addCommand(struct);
 
-        StringValue value = new StringValue("@.str" + LITERAL_COUNT++, expressionNode.getValue());
+        String v = expressionNode.getValue();
+        int size = v.getBytes().length + commonArray.getSize();
+        byte s[] = new byte[size];
+
+        for (int i = 0; i < v.getBytes().length; i++) {
+            s[i + commonArray.getSize()] = v.getBytes()[i];
+        }
+
+        byte[] bytes = ByteBuffer.allocate(4).putInt(-1).array();
+
+        s[4] = bytes[0];
+        s[5] = bytes[1];
+        s[6] = bytes[2];
+        s[7] = bytes[3];
+
+        String vn = "\0\0\0\0".repeat(4) + v;
+        StringValue value = new StringValue("@.str" + LITERAL_COUNT++, vn);
         literals.add(value);
 
         Command castStr = new Command(
@@ -2656,9 +2781,31 @@ public class Translator {
                 structSize.getResult(),
                 STORE,
                 List.of(new IntValue(value.getType().getSize())));
+        function.getCurrentBlock().addCommand(storeSize);
 
-        current = function.getCurrentBlock();
-        current.addCommand(storeSize);
+        Command structType = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(castCommand.getResult(), new IntValue(1)));
+        function.getCurrentBlock().addCommand(structType);
+
+        Command structTypeStore = new Command(
+                structType.getResult(),
+                STORE,
+                List.of(new IntValue(1)));
+        function.getCurrentBlock().addCommand(structTypeStore);
+
+        Command structCount = new Command(
+                createTempVariable(INT_32),
+                FIELD_ACCESS,
+                List.of(castCommand.getResult(), new IntValue(0)));
+        function.getCurrentBlock().addCommand(structCount);
+
+        Command structCountStore = new Command(
+                structCount.getResult(),
+                STORE,
+                List.of(new IntValue(0)));
+        function.getCurrentBlock().addCommand(structCountStore);
 
         return castCommand.getResult();
     }

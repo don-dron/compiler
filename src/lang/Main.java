@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -96,9 +97,11 @@ public class Main {
         if (cmd.hasOption(IR_DOT_GRAPH)) {
             String picturePath = Optional.ofNullable(cmd.getOptionValue(IR_DOT_GRAPH)).orElse("ir.dot.dump");
 
+            AtomicInteger clusterId = new AtomicInteger();
+
             String digraphDebug = "digraph G {\n" +
                     module.getFunctions().stream()
-                            .map(Translator::graphVizDebug)
+                            .map(f -> Translator.graphVizDebug(f, clusterId.getAndIncrement()))
                             .collect(Collectors.joining("\n")) + "\n}";
 
             File dotFile = new File(picturePath);

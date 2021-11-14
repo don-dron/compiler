@@ -1,759 +1,3028 @@
 digraph G {
-	"header_26" [style=filled, shape=box, label="header_26:
-($3_c,i32) alloc 
-($3_c,i32) store (%0,i32)
-($$_ret_value_0,%struct.$0_A*) alloc 
-($$_this_value_5,%struct.$0_A*) alloc 
-(%1,i64*) <- struct_allocation i64*,12
-(%2,%struct.$0_A*) <- cast (%1,i64*)
-($$_this_value_5,%struct.$0_A*) store (%2,%struct.$0_A*)
-($$_ret_value_0,%struct.$0_A*) store (%2,%struct.$0_A*)
-(%3,%struct.$0_A*) load ($$_this_value_5,%struct.$0_A*)
-(%4,i32) <- field_access (%3,%struct.$0_A*),0
-(%4,i32) store 0
-(%5,i32) <- field_access (%3,%struct.$0_A*),1
+	"header_28" [style=filled, shape=box, label="header_28:
+($$_ret_value_0,%struct.$0_Point*) alloc 
+branch entry_33"];
+	"return_29" [style=filled, shape=box, label="return_29:
+(%0,%struct.$0_Point*) load ($$_ret_value_0,%struct.$0_Point*)
+branch start_cond_30"];
+	"start_cond_30" [style=filled, shape=box, label="start_cond_30:
+(%1,i1) <- ne (%0,%struct.$0_Point*),null
+(%2,%struct.$$$_commmon_struct*) <- cast (%0,%struct.$0_Point*)
+(%3,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%4,i32) load (%3,i32)
+(%5,i1) <- ne (%4,i32),0
+(%6,i32) <- field_access (%2,%struct.$$$_commmon_struct*),1
+(%7,i32) load (%6,i32)
+(%8,i1) <- ne (%7,i32),0
+(%9,i1) <- and (%1,i1),(%5,i1)
+(%10,i1) <- and (%9,i1),(%8,i1)
+branch (%10,i1) body_31,temp_merge_32"];
+	"body_31" [style=filled, shape=box, label="body_31:
+(%11,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%12,i32) load (%11,i32)
+(%13,i32) <- sub (%12,i32),1
+(%11,i32) store (%13,i32)
+branch temp_merge_32"];
+	"temp_merge_32" [style=filled, shape=box, label="temp_merge_32:
+
+return (%0,%struct.$0_Point*)"];
+	"entry_33" [style=filled, shape=box, label="entry_33:
+($27_a,%struct.$0_Point*) alloc 
+(%14,%struct.$0_Point*) <- call $9_f
+($27_a,%struct.$0_Point*) store (%14,%struct.$0_Point*)
+(%15,%struct.$$$_commmon_struct*) <- cast (%14,%struct.$0_Point*)
+ <- call $$$_add_inc,(%15,%struct.$$$_commmon_struct*)
+($28_b,%struct.$0_Point*) alloc 
+(%16,%struct.$0_Point*) <- call $_constructor_0,1,1
+($28_b,%struct.$0_Point*) store (%16,%struct.$0_Point*)
+(%17,%struct.$$$_commmon_struct*) <- cast (%16,%struct.$0_Point*)
+ <- call $$$_add_inc,(%17,%struct.$$$_commmon_struct*)
+branch local_return_34"];
+	"local_return_34" [style=filled, shape=box, label="local_return_34:
+(%18,%struct.$0_Point*) load ($27_a,%struct.$0_Point*)
+branch start_cond_35"];
+	"start_cond_35" [style=filled, shape=box, label="start_cond_35:
+(%19,i1) <- ne (%18,%struct.$0_Point*),null
+(%20,%struct.$$$_commmon_struct*) <- cast (%18,%struct.$0_Point*)
+(%21,i32) <- field_access (%20,%struct.$$$_commmon_struct*),0
+(%22,i32) load (%21,i32)
+(%23,i1) <- ne (%22,i32),0
+(%24,i32) <- field_access (%20,%struct.$$$_commmon_struct*),1
+(%25,i32) load (%24,i32)
+(%26,i1) <- ne (%25,i32),0
+(%27,i1) <- and (%19,i1),(%23,i1)
+(%28,i1) <- and (%27,i1),(%26,i1)
+branch (%28,i1) body_36,temp_merge_37"];
+	"body_36" [style=filled, shape=box, label="body_36:
+(%29,i32) <- field_access (%20,%struct.$$$_commmon_struct*),0
+(%30,i32) load (%29,i32)
+(%31,i32) <- add (%30,i32),1
+(%29,i32) store (%31,i32)
+branch temp_merge_37"];
+	"temp_merge_37" [style=filled, shape=box, label="temp_merge_37:
+($$_ret_value_0,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+(%32,%struct.$0_Point*) load ($27_a,%struct.$0_Point*)
+(%33,i32*) <- cast (%32,%struct.$0_Point*)
+ <- call $_common_destructor,(%33,i32*)
+(%34,%struct.$0_Point*) load ($28_b,%struct.$0_Point*)
+(%35,i32*) <- cast (%34,%struct.$0_Point*)
+ <- call $_common_destructor,(%35,i32*)
+branch return_29"];
+
+	subgraph cluster_0 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$14_f3";
+		"header_28" -> "entry_33";
+		"return_29" -> "start_cond_30";
+		"start_cond_30" -> "body_31";
+		"start_cond_30" -> "temp_merge_32";
+		"body_31" -> "temp_merge_32";
+		"entry_33" -> "local_return_34";
+		"local_return_34" -> "start_cond_35";
+		"start_cond_35" -> "body_36";
+		"start_cond_35" -> "temp_merge_37";
+		"body_36" -> "temp_merge_37";
+		"temp_merge_37" -> "return_29";
+	}
+	"header_40" [style=filled, shape=box, label="header_40:
+($39_p,%struct.$0_Point*) alloc 
+($39_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($$_ret_value_1,%struct.$0_Point*) alloc 
+branch entry_45"];
+	"return_41" [style=filled, shape=box, label="return_41:
+(%1,%struct.$0_Point*) load ($$_ret_value_1,%struct.$0_Point*)
+branch start_cond_42"];
+	"start_cond_42" [style=filled, shape=box, label="start_cond_42:
+(%2,i1) <- ne (%1,%struct.$0_Point*),null
+(%3,%struct.$$$_commmon_struct*) <- cast (%1,%struct.$0_Point*)
+(%4,i32) <- field_access (%3,%struct.$$$_commmon_struct*),0
+(%5,i32) load (%4,i32)
+(%6,i1) <- ne (%5,i32),0
+(%7,i32) <- field_access (%3,%struct.$$$_commmon_struct*),1
+(%8,i32) load (%7,i32)
+(%9,i1) <- ne (%8,i32),0
+(%10,i1) <- and (%2,i1),(%6,i1)
+(%11,i1) <- and (%10,i1),(%9,i1)
+branch (%11,i1) body_43,temp_merge_44"];
+	"body_43" [style=filled, shape=box, label="body_43:
+(%12,i32) <- field_access (%3,%struct.$$$_commmon_struct*),0
+(%13,i32) load (%12,i32)
+(%14,i32) <- sub (%13,i32),1
+(%12,i32) store (%14,i32)
+branch temp_merge_44"];
+	"temp_merge_44" [style=filled, shape=box, label="temp_merge_44:
+
+return (%1,%struct.$0_Point*)"];
+	"entry_45" [style=filled, shape=box, label="entry_45:
+($40_a,%struct.$0_Point*) alloc 
+(%15,%struct.$0_Point*) <- call $_constructor_0,1,1
+($40_a,%struct.$0_Point*) store (%15,%struct.$0_Point*)
+(%16,%struct.$$$_commmon_struct*) <- cast (%15,%struct.$0_Point*)
+ <- call $$$_add_inc,(%16,%struct.$$$_commmon_struct*)
+($41_b,%struct.$0_Point*) alloc 
+(%17,%struct.$0_Point*) <- call $_constructor_0,1,1
+($41_b,%struct.$0_Point*) store (%17,%struct.$0_Point*)
+(%18,%struct.$$$_commmon_struct*) <- cast (%17,%struct.$0_Point*)
+ <- call $$$_add_inc,(%18,%struct.$$$_commmon_struct*)
+(%19,%struct.$0_Point*) load ($39_p,%struct.$0_Point*)
+(%20,%struct.$$$_commmon_struct*) <- cast (%19,%struct.$0_Point*)
+ <- call $$$_add_inc,(%20,%struct.$$$_commmon_struct*)
+(%21,%struct.$0_Point*) <- call $10_f5,(%19,%struct.$0_Point*)
+(%22,i32) <- field_access (%21,%struct.$0_Point*),2
+(%23,i32) load (%22,i32)
+branch check_temp_cond_null_46"];
+	"check_temp_cond_null_46" [style=filled, shape=box, label="check_temp_cond_null_46:
+(%24,%struct.$$$_commmon_struct*) <- cast (%21,%struct.$0_Point*)
+(%25,i1) <- ne (%24,%struct.$$$_commmon_struct*),null
+branch (%25,i1) check_temp_cond_count_47,check_temp_merge_49"];
+	"check_temp_cond_count_47" [style=filled, shape=box, label="check_temp_cond_count_47:
+(%26,i32) <- field_access (%24,%struct.$$$_commmon_struct*),0
+(%27,i32) load (%26,i32)
+(%28,i1) <- eq (%27,i32),0
+branch (%28,i1) check_temp_body_48,check_temp_merge_49"];
+	"check_temp_body_48" [style=filled, shape=box, label="check_temp_body_48:
+(%29,i32*) <- cast (%24,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%29,i32*)
+branch check_temp_merge_49"];
+	"check_temp_merge_49" [style=filled, shape=box, label="check_temp_merge_49:
+(%30,%struct.$0_Point*) load ($39_p,%struct.$0_Point*)
+(%31,%struct.$$$_commmon_struct*) <- cast (%30,%struct.$0_Point*)
+ <- call $$$_add_inc,(%31,%struct.$$$_commmon_struct*)
+(%32,%struct.$0_Point*) <- call $10_f5,(%30,%struct.$0_Point*)
+(%33,i32) <- field_access (%32,%struct.$0_Point*),3
+(%34,i32) load (%33,i32)
+branch check_temp_cond_null_50"];
+	"check_temp_cond_null_50" [style=filled, shape=box, label="check_temp_cond_null_50:
+(%35,%struct.$$$_commmon_struct*) <- cast (%32,%struct.$0_Point*)
+(%36,i1) <- ne (%35,%struct.$$$_commmon_struct*),null
+branch (%36,i1) check_temp_cond_count_51,local_return_54"];
+	"check_temp_cond_count_51" [style=filled, shape=box, label="check_temp_cond_count_51:
+(%37,i32) <- field_access (%35,%struct.$$$_commmon_struct*),0
+(%38,i32) load (%37,i32)
+(%39,i1) <- eq (%38,i32),0
+branch (%39,i1) check_temp_body_52,local_return_54"];
+	"check_temp_body_52" [style=filled, shape=box, label="check_temp_body_52:
+(%40,i32*) <- cast (%35,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%40,i32*)
+branch local_return_54"];
+	"local_return_54" [style=filled, shape=box, label="local_return_54:
+(%41,%struct.$0_Point*) load ($39_p,%struct.$0_Point*)
+(%42,i32) <- field_access (%41,%struct.$0_Point*),2
+(%43,i32) load (%42,i32)
+branch check_temp_cond_null_55"];
+	"check_temp_cond_null_55" [style=filled, shape=box, label="check_temp_cond_null_55:
+(%44,%struct.$$$_commmon_struct*) <- cast (%41,%struct.$0_Point*)
+(%45,i1) <- ne (%44,%struct.$$$_commmon_struct*),null
+branch (%45,i1) check_temp_cond_count_56,check_temp_merge_58"];
+	"check_temp_cond_count_56" [style=filled, shape=box, label="check_temp_cond_count_56:
+(%46,i32) <- field_access (%44,%struct.$$$_commmon_struct*),0
+(%47,i32) load (%46,i32)
+(%48,i1) <- eq (%47,i32),0
+branch (%48,i1) check_temp_body_57,check_temp_merge_58"];
+	"check_temp_body_57" [style=filled, shape=box, label="check_temp_body_57:
+(%49,i32*) <- cast (%44,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%49,i32*)
+branch check_temp_merge_58"];
+	"check_temp_merge_58" [style=filled, shape=box, label="check_temp_merge_58:
+(%50,%struct.$0_Point*) <- call $9_f
+(%51,i32) <- field_access (%50,%struct.$0_Point*),2
+(%52,i32) load (%51,i32)
+branch check_temp_cond_null_59"];
+	"check_temp_cond_null_59" [style=filled, shape=box, label="check_temp_cond_null_59:
+(%53,%struct.$$$_commmon_struct*) <- cast (%50,%struct.$0_Point*)
+(%54,i1) <- ne (%53,%struct.$$$_commmon_struct*),null
+branch (%54,i1) check_temp_cond_count_60,check_temp_merge_62"];
+	"check_temp_cond_count_60" [style=filled, shape=box, label="check_temp_cond_count_60:
+(%55,i32) <- field_access (%53,%struct.$$$_commmon_struct*),0
+(%56,i32) load (%55,i32)
+(%57,i1) <- eq (%56,i32),0
+branch (%57,i1) check_temp_body_61,check_temp_merge_62"];
+	"check_temp_body_61" [style=filled, shape=box, label="check_temp_body_61:
+(%58,i32*) <- cast (%53,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%58,i32*)
+branch check_temp_merge_62"];
+	"check_temp_merge_62" [style=filled, shape=box, label="check_temp_merge_62:
+(%59,%struct.$0_Point*) <- call $_constructor_0,(%43,i32),(%52,i32)
+(%60,i32) <- field_access (%59,%struct.$0_Point*),2
+(%61,i32) load (%60,i32)
+branch check_temp_cond_null_63"];
+	"check_temp_cond_null_63" [style=filled, shape=box, label="check_temp_cond_null_63:
+(%62,%struct.$$$_commmon_struct*) <- cast (%59,%struct.$0_Point*)
+(%63,i1) <- ne (%62,%struct.$$$_commmon_struct*),null
+branch (%63,i1) check_temp_cond_count_64,check_temp_merge_66"];
+	"check_temp_cond_count_64" [style=filled, shape=box, label="check_temp_cond_count_64:
+(%64,i32) <- field_access (%62,%struct.$$$_commmon_struct*),0
+(%65,i32) load (%64,i32)
+(%66,i1) <- eq (%65,i32),0
+branch (%66,i1) check_temp_body_65,check_temp_merge_66"];
+	"check_temp_body_65" [style=filled, shape=box, label="check_temp_body_65:
+(%67,i32*) <- cast (%62,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%67,i32*)
+branch check_temp_merge_66"];
+	"check_temp_merge_66" [style=filled, shape=box, label="check_temp_merge_66:
+(%68,%struct.$0_Point*) load ($39_p,%struct.$0_Point*)
+(%69,i32) <- field_access (%68,%struct.$0_Point*),3
+(%70,i32) load (%69,i32)
+branch check_temp_cond_null_67"];
+	"check_temp_cond_null_67" [style=filled, shape=box, label="check_temp_cond_null_67:
+(%71,%struct.$$$_commmon_struct*) <- cast (%68,%struct.$0_Point*)
+(%72,i1) <- ne (%71,%struct.$$$_commmon_struct*),null
+branch (%72,i1) check_temp_cond_count_68,check_temp_merge_70"];
+	"check_temp_cond_count_68" [style=filled, shape=box, label="check_temp_cond_count_68:
+(%73,i32) <- field_access (%71,%struct.$$$_commmon_struct*),0
+(%74,i32) load (%73,i32)
+(%75,i1) <- eq (%74,i32),0
+branch (%75,i1) check_temp_body_69,check_temp_merge_70"];
+	"check_temp_body_69" [style=filled, shape=box, label="check_temp_body_69:
+(%76,i32*) <- cast (%71,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%76,i32*)
+branch check_temp_merge_70"];
+	"check_temp_merge_70" [style=filled, shape=box, label="check_temp_merge_70:
+(%77,%struct.$0_Point*) <- call $_constructor_0,1,(%70,i32)
+(%78,i32) <- field_access (%77,%struct.$0_Point*),3
+(%79,i32) load (%78,i32)
+branch check_temp_cond_null_71"];
+	"check_temp_cond_null_71" [style=filled, shape=box, label="check_temp_cond_null_71:
+(%80,%struct.$$$_commmon_struct*) <- cast (%77,%struct.$0_Point*)
+(%81,i1) <- ne (%80,%struct.$$$_commmon_struct*),null
+branch (%81,i1) check_temp_cond_count_72,check_temp_merge_74"];
+	"check_temp_cond_count_72" [style=filled, shape=box, label="check_temp_cond_count_72:
+(%82,i32) <- field_access (%80,%struct.$$$_commmon_struct*),0
+(%83,i32) load (%82,i32)
+(%84,i1) <- eq (%83,i32),0
+branch (%84,i1) check_temp_body_73,check_temp_merge_74"];
+	"check_temp_body_73" [style=filled, shape=box, label="check_temp_body_73:
+(%85,i32*) <- cast (%80,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%85,i32*)
+branch check_temp_merge_74"];
+	"check_temp_merge_74" [style=filled, shape=box, label="check_temp_merge_74:
+(%86,%struct.$0_Point*) <- call $_constructor_0,(%61,i32),(%79,i32)
+branch start_cond_75"];
+	"start_cond_75" [style=filled, shape=box, label="start_cond_75:
+(%87,i1) <- ne (%86,%struct.$0_Point*),null
+(%88,%struct.$$$_commmon_struct*) <- cast (%86,%struct.$0_Point*)
+(%89,i32) <- field_access (%88,%struct.$$$_commmon_struct*),0
+(%90,i32) load (%89,i32)
+(%91,i1) <- ne (%90,i32),0
+(%92,i32) <- field_access (%88,%struct.$$$_commmon_struct*),1
+(%93,i32) load (%92,i32)
+(%94,i1) <- ne (%93,i32),0
+(%95,i1) <- and (%87,i1),(%91,i1)
+(%96,i1) <- and (%95,i1),(%94,i1)
+branch (%96,i1) body_76,temp_merge_77"];
+	"body_76" [style=filled, shape=box, label="body_76:
+(%97,i32) <- field_access (%88,%struct.$$$_commmon_struct*),0
+(%98,i32) load (%97,i32)
+(%99,i32) <- add (%98,i32),1
+(%97,i32) store (%99,i32)
+branch temp_merge_77"];
+	"temp_merge_77" [style=filled, shape=box, label="temp_merge_77:
+($$_ret_value_1,%struct.$0_Point*) store (%86,%struct.$0_Point*)
+(%100,%struct.$0_Point*) load ($40_a,%struct.$0_Point*)
+(%101,i32*) <- cast (%100,%struct.$0_Point*)
+ <- call $_common_destructor,(%101,i32*)
+(%102,%struct.$0_Point*) load ($41_b,%struct.$0_Point*)
+(%103,i32*) <- cast (%102,%struct.$0_Point*)
+ <- call $_common_destructor,(%103,i32*)
+branch end_function_destructor_79"];
+	"end_function_destructor_79" [style=filled, shape=box, label="end_function_destructor_79:
+(%104,%struct.$0_Point*) load ($39_p,%struct.$0_Point*)
+(%105,i32*) <- cast (%104,%struct.$0_Point*)
+ <- call $_common_destructor,(%105,i32*)
+branch return_41"];
+
+	subgraph cluster_1 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$11_f7";
+		"header_40" -> "entry_45";
+		"return_41" -> "start_cond_42";
+		"start_cond_42" -> "body_43";
+		"start_cond_42" -> "temp_merge_44";
+		"body_43" -> "temp_merge_44";
+		"entry_45" -> "check_temp_cond_null_46";
+		"check_temp_cond_null_46" -> "check_temp_cond_count_47";
+		"check_temp_cond_null_46" -> "check_temp_merge_49";
+		"check_temp_cond_count_47" -> "check_temp_body_48";
+		"check_temp_cond_count_47" -> "check_temp_merge_49";
+		"check_temp_body_48" -> "check_temp_merge_49";
+		"check_temp_merge_49" -> "check_temp_cond_null_50";
+		"check_temp_cond_null_50" -> "check_temp_cond_count_51";
+		"check_temp_cond_null_50" -> "local_return_54";
+		"check_temp_cond_count_51" -> "check_temp_body_52";
+		"check_temp_cond_count_51" -> "local_return_54";
+		"check_temp_body_52" -> "local_return_54";
+		"local_return_54" -> "check_temp_cond_null_55";
+		"check_temp_cond_null_55" -> "check_temp_cond_count_56";
+		"check_temp_cond_null_55" -> "check_temp_merge_58";
+		"check_temp_cond_count_56" -> "check_temp_body_57";
+		"check_temp_cond_count_56" -> "check_temp_merge_58";
+		"check_temp_body_57" -> "check_temp_merge_58";
+		"check_temp_merge_58" -> "check_temp_cond_null_59";
+		"check_temp_cond_null_59" -> "check_temp_cond_count_60";
+		"check_temp_cond_null_59" -> "check_temp_merge_62";
+		"check_temp_cond_count_60" -> "check_temp_body_61";
+		"check_temp_cond_count_60" -> "check_temp_merge_62";
+		"check_temp_body_61" -> "check_temp_merge_62";
+		"check_temp_merge_62" -> "check_temp_cond_null_63";
+		"check_temp_cond_null_63" -> "check_temp_cond_count_64";
+		"check_temp_cond_null_63" -> "check_temp_merge_66";
+		"check_temp_cond_count_64" -> "check_temp_body_65";
+		"check_temp_cond_count_64" -> "check_temp_merge_66";
+		"check_temp_body_65" -> "check_temp_merge_66";
+		"check_temp_merge_66" -> "check_temp_cond_null_67";
+		"check_temp_cond_null_67" -> "check_temp_cond_count_68";
+		"check_temp_cond_null_67" -> "check_temp_merge_70";
+		"check_temp_cond_count_68" -> "check_temp_body_69";
+		"check_temp_cond_count_68" -> "check_temp_merge_70";
+		"check_temp_body_69" -> "check_temp_merge_70";
+		"check_temp_merge_70" -> "check_temp_cond_null_71";
+		"check_temp_cond_null_71" -> "check_temp_cond_count_72";
+		"check_temp_cond_null_71" -> "check_temp_merge_74";
+		"check_temp_cond_count_72" -> "check_temp_body_73";
+		"check_temp_cond_count_72" -> "check_temp_merge_74";
+		"check_temp_body_73" -> "check_temp_merge_74";
+		"check_temp_merge_74" -> "start_cond_75";
+		"start_cond_75" -> "body_76";
+		"start_cond_75" -> "temp_merge_77";
+		"body_76" -> "temp_merge_77";
+		"temp_merge_77" -> "end_function_destructor_79";
+		"end_function_destructor_79" -> "return_41";
+	}
+	"header_80" [style=filled, shape=box, label="header_80:
+($42_p,%struct.$0_Point*) alloc 
+($42_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($$_ret_value_2,%struct.$0_Point*) alloc 
+branch entry_85"];
+	"return_81" [style=filled, shape=box, label="return_81:
+(%1,%struct.$0_Point*) load ($$_ret_value_2,%struct.$0_Point*)
+branch start_cond_82"];
+	"start_cond_82" [style=filled, shape=box, label="start_cond_82:
+(%2,i1) <- ne (%1,%struct.$0_Point*),null
+(%3,%struct.$$$_commmon_struct*) <- cast (%1,%struct.$0_Point*)
+(%4,i32) <- field_access (%3,%struct.$$$_commmon_struct*),0
+(%5,i32) load (%4,i32)
+(%6,i1) <- ne (%5,i32),0
+(%7,i32) <- field_access (%3,%struct.$$$_commmon_struct*),1
+(%8,i32) load (%7,i32)
+(%9,i1) <- ne (%8,i32),0
+(%10,i1) <- and (%2,i1),(%6,i1)
+(%11,i1) <- and (%10,i1),(%9,i1)
+branch (%11,i1) body_83,temp_merge_84"];
+	"body_83" [style=filled, shape=box, label="body_83:
+(%12,i32) <- field_access (%3,%struct.$$$_commmon_struct*),0
+(%13,i32) load (%12,i32)
+(%14,i32) <- sub (%13,i32),1
+(%12,i32) store (%14,i32)
+branch temp_merge_84"];
+	"temp_merge_84" [style=filled, shape=box, label="temp_merge_84:
+
+return (%1,%struct.$0_Point*)"];
+	"entry_85" [style=filled, shape=box, label="entry_85:
+($43_a,%struct.$0_Point*) alloc 
+(%15,%struct.$0_Point*) <- call $9_f
+($43_a,%struct.$0_Point*) store (%15,%struct.$0_Point*)
+(%16,%struct.$$$_commmon_struct*) <- cast (%15,%struct.$0_Point*)
+ <- call $$$_add_inc,(%16,%struct.$$$_commmon_struct*)
+($44_b,%struct.$0_Point*) alloc 
+(%17,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
+($44_b,%struct.$0_Point*) store (%17,%struct.$0_Point*)
+(%18,%struct.$$$_commmon_struct*) <- cast (%17,%struct.$0_Point*)
+ <- call $$$_add_inc,(%18,%struct.$$$_commmon_struct*)
+branch local_return_86"];
+	"local_return_86" [style=filled, shape=box, label="local_return_86:
+(%19,%struct.$0_Point*) load ($43_a,%struct.$0_Point*)
+branch start_cond_87"];
+	"start_cond_87" [style=filled, shape=box, label="start_cond_87:
+(%20,i1) <- ne (%19,%struct.$0_Point*),null
+(%21,%struct.$$$_commmon_struct*) <- cast (%19,%struct.$0_Point*)
+(%22,i32) <- field_access (%21,%struct.$$$_commmon_struct*),0
+(%23,i32) load (%22,i32)
+(%24,i1) <- ne (%23,i32),0
+(%25,i32) <- field_access (%21,%struct.$$$_commmon_struct*),1
+(%26,i32) load (%25,i32)
+(%27,i1) <- ne (%26,i32),0
+(%28,i1) <- and (%20,i1),(%24,i1)
+(%29,i1) <- and (%28,i1),(%27,i1)
+branch (%29,i1) body_88,temp_merge_89"];
+	"body_88" [style=filled, shape=box, label="body_88:
+(%30,i32) <- field_access (%21,%struct.$$$_commmon_struct*),0
+(%31,i32) load (%30,i32)
+(%32,i32) <- add (%31,i32),1
+(%30,i32) store (%32,i32)
+branch temp_merge_89"];
+	"temp_merge_89" [style=filled, shape=box, label="temp_merge_89:
+($$_ret_value_2,%struct.$0_Point*) store (%19,%struct.$0_Point*)
+(%33,%struct.$0_Point*) load ($43_a,%struct.$0_Point*)
+(%34,i32*) <- cast (%33,%struct.$0_Point*)
+ <- call $_common_destructor,(%34,i32*)
+(%35,%struct.$0_Point*) load ($44_b,%struct.$0_Point*)
+(%36,i32*) <- cast (%35,%struct.$0_Point*)
+ <- call $_common_destructor,(%36,i32*)
+branch end_function_destructor_91"];
+	"end_function_destructor_91" [style=filled, shape=box, label="end_function_destructor_91:
+(%37,%struct.$0_Point*) load ($42_p,%struct.$0_Point*)
+(%38,i32*) <- cast (%37,%struct.$0_Point*)
+ <- call $_common_destructor,(%38,i32*)
+branch return_81"];
+
+	subgraph cluster_2 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$6_f8";
+		"header_80" -> "entry_85";
+		"return_81" -> "start_cond_82";
+		"start_cond_82" -> "body_83";
+		"start_cond_82" -> "temp_merge_84";
+		"body_83" -> "temp_merge_84";
+		"entry_85" -> "local_return_86";
+		"local_return_86" -> "start_cond_87";
+		"start_cond_87" -> "body_88";
+		"start_cond_87" -> "temp_merge_89";
+		"body_88" -> "temp_merge_89";
+		"temp_merge_89" -> "end_function_destructor_91";
+		"end_function_destructor_91" -> "return_81";
+	}
+	"header_92" [style=filled, shape=box, label="header_92:
+($15_x,i32) alloc 
+($15_x,i32) store (%0,i32)
+($16_y,i32) alloc 
+($16_y,i32) store (%1,i32)
+($$_ret_value_3,%struct.$0_Point*) alloc 
+($$_this_value_5,%struct.$0_Point*) alloc 
+(%2,i64*) <- struct_allocation i64*,24
+(%3,%struct.$0_Point*) <- cast (%2,i64*)
+($$_this_value_5,%struct.$0_Point*) store (%3,%struct.$0_Point*)
+($$_ret_value_3,%struct.$0_Point*) store (%3,%struct.$0_Point*)
+(%4,%struct.$0_Point*) load ($$_this_value_5,%struct.$0_Point*)
+(%5,i32) <- field_access (%4,%struct.$0_Point*),0
 (%5,i32) store 0
-(%6,i32) <- field_access (%3,%struct.$0_A*),2
+(%6,i32) <- field_access (%4,%struct.$0_Point*),1
 (%6,i32) store 0
-branch entry_31"];
-	"return_27" [style=filled, shape=box, label="return_27:
-(%7,%struct.$0_A*) load ($$_ret_value_0,%struct.$0_A*)
-branch start_cond_28"];
-	"start_cond_28" [style=filled, shape=box, label="start_cond_28:
-(%8,i1) <- ne (%7,%struct.$0_A*),null
-(%9,%struct.$$$_commmon_struct*) <- cast (%7,%struct.$0_A*)
-(%10,i32) <- field_access (%9,%struct.$$$_commmon_struct*),0
-(%11,i32) load (%10,i32)
-(%12,i1) <- ne (%11,i32),0
-(%13,i1) <- and (%8,i1),(%12,i1)
-branch (%13,i1) body_29,temp_merge_30"];
-	"body_29" [style=filled, shape=box, label="body_29:
-(%14,i32) <- field_access (%9,%struct.$$$_commmon_struct*),0
+(%7,i32) <- field_access (%4,%struct.$0_Point*),2
+(%7,i32) store 0
+(%8,i32) <- field_access (%4,%struct.$0_Point*),3
+(%8,i32) store 0
+(%9,%struct.$0_Point*) <- field_access (%4,%struct.$0_Point*),4
+(%9,%struct.$0_Point*) store null
+(%10,i32) <- field_access (%3,%struct.$0_Point*),1
+(%10,i32) store 3
+branch entry_97"];
+	"return_93" [style=filled, shape=box, label="return_93:
+(%11,%struct.$0_Point*) load ($$_ret_value_3,%struct.$0_Point*)
+branch start_cond_94"];
+	"start_cond_94" [style=filled, shape=box, label="start_cond_94:
+(%12,i1) <- ne (%11,%struct.$0_Point*),null
+(%13,%struct.$$$_commmon_struct*) <- cast (%11,%struct.$0_Point*)
+(%14,i32) <- field_access (%13,%struct.$$$_commmon_struct*),0
 (%15,i32) load (%14,i32)
-(%16,i32) <- sub (%15,i32),1
-(%14,i32) store (%16,i32)
-branch temp_merge_30"];
-	"temp_merge_30" [style=filled, shape=box, label="temp_merge_30:
+(%16,i1) <- ne (%15,i32),0
+(%17,i32) <- field_access (%13,%struct.$$$_commmon_struct*),1
+(%18,i32) load (%17,i32)
+(%19,i1) <- ne (%18,i32),0
+(%20,i1) <- and (%12,i1),(%16,i1)
+(%21,i1) <- and (%20,i1),(%19,i1)
+branch (%21,i1) body_95,temp_merge_96"];
+	"body_95" [style=filled, shape=box, label="body_95:
+(%22,i32) <- field_access (%13,%struct.$$$_commmon_struct*),0
+(%23,i32) load (%22,i32)
+(%24,i32) <- sub (%23,i32),1
+(%22,i32) store (%24,i32)
+branch temp_merge_96"];
+	"temp_merge_96" [style=filled, shape=box, label="temp_merge_96:
 
-return (%7,%struct.$0_A*)"];
-	"entry_31" [style=filled, shape=box, label="entry_31:
-(%17,%struct.$0_A*) load ($$_this_value_5,%struct.$0_A*)
-(%18,i32) <- field_access (%17,%struct.$0_A*),2
-(%19,i32) load ($3_c,i32)
-(%18,i32) store (%19,i32)
-branch return_27"];
-"header_26" -> "entry_31";
-"return_27" -> "start_cond_28";
-"start_cond_28" -> "body_29";
-"start_cond_28" -> "temp_merge_30";
-"body_29" -> "temp_merge_30";
-"entry_31" -> "return_27";
+return (%11,%struct.$0_Point*)"];
+	"entry_97" [style=filled, shape=box, label="entry_97:
+(%25,%struct.$0_Point*) load ($$_this_value_5,%struct.$0_Point*)
+(%26,i32) <- field_access (%25,%struct.$0_Point*),2
+(%27,i32) load ($15_x,i32)
+(%26,i32) store (%27,i32)
+(%28,%struct.$0_Point*) load ($$_this_value_5,%struct.$0_Point*)
+(%29,i32) <- field_access (%28,%struct.$0_Point*),3
+(%30,i32) load ($16_y,i32)
+(%29,i32) store (%30,i32)
+(%31,%struct.$0_Point*) load ($$_this_value_5,%struct.$0_Point*)
+(%32,%struct.$0_Point*) <- field_access (%31,%struct.$0_Point*),4
+(%33,%struct.$0_Point*) load (%32,%struct.$0_Point*)
+(%32,%struct.$0_Point*) store null
+(%34,%struct.$0_Point*) load ($$_this_value_5,%struct.$0_Point*)
+(%35,%struct.$0_Point*) <- field_access (%34,%struct.$0_Point*),4
+(%36,%struct.$0_Point*) load (%35,%struct.$0_Point*)
+(%37,%struct.$$$_commmon_struct*) <- cast (%36,%struct.$0_Point*)
+ <- call $$$_add_inc,(%37,%struct.$$$_commmon_struct*)
+(%38,i32*) <- cast (%33,%struct.$0_Point*)
+ <- call $_common_destructor,(%38,i32*)
+branch return_93"];
 
-	"header_33" [style=filled, shape=box, label="header_33:
-($$_ret_value_1,i32) alloc 
-branch entry_35"];
-	"return_34" [style=filled, shape=box, label="return_34:
-(%0,i32) load ($$_ret_value_1,i32)
-return (%0,i32)"];
-	"entry_35" [style=filled, shape=box, label="entry_35:
-($4_a,%struct.$0_A**) alloc 
-($array_1,%struct.$0_A**) alloc 
-($size_1,i32) alloc 
-($alloc_iterator_1,i32) alloc 
-($array_access_1,%struct.$0_A**) alloc 
-($alloc_iterator_1,i32) store 0
-($size_1,i32) store 4
-($alloc_iterator_1,i32) store 0
-(%1,i32) load ($size_1,i32)
-(%2,i32) <- mul 8,(%1,i32)
-(%3,i32) <- add 16,(%2,i32)
-(%4,i64*) <- array_allocation i64*,(%3,i32)
-(%5,%struct.$$$_commmon_array*) <- cast (%4,i64*)
-(%6,i32) <- field_access (%5,%struct.$$$_commmon_array*),0
+	subgraph cluster_3 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$_constructor_0";
+		"header_92" -> "entry_97";
+		"return_93" -> "start_cond_94";
+		"start_cond_94" -> "body_95";
+		"start_cond_94" -> "temp_merge_96";
+		"body_95" -> "temp_merge_96";
+		"entry_97" -> "return_93";
+	}
+	"header_99" [style=filled, shape=box, label="header_99:
+($17_x,i32) alloc 
+($17_x,i32) store (%0,i32)
+($18_y,i32) alloc 
+($18_y,i32) store (%1,i32)
+($19_a,%struct.$0_Point*) alloc 
+($19_a,%struct.$0_Point*) store (%2,%struct.$0_Point*)
+($$_ret_value_4,%struct.$0_Point*) alloc 
+($$_this_value_6,%struct.$0_Point*) alloc 
+(%3,i64*) <- struct_allocation i64*,24
+(%4,%struct.$0_Point*) <- cast (%3,i64*)
+($$_this_value_6,%struct.$0_Point*) store (%4,%struct.$0_Point*)
+($$_ret_value_4,%struct.$0_Point*) store (%4,%struct.$0_Point*)
+(%5,%struct.$0_Point*) load ($$_this_value_6,%struct.$0_Point*)
+(%6,i32) <- field_access (%5,%struct.$0_Point*),0
 (%6,i32) store 0
-(%7,i32) <- field_access (%5,%struct.$$$_commmon_array*),2
-(%7,i32) store (%1,i32)
-(%8,i32) <- field_access (%5,%struct.$$$_commmon_array*),1
-(%8,i32) store 1
-(%9,%struct.$0_A**) <- cast (%4,i64*)
-($array_1,%struct.$0_A**) store (%9,%struct.$0_A**)
-($array_access_1,%struct.$0_A**) store (%9,%struct.$0_A**)
-branch alloc_condition_36"];
-	"alloc_condition_36" [style=filled, shape=box, label="alloc_condition_36:
-(%10,i32) load ($size_1,i32)
-(%11,i32) load ($alloc_iterator_1,i32)
-(%12,i1) <- lt (%11,i32),(%10,i32)
-branch (%12,i1) alloc_body_37,alloc_merge_38"];
-	"alloc_body_37" [style=filled, shape=box, label="alloc_body_37:
-(%13,i32) load ($alloc_iterator_1,i32)
-(%14,%struct.$0_A**) load ($array_access_1,%struct.$0_A**)
-(%15,i64) <- ptrtoint (%14,%struct.$0_A**)
-(%16,i64) <- add (%15,i64),16
-(%17,%struct.$0_A**) <- inttoptr (%16,i64)
-(%18,%struct.$0_A*) <- array_access (%17,%struct.$0_A**),(%13,i32)
-(%18,%struct.$0_A*) store null
-(%19,i32) load ($alloc_iterator_1,i32)
-(%20,i32) <- add (%19,i32),1
-($alloc_iterator_1,i32) store (%20,i32)
-branch alloc_condition_36"];
-	"alloc_merge_38" [style=filled, shape=box, label="alloc_merge_38:
-(%21,%struct.$0_A**) load ($array_1,%struct.$0_A**)
-($4_a,%struct.$0_A**) store (%21,%struct.$0_A**)
-(%22,%struct.$$$_commmon_struct*) <- cast (%21,%struct.$0_A**)
-branch assigment_inc_count_if_cond_39"];
-	"assigment_inc_count_if_cond_39" [style=filled, shape=box, label="assigment_inc_count_if_cond_39:
+(%7,i32) <- field_access (%5,%struct.$0_Point*),1
+(%7,i32) store 0
+(%8,i32) <- field_access (%5,%struct.$0_Point*),2
+(%8,i32) store 0
+(%9,i32) <- field_access (%5,%struct.$0_Point*),3
+(%9,i32) store 0
+(%10,%struct.$0_Point*) <- field_access (%5,%struct.$0_Point*),4
+(%10,%struct.$0_Point*) store null
+(%11,i32) <- field_access (%4,%struct.$0_Point*),1
+(%11,i32) store 3
+branch entry_104"];
+	"return_100" [style=filled, shape=box, label="return_100:
+(%12,%struct.$0_Point*) load ($$_ret_value_4,%struct.$0_Point*)
+branch start_cond_101"];
+	"start_cond_101" [style=filled, shape=box, label="start_cond_101:
+(%13,i1) <- ne (%12,%struct.$0_Point*),null
+(%14,%struct.$$$_commmon_struct*) <- cast (%12,%struct.$0_Point*)
+(%15,i32) <- field_access (%14,%struct.$$$_commmon_struct*),0
+(%16,i32) load (%15,i32)
+(%17,i1) <- ne (%16,i32),0
+(%18,i32) <- field_access (%14,%struct.$$$_commmon_struct*),1
+(%19,i32) load (%18,i32)
+(%20,i1) <- ne (%19,i32),0
+(%21,i1) <- and (%13,i1),(%17,i1)
+(%22,i1) <- and (%21,i1),(%20,i1)
+branch (%22,i1) body_102,temp_merge_103"];
+	"body_102" [style=filled, shape=box, label="body_102:
+(%23,i32) <- field_access (%14,%struct.$$$_commmon_struct*),0
+(%24,i32) load (%23,i32)
+(%25,i32) <- sub (%24,i32),1
+(%23,i32) store (%25,i32)
+branch temp_merge_103"];
+	"temp_merge_103" [style=filled, shape=box, label="temp_merge_103:
+
+return (%12,%struct.$0_Point*)"];
+	"entry_104" [style=filled, shape=box, label="entry_104:
+(%26,%struct.$0_Point*) load ($$_this_value_6,%struct.$0_Point*)
+(%27,i32) <- field_access (%26,%struct.$0_Point*),2
+(%28,i32) load ($17_x,i32)
+(%27,i32) store (%28,i32)
+(%29,%struct.$0_Point*) load ($$_this_value_6,%struct.$0_Point*)
+(%30,i32) <- field_access (%29,%struct.$0_Point*),3
+(%31,i32) load ($18_y,i32)
+(%30,i32) store (%31,i32)
+(%32,%struct.$0_Point*) load ($$_this_value_6,%struct.$0_Point*)
+(%33,%struct.$0_Point*) <- field_access (%32,%struct.$0_Point*),4
+(%34,%struct.$0_Point*) load (%33,%struct.$0_Point*)
+(%35,%struct.$0_Point*) load ($19_a,%struct.$0_Point*)
+(%33,%struct.$0_Point*) store (%35,%struct.$0_Point*)
+(%36,%struct.$0_Point*) load ($$_this_value_6,%struct.$0_Point*)
+(%37,%struct.$0_Point*) <- field_access (%36,%struct.$0_Point*),4
+(%38,%struct.$0_Point*) load (%37,%struct.$0_Point*)
+(%39,%struct.$$$_commmon_struct*) <- cast (%38,%struct.$0_Point*)
+ <- call $$$_add_inc,(%39,%struct.$$$_commmon_struct*)
+(%40,i32*) <- cast (%34,%struct.$0_Point*)
+ <- call $_common_destructor,(%40,i32*)
+($20_z,%struct.$0_Point*) alloc 
+($20_z,%struct.$0_Point*) store null
+(%41,%struct.$$$_commmon_struct*) <- cast null
+ <- call $$$_add_inc,(%41,%struct.$$$_commmon_struct*)
+(%42,%struct.$0_Point*) load ($$_this_value_6,%struct.$0_Point*)
+(%43,%struct.$0_Point*) <- field_access (%42,%struct.$0_Point*),4
+(%44,%struct.$0_Point*) load (%43,%struct.$0_Point*)
+(%45,%struct.$0_Point*) load ($20_z,%struct.$0_Point*)
+(%43,%struct.$0_Point*) store (%45,%struct.$0_Point*)
+(%46,%struct.$0_Point*) load ($$_this_value_6,%struct.$0_Point*)
+(%47,%struct.$0_Point*) <- field_access (%46,%struct.$0_Point*),4
+(%48,%struct.$0_Point*) load (%47,%struct.$0_Point*)
+(%49,%struct.$$$_commmon_struct*) <- cast (%48,%struct.$0_Point*)
+ <- call $$$_add_inc,(%49,%struct.$$$_commmon_struct*)
+(%50,i32*) <- cast (%44,%struct.$0_Point*)
+ <- call $_common_destructor,(%50,i32*)
+(%51,%struct.$0_Point*) load ($20_z,%struct.$0_Point*)
+(%52,i32*) <- cast (%51,%struct.$0_Point*)
+ <- call $_common_destructor,(%52,i32*)
+branch end_function_destructor_105"];
+	"end_function_destructor_105" [style=filled, shape=box, label="end_function_destructor_105:
+(%53,%struct.$0_Point*) load ($19_a,%struct.$0_Point*)
+(%54,i32*) <- cast (%53,%struct.$0_Point*)
+ <- call $_common_destructor,(%54,i32*)
+branch return_100"];
+
+	subgraph cluster_4 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$_constructor_1";
+		"header_99" -> "entry_104";
+		"return_100" -> "start_cond_101";
+		"start_cond_101" -> "body_102";
+		"start_cond_101" -> "temp_merge_103";
+		"body_102" -> "temp_merge_103";
+		"entry_104" -> "end_function_destructor_105";
+		"end_function_destructor_105" -> "return_100";
+	}
+	"header_106" [style=filled, shape=box, label="header_106:
+($45_p,%struct.$0_Point*) alloc 
+($45_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($46_k,i32) alloc 
+($46_k,i32) store (%1,i32)
+($$_ret_value_5,%struct.$0_Point*) alloc 
+branch entry_111"];
+	"return_107" [style=filled, shape=box, label="return_107:
+(%2,%struct.$0_Point*) load ($$_ret_value_5,%struct.$0_Point*)
+branch start_cond_108"];
+	"start_cond_108" [style=filled, shape=box, label="start_cond_108:
+(%3,i1) <- ne (%2,%struct.$0_Point*),null
+(%4,%struct.$$$_commmon_struct*) <- cast (%2,%struct.$0_Point*)
+(%5,i32) <- field_access (%4,%struct.$$$_commmon_struct*),0
+(%6,i32) load (%5,i32)
+(%7,i1) <- ne (%6,i32),0
+(%8,i32) <- field_access (%4,%struct.$$$_commmon_struct*),1
+(%9,i32) load (%8,i32)
+(%10,i1) <- ne (%9,i32),0
+(%11,i1) <- and (%3,i1),(%7,i1)
+(%12,i1) <- and (%11,i1),(%10,i1)
+branch (%12,i1) body_109,temp_merge_110"];
+	"body_109" [style=filled, shape=box, label="body_109:
+(%13,i32) <- field_access (%4,%struct.$$$_commmon_struct*),0
+(%14,i32) load (%13,i32)
+(%15,i32) <- sub (%14,i32),1
+(%13,i32) store (%15,i32)
+branch temp_merge_110"];
+	"temp_merge_110" [style=filled, shape=box, label="temp_merge_110:
+
+return (%2,%struct.$0_Point*)"];
+	"entry_111" [style=filled, shape=box, label="entry_111:
+($47_a,%struct.$0_Point*) alloc 
+(%16,%struct.$0_Point*) <- call $9_f
+($47_a,%struct.$0_Point*) store (%16,%struct.$0_Point*)
+(%17,%struct.$$$_commmon_struct*) <- cast (%16,%struct.$0_Point*)
+ <- call $$$_add_inc,(%17,%struct.$$$_commmon_struct*)
+($48_b,%struct.$0_Point*) alloc 
+(%18,%struct.$0_Point*) <- call $_constructor_0,1,1
+($48_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+(%19,%struct.$$$_commmon_struct*) <- cast (%18,%struct.$0_Point*)
+ <- call $$$_add_inc,(%19,%struct.$$$_commmon_struct*)
+branch local_return_112"];
+	"local_return_112" [style=filled, shape=box, label="local_return_112:
+(%20,%struct.$0_Point*) load ($45_p,%struct.$0_Point*)
+branch start_cond_113"];
+	"start_cond_113" [style=filled, shape=box, label="start_cond_113:
+(%21,i1) <- ne (%20,%struct.$0_Point*),null
+(%22,%struct.$$$_commmon_struct*) <- cast (%20,%struct.$0_Point*)
+(%23,i32) <- field_access (%22,%struct.$$$_commmon_struct*),0
+(%24,i32) load (%23,i32)
+(%25,i1) <- ne (%24,i32),0
+(%26,i32) <- field_access (%22,%struct.$$$_commmon_struct*),1
+(%27,i32) load (%26,i32)
+(%28,i1) <- ne (%27,i32),0
+(%29,i1) <- and (%21,i1),(%25,i1)
+(%30,i1) <- and (%29,i1),(%28,i1)
+branch (%30,i1) body_114,temp_merge_115"];
+	"body_114" [style=filled, shape=box, label="body_114:
+(%31,i32) <- field_access (%22,%struct.$$$_commmon_struct*),0
+(%32,i32) load (%31,i32)
+(%33,i32) <- add (%32,i32),1
+(%31,i32) store (%33,i32)
+branch temp_merge_115"];
+	"temp_merge_115" [style=filled, shape=box, label="temp_merge_115:
+($$_ret_value_5,%struct.$0_Point*) store (%20,%struct.$0_Point*)
+(%34,%struct.$0_Point*) load ($47_a,%struct.$0_Point*)
+(%35,i32*) <- cast (%34,%struct.$0_Point*)
+ <- call $_common_destructor,(%35,i32*)
+(%36,%struct.$0_Point*) load ($48_b,%struct.$0_Point*)
+(%37,i32*) <- cast (%36,%struct.$0_Point*)
+ <- call $_common_destructor,(%37,i32*)
+branch end_function_destructor_117"];
+	"end_function_destructor_117" [style=filled, shape=box, label="end_function_destructor_117:
+(%38,%struct.$0_Point*) load ($45_p,%struct.$0_Point*)
+(%39,i32*) <- cast (%38,%struct.$0_Point*)
+ <- call $_common_destructor,(%39,i32*)
+branch return_107"];
+
+	subgraph cluster_5 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$7_f9";
+		"header_106" -> "entry_111";
+		"return_107" -> "start_cond_108";
+		"start_cond_108" -> "body_109";
+		"start_cond_108" -> "temp_merge_110";
+		"body_109" -> "temp_merge_110";
+		"entry_111" -> "local_return_112";
+		"local_return_112" -> "start_cond_113";
+		"start_cond_113" -> "body_114";
+		"start_cond_113" -> "temp_merge_115";
+		"body_114" -> "temp_merge_115";
+		"temp_merge_115" -> "end_function_destructor_117";
+		"end_function_destructor_117" -> "return_107";
+	}
+	"header_118" [style=filled, shape=box, label="header_118:
+($$_ret_value_6,%struct.$0_Point*) alloc 
+branch entry_123"];
+	"return_119" [style=filled, shape=box, label="return_119:
+(%0,%struct.$0_Point*) load ($$_ret_value_6,%struct.$0_Point*)
+branch start_cond_120"];
+	"start_cond_120" [style=filled, shape=box, label="start_cond_120:
+(%1,i1) <- ne (%0,%struct.$0_Point*),null
+(%2,%struct.$$$_commmon_struct*) <- cast (%0,%struct.$0_Point*)
+(%3,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%4,i32) load (%3,i32)
+(%5,i1) <- ne (%4,i32),0
+(%6,i32) <- field_access (%2,%struct.$$$_commmon_struct*),1
+(%7,i32) load (%6,i32)
+(%8,i1) <- ne (%7,i32),0
+(%9,i1) <- and (%1,i1),(%5,i1)
+(%10,i1) <- and (%9,i1),(%8,i1)
+branch (%10,i1) body_121,temp_merge_122"];
+	"body_121" [style=filled, shape=box, label="body_121:
+(%11,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%12,i32) load (%11,i32)
+(%13,i32) <- sub (%12,i32),1
+(%11,i32) store (%13,i32)
+branch temp_merge_122"];
+	"temp_merge_122" [style=filled, shape=box, label="temp_merge_122:
+
+return (%0,%struct.$0_Point*)"];
+	"entry_123" [style=filled, shape=box, label="entry_123:
+($23_a,%struct.$0_Point*) alloc 
+(%14,%struct.$0_Point*) <- call $_constructor_0,1,1
+($23_a,%struct.$0_Point*) store (%14,%struct.$0_Point*)
+(%15,%struct.$$$_commmon_struct*) <- cast (%14,%struct.$0_Point*)
+ <- call $$$_add_inc,(%15,%struct.$$$_commmon_struct*)
+($24_b,%struct.$0_Point*) alloc 
+(%16,%struct.$0_Point*) load ($23_a,%struct.$0_Point*)
+(%17,%struct.$$$_commmon_struct*) <- cast (%16,%struct.$0_Point*)
+ <- call $$$_add_inc,(%17,%struct.$$$_commmon_struct*)
+(%18,%struct.$0_Point*) <- call $_constructor_1,1,1,(%16,%struct.$0_Point*)
+($24_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+(%19,%struct.$$$_commmon_struct*) <- cast (%18,%struct.$0_Point*)
+ <- call $$$_add_inc,(%19,%struct.$$$_commmon_struct*)
+branch local_return_124"];
+	"local_return_124" [style=filled, shape=box, label="local_return_124:
+(%20,%struct.$0_Point*) load ($24_b,%struct.$0_Point*)
+branch start_cond_125"];
+	"start_cond_125" [style=filled, shape=box, label="start_cond_125:
+(%21,i1) <- ne (%20,%struct.$0_Point*),null
+(%22,%struct.$$$_commmon_struct*) <- cast (%20,%struct.$0_Point*)
+(%23,i32) <- field_access (%22,%struct.$$$_commmon_struct*),0
+(%24,i32) load (%23,i32)
+(%25,i1) <- ne (%24,i32),0
+(%26,i32) <- field_access (%22,%struct.$$$_commmon_struct*),1
+(%27,i32) load (%26,i32)
+(%28,i1) <- ne (%27,i32),0
+(%29,i1) <- and (%21,i1),(%25,i1)
+(%30,i1) <- and (%29,i1),(%28,i1)
+branch (%30,i1) body_126,temp_merge_127"];
+	"body_126" [style=filled, shape=box, label="body_126:
+(%31,i32) <- field_access (%22,%struct.$$$_commmon_struct*),0
+(%32,i32) load (%31,i32)
+(%33,i32) <- add (%32,i32),1
+(%31,i32) store (%33,i32)
+branch temp_merge_127"];
+	"temp_merge_127" [style=filled, shape=box, label="temp_merge_127:
+($$_ret_value_6,%struct.$0_Point*) store (%20,%struct.$0_Point*)
+(%34,%struct.$0_Point*) load ($23_a,%struct.$0_Point*)
+(%35,i32*) <- cast (%34,%struct.$0_Point*)
+ <- call $_common_destructor,(%35,i32*)
+(%36,%struct.$0_Point*) load ($24_b,%struct.$0_Point*)
+(%37,i32*) <- cast (%36,%struct.$0_Point*)
+ <- call $_common_destructor,(%37,i32*)
+branch return_119"];
+
+	subgraph cluster_6 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$8_f1";
+		"header_118" -> "entry_123";
+		"return_119" -> "start_cond_120";
+		"start_cond_120" -> "body_121";
+		"start_cond_120" -> "temp_merge_122";
+		"body_121" -> "temp_merge_122";
+		"entry_123" -> "local_return_124";
+		"local_return_124" -> "start_cond_125";
+		"start_cond_125" -> "body_126";
+		"start_cond_125" -> "temp_merge_127";
+		"body_126" -> "temp_merge_127";
+		"temp_merge_127" -> "return_119";
+	}
+	"header_130" [style=filled, shape=box, label="header_130:
+($$_ret_value_7,%struct.$0_Point*) alloc 
+branch entry_135"];
+	"return_131" [style=filled, shape=box, label="return_131:
+(%0,%struct.$0_Point*) load ($$_ret_value_7,%struct.$0_Point*)
+branch start_cond_132"];
+	"start_cond_132" [style=filled, shape=box, label="start_cond_132:
+(%1,i1) <- ne (%0,%struct.$0_Point*),null
+(%2,%struct.$$$_commmon_struct*) <- cast (%0,%struct.$0_Point*)
+(%3,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%4,i32) load (%3,i32)
+(%5,i1) <- ne (%4,i32),0
+(%6,i32) <- field_access (%2,%struct.$$$_commmon_struct*),1
+(%7,i32) load (%6,i32)
+(%8,i1) <- ne (%7,i32),0
+(%9,i1) <- and (%1,i1),(%5,i1)
+(%10,i1) <- and (%9,i1),(%8,i1)
+branch (%10,i1) body_133,temp_merge_134"];
+	"body_133" [style=filled, shape=box, label="body_133:
+(%11,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%12,i32) load (%11,i32)
+(%13,i32) <- sub (%12,i32),1
+(%11,i32) store (%13,i32)
+branch temp_merge_134"];
+	"temp_merge_134" [style=filled, shape=box, label="temp_merge_134:
+
+return (%0,%struct.$0_Point*)"];
+	"entry_135" [style=filled, shape=box, label="entry_135:
+($25_a,%struct.$0_Point*) alloc 
+(%14,%struct.$0_Point*) <- call $_constructor_0,1,1
+($25_a,%struct.$0_Point*) store (%14,%struct.$0_Point*)
+(%15,%struct.$$$_commmon_struct*) <- cast (%14,%struct.$0_Point*)
+ <- call $$$_add_inc,(%15,%struct.$$$_commmon_struct*)
+($26_b,%struct.$0_Point*) alloc 
+(%16,%struct.$0_Point*) load ($25_a,%struct.$0_Point*)
+(%17,%struct.$$$_commmon_struct*) <- cast (%16,%struct.$0_Point*)
+ <- call $$$_add_inc,(%17,%struct.$$$_commmon_struct*)
+(%18,%struct.$0_Point*) <- call $_constructor_1,1,1,(%16,%struct.$0_Point*)
+($26_b,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+(%19,%struct.$$$_commmon_struct*) <- cast (%18,%struct.$0_Point*)
+ <- call $$$_add_inc,(%19,%struct.$$$_commmon_struct*)
+branch local_return_136"];
+	"local_return_136" [style=filled, shape=box, label="local_return_136:
+(%20,%struct.$0_Point*) <- call $9_f
+(%21,i32) <- field_access (%20,%struct.$0_Point*),2
+(%22,i32) load (%21,i32)
+branch check_temp_cond_null_137"];
+	"check_temp_cond_null_137" [style=filled, shape=box, label="check_temp_cond_null_137:
+(%23,%struct.$$$_commmon_struct*) <- cast (%20,%struct.$0_Point*)
+(%24,i1) <- ne (%23,%struct.$$$_commmon_struct*),null
+branch (%24,i1) check_temp_cond_count_138,check_temp_merge_140"];
+	"check_temp_cond_count_138" [style=filled, shape=box, label="check_temp_cond_count_138:
+(%25,i32) <- field_access (%23,%struct.$$$_commmon_struct*),0
+(%26,i32) load (%25,i32)
+(%27,i1) <- eq (%26,i32),0
+branch (%27,i1) check_temp_body_139,check_temp_merge_140"];
+	"check_temp_body_139" [style=filled, shape=box, label="check_temp_body_139:
+(%28,i32*) <- cast (%23,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%28,i32*)
+branch check_temp_merge_140"];
+	"check_temp_merge_140" [style=filled, shape=box, label="check_temp_merge_140:
+(%29,%struct.$0_Point*) <- call $_constructor_0,1,(%22,i32)
+(%30,i32) <- field_access (%29,%struct.$0_Point*),2
+(%31,i32) load (%30,i32)
+branch check_temp_cond_null_141"];
+	"check_temp_cond_null_141" [style=filled, shape=box, label="check_temp_cond_null_141:
+(%32,%struct.$$$_commmon_struct*) <- cast (%29,%struct.$0_Point*)
+(%33,i1) <- ne (%32,%struct.$$$_commmon_struct*),null
+branch (%33,i1) check_temp_cond_count_142,check_temp_merge_144"];
+	"check_temp_cond_count_142" [style=filled, shape=box, label="check_temp_cond_count_142:
+(%34,i32) <- field_access (%32,%struct.$$$_commmon_struct*),0
+(%35,i32) load (%34,i32)
+(%36,i1) <- eq (%35,i32),0
+branch (%36,i1) check_temp_body_143,check_temp_merge_144"];
+	"check_temp_body_143" [style=filled, shape=box, label="check_temp_body_143:
+(%37,i32*) <- cast (%32,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%37,i32*)
+branch check_temp_merge_144"];
+	"check_temp_merge_144" [style=filled, shape=box, label="check_temp_merge_144:
+(%38,%struct.$0_Point*) <- call $_constructor_0,1,1
+(%39,i32) <- field_access (%38,%struct.$0_Point*),3
+(%40,i32) load (%39,i32)
+branch check_temp_cond_null_145"];
+	"check_temp_cond_null_145" [style=filled, shape=box, label="check_temp_cond_null_145:
+(%41,%struct.$$$_commmon_struct*) <- cast (%38,%struct.$0_Point*)
+(%42,i1) <- ne (%41,%struct.$$$_commmon_struct*),null
+branch (%42,i1) check_temp_cond_count_146,check_temp_merge_148"];
+	"check_temp_cond_count_146" [style=filled, shape=box, label="check_temp_cond_count_146:
+(%43,i32) <- field_access (%41,%struct.$$$_commmon_struct*),0
+(%44,i32) load (%43,i32)
+(%45,i1) <- eq (%44,i32),0
+branch (%45,i1) check_temp_body_147,check_temp_merge_148"];
+	"check_temp_body_147" [style=filled, shape=box, label="check_temp_body_147:
+(%46,i32*) <- cast (%41,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%46,i32*)
+branch check_temp_merge_148"];
+	"check_temp_merge_148" [style=filled, shape=box, label="check_temp_merge_148:
+(%47,%struct.$0_Point*) <- call $_constructor_0,1,(%40,i32)
+(%48,i32) <- field_access (%47,%struct.$0_Point*),3
+(%49,i32) load (%48,i32)
+branch check_temp_cond_null_149"];
+	"check_temp_cond_null_149" [style=filled, shape=box, label="check_temp_cond_null_149:
+(%50,%struct.$$$_commmon_struct*) <- cast (%47,%struct.$0_Point*)
+(%51,i1) <- ne (%50,%struct.$$$_commmon_struct*),null
+branch (%51,i1) check_temp_cond_count_150,check_temp_merge_152"];
+	"check_temp_cond_count_150" [style=filled, shape=box, label="check_temp_cond_count_150:
+(%52,i32) <- field_access (%50,%struct.$$$_commmon_struct*),0
+(%53,i32) load (%52,i32)
+(%54,i1) <- eq (%53,i32),0
+branch (%54,i1) check_temp_body_151,check_temp_merge_152"];
+	"check_temp_body_151" [style=filled, shape=box, label="check_temp_body_151:
+(%55,i32*) <- cast (%50,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%55,i32*)
+branch check_temp_merge_152"];
+	"check_temp_merge_152" [style=filled, shape=box, label="check_temp_merge_152:
+(%56,%struct.$0_Point*) <- call $_constructor_0,(%31,i32),(%49,i32)
+branch start_cond_153"];
+	"start_cond_153" [style=filled, shape=box, label="start_cond_153:
+(%57,i1) <- ne (%56,%struct.$0_Point*),null
+(%58,%struct.$$$_commmon_struct*) <- cast (%56,%struct.$0_Point*)
+(%59,i32) <- field_access (%58,%struct.$$$_commmon_struct*),0
+(%60,i32) load (%59,i32)
+(%61,i1) <- ne (%60,i32),0
+(%62,i32) <- field_access (%58,%struct.$$$_commmon_struct*),1
+(%63,i32) load (%62,i32)
+(%64,i1) <- ne (%63,i32),0
+(%65,i1) <- and (%57,i1),(%61,i1)
+(%66,i1) <- and (%65,i1),(%64,i1)
+branch (%66,i1) body_154,temp_merge_155"];
+	"body_154" [style=filled, shape=box, label="body_154:
+(%67,i32) <- field_access (%58,%struct.$$$_commmon_struct*),0
+(%68,i32) load (%67,i32)
+(%69,i32) <- add (%68,i32),1
+(%67,i32) store (%69,i32)
+branch temp_merge_155"];
+	"temp_merge_155" [style=filled, shape=box, label="temp_merge_155:
+($$_ret_value_7,%struct.$0_Point*) store (%56,%struct.$0_Point*)
+(%70,%struct.$0_Point*) load ($25_a,%struct.$0_Point*)
+(%71,i32*) <- cast (%70,%struct.$0_Point*)
+ <- call $_common_destructor,(%71,i32*)
+(%72,%struct.$0_Point*) load ($26_b,%struct.$0_Point*)
+(%73,i32*) <- cast (%72,%struct.$0_Point*)
+ <- call $_common_destructor,(%73,i32*)
+branch return_131"];
+
+	subgraph cluster_7 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$4_f2";
+		"header_130" -> "entry_135";
+		"return_131" -> "start_cond_132";
+		"start_cond_132" -> "body_133";
+		"start_cond_132" -> "temp_merge_134";
+		"body_133" -> "temp_merge_134";
+		"entry_135" -> "local_return_136";
+		"local_return_136" -> "check_temp_cond_null_137";
+		"check_temp_cond_null_137" -> "check_temp_cond_count_138";
+		"check_temp_cond_null_137" -> "check_temp_merge_140";
+		"check_temp_cond_count_138" -> "check_temp_body_139";
+		"check_temp_cond_count_138" -> "check_temp_merge_140";
+		"check_temp_body_139" -> "check_temp_merge_140";
+		"check_temp_merge_140" -> "check_temp_cond_null_141";
+		"check_temp_cond_null_141" -> "check_temp_cond_count_142";
+		"check_temp_cond_null_141" -> "check_temp_merge_144";
+		"check_temp_cond_count_142" -> "check_temp_body_143";
+		"check_temp_cond_count_142" -> "check_temp_merge_144";
+		"check_temp_body_143" -> "check_temp_merge_144";
+		"check_temp_merge_144" -> "check_temp_cond_null_145";
+		"check_temp_cond_null_145" -> "check_temp_cond_count_146";
+		"check_temp_cond_null_145" -> "check_temp_merge_148";
+		"check_temp_cond_count_146" -> "check_temp_body_147";
+		"check_temp_cond_count_146" -> "check_temp_merge_148";
+		"check_temp_body_147" -> "check_temp_merge_148";
+		"check_temp_merge_148" -> "check_temp_cond_null_149";
+		"check_temp_cond_null_149" -> "check_temp_cond_count_150";
+		"check_temp_cond_null_149" -> "check_temp_merge_152";
+		"check_temp_cond_count_150" -> "check_temp_body_151";
+		"check_temp_cond_count_150" -> "check_temp_merge_152";
+		"check_temp_body_151" -> "check_temp_merge_152";
+		"check_temp_merge_152" -> "start_cond_153";
+		"start_cond_153" -> "body_154";
+		"start_cond_153" -> "temp_merge_155";
+		"body_154" -> "temp_merge_155";
+		"temp_merge_155" -> "return_131";
+	}
+	"header_158" [style=filled, shape=box, label="header_158:
+($34_p,%struct.$0_Point*) alloc 
+($34_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($$_ret_value_8,%struct.$0_Point*) alloc 
+branch entry_163"];
+	"return_159" [style=filled, shape=box, label="return_159:
+(%1,%struct.$0_Point*) load ($$_ret_value_8,%struct.$0_Point*)
+branch start_cond_160"];
+	"start_cond_160" [style=filled, shape=box, label="start_cond_160:
+(%2,i1) <- ne (%1,%struct.$0_Point*),null
+(%3,%struct.$$$_commmon_struct*) <- cast (%1,%struct.$0_Point*)
+(%4,i32) <- field_access (%3,%struct.$$$_commmon_struct*),0
+(%5,i32) load (%4,i32)
+(%6,i1) <- ne (%5,i32),0
+(%7,i32) <- field_access (%3,%struct.$$$_commmon_struct*),1
+(%8,i32) load (%7,i32)
+(%9,i1) <- ne (%8,i32),0
+(%10,i1) <- and (%2,i1),(%6,i1)
+(%11,i1) <- and (%10,i1),(%9,i1)
+branch (%11,i1) body_161,temp_merge_162"];
+	"body_161" [style=filled, shape=box, label="body_161:
+(%12,i32) <- field_access (%3,%struct.$$$_commmon_struct*),0
+(%13,i32) load (%12,i32)
+(%14,i32) <- sub (%13,i32),1
+(%12,i32) store (%14,i32)
+branch temp_merge_162"];
+	"temp_merge_162" [style=filled, shape=box, label="temp_merge_162:
+
+return (%1,%struct.$0_Point*)"];
+	"entry_163" [style=filled, shape=box, label="entry_163:
+($35_k,%struct.$0_Point*) alloc 
+($35_k,%struct.$0_Point*) store null
+(%15,%struct.$$$_commmon_struct*) <- cast null
+ <- call $$$_add_inc,(%15,%struct.$$$_commmon_struct*)
+($36_a,%struct.$0_Point*) alloc 
+(%16,%struct.$0_Point*) load ($34_p,%struct.$0_Point*)
+(%17,%struct.$$$_commmon_struct*) <- cast (%16,%struct.$0_Point*)
+ <- call $$$_add_inc,(%17,%struct.$$$_commmon_struct*)
+(%18,%struct.$0_Point*) <- call $_constructor_1,1,1,(%16,%struct.$0_Point*)
+($36_a,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+(%19,%struct.$$$_commmon_struct*) <- cast (%18,%struct.$0_Point*)
+ <- call $$$_add_inc,(%19,%struct.$$$_commmon_struct*)
+($37_b,%struct.$0_Point*) alloc 
+(%20,%struct.$0_Point*) load ($34_p,%struct.$0_Point*)
+(%21,%struct.$$$_commmon_struct*) <- cast (%20,%struct.$0_Point*)
+ <- call $$$_add_inc,(%21,%struct.$$$_commmon_struct*)
+(%22,%struct.$0_Point*) <- call $_constructor_1,1,1,(%20,%struct.$0_Point*)
+($37_b,%struct.$0_Point*) store (%22,%struct.$0_Point*)
+(%23,%struct.$$$_commmon_struct*) <- cast (%22,%struct.$0_Point*)
+ <- call $$$_add_inc,(%23,%struct.$$$_commmon_struct*)
+($38_c,%struct.$0_Point*) alloc 
+(%24,%struct.$0_Point*) load ($34_p,%struct.$0_Point*)
+(%25,%struct.$$$_commmon_struct*) <- cast (%24,%struct.$0_Point*)
+ <- call $$$_add_inc,(%25,%struct.$$$_commmon_struct*)
+(%26,%struct.$0_Point*) <- call $_constructor_1,1,1,(%24,%struct.$0_Point*)
+($38_c,%struct.$0_Point*) store (%26,%struct.$0_Point*)
+(%27,%struct.$$$_commmon_struct*) <- cast (%26,%struct.$0_Point*)
+ <- call $$$_add_inc,(%27,%struct.$$$_commmon_struct*)
+branch local_return_164"];
+	"local_return_164" [style=filled, shape=box, label="local_return_164:
+(%28,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
+branch start_cond_165"];
+	"start_cond_165" [style=filled, shape=box, label="start_cond_165:
+(%29,i1) <- ne (%28,%struct.$0_Point*),null
+(%30,%struct.$$$_commmon_struct*) <- cast (%28,%struct.$0_Point*)
+(%31,i32) <- field_access (%30,%struct.$$$_commmon_struct*),0
+(%32,i32) load (%31,i32)
+(%33,i1) <- ne (%32,i32),0
+(%34,i32) <- field_access (%30,%struct.$$$_commmon_struct*),1
+(%35,i32) load (%34,i32)
+(%36,i1) <- ne (%35,i32),0
+(%37,i1) <- and (%29,i1),(%33,i1)
+(%38,i1) <- and (%37,i1),(%36,i1)
+branch (%38,i1) body_166,temp_merge_167"];
+	"body_166" [style=filled, shape=box, label="body_166:
+(%39,i32) <- field_access (%30,%struct.$$$_commmon_struct*),0
+(%40,i32) load (%39,i32)
+(%41,i32) <- add (%40,i32),1
+(%39,i32) store (%41,i32)
+branch temp_merge_167"];
+	"temp_merge_167" [style=filled, shape=box, label="temp_merge_167:
+($$_ret_value_8,%struct.$0_Point*) store (%28,%struct.$0_Point*)
+(%42,%struct.$0_Point*) load ($35_k,%struct.$0_Point*)
+(%43,i32*) <- cast (%42,%struct.$0_Point*)
+ <- call $_common_destructor,(%43,i32*)
+(%44,%struct.$0_Point*) load ($36_a,%struct.$0_Point*)
+(%45,i32*) <- cast (%44,%struct.$0_Point*)
+ <- call $_common_destructor,(%45,i32*)
+(%46,%struct.$0_Point*) load ($37_b,%struct.$0_Point*)
+(%47,i32*) <- cast (%46,%struct.$0_Point*)
+ <- call $_common_destructor,(%47,i32*)
+(%48,%struct.$0_Point*) load ($38_c,%struct.$0_Point*)
+(%49,i32*) <- cast (%48,%struct.$0_Point*)
+ <- call $_common_destructor,(%49,i32*)
+branch end_function_destructor_169"];
+	"end_function_destructor_169" [style=filled, shape=box, label="end_function_destructor_169:
+(%50,%struct.$0_Point*) load ($34_p,%struct.$0_Point*)
+(%51,i32*) <- cast (%50,%struct.$0_Point*)
+ <- call $_common_destructor,(%51,i32*)
+branch return_159"];
+
+	subgraph cluster_8 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$13_f6";
+		"header_158" -> "entry_163";
+		"return_159" -> "start_cond_160";
+		"start_cond_160" -> "body_161";
+		"start_cond_160" -> "temp_merge_162";
+		"body_161" -> "temp_merge_162";
+		"entry_163" -> "local_return_164";
+		"local_return_164" -> "start_cond_165";
+		"start_cond_165" -> "body_166";
+		"start_cond_165" -> "temp_merge_167";
+		"body_166" -> "temp_merge_167";
+		"temp_merge_167" -> "end_function_destructor_169";
+		"end_function_destructor_169" -> "return_159";
+	}
+	"header_170" [style=filled, shape=box, label="header_170:
+($$_ret_value_9,i32) alloc 
+branch entry_172"];
+	"return_171" [style=filled, shape=box, label="return_171:
+(%0,i32) load ($$_ret_value_9,i32)
+return (%0,i32)"];
+	"entry_172" [style=filled, shape=box, label="entry_172:
+($49_a,i32) alloc 
+($49_a,i32) store 0
+($50_p,%struct.$0_Point*) alloc 
+(%1,%struct.$0_Point*) <- call $_constructor_0,1,2
+($50_p,%struct.$0_Point*) store (%1,%struct.$0_Point*)
+(%2,%struct.$$$_commmon_struct*) <- cast (%1,%struct.$0_Point*)
+ <- call $$$_add_inc,(%2,%struct.$$$_commmon_struct*)
+(%3,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%4,%struct.$0_Point*) <- call $_constructor_0,1,2
+($50_p,%struct.$0_Point*) store (%4,%struct.$0_Point*)
+(%5,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%6,%struct.$$$_commmon_struct*) <- cast (%5,%struct.$0_Point*)
+ <- call $$$_add_inc,(%6,%struct.$$$_commmon_struct*)
+(%7,i32*) <- cast (%3,%struct.$0_Point*)
+ <- call $_common_destructor,(%7,i32*)
+(%8,i32) load ($49_a,i32)
+(%9,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%10,i32) <- field_access (%9,%struct.$0_Point*),2
+(%11,i32) load (%10,i32)
+branch check_temp_cond_null_173"];
+	"check_temp_cond_null_173" [style=filled, shape=box, label="check_temp_cond_null_173:
+(%12,%struct.$$$_commmon_struct*) <- cast (%9,%struct.$0_Point*)
+(%13,i1) <- ne (%12,%struct.$$$_commmon_struct*),null
+branch (%13,i1) check_temp_cond_count_174,check_temp_merge_176"];
+	"check_temp_cond_count_174" [style=filled, shape=box, label="check_temp_cond_count_174:
+(%14,i32) <- field_access (%12,%struct.$$$_commmon_struct*),0
+(%15,i32) load (%14,i32)
+(%16,i1) <- eq (%15,i32),0
+branch (%16,i1) check_temp_body_175,check_temp_merge_176"];
+	"check_temp_body_175" [style=filled, shape=box, label="check_temp_body_175:
+(%17,i32*) <- cast (%12,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%17,i32*)
+branch check_temp_merge_176"];
+	"check_temp_merge_176" [style=filled, shape=box, label="check_temp_merge_176:
+(%18,i32) <- add (%8,i32),(%11,i32)
+(%19,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%20,i32) <- field_access (%19,%struct.$0_Point*),3
+(%21,i32) load (%20,i32)
+branch check_temp_cond_null_177"];
+	"check_temp_cond_null_177" [style=filled, shape=box, label="check_temp_cond_null_177:
+(%22,%struct.$$$_commmon_struct*) <- cast (%19,%struct.$0_Point*)
 (%23,i1) <- ne (%22,%struct.$$$_commmon_struct*),null
-branch (%23,i1) assigment_inc_count_if_body_40,assigment_inc_count_if_merge_41"];
-	"assigment_inc_count_if_body_40" [style=filled, shape=box, label="assigment_inc_count_if_body_40:
+branch (%23,i1) check_temp_cond_count_178,check_temp_merge_180"];
+	"check_temp_cond_count_178" [style=filled, shape=box, label="check_temp_cond_count_178:
 (%24,i32) <- field_access (%22,%struct.$$$_commmon_struct*),0
 (%25,i32) load (%24,i32)
-(%26,i32) <- add (%25,i32),1
-(%24,i32) store (%26,i32)
-branch assigment_inc_count_if_merge_41"];
-	"assigment_inc_count_if_merge_41" [style=filled, shape=box, label="assigment_inc_count_if_merge_41:
-($5_b,%struct.$0_A***) alloc 
-($array_2,%struct.$0_A***) alloc 
-($size_2,i32) alloc 
-($alloc_iterator_2,i32) alloc 
-($array_access_2,%struct.$0_A***) alloc 
-($alloc_iterator_2,i32) store 0
-($size_2,i32) store 4
-($size_3,i32) alloc 
-($alloc_iterator_3,i32) alloc 
-($array_access_3,%struct.$0_A**) alloc 
-($alloc_iterator_3,i32) store 0
-($size_3,i32) store 5
-($alloc_iterator_2,i32) store 0
-(%27,i32) load ($size_2,i32)
-(%28,i32) <- mul 8,(%27,i32)
-(%29,i32) <- add 16,(%28,i32)
-(%30,i64*) <- array_allocation i64*,(%29,i32)
-(%31,%struct.$$$_commmon_array*) <- cast (%30,i64*)
-(%32,i32) <- field_access (%31,%struct.$$$_commmon_array*),0
-(%32,i32) store 0
-(%33,i32) <- field_access (%31,%struct.$$$_commmon_array*),2
-(%33,i32) store (%27,i32)
-(%34,i32) <- field_access (%31,%struct.$$$_commmon_array*),1
-(%34,i32) store 1
-(%35,%struct.$0_A***) <- cast (%30,i64*)
-($array_2,%struct.$0_A***) store (%35,%struct.$0_A***)
-($array_access_2,%struct.$0_A***) store (%35,%struct.$0_A***)
-branch alloc_condition_42"];
-	"alloc_condition_42" [style=filled, shape=box, label="alloc_condition_42:
-(%36,i32) load ($size_2,i32)
-(%37,i32) load ($alloc_iterator_2,i32)
-(%38,i1) <- lt (%37,i32),(%36,i32)
-branch (%38,i1) alloc_body_43,alloc_merge_47"];
-	"alloc_body_43" [style=filled, shape=box, label="alloc_body_43:
-(%39,i32) load ($alloc_iterator_2,i32)
-(%40,%struct.$0_A***) load ($array_access_2,%struct.$0_A***)
-(%41,i64) <- ptrtoint (%40,%struct.$0_A***)
-(%42,i64) <- add (%41,i64),16
-(%43,%struct.$0_A***) <- inttoptr (%42,i64)
-(%44,%struct.$0_A**) <- array_access (%43,%struct.$0_A***),(%39,i32)
-($alloc_iterator_3,i32) store 0
-(%45,i32) load ($size_3,i32)
-(%46,i32) <- mul 8,(%45,i32)
-(%47,i32) <- add 16,(%46,i32)
-(%48,i64*) <- array_allocation i64*,(%47,i32)
-(%49,%struct.$$$_commmon_array*) <- cast (%48,i64*)
-(%50,i32) <- field_access (%49,%struct.$$$_commmon_array*),0
-(%50,i32) store 0
-(%51,i32) <- field_access (%49,%struct.$$$_commmon_array*),2
-(%51,i32) store (%45,i32)
-(%52,i32) <- field_access (%49,%struct.$$$_commmon_array*),1
-(%52,i32) store 1
-(%53,%struct.$0_A**) <- cast (%48,i64*)
-(%44,%struct.$0_A**) store (%53,%struct.$0_A**)
-($array_access_3,%struct.$0_A**) store (%53,%struct.$0_A**)
-branch alloc_condition_44"];
-	"alloc_condition_44" [style=filled, shape=box, label="alloc_condition_44:
-(%54,i32) load ($size_3,i32)
-(%55,i32) load ($alloc_iterator_3,i32)
-(%56,i1) <- lt (%55,i32),(%54,i32)
-branch (%56,i1) alloc_body_45,alloc_merge_46"];
-	"alloc_body_45" [style=filled, shape=box, label="alloc_body_45:
-(%57,i32) load ($alloc_iterator_3,i32)
-(%58,%struct.$0_A**) load ($array_access_3,%struct.$0_A**)
-(%59,i64) <- ptrtoint (%58,%struct.$0_A**)
-(%60,i64) <- add (%59,i64),16
-(%61,%struct.$0_A**) <- inttoptr (%60,i64)
-(%62,%struct.$0_A*) <- array_access (%61,%struct.$0_A**),(%57,i32)
-(%62,%struct.$0_A*) store null
-(%63,i32) load ($alloc_iterator_3,i32)
-(%64,i32) <- add (%63,i32),1
-($alloc_iterator_3,i32) store (%64,i32)
-branch alloc_condition_44"];
-	"alloc_merge_46" [style=filled, shape=box, label="alloc_merge_46:
-(%65,i32) load ($alloc_iterator_2,i32)
-(%66,i32) <- add (%65,i32),1
-($alloc_iterator_2,i32) store (%66,i32)
-branch alloc_condition_42"];
-	"alloc_merge_47" [style=filled, shape=box, label="alloc_merge_47:
-(%67,%struct.$0_A***) load ($array_2,%struct.$0_A***)
-($5_b,%struct.$0_A***) store (%67,%struct.$0_A***)
-(%68,%struct.$$$_commmon_struct*) <- cast (%67,%struct.$0_A***)
-branch assigment_inc_count_if_cond_48"];
-	"assigment_inc_count_if_cond_48" [style=filled, shape=box, label="assigment_inc_count_if_cond_48:
-(%69,i1) <- ne (%68,%struct.$$$_commmon_struct*),null
-branch (%69,i1) assigment_inc_count_if_body_49,assigment_inc_count_if_merge_50"];
-	"assigment_inc_count_if_body_49" [style=filled, shape=box, label="assigment_inc_count_if_body_49:
-(%70,i32) <- field_access (%68,%struct.$$$_commmon_struct*),0
-(%71,i32) load (%70,i32)
-(%72,i32) <- add (%71,i32),1
-(%70,i32) store (%72,i32)
-branch assigment_inc_count_if_merge_50"];
-	"assigment_inc_count_if_merge_50" [style=filled, shape=box, label="assigment_inc_count_if_merge_50:
-($6_c,%struct.$0_A****) alloc 
-($array_4,%struct.$0_A****) alloc 
-($size_4,i32) alloc 
-($alloc_iterator_4,i32) alloc 
-($array_access_4,%struct.$0_A****) alloc 
-($alloc_iterator_4,i32) store 0
-($size_4,i32) store 4
-($size_5,i32) alloc 
-($alloc_iterator_5,i32) alloc 
-($array_access_5,%struct.$0_A***) alloc 
-($alloc_iterator_5,i32) store 0
-($size_5,i32) store 5
-($size_6,i32) alloc 
-($alloc_iterator_6,i32) alloc 
-($array_access_6,%struct.$0_A**) alloc 
-($alloc_iterator_6,i32) store 0
-($size_6,i32) store 9
-($alloc_iterator_4,i32) store 0
-(%73,i32) load ($size_4,i32)
-(%74,i32) <- mul 8,(%73,i32)
-(%75,i32) <- add 16,(%74,i32)
-(%76,i64*) <- array_allocation i64*,(%75,i32)
-(%77,%struct.$$$_commmon_array*) <- cast (%76,i64*)
-(%78,i32) <- field_access (%77,%struct.$$$_commmon_array*),0
-(%78,i32) store 0
-(%79,i32) <- field_access (%77,%struct.$$$_commmon_array*),2
-(%79,i32) store (%73,i32)
-(%80,i32) <- field_access (%77,%struct.$$$_commmon_array*),1
-(%80,i32) store 1
-(%81,%struct.$0_A****) <- cast (%76,i64*)
-($array_4,%struct.$0_A****) store (%81,%struct.$0_A****)
-($array_access_4,%struct.$0_A****) store (%81,%struct.$0_A****)
-branch alloc_condition_51"];
-	"alloc_condition_51" [style=filled, shape=box, label="alloc_condition_51:
-(%82,i32) load ($size_4,i32)
-(%83,i32) load ($alloc_iterator_4,i32)
-(%84,i1) <- lt (%83,i32),(%82,i32)
-branch (%84,i1) alloc_body_52,alloc_merge_59"];
-	"alloc_body_52" [style=filled, shape=box, label="alloc_body_52:
-(%85,i32) load ($alloc_iterator_4,i32)
-(%86,%struct.$0_A****) load ($array_access_4,%struct.$0_A****)
-(%87,i64) <- ptrtoint (%86,%struct.$0_A****)
-(%88,i64) <- add (%87,i64),16
-(%89,%struct.$0_A****) <- inttoptr (%88,i64)
-(%90,%struct.$0_A***) <- array_access (%89,%struct.$0_A****),(%85,i32)
-($alloc_iterator_5,i32) store 0
-(%91,i32) load ($size_5,i32)
-(%92,i32) <- mul 8,(%91,i32)
-(%93,i32) <- add 16,(%92,i32)
-(%94,i64*) <- array_allocation i64*,(%93,i32)
-(%95,%struct.$$$_commmon_array*) <- cast (%94,i64*)
-(%96,i32) <- field_access (%95,%struct.$$$_commmon_array*),0
-(%96,i32) store 0
-(%97,i32) <- field_access (%95,%struct.$$$_commmon_array*),2
-(%97,i32) store (%91,i32)
-(%98,i32) <- field_access (%95,%struct.$$$_commmon_array*),1
-(%98,i32) store 1
-(%99,%struct.$0_A***) <- cast (%94,i64*)
-(%90,%struct.$0_A***) store (%99,%struct.$0_A***)
-($array_access_5,%struct.$0_A***) store (%99,%struct.$0_A***)
-branch alloc_condition_53"];
-	"alloc_condition_53" [style=filled, shape=box, label="alloc_condition_53:
-(%100,i32) load ($size_5,i32)
-(%101,i32) load ($alloc_iterator_5,i32)
-(%102,i1) <- lt (%101,i32),(%100,i32)
-branch (%102,i1) alloc_body_54,alloc_merge_58"];
-	"alloc_body_54" [style=filled, shape=box, label="alloc_body_54:
-(%103,i32) load ($alloc_iterator_5,i32)
-(%104,%struct.$0_A***) load ($array_access_5,%struct.$0_A***)
-(%105,i64) <- ptrtoint (%104,%struct.$0_A***)
-(%106,i64) <- add (%105,i64),16
-(%107,%struct.$0_A***) <- inttoptr (%106,i64)
-(%108,%struct.$0_A**) <- array_access (%107,%struct.$0_A***),(%103,i32)
-($alloc_iterator_6,i32) store 0
-(%109,i32) load ($size_6,i32)
-(%110,i32) <- mul 8,(%109,i32)
-(%111,i32) <- add 16,(%110,i32)
-(%112,i64*) <- array_allocation i64*,(%111,i32)
-(%113,%struct.$$$_commmon_array*) <- cast (%112,i64*)
-(%114,i32) <- field_access (%113,%struct.$$$_commmon_array*),0
-(%114,i32) store 0
-(%115,i32) <- field_access (%113,%struct.$$$_commmon_array*),2
-(%115,i32) store (%109,i32)
-(%116,i32) <- field_access (%113,%struct.$$$_commmon_array*),1
-(%116,i32) store 1
-(%117,%struct.$0_A**) <- cast (%112,i64*)
-(%108,%struct.$0_A**) store (%117,%struct.$0_A**)
-($array_access_6,%struct.$0_A**) store (%117,%struct.$0_A**)
-branch alloc_condition_55"];
-	"alloc_condition_55" [style=filled, shape=box, label="alloc_condition_55:
-(%118,i32) load ($size_6,i32)
-(%119,i32) load ($alloc_iterator_6,i32)
-(%120,i1) <- lt (%119,i32),(%118,i32)
-branch (%120,i1) alloc_body_56,alloc_merge_57"];
-	"alloc_body_56" [style=filled, shape=box, label="alloc_body_56:
-(%121,i32) load ($alloc_iterator_6,i32)
-(%122,%struct.$0_A**) load ($array_access_6,%struct.$0_A**)
-(%123,i64) <- ptrtoint (%122,%struct.$0_A**)
-(%124,i64) <- add (%123,i64),16
-(%125,%struct.$0_A**) <- inttoptr (%124,i64)
-(%126,%struct.$0_A*) <- array_access (%125,%struct.$0_A**),(%121,i32)
-(%126,%struct.$0_A*) store null
-(%127,i32) load ($alloc_iterator_6,i32)
-(%128,i32) <- add (%127,i32),1
-($alloc_iterator_6,i32) store (%128,i32)
-branch alloc_condition_55"];
-	"alloc_merge_57" [style=filled, shape=box, label="alloc_merge_57:
-(%129,i32) load ($alloc_iterator_5,i32)
-(%130,i32) <- add (%129,i32),1
-($alloc_iterator_5,i32) store (%130,i32)
-branch alloc_condition_53"];
-	"alloc_merge_58" [style=filled, shape=box, label="alloc_merge_58:
-(%131,i32) load ($alloc_iterator_4,i32)
-(%132,i32) <- add (%131,i32),1
-($alloc_iterator_4,i32) store (%132,i32)
-branch alloc_condition_51"];
-	"alloc_merge_59" [style=filled, shape=box, label="alloc_merge_59:
-(%133,%struct.$0_A****) load ($array_4,%struct.$0_A****)
-($6_c,%struct.$0_A****) store (%133,%struct.$0_A****)
-(%134,%struct.$$$_commmon_struct*) <- cast (%133,%struct.$0_A****)
-branch assigment_inc_count_if_cond_60"];
-	"assigment_inc_count_if_cond_60" [style=filled, shape=box, label="assigment_inc_count_if_cond_60:
-(%135,i1) <- ne (%134,%struct.$$$_commmon_struct*),null
-branch (%135,i1) assigment_inc_count_if_body_61,assigment_inc_count_if_merge_62"];
-	"assigment_inc_count_if_body_61" [style=filled, shape=box, label="assigment_inc_count_if_body_61:
-(%136,i32) <- field_access (%134,%struct.$$$_commmon_struct*),0
-(%137,i32) load (%136,i32)
-(%138,i32) <- add (%137,i32),1
-(%136,i32) store (%138,i32)
-branch assigment_inc_count_if_merge_62"];
-	"assigment_inc_count_if_merge_62" [style=filled, shape=box, label="assigment_inc_count_if_merge_62:
-($7_d,%struct.$0_A*****) alloc 
-($array_7,%struct.$0_A*****) alloc 
-($size_7,i32) alloc 
-($alloc_iterator_7,i32) alloc 
-($array_access_7,%struct.$0_A*****) alloc 
-($alloc_iterator_7,i32) store 0
-($size_7,i32) store 2
-($size_8,i32) alloc 
-($alloc_iterator_8,i32) alloc 
-($array_access_8,%struct.$0_A****) alloc 
-($alloc_iterator_8,i32) store 0
-($size_8,i32) store 4
-($size_9,i32) alloc 
-($alloc_iterator_9,i32) alloc 
-($array_access_9,%struct.$0_A***) alloc 
-($alloc_iterator_9,i32) store 0
-($size_9,i32) store 5
-($size_10,i32) alloc 
-($alloc_iterator_10,i32) alloc 
-($array_access_10,%struct.$0_A**) alloc 
-($alloc_iterator_10,i32) store 0
-($size_10,i32) store 9
-($alloc_iterator_7,i32) store 0
-(%139,i32) load ($size_7,i32)
-(%140,i32) <- mul 8,(%139,i32)
-(%141,i32) <- add 16,(%140,i32)
-(%142,i64*) <- array_allocation i64*,(%141,i32)
-(%143,%struct.$$$_commmon_array*) <- cast (%142,i64*)
-(%144,i32) <- field_access (%143,%struct.$$$_commmon_array*),0
-(%144,i32) store 0
-(%145,i32) <- field_access (%143,%struct.$$$_commmon_array*),2
-(%145,i32) store (%139,i32)
-(%146,i32) <- field_access (%143,%struct.$$$_commmon_array*),1
-(%146,i32) store 1
-(%147,%struct.$0_A*****) <- cast (%142,i64*)
-($array_7,%struct.$0_A*****) store (%147,%struct.$0_A*****)
-($array_access_7,%struct.$0_A*****) store (%147,%struct.$0_A*****)
-branch alloc_condition_63"];
-	"alloc_condition_63" [style=filled, shape=box, label="alloc_condition_63:
-(%148,i32) load ($size_7,i32)
-(%149,i32) load ($alloc_iterator_7,i32)
-(%150,i1) <- lt (%149,i32),(%148,i32)
-branch (%150,i1) alloc_body_64,alloc_merge_74"];
-	"alloc_body_64" [style=filled, shape=box, label="alloc_body_64:
-(%151,i32) load ($alloc_iterator_7,i32)
-(%152,%struct.$0_A*****) load ($array_access_7,%struct.$0_A*****)
-(%153,i64) <- ptrtoint (%152,%struct.$0_A*****)
-(%154,i64) <- add (%153,i64),16
-(%155,%struct.$0_A*****) <- inttoptr (%154,i64)
-(%156,%struct.$0_A****) <- array_access (%155,%struct.$0_A*****),(%151,i32)
-($alloc_iterator_8,i32) store 0
-(%157,i32) load ($size_8,i32)
-(%158,i32) <- mul 8,(%157,i32)
-(%159,i32) <- add 16,(%158,i32)
-(%160,i64*) <- array_allocation i64*,(%159,i32)
-(%161,%struct.$$$_commmon_array*) <- cast (%160,i64*)
-(%162,i32) <- field_access (%161,%struct.$$$_commmon_array*),0
-(%162,i32) store 0
-(%163,i32) <- field_access (%161,%struct.$$$_commmon_array*),2
-(%163,i32) store (%157,i32)
-(%164,i32) <- field_access (%161,%struct.$$$_commmon_array*),1
-(%164,i32) store 1
-(%165,%struct.$0_A****) <- cast (%160,i64*)
-(%156,%struct.$0_A****) store (%165,%struct.$0_A****)
-($array_access_8,%struct.$0_A****) store (%165,%struct.$0_A****)
-branch alloc_condition_65"];
-	"alloc_condition_65" [style=filled, shape=box, label="alloc_condition_65:
-(%166,i32) load ($size_8,i32)
-(%167,i32) load ($alloc_iterator_8,i32)
-(%168,i1) <- lt (%167,i32),(%166,i32)
-branch (%168,i1) alloc_body_66,alloc_merge_73"];
-	"alloc_body_66" [style=filled, shape=box, label="alloc_body_66:
-(%169,i32) load ($alloc_iterator_8,i32)
-(%170,%struct.$0_A****) load ($array_access_8,%struct.$0_A****)
-(%171,i64) <- ptrtoint (%170,%struct.$0_A****)
-(%172,i64) <- add (%171,i64),16
-(%173,%struct.$0_A****) <- inttoptr (%172,i64)
-(%174,%struct.$0_A***) <- array_access (%173,%struct.$0_A****),(%169,i32)
-($alloc_iterator_9,i32) store 0
-(%175,i32) load ($size_9,i32)
-(%176,i32) <- mul 8,(%175,i32)
-(%177,i32) <- add 16,(%176,i32)
-(%178,i64*) <- array_allocation i64*,(%177,i32)
-(%179,%struct.$$$_commmon_array*) <- cast (%178,i64*)
-(%180,i32) <- field_access (%179,%struct.$$$_commmon_array*),0
-(%180,i32) store 0
-(%181,i32) <- field_access (%179,%struct.$$$_commmon_array*),2
-(%181,i32) store (%175,i32)
-(%182,i32) <- field_access (%179,%struct.$$$_commmon_array*),1
-(%182,i32) store 1
-(%183,%struct.$0_A***) <- cast (%178,i64*)
-(%174,%struct.$0_A***) store (%183,%struct.$0_A***)
-($array_access_9,%struct.$0_A***) store (%183,%struct.$0_A***)
-branch alloc_condition_67"];
-	"alloc_condition_67" [style=filled, shape=box, label="alloc_condition_67:
-(%184,i32) load ($size_9,i32)
-(%185,i32) load ($alloc_iterator_9,i32)
-(%186,i1) <- lt (%185,i32),(%184,i32)
-branch (%186,i1) alloc_body_68,alloc_merge_72"];
-	"alloc_body_68" [style=filled, shape=box, label="alloc_body_68:
-(%187,i32) load ($alloc_iterator_9,i32)
-(%188,%struct.$0_A***) load ($array_access_9,%struct.$0_A***)
-(%189,i64) <- ptrtoint (%188,%struct.$0_A***)
-(%190,i64) <- add (%189,i64),16
-(%191,%struct.$0_A***) <- inttoptr (%190,i64)
-(%192,%struct.$0_A**) <- array_access (%191,%struct.$0_A***),(%187,i32)
-($alloc_iterator_10,i32) store 0
-(%193,i32) load ($size_10,i32)
-(%194,i32) <- mul 8,(%193,i32)
-(%195,i32) <- add 16,(%194,i32)
-(%196,i64*) <- array_allocation i64*,(%195,i32)
-(%197,%struct.$$$_commmon_array*) <- cast (%196,i64*)
-(%198,i32) <- field_access (%197,%struct.$$$_commmon_array*),0
-(%198,i32) store 0
-(%199,i32) <- field_access (%197,%struct.$$$_commmon_array*),2
-(%199,i32) store (%193,i32)
-(%200,i32) <- field_access (%197,%struct.$$$_commmon_array*),1
-(%200,i32) store 1
-(%201,%struct.$0_A**) <- cast (%196,i64*)
-(%192,%struct.$0_A**) store (%201,%struct.$0_A**)
-($array_access_10,%struct.$0_A**) store (%201,%struct.$0_A**)
-branch alloc_condition_69"];
-	"alloc_condition_69" [style=filled, shape=box, label="alloc_condition_69:
-(%202,i32) load ($size_10,i32)
-(%203,i32) load ($alloc_iterator_10,i32)
-(%204,i1) <- lt (%203,i32),(%202,i32)
-branch (%204,i1) alloc_body_70,alloc_merge_71"];
-	"alloc_body_70" [style=filled, shape=box, label="alloc_body_70:
-(%205,i32) load ($alloc_iterator_10,i32)
-(%206,%struct.$0_A**) load ($array_access_10,%struct.$0_A**)
-(%207,i64) <- ptrtoint (%206,%struct.$0_A**)
-(%208,i64) <- add (%207,i64),16
-(%209,%struct.$0_A**) <- inttoptr (%208,i64)
-(%210,%struct.$0_A*) <- array_access (%209,%struct.$0_A**),(%205,i32)
-(%210,%struct.$0_A*) store null
-(%211,i32) load ($alloc_iterator_10,i32)
-(%212,i32) <- add (%211,i32),1
-($alloc_iterator_10,i32) store (%212,i32)
-branch alloc_condition_69"];
-	"alloc_merge_71" [style=filled, shape=box, label="alloc_merge_71:
-(%213,i32) load ($alloc_iterator_9,i32)
-(%214,i32) <- add (%213,i32),1
-($alloc_iterator_9,i32) store (%214,i32)
-branch alloc_condition_67"];
-	"alloc_merge_72" [style=filled, shape=box, label="alloc_merge_72:
-(%215,i32) load ($alloc_iterator_8,i32)
-(%216,i32) <- add (%215,i32),1
-($alloc_iterator_8,i32) store (%216,i32)
-branch alloc_condition_65"];
-	"alloc_merge_73" [style=filled, shape=box, label="alloc_merge_73:
-(%217,i32) load ($alloc_iterator_7,i32)
-(%218,i32) <- add (%217,i32),1
-($alloc_iterator_7,i32) store (%218,i32)
-branch alloc_condition_63"];
-	"alloc_merge_74" [style=filled, shape=box, label="alloc_merge_74:
-(%219,%struct.$0_A*****) load ($array_7,%struct.$0_A*****)
-($7_d,%struct.$0_A*****) store (%219,%struct.$0_A*****)
-(%220,%struct.$$$_commmon_struct*) <- cast (%219,%struct.$0_A*****)
-branch assigment_inc_count_if_cond_75"];
-	"assigment_inc_count_if_cond_75" [style=filled, shape=box, label="assigment_inc_count_if_cond_75:
-(%221,i1) <- ne (%220,%struct.$$$_commmon_struct*),null
-branch (%221,i1) assigment_inc_count_if_body_76,assigment_inc_count_if_merge_77"];
-	"assigment_inc_count_if_body_76" [style=filled, shape=box, label="assigment_inc_count_if_body_76:
-(%222,i32) <- field_access (%220,%struct.$$$_commmon_struct*),0
-(%223,i32) load (%222,i32)
-(%224,i32) <- add (%223,i32),1
-(%222,i32) store (%224,i32)
-branch assigment_inc_count_if_merge_77"];
-	"assigment_inc_count_if_merge_77" [style=filled, shape=box, label="assigment_inc_count_if_merge_77:
-(%225,%struct.$0_A**) load ($4_a,%struct.$0_A**)
-(%226,i64) <- ptrtoint (%225,%struct.$0_A**)
-(%227,i64) <- add (%226,i64),16
-(%228,%struct.$0_A**) <- inttoptr (%227,i64)
-(%229,%struct.$0_A*) <- array_left_access (%228,%struct.$0_A**),0
-(%230,%struct.$0_A*) load (%229,%struct.$0_A*)
-(%231,%struct.$0_A*) <- call $_constructor_0,0
-(%229,%struct.$0_A*) store (%231,%struct.$0_A*)
-(%232,%struct.$0_A**) load ($4_a,%struct.$0_A**)
-(%233,i64) <- ptrtoint (%232,%struct.$0_A**)
-(%234,i64) <- add (%233,i64),16
-(%235,%struct.$0_A**) <- inttoptr (%234,i64)
-(%236,%struct.$0_A*) <- array_left_access (%235,%struct.$0_A**),0
-(%237,%struct.$0_A*) load (%236,%struct.$0_A*)
-(%238,%struct.$$$_commmon_struct*) <- cast (%237,%struct.$0_A*)
- <- call $$$_add_inc,(%238,%struct.$$$_commmon_struct*)
-(%239,i32*) <- cast (%230,%struct.$0_A*)
- <- call $_common_destructor,(%239,i32*)
-(%240,%struct.$0_A***) load ($5_b,%struct.$0_A***)
-(%241,i64) <- ptrtoint (%240,%struct.$0_A***)
-(%242,i64) <- add (%241,i64),16
-(%243,%struct.$0_A***) <- inttoptr (%242,i64)
-(%244,%struct.$0_A**) <- array_access (%243,%struct.$0_A***),0
-(%245,%struct.$0_A**) load (%244,%struct.$0_A**)
-(%246,i64) <- ptrtoint (%245,%struct.$0_A**)
-(%247,i64) <- add (%246,i64),16
-(%248,%struct.$0_A**) <- inttoptr (%247,i64)
-(%249,%struct.$0_A*) <- array_left_access (%248,%struct.$0_A**),0
-(%250,%struct.$0_A*) load (%249,%struct.$0_A*)
-(%251,%struct.$0_A*) <- call $_constructor_0,0
-(%249,%struct.$0_A*) store (%251,%struct.$0_A*)
-(%252,%struct.$0_A***) load ($5_b,%struct.$0_A***)
-(%253,i64) <- ptrtoint (%252,%struct.$0_A***)
-(%254,i64) <- add (%253,i64),16
-(%255,%struct.$0_A***) <- inttoptr (%254,i64)
-(%256,%struct.$0_A**) <- array_access (%255,%struct.$0_A***),0
-(%257,%struct.$0_A**) load (%256,%struct.$0_A**)
-(%258,i64) <- ptrtoint (%257,%struct.$0_A**)
-(%259,i64) <- add (%258,i64),16
-(%260,%struct.$0_A**) <- inttoptr (%259,i64)
-(%261,%struct.$0_A*) <- array_left_access (%260,%struct.$0_A**),0
-(%262,%struct.$0_A*) load (%261,%struct.$0_A*)
-(%263,%struct.$$$_commmon_struct*) <- cast (%262,%struct.$0_A*)
- <- call $$$_add_inc,(%263,%struct.$$$_commmon_struct*)
-(%264,i32*) <- cast (%250,%struct.$0_A*)
- <- call $_common_destructor,(%264,i32*)
-(%265,%struct.$0_A****) load ($6_c,%struct.$0_A****)
-(%266,i64) <- ptrtoint (%265,%struct.$0_A****)
-(%267,i64) <- add (%266,i64),16
-(%268,%struct.$0_A****) <- inttoptr (%267,i64)
-(%269,%struct.$0_A***) <- array_access (%268,%struct.$0_A****),0
-(%270,%struct.$0_A***) load (%269,%struct.$0_A***)
-(%271,i64) <- ptrtoint (%270,%struct.$0_A***)
-(%272,i64) <- add (%271,i64),16
-(%273,%struct.$0_A***) <- inttoptr (%272,i64)
-(%274,%struct.$0_A**) <- array_access (%273,%struct.$0_A***),0
-(%275,%struct.$0_A**) load (%274,%struct.$0_A**)
-(%276,i64) <- ptrtoint (%275,%struct.$0_A**)
-(%277,i64) <- add (%276,i64),16
-(%278,%struct.$0_A**) <- inttoptr (%277,i64)
-(%279,%struct.$0_A*) <- array_left_access (%278,%struct.$0_A**),0
-(%280,%struct.$0_A*) load (%279,%struct.$0_A*)
-(%281,%struct.$0_A*) <- call $_constructor_0,0
-(%279,%struct.$0_A*) store (%281,%struct.$0_A*)
-(%282,%struct.$0_A****) load ($6_c,%struct.$0_A****)
-(%283,i64) <- ptrtoint (%282,%struct.$0_A****)
-(%284,i64) <- add (%283,i64),16
-(%285,%struct.$0_A****) <- inttoptr (%284,i64)
-(%286,%struct.$0_A***) <- array_access (%285,%struct.$0_A****),0
-(%287,%struct.$0_A***) load (%286,%struct.$0_A***)
-(%288,i64) <- ptrtoint (%287,%struct.$0_A***)
-(%289,i64) <- add (%288,i64),16
-(%290,%struct.$0_A***) <- inttoptr (%289,i64)
-(%291,%struct.$0_A**) <- array_access (%290,%struct.$0_A***),0
-(%292,%struct.$0_A**) load (%291,%struct.$0_A**)
-(%293,i64) <- ptrtoint (%292,%struct.$0_A**)
-(%294,i64) <- add (%293,i64),16
-(%295,%struct.$0_A**) <- inttoptr (%294,i64)
-(%296,%struct.$0_A*) <- array_left_access (%295,%struct.$0_A**),0
-(%297,%struct.$0_A*) load (%296,%struct.$0_A*)
-(%298,%struct.$$$_commmon_struct*) <- cast (%297,%struct.$0_A*)
- <- call $$$_add_inc,(%298,%struct.$$$_commmon_struct*)
-(%299,i32*) <- cast (%280,%struct.$0_A*)
- <- call $_common_destructor,(%299,i32*)
-(%300,%struct.$0_A*****) load ($7_d,%struct.$0_A*****)
-(%301,i64) <- ptrtoint (%300,%struct.$0_A*****)
-(%302,i64) <- add (%301,i64),16
-(%303,%struct.$0_A*****) <- inttoptr (%302,i64)
-(%304,%struct.$0_A****) <- array_access (%303,%struct.$0_A*****),0
-(%305,%struct.$0_A****) load (%304,%struct.$0_A****)
-(%306,i64) <- ptrtoint (%305,%struct.$0_A****)
-(%307,i64) <- add (%306,i64),16
-(%308,%struct.$0_A****) <- inttoptr (%307,i64)
-(%309,%struct.$0_A***) <- array_access (%308,%struct.$0_A****),0
-(%310,%struct.$0_A***) load (%309,%struct.$0_A***)
-(%311,i64) <- ptrtoint (%310,%struct.$0_A***)
-(%312,i64) <- add (%311,i64),16
-(%313,%struct.$0_A***) <- inttoptr (%312,i64)
-(%314,%struct.$0_A**) <- array_access (%313,%struct.$0_A***),0
-(%315,%struct.$0_A**) load (%314,%struct.$0_A**)
-(%316,i64) <- ptrtoint (%315,%struct.$0_A**)
-(%317,i64) <- add (%316,i64),16
-(%318,%struct.$0_A**) <- inttoptr (%317,i64)
-(%319,%struct.$0_A*) <- array_left_access (%318,%struct.$0_A**),0
-(%320,%struct.$0_A*) load (%319,%struct.$0_A*)
-(%321,%struct.$0_A*) <- call $_constructor_0,0
-(%319,%struct.$0_A*) store (%321,%struct.$0_A*)
-(%322,%struct.$0_A*****) load ($7_d,%struct.$0_A*****)
-(%323,i64) <- ptrtoint (%322,%struct.$0_A*****)
-(%324,i64) <- add (%323,i64),16
-(%325,%struct.$0_A*****) <- inttoptr (%324,i64)
-(%326,%struct.$0_A****) <- array_access (%325,%struct.$0_A*****),0
-(%327,%struct.$0_A****) load (%326,%struct.$0_A****)
-(%328,i64) <- ptrtoint (%327,%struct.$0_A****)
-(%329,i64) <- add (%328,i64),16
-(%330,%struct.$0_A****) <- inttoptr (%329,i64)
-(%331,%struct.$0_A***) <- array_access (%330,%struct.$0_A****),0
-(%332,%struct.$0_A***) load (%331,%struct.$0_A***)
-(%333,i64) <- ptrtoint (%332,%struct.$0_A***)
-(%334,i64) <- add (%333,i64),16
-(%335,%struct.$0_A***) <- inttoptr (%334,i64)
-(%336,%struct.$0_A**) <- array_access (%335,%struct.$0_A***),0
-(%337,%struct.$0_A**) load (%336,%struct.$0_A**)
-(%338,i64) <- ptrtoint (%337,%struct.$0_A**)
-(%339,i64) <- add (%338,i64),16
-(%340,%struct.$0_A**) <- inttoptr (%339,i64)
-(%341,%struct.$0_A*) <- array_left_access (%340,%struct.$0_A**),0
-(%342,%struct.$0_A*) load (%341,%struct.$0_A*)
-(%343,%struct.$$$_commmon_struct*) <- cast (%342,%struct.$0_A*)
- <- call $$$_add_inc,(%343,%struct.$$$_commmon_struct*)
-(%344,i32*) <- cast (%320,%struct.$0_A*)
- <- call $_common_destructor,(%344,i32*)
-branch local_return_78"];
-	"local_return_78" [style=filled, shape=box, label="local_return_78:
-($$_ret_value_1,i32) store 0
-(%345,%struct.$0_A**) load ($4_a,%struct.$0_A**)
-(%346,i32*) <- cast (%345,%struct.$0_A**)
- <- call $_common_destructor,(%346,i32*)
-(%347,%struct.$0_A***) load ($5_b,%struct.$0_A***)
-(%348,i32*) <- cast (%347,%struct.$0_A***)
- <- call $_common_destructor,(%348,i32*)
-(%349,%struct.$0_A****) load ($6_c,%struct.$0_A****)
-(%350,i32*) <- cast (%349,%struct.$0_A****)
- <- call $_common_destructor,(%350,i32*)
-(%351,%struct.$0_A*****) load ($7_d,%struct.$0_A*****)
-(%352,i32*) <- cast (%351,%struct.$0_A*****)
- <- call $_common_destructor,(%352,i32*)
-branch return_34"];
-"header_33" -> "entry_35";
-"entry_35" -> "alloc_condition_36";
-"alloc_condition_36" -> "alloc_body_37";
-"alloc_condition_36" -> "alloc_merge_38";
-"alloc_body_37" -> "alloc_condition_36";
-"alloc_merge_38" -> "assigment_inc_count_if_cond_39";
-"assigment_inc_count_if_cond_39" -> "assigment_inc_count_if_body_40";
-"assigment_inc_count_if_cond_39" -> "assigment_inc_count_if_merge_41";
-"assigment_inc_count_if_body_40" -> "assigment_inc_count_if_merge_41";
-"assigment_inc_count_if_merge_41" -> "alloc_condition_42";
-"alloc_condition_42" -> "alloc_body_43";
-"alloc_condition_42" -> "alloc_merge_47";
-"alloc_body_43" -> "alloc_condition_44";
-"alloc_condition_44" -> "alloc_body_45";
-"alloc_condition_44" -> "alloc_merge_46";
-"alloc_body_45" -> "alloc_condition_44";
-"alloc_merge_46" -> "alloc_condition_42";
-"alloc_merge_47" -> "assigment_inc_count_if_cond_48";
-"assigment_inc_count_if_cond_48" -> "assigment_inc_count_if_body_49";
-"assigment_inc_count_if_cond_48" -> "assigment_inc_count_if_merge_50";
-"assigment_inc_count_if_body_49" -> "assigment_inc_count_if_merge_50";
-"assigment_inc_count_if_merge_50" -> "alloc_condition_51";
-"alloc_condition_51" -> "alloc_body_52";
-"alloc_condition_51" -> "alloc_merge_59";
-"alloc_body_52" -> "alloc_condition_53";
-"alloc_condition_53" -> "alloc_body_54";
-"alloc_condition_53" -> "alloc_merge_58";
-"alloc_body_54" -> "alloc_condition_55";
-"alloc_condition_55" -> "alloc_body_56";
-"alloc_condition_55" -> "alloc_merge_57";
-"alloc_body_56" -> "alloc_condition_55";
-"alloc_merge_57" -> "alloc_condition_53";
-"alloc_merge_58" -> "alloc_condition_51";
-"alloc_merge_59" -> "assigment_inc_count_if_cond_60";
-"assigment_inc_count_if_cond_60" -> "assigment_inc_count_if_body_61";
-"assigment_inc_count_if_cond_60" -> "assigment_inc_count_if_merge_62";
-"assigment_inc_count_if_body_61" -> "assigment_inc_count_if_merge_62";
-"assigment_inc_count_if_merge_62" -> "alloc_condition_63";
-"alloc_condition_63" -> "alloc_body_64";
-"alloc_condition_63" -> "alloc_merge_74";
-"alloc_body_64" -> "alloc_condition_65";
-"alloc_condition_65" -> "alloc_body_66";
-"alloc_condition_65" -> "alloc_merge_73";
-"alloc_body_66" -> "alloc_condition_67";
-"alloc_condition_67" -> "alloc_body_68";
-"alloc_condition_67" -> "alloc_merge_72";
-"alloc_body_68" -> "alloc_condition_69";
-"alloc_condition_69" -> "alloc_body_70";
-"alloc_condition_69" -> "alloc_merge_71";
-"alloc_body_70" -> "alloc_condition_69";
-"alloc_merge_71" -> "alloc_condition_67";
-"alloc_merge_72" -> "alloc_condition_65";
-"alloc_merge_73" -> "alloc_condition_63";
-"alloc_merge_74" -> "assigment_inc_count_if_cond_75";
-"assigment_inc_count_if_cond_75" -> "assigment_inc_count_if_body_76";
-"assigment_inc_count_if_cond_75" -> "assigment_inc_count_if_merge_77";
-"assigment_inc_count_if_body_76" -> "assigment_inc_count_if_merge_77";
-"assigment_inc_count_if_merge_77" -> "local_return_78";
-"local_return_78" -> "return_34";
+(%26,i1) <- eq (%25,i32),0
+branch (%26,i1) check_temp_body_179,check_temp_merge_180"];
+	"check_temp_body_179" [style=filled, shape=box, label="check_temp_body_179:
+(%27,i32*) <- cast (%22,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%27,i32*)
+branch check_temp_merge_180"];
+	"check_temp_merge_180" [style=filled, shape=box, label="check_temp_merge_180:
+(%28,i32) <- add (%18,i32),(%21,i32)
+($49_a,i32) store (%28,i32)
+(%29,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%30,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%31,%struct.$$$_commmon_struct*) <- cast (%30,%struct.$0_Point*)
+ <- call $$$_add_inc,(%31,%struct.$$$_commmon_struct*)
+(%32,%struct.$0_Point*) <- call $10_f5,(%30,%struct.$0_Point*)
+($50_p,%struct.$0_Point*) store (%32,%struct.$0_Point*)
+(%33,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%34,%struct.$$$_commmon_struct*) <- cast (%33,%struct.$0_Point*)
+ <- call $$$_add_inc,(%34,%struct.$$$_commmon_struct*)
+(%35,i32*) <- cast (%29,%struct.$0_Point*)
+ <- call $_common_destructor,(%35,i32*)
+(%36,%struct.$0_Point*) <- call $9_f
+branch check_temp_cond_null_181"];
+	"check_temp_cond_null_181" [style=filled, shape=box, label="check_temp_cond_null_181:
+(%37,%struct.$$$_commmon_struct*) <- cast (%36,%struct.$0_Point*)
+(%38,i1) <- ne (%37,%struct.$$$_commmon_struct*),null
+branch (%38,i1) check_temp_cond_count_182,check_temp_merge_184"];
+	"check_temp_cond_count_182" [style=filled, shape=box, label="check_temp_cond_count_182:
+(%39,i32) <- field_access (%37,%struct.$$$_commmon_struct*),0
+(%40,i32) load (%39,i32)
+(%41,i1) <- eq (%40,i32),0
+branch (%41,i1) check_temp_body_183,check_temp_merge_184"];
+	"check_temp_body_183" [style=filled, shape=box, label="check_temp_body_183:
+(%42,i32*) <- cast (%37,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%42,i32*)
+branch check_temp_merge_184"];
+	"check_temp_merge_184" [style=filled, shape=box, label="check_temp_merge_184:
+(%43,%struct.$0_Point*) <- call $8_f1
+branch check_temp_cond_null_185"];
+	"check_temp_cond_null_185" [style=filled, shape=box, label="check_temp_cond_null_185:
+(%44,%struct.$$$_commmon_struct*) <- cast (%43,%struct.$0_Point*)
+(%45,i1) <- ne (%44,%struct.$$$_commmon_struct*),null
+branch (%45,i1) check_temp_cond_count_186,check_temp_merge_188"];
+	"check_temp_cond_count_186" [style=filled, shape=box, label="check_temp_cond_count_186:
+(%46,i32) <- field_access (%44,%struct.$$$_commmon_struct*),0
+(%47,i32) load (%46,i32)
+(%48,i1) <- eq (%47,i32),0
+branch (%48,i1) check_temp_body_187,check_temp_merge_188"];
+	"check_temp_body_187" [style=filled, shape=box, label="check_temp_body_187:
+(%49,i32*) <- cast (%44,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%49,i32*)
+branch check_temp_merge_188"];
+	"check_temp_merge_188" [style=filled, shape=box, label="check_temp_merge_188:
+(%50,%struct.$0_Point*) <- call $4_f2
+branch check_temp_cond_null_189"];
+	"check_temp_cond_null_189" [style=filled, shape=box, label="check_temp_cond_null_189:
+(%51,%struct.$$$_commmon_struct*) <- cast (%50,%struct.$0_Point*)
+(%52,i1) <- ne (%51,%struct.$$$_commmon_struct*),null
+branch (%52,i1) check_temp_cond_count_190,check_temp_merge_192"];
+	"check_temp_cond_count_190" [style=filled, shape=box, label="check_temp_cond_count_190:
+(%53,i32) <- field_access (%51,%struct.$$$_commmon_struct*),0
+(%54,i32) load (%53,i32)
+(%55,i1) <- eq (%54,i32),0
+branch (%55,i1) check_temp_body_191,check_temp_merge_192"];
+	"check_temp_body_191" [style=filled, shape=box, label="check_temp_body_191:
+(%56,i32*) <- cast (%51,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%56,i32*)
+branch check_temp_merge_192"];
+	"check_temp_merge_192" [style=filled, shape=box, label="check_temp_merge_192:
+(%57,%struct.$0_Point*) <- call $14_f3
+branch check_temp_cond_null_193"];
+	"check_temp_cond_null_193" [style=filled, shape=box, label="check_temp_cond_null_193:
+(%58,%struct.$$$_commmon_struct*) <- cast (%57,%struct.$0_Point*)
+(%59,i1) <- ne (%58,%struct.$$$_commmon_struct*),null
+branch (%59,i1) check_temp_cond_count_194,check_temp_merge_196"];
+	"check_temp_cond_count_194" [style=filled, shape=box, label="check_temp_cond_count_194:
+(%60,i32) <- field_access (%58,%struct.$$$_commmon_struct*),0
+(%61,i32) load (%60,i32)
+(%62,i1) <- eq (%61,i32),0
+branch (%62,i1) check_temp_body_195,check_temp_merge_196"];
+	"check_temp_body_195" [style=filled, shape=box, label="check_temp_body_195:
+(%63,i32*) <- cast (%58,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%63,i32*)
+branch check_temp_merge_196"];
+	"check_temp_merge_196" [style=filled, shape=box, label="check_temp_merge_196:
+(%64,%struct.$0_Point*) <- call $5_f4
+branch check_temp_cond_null_197"];
+	"check_temp_cond_null_197" [style=filled, shape=box, label="check_temp_cond_null_197:
+(%65,%struct.$$$_commmon_struct*) <- cast (%64,%struct.$0_Point*)
+(%66,i1) <- ne (%65,%struct.$$$_commmon_struct*),null
+branch (%66,i1) check_temp_cond_count_198,check_temp_merge_200"];
+	"check_temp_cond_count_198" [style=filled, shape=box, label="check_temp_cond_count_198:
+(%67,i32) <- field_access (%65,%struct.$$$_commmon_struct*),0
+(%68,i32) load (%67,i32)
+(%69,i1) <- eq (%68,i32),0
+branch (%69,i1) check_temp_body_199,check_temp_merge_200"];
+	"check_temp_body_199" [style=filled, shape=box, label="check_temp_body_199:
+(%70,i32*) <- cast (%65,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%70,i32*)
+branch check_temp_merge_200"];
+	"check_temp_merge_200" [style=filled, shape=box, label="check_temp_merge_200:
+(%71,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%72,%struct.$$$_commmon_struct*) <- cast (%71,%struct.$0_Point*)
+ <- call $$$_add_inc,(%72,%struct.$$$_commmon_struct*)
+(%73,%struct.$0_Point*) <- call $10_f5,(%71,%struct.$0_Point*)
+branch check_temp_cond_null_201"];
+	"check_temp_cond_null_201" [style=filled, shape=box, label="check_temp_cond_null_201:
+(%74,%struct.$$$_commmon_struct*) <- cast (%73,%struct.$0_Point*)
+(%75,i1) <- ne (%74,%struct.$$$_commmon_struct*),null
+branch (%75,i1) check_temp_cond_count_202,check_temp_merge_204"];
+	"check_temp_cond_count_202" [style=filled, shape=box, label="check_temp_cond_count_202:
+(%76,i32) <- field_access (%74,%struct.$$$_commmon_struct*),0
+(%77,i32) load (%76,i32)
+(%78,i1) <- eq (%77,i32),0
+branch (%78,i1) check_temp_body_203,check_temp_merge_204"];
+	"check_temp_body_203" [style=filled, shape=box, label="check_temp_body_203:
+(%79,i32*) <- cast (%74,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%79,i32*)
+branch check_temp_merge_204"];
+	"check_temp_merge_204" [style=filled, shape=box, label="check_temp_merge_204:
+(%80,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%81,%struct.$$$_commmon_struct*) <- cast (%80,%struct.$0_Point*)
+ <- call $$$_add_inc,(%81,%struct.$$$_commmon_struct*)
+(%82,%struct.$0_Point*) <- call $13_f6,(%80,%struct.$0_Point*)
+branch check_temp_cond_null_205"];
+	"check_temp_cond_null_205" [style=filled, shape=box, label="check_temp_cond_null_205:
+(%83,%struct.$$$_commmon_struct*) <- cast (%82,%struct.$0_Point*)
+(%84,i1) <- ne (%83,%struct.$$$_commmon_struct*),null
+branch (%84,i1) check_temp_cond_count_206,check_temp_merge_208"];
+	"check_temp_cond_count_206" [style=filled, shape=box, label="check_temp_cond_count_206:
+(%85,i32) <- field_access (%83,%struct.$$$_commmon_struct*),0
+(%86,i32) load (%85,i32)
+(%87,i1) <- eq (%86,i32),0
+branch (%87,i1) check_temp_body_207,check_temp_merge_208"];
+	"check_temp_body_207" [style=filled, shape=box, label="check_temp_body_207:
+(%88,i32*) <- cast (%83,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%88,i32*)
+branch check_temp_merge_208"];
+	"check_temp_merge_208" [style=filled, shape=box, label="check_temp_merge_208:
+(%89,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%90,%struct.$$$_commmon_struct*) <- cast (%89,%struct.$0_Point*)
+ <- call $$$_add_inc,(%90,%struct.$$$_commmon_struct*)
+(%91,%struct.$0_Point*) <- call $11_f7,(%89,%struct.$0_Point*)
+branch check_temp_cond_null_209"];
+	"check_temp_cond_null_209" [style=filled, shape=box, label="check_temp_cond_null_209:
+(%92,%struct.$$$_commmon_struct*) <- cast (%91,%struct.$0_Point*)
+(%93,i1) <- ne (%92,%struct.$$$_commmon_struct*),null
+branch (%93,i1) check_temp_cond_count_210,check_temp_merge_212"];
+	"check_temp_cond_count_210" [style=filled, shape=box, label="check_temp_cond_count_210:
+(%94,i32) <- field_access (%92,%struct.$$$_commmon_struct*),0
+(%95,i32) load (%94,i32)
+(%96,i1) <- eq (%95,i32),0
+branch (%96,i1) check_temp_body_211,check_temp_merge_212"];
+	"check_temp_body_211" [style=filled, shape=box, label="check_temp_body_211:
+(%97,i32*) <- cast (%92,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%97,i32*)
+branch check_temp_merge_212"];
+	"check_temp_merge_212" [style=filled, shape=box, label="check_temp_merge_212:
+(%98,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%99,%struct.$$$_commmon_struct*) <- cast (%98,%struct.$0_Point*)
+ <- call $$$_add_inc,(%99,%struct.$$$_commmon_struct*)
+(%100,%struct.$0_Point*) <- call $6_f8,(%98,%struct.$0_Point*)
+branch check_temp_cond_null_213"];
+	"check_temp_cond_null_213" [style=filled, shape=box, label="check_temp_cond_null_213:
+(%101,%struct.$$$_commmon_struct*) <- cast (%100,%struct.$0_Point*)
+(%102,i1) <- ne (%101,%struct.$$$_commmon_struct*),null
+branch (%102,i1) check_temp_cond_count_214,check_temp_merge_216"];
+	"check_temp_cond_count_214" [style=filled, shape=box, label="check_temp_cond_count_214:
+(%103,i32) <- field_access (%101,%struct.$$$_commmon_struct*),0
+(%104,i32) load (%103,i32)
+(%105,i1) <- eq (%104,i32),0
+branch (%105,i1) check_temp_body_215,check_temp_merge_216"];
+	"check_temp_body_215" [style=filled, shape=box, label="check_temp_body_215:
+(%106,i32*) <- cast (%101,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%106,i32*)
+branch check_temp_merge_216"];
+	"check_temp_merge_216" [style=filled, shape=box, label="check_temp_merge_216:
+(%107,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%108,%struct.$$$_commmon_struct*) <- cast (%107,%struct.$0_Point*)
+ <- call $$$_add_inc,(%108,%struct.$$$_commmon_struct*)
+(%109,%struct.$0_Point*) <- call $7_f9,(%107,%struct.$0_Point*),4
+branch check_temp_cond_null_217"];
+	"check_temp_cond_null_217" [style=filled, shape=box, label="check_temp_cond_null_217:
+(%110,%struct.$$$_commmon_struct*) <- cast (%109,%struct.$0_Point*)
+(%111,i1) <- ne (%110,%struct.$$$_commmon_struct*),null
+branch (%111,i1) check_temp_cond_count_218,check_temp_merge_220"];
+	"check_temp_cond_count_218" [style=filled, shape=box, label="check_temp_cond_count_218:
+(%112,i32) <- field_access (%110,%struct.$$$_commmon_struct*),0
+(%113,i32) load (%112,i32)
+(%114,i1) <- eq (%113,i32),0
+branch (%114,i1) check_temp_body_219,check_temp_merge_220"];
+	"check_temp_body_219" [style=filled, shape=box, label="check_temp_body_219:
+(%115,i32*) <- cast (%110,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%115,i32*)
+branch check_temp_merge_220"];
+	"check_temp_merge_220" [style=filled, shape=box, label="check_temp_merge_220:
+(%116,%struct.$0_Point*) <- call $9_f
+(%117,i32) <- field_access (%116,%struct.$0_Point*),2
+(%118,i32) load (%117,i32)
+branch check_temp_cond_null_221"];
+	"check_temp_cond_null_221" [style=filled, shape=box, label="check_temp_cond_null_221:
+(%119,%struct.$$$_commmon_struct*) <- cast (%116,%struct.$0_Point*)
+(%120,i1) <- ne (%119,%struct.$$$_commmon_struct*),null
+branch (%120,i1) check_temp_cond_count_222,check_temp_merge_224"];
+	"check_temp_cond_count_222" [style=filled, shape=box, label="check_temp_cond_count_222:
+(%121,i32) <- field_access (%119,%struct.$$$_commmon_struct*),0
+(%122,i32) load (%121,i32)
+(%123,i1) <- eq (%122,i32),0
+branch (%123,i1) check_temp_body_223,check_temp_merge_224"];
+	"check_temp_body_223" [style=filled, shape=box, label="check_temp_body_223:
+(%124,i32*) <- cast (%119,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%124,i32*)
+branch check_temp_merge_224"];
+	"check_temp_merge_224" [style=filled, shape=box, label="check_temp_merge_224:
+(%125,%struct.$0_Point*) <- call $8_f1
+(%126,i32) <- field_access (%125,%struct.$0_Point*),2
+(%127,i32) load (%126,i32)
+branch check_temp_cond_null_225"];
+	"check_temp_cond_null_225" [style=filled, shape=box, label="check_temp_cond_null_225:
+(%128,%struct.$$$_commmon_struct*) <- cast (%125,%struct.$0_Point*)
+(%129,i1) <- ne (%128,%struct.$$$_commmon_struct*),null
+branch (%129,i1) check_temp_cond_count_226,check_temp_merge_228"];
+	"check_temp_cond_count_226" [style=filled, shape=box, label="check_temp_cond_count_226:
+(%130,i32) <- field_access (%128,%struct.$$$_commmon_struct*),0
+(%131,i32) load (%130,i32)
+(%132,i1) <- eq (%131,i32),0
+branch (%132,i1) check_temp_body_227,check_temp_merge_228"];
+	"check_temp_body_227" [style=filled, shape=box, label="check_temp_body_227:
+(%133,i32*) <- cast (%128,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%133,i32*)
+branch check_temp_merge_228"];
+	"check_temp_merge_228" [style=filled, shape=box, label="check_temp_merge_228:
+(%134,%struct.$0_Point*) <- call $4_f2
+(%135,i32) <- field_access (%134,%struct.$0_Point*),2
+(%136,i32) load (%135,i32)
+branch check_temp_cond_null_229"];
+	"check_temp_cond_null_229" [style=filled, shape=box, label="check_temp_cond_null_229:
+(%137,%struct.$$$_commmon_struct*) <- cast (%134,%struct.$0_Point*)
+(%138,i1) <- ne (%137,%struct.$$$_commmon_struct*),null
+branch (%138,i1) check_temp_cond_count_230,check_temp_merge_232"];
+	"check_temp_cond_count_230" [style=filled, shape=box, label="check_temp_cond_count_230:
+(%139,i32) <- field_access (%137,%struct.$$$_commmon_struct*),0
+(%140,i32) load (%139,i32)
+(%141,i1) <- eq (%140,i32),0
+branch (%141,i1) check_temp_body_231,check_temp_merge_232"];
+	"check_temp_body_231" [style=filled, shape=box, label="check_temp_body_231:
+(%142,i32*) <- cast (%137,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%142,i32*)
+branch check_temp_merge_232"];
+	"check_temp_merge_232" [style=filled, shape=box, label="check_temp_merge_232:
+(%143,%struct.$0_Point*) <- call $14_f3
+(%144,i32) <- field_access (%143,%struct.$0_Point*),2
+(%145,i32) load (%144,i32)
+branch check_temp_cond_null_233"];
+	"check_temp_cond_null_233" [style=filled, shape=box, label="check_temp_cond_null_233:
+(%146,%struct.$$$_commmon_struct*) <- cast (%143,%struct.$0_Point*)
+(%147,i1) <- ne (%146,%struct.$$$_commmon_struct*),null
+branch (%147,i1) check_temp_cond_count_234,check_temp_merge_236"];
+	"check_temp_cond_count_234" [style=filled, shape=box, label="check_temp_cond_count_234:
+(%148,i32) <- field_access (%146,%struct.$$$_commmon_struct*),0
+(%149,i32) load (%148,i32)
+(%150,i1) <- eq (%149,i32),0
+branch (%150,i1) check_temp_body_235,check_temp_merge_236"];
+	"check_temp_body_235" [style=filled, shape=box, label="check_temp_body_235:
+(%151,i32*) <- cast (%146,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%151,i32*)
+branch check_temp_merge_236"];
+	"check_temp_merge_236" [style=filled, shape=box, label="check_temp_merge_236:
+(%152,%struct.$0_Point*) <- call $5_f4
+(%153,i32) <- field_access (%152,%struct.$0_Point*),2
+(%154,i32) load (%153,i32)
+branch check_temp_cond_null_237"];
+	"check_temp_cond_null_237" [style=filled, shape=box, label="check_temp_cond_null_237:
+(%155,%struct.$$$_commmon_struct*) <- cast (%152,%struct.$0_Point*)
+(%156,i1) <- ne (%155,%struct.$$$_commmon_struct*),null
+branch (%156,i1) check_temp_cond_count_238,check_temp_merge_240"];
+	"check_temp_cond_count_238" [style=filled, shape=box, label="check_temp_cond_count_238:
+(%157,i32) <- field_access (%155,%struct.$$$_commmon_struct*),0
+(%158,i32) load (%157,i32)
+(%159,i1) <- eq (%158,i32),0
+branch (%159,i1) check_temp_body_239,check_temp_merge_240"];
+	"check_temp_body_239" [style=filled, shape=box, label="check_temp_body_239:
+(%160,i32*) <- cast (%155,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%160,i32*)
+branch check_temp_merge_240"];
+	"check_temp_merge_240" [style=filled, shape=box, label="check_temp_merge_240:
+(%161,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%162,%struct.$$$_commmon_struct*) <- cast (%161,%struct.$0_Point*)
+ <- call $$$_add_inc,(%162,%struct.$$$_commmon_struct*)
+(%163,%struct.$0_Point*) <- call $10_f5,(%161,%struct.$0_Point*)
+(%164,i32) <- field_access (%163,%struct.$0_Point*),2
+(%165,i32) load (%164,i32)
+branch check_temp_cond_null_241"];
+	"check_temp_cond_null_241" [style=filled, shape=box, label="check_temp_cond_null_241:
+(%166,%struct.$$$_commmon_struct*) <- cast (%163,%struct.$0_Point*)
+(%167,i1) <- ne (%166,%struct.$$$_commmon_struct*),null
+branch (%167,i1) check_temp_cond_count_242,check_temp_merge_244"];
+	"check_temp_cond_count_242" [style=filled, shape=box, label="check_temp_cond_count_242:
+(%168,i32) <- field_access (%166,%struct.$$$_commmon_struct*),0
+(%169,i32) load (%168,i32)
+(%170,i1) <- eq (%169,i32),0
+branch (%170,i1) check_temp_body_243,check_temp_merge_244"];
+	"check_temp_body_243" [style=filled, shape=box, label="check_temp_body_243:
+(%171,i32*) <- cast (%166,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%171,i32*)
+branch check_temp_merge_244"];
+	"check_temp_merge_244" [style=filled, shape=box, label="check_temp_merge_244:
+(%172,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%173,%struct.$$$_commmon_struct*) <- cast (%172,%struct.$0_Point*)
+ <- call $$$_add_inc,(%173,%struct.$$$_commmon_struct*)
+(%174,%struct.$0_Point*) <- call $13_f6,(%172,%struct.$0_Point*)
+(%175,i32) <- field_access (%174,%struct.$0_Point*),2
+(%176,i32) load (%175,i32)
+branch check_temp_cond_null_245"];
+	"check_temp_cond_null_245" [style=filled, shape=box, label="check_temp_cond_null_245:
+(%177,%struct.$$$_commmon_struct*) <- cast (%174,%struct.$0_Point*)
+(%178,i1) <- ne (%177,%struct.$$$_commmon_struct*),null
+branch (%178,i1) check_temp_cond_count_246,check_temp_merge_248"];
+	"check_temp_cond_count_246" [style=filled, shape=box, label="check_temp_cond_count_246:
+(%179,i32) <- field_access (%177,%struct.$$$_commmon_struct*),0
+(%180,i32) load (%179,i32)
+(%181,i1) <- eq (%180,i32),0
+branch (%181,i1) check_temp_body_247,check_temp_merge_248"];
+	"check_temp_body_247" [style=filled, shape=box, label="check_temp_body_247:
+(%182,i32*) <- cast (%177,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%182,i32*)
+branch check_temp_merge_248"];
+	"check_temp_merge_248" [style=filled, shape=box, label="check_temp_merge_248:
+(%183,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%184,%struct.$$$_commmon_struct*) <- cast (%183,%struct.$0_Point*)
+ <- call $$$_add_inc,(%184,%struct.$$$_commmon_struct*)
+(%185,%struct.$0_Point*) <- call $11_f7,(%183,%struct.$0_Point*)
+(%186,i32) <- field_access (%185,%struct.$0_Point*),2
+(%187,i32) load (%186,i32)
+branch check_temp_cond_null_249"];
+	"check_temp_cond_null_249" [style=filled, shape=box, label="check_temp_cond_null_249:
+(%188,%struct.$$$_commmon_struct*) <- cast (%185,%struct.$0_Point*)
+(%189,i1) <- ne (%188,%struct.$$$_commmon_struct*),null
+branch (%189,i1) check_temp_cond_count_250,check_temp_merge_252"];
+	"check_temp_cond_count_250" [style=filled, shape=box, label="check_temp_cond_count_250:
+(%190,i32) <- field_access (%188,%struct.$$$_commmon_struct*),0
+(%191,i32) load (%190,i32)
+(%192,i1) <- eq (%191,i32),0
+branch (%192,i1) check_temp_body_251,check_temp_merge_252"];
+	"check_temp_body_251" [style=filled, shape=box, label="check_temp_body_251:
+(%193,i32*) <- cast (%188,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%193,i32*)
+branch check_temp_merge_252"];
+	"check_temp_merge_252" [style=filled, shape=box, label="check_temp_merge_252:
+(%194,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%195,%struct.$$$_commmon_struct*) <- cast (%194,%struct.$0_Point*)
+ <- call $$$_add_inc,(%195,%struct.$$$_commmon_struct*)
+(%196,%struct.$0_Point*) <- call $6_f8,(%194,%struct.$0_Point*)
+(%197,i32) <- field_access (%196,%struct.$0_Point*),2
+(%198,i32) load (%197,i32)
+branch check_temp_cond_null_253"];
+	"check_temp_cond_null_253" [style=filled, shape=box, label="check_temp_cond_null_253:
+(%199,%struct.$$$_commmon_struct*) <- cast (%196,%struct.$0_Point*)
+(%200,i1) <- ne (%199,%struct.$$$_commmon_struct*),null
+branch (%200,i1) check_temp_cond_count_254,check_temp_merge_256"];
+	"check_temp_cond_count_254" [style=filled, shape=box, label="check_temp_cond_count_254:
+(%201,i32) <- field_access (%199,%struct.$$$_commmon_struct*),0
+(%202,i32) load (%201,i32)
+(%203,i1) <- eq (%202,i32),0
+branch (%203,i1) check_temp_body_255,check_temp_merge_256"];
+	"check_temp_body_255" [style=filled, shape=box, label="check_temp_body_255:
+(%204,i32*) <- cast (%199,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%204,i32*)
+branch check_temp_merge_256"];
+	"check_temp_merge_256" [style=filled, shape=box, label="check_temp_merge_256:
+(%205,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%206,%struct.$$$_commmon_struct*) <- cast (%205,%struct.$0_Point*)
+ <- call $$$_add_inc,(%206,%struct.$$$_commmon_struct*)
+(%207,%struct.$0_Point*) <- call $7_f9,(%205,%struct.$0_Point*),9
+(%208,i32) <- field_access (%207,%struct.$0_Point*),2
+(%209,i32) load (%208,i32)
+branch check_temp_cond_null_257"];
+	"check_temp_cond_null_257" [style=filled, shape=box, label="check_temp_cond_null_257:
+(%210,%struct.$$$_commmon_struct*) <- cast (%207,%struct.$0_Point*)
+(%211,i1) <- ne (%210,%struct.$$$_commmon_struct*),null
+branch (%211,i1) check_temp_cond_count_258,check_temp_merge_260"];
+	"check_temp_cond_count_258" [style=filled, shape=box, label="check_temp_cond_count_258:
+(%212,i32) <- field_access (%210,%struct.$$$_commmon_struct*),0
+(%213,i32) load (%212,i32)
+(%214,i1) <- eq (%213,i32),0
+branch (%214,i1) check_temp_body_259,check_temp_merge_260"];
+	"check_temp_body_259" [style=filled, shape=box, label="check_temp_body_259:
+(%215,i32*) <- cast (%210,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%215,i32*)
+branch check_temp_merge_260"];
+	"check_temp_merge_260" [style=filled, shape=box, label="check_temp_merge_260:
+(%216,%struct.$0_Point*) <- call $_constructor_0,2,2
+branch check_temp_cond_null_261"];
+	"check_temp_cond_null_261" [style=filled, shape=box, label="check_temp_cond_null_261:
+(%217,%struct.$$$_commmon_struct*) <- cast (%216,%struct.$0_Point*)
+(%218,i1) <- ne (%217,%struct.$$$_commmon_struct*),null
+branch (%218,i1) check_temp_cond_count_262,check_temp_merge_264"];
+	"check_temp_cond_count_262" [style=filled, shape=box, label="check_temp_cond_count_262:
+(%219,i32) <- field_access (%217,%struct.$$$_commmon_struct*),0
+(%220,i32) load (%219,i32)
+(%221,i1) <- eq (%220,i32),0
+branch (%221,i1) check_temp_body_263,check_temp_merge_264"];
+	"check_temp_body_263" [style=filled, shape=box, label="check_temp_body_263:
+(%222,i32*) <- cast (%217,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%222,i32*)
+branch check_temp_merge_264"];
+	"check_temp_merge_264" [style=filled, shape=box, label="check_temp_merge_264:
+(%223,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%224,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%225,%struct.$$$_commmon_struct*) <- cast (%224,%struct.$0_Point*)
+ <- call $$$_add_inc,(%225,%struct.$$$_commmon_struct*)
+(%226,%struct.$0_Point*) <- call $6_f8,(%224,%struct.$0_Point*)
+(%227,%struct.$$$_commmon_struct*) <- cast (%226,%struct.$0_Point*)
+ <- call $$$_add_inc,(%227,%struct.$$$_commmon_struct*)
+(%228,%struct.$0_Point*) <- call $6_f8,(%226,%struct.$0_Point*)
+(%229,%struct.$$$_commmon_struct*) <- cast (%228,%struct.$0_Point*)
+ <- call $$$_add_inc,(%229,%struct.$$$_commmon_struct*)
+(%230,%struct.$0_Point*) <- call $6_f8,(%228,%struct.$0_Point*)
+($50_p,%struct.$0_Point*) store (%230,%struct.$0_Point*)
+(%231,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%232,%struct.$$$_commmon_struct*) <- cast (%231,%struct.$0_Point*)
+ <- call $$$_add_inc,(%232,%struct.$$$_commmon_struct*)
+(%233,i32*) <- cast (%223,%struct.$0_Point*)
+ <- call $_common_destructor,(%233,i32*)
+(%234,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%235,%struct.$$$_commmon_struct*) <- cast (%234,%struct.$0_Point*)
+ <- call $$$_add_inc,(%235,%struct.$$$_commmon_struct*)
+(%236,%struct.$0_Point*) <- call $6_f8,(%234,%struct.$0_Point*)
+(%237,%struct.$$$_commmon_struct*) <- cast (%236,%struct.$0_Point*)
+ <- call $$$_add_inc,(%237,%struct.$$$_commmon_struct*)
+(%238,%struct.$0_Point*) <- call $6_f8,(%236,%struct.$0_Point*)
+(%239,%struct.$$$_commmon_struct*) <- cast (%238,%struct.$0_Point*)
+ <- call $$$_add_inc,(%239,%struct.$$$_commmon_struct*)
+(%240,%struct.$0_Point*) <- call $6_f8,(%238,%struct.$0_Point*)
+branch check_temp_cond_null_265"];
+	"check_temp_cond_null_265" [style=filled, shape=box, label="check_temp_cond_null_265:
+(%241,%struct.$$$_commmon_struct*) <- cast (%240,%struct.$0_Point*)
+(%242,i1) <- ne (%241,%struct.$$$_commmon_struct*),null
+branch (%242,i1) check_temp_cond_count_266,check_temp_merge_268"];
+	"check_temp_cond_count_266" [style=filled, shape=box, label="check_temp_cond_count_266:
+(%243,i32) <- field_access (%241,%struct.$$$_commmon_struct*),0
+(%244,i32) load (%243,i32)
+(%245,i1) <- eq (%244,i32),0
+branch (%245,i1) check_temp_body_267,check_temp_merge_268"];
+	"check_temp_body_267" [style=filled, shape=box, label="check_temp_body_267:
+(%246,i32*) <- cast (%241,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%246,i32*)
+branch check_temp_merge_268"];
+	"check_temp_merge_268" [style=filled, shape=box, label="check_temp_merge_268:
+(%247,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%248,%struct.$$$_commmon_struct*) <- cast (%247,%struct.$0_Point*)
+ <- call $$$_add_inc,(%248,%struct.$$$_commmon_struct*)
+(%249,%struct.$0_Point*) <- call $13_f6,(%247,%struct.$0_Point*)
+(%250,%struct.$$$_commmon_struct*) <- cast (%249,%struct.$0_Point*)
+ <- call $$$_add_inc,(%250,%struct.$$$_commmon_struct*)
+(%251,%struct.$0_Point*) <- call $10_f5,(%249,%struct.$0_Point*)
+(%252,%struct.$$$_commmon_struct*) <- cast (%251,%struct.$0_Point*)
+ <- call $$$_add_inc,(%252,%struct.$$$_commmon_struct*)
+(%253,%struct.$0_Point*) <- call $11_f7,(%251,%struct.$0_Point*)
+branch check_temp_cond_null_269"];
+	"check_temp_cond_null_269" [style=filled, shape=box, label="check_temp_cond_null_269:
+(%254,%struct.$$$_commmon_struct*) <- cast (%253,%struct.$0_Point*)
+(%255,i1) <- ne (%254,%struct.$$$_commmon_struct*),null
+branch (%255,i1) check_temp_cond_count_270,check_temp_merge_272"];
+	"check_temp_cond_count_270" [style=filled, shape=box, label="check_temp_cond_count_270:
+(%256,i32) <- field_access (%254,%struct.$$$_commmon_struct*),0
+(%257,i32) load (%256,i32)
+(%258,i1) <- eq (%257,i32),0
+branch (%258,i1) check_temp_body_271,check_temp_merge_272"];
+	"check_temp_body_271" [style=filled, shape=box, label="check_temp_body_271:
+(%259,i32*) <- cast (%254,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%259,i32*)
+branch check_temp_merge_272"];
+	"check_temp_merge_272" [style=filled, shape=box, label="check_temp_merge_272:
+(%260,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%261,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%262,%struct.$$$_commmon_struct*) <- cast (%261,%struct.$0_Point*)
+ <- call $$$_add_inc,(%262,%struct.$$$_commmon_struct*)
+(%263,%struct.$0_Point*) <- call $13_f6,(%261,%struct.$0_Point*)
+(%264,%struct.$$$_commmon_struct*) <- cast (%263,%struct.$0_Point*)
+ <- call $$$_add_inc,(%264,%struct.$$$_commmon_struct*)
+(%265,%struct.$0_Point*) <- call $10_f5,(%263,%struct.$0_Point*)
+(%266,%struct.$$$_commmon_struct*) <- cast (%265,%struct.$0_Point*)
+ <- call $$$_add_inc,(%266,%struct.$$$_commmon_struct*)
+(%267,%struct.$0_Point*) <- call $11_f7,(%265,%struct.$0_Point*)
+($50_p,%struct.$0_Point*) store (%267,%struct.$0_Point*)
+(%268,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%269,%struct.$$$_commmon_struct*) <- cast (%268,%struct.$0_Point*)
+ <- call $$$_add_inc,(%269,%struct.$$$_commmon_struct*)
+(%270,i32*) <- cast (%260,%struct.$0_Point*)
+ <- call $_common_destructor,(%270,i32*)
+(%271,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%272,%struct.$0_Point*) <- call $9_f
+($50_p,%struct.$0_Point*) store (%272,%struct.$0_Point*)
+(%273,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%274,%struct.$$$_commmon_struct*) <- cast (%273,%struct.$0_Point*)
+ <- call $$$_add_inc,(%274,%struct.$$$_commmon_struct*)
+(%275,i32*) <- cast (%271,%struct.$0_Point*)
+ <- call $_common_destructor,(%275,i32*)
+(%276,i32) load ($49_a,i32)
+(%277,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%278,i32) <- field_access (%277,%struct.$0_Point*),2
+(%279,i32) load (%278,i32)
+branch check_temp_cond_null_273"];
+	"check_temp_cond_null_273" [style=filled, shape=box, label="check_temp_cond_null_273:
+(%280,%struct.$$$_commmon_struct*) <- cast (%277,%struct.$0_Point*)
+(%281,i1) <- ne (%280,%struct.$$$_commmon_struct*),null
+branch (%281,i1) check_temp_cond_count_274,check_temp_merge_276"];
+	"check_temp_cond_count_274" [style=filled, shape=box, label="check_temp_cond_count_274:
+(%282,i32) <- field_access (%280,%struct.$$$_commmon_struct*),0
+(%283,i32) load (%282,i32)
+(%284,i1) <- eq (%283,i32),0
+branch (%284,i1) check_temp_body_275,check_temp_merge_276"];
+	"check_temp_body_275" [style=filled, shape=box, label="check_temp_body_275:
+(%285,i32*) <- cast (%280,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%285,i32*)
+branch check_temp_merge_276"];
+	"check_temp_merge_276" [style=filled, shape=box, label="check_temp_merge_276:
+(%286,i32) <- add (%276,i32),(%279,i32)
+(%287,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%288,i32) <- field_access (%287,%struct.$0_Point*),3
+(%289,i32) load (%288,i32)
+branch check_temp_cond_null_277"];
+	"check_temp_cond_null_277" [style=filled, shape=box, label="check_temp_cond_null_277:
+(%290,%struct.$$$_commmon_struct*) <- cast (%287,%struct.$0_Point*)
+(%291,i1) <- ne (%290,%struct.$$$_commmon_struct*),null
+branch (%291,i1) check_temp_cond_count_278,check_temp_merge_280"];
+	"check_temp_cond_count_278" [style=filled, shape=box, label="check_temp_cond_count_278:
+(%292,i32) <- field_access (%290,%struct.$$$_commmon_struct*),0
+(%293,i32) load (%292,i32)
+(%294,i1) <- eq (%293,i32),0
+branch (%294,i1) check_temp_body_279,check_temp_merge_280"];
+	"check_temp_body_279" [style=filled, shape=box, label="check_temp_body_279:
+(%295,i32*) <- cast (%290,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%295,i32*)
+branch check_temp_merge_280"];
+	"check_temp_merge_280" [style=filled, shape=box, label="check_temp_merge_280:
+(%296,i32) <- add (%286,i32),(%289,i32)
+($49_a,i32) store (%296,i32)
+(%297,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%298,%struct.$0_Point*) <- call $8_f1
+($50_p,%struct.$0_Point*) store (%298,%struct.$0_Point*)
+(%299,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%300,%struct.$$$_commmon_struct*) <- cast (%299,%struct.$0_Point*)
+ <- call $$$_add_inc,(%300,%struct.$$$_commmon_struct*)
+(%301,i32*) <- cast (%297,%struct.$0_Point*)
+ <- call $_common_destructor,(%301,i32*)
+(%302,i32) load ($49_a,i32)
+(%303,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%304,i32) <- field_access (%303,%struct.$0_Point*),2
+(%305,i32) load (%304,i32)
+branch check_temp_cond_null_281"];
+	"check_temp_cond_null_281" [style=filled, shape=box, label="check_temp_cond_null_281:
+(%306,%struct.$$$_commmon_struct*) <- cast (%303,%struct.$0_Point*)
+(%307,i1) <- ne (%306,%struct.$$$_commmon_struct*),null
+branch (%307,i1) check_temp_cond_count_282,check_temp_merge_284"];
+	"check_temp_cond_count_282" [style=filled, shape=box, label="check_temp_cond_count_282:
+(%308,i32) <- field_access (%306,%struct.$$$_commmon_struct*),0
+(%309,i32) load (%308,i32)
+(%310,i1) <- eq (%309,i32),0
+branch (%310,i1) check_temp_body_283,check_temp_merge_284"];
+	"check_temp_body_283" [style=filled, shape=box, label="check_temp_body_283:
+(%311,i32*) <- cast (%306,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%311,i32*)
+branch check_temp_merge_284"];
+	"check_temp_merge_284" [style=filled, shape=box, label="check_temp_merge_284:
+(%312,i32) <- add (%302,i32),(%305,i32)
+(%313,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%314,i32) <- field_access (%313,%struct.$0_Point*),3
+(%315,i32) load (%314,i32)
+branch check_temp_cond_null_285"];
+	"check_temp_cond_null_285" [style=filled, shape=box, label="check_temp_cond_null_285:
+(%316,%struct.$$$_commmon_struct*) <- cast (%313,%struct.$0_Point*)
+(%317,i1) <- ne (%316,%struct.$$$_commmon_struct*),null
+branch (%317,i1) check_temp_cond_count_286,check_temp_merge_288"];
+	"check_temp_cond_count_286" [style=filled, shape=box, label="check_temp_cond_count_286:
+(%318,i32) <- field_access (%316,%struct.$$$_commmon_struct*),0
+(%319,i32) load (%318,i32)
+(%320,i1) <- eq (%319,i32),0
+branch (%320,i1) check_temp_body_287,check_temp_merge_288"];
+	"check_temp_body_287" [style=filled, shape=box, label="check_temp_body_287:
+(%321,i32*) <- cast (%316,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%321,i32*)
+branch check_temp_merge_288"];
+	"check_temp_merge_288" [style=filled, shape=box, label="check_temp_merge_288:
+(%322,i32) <- add (%312,i32),(%315,i32)
+($49_a,i32) store (%322,i32)
+(%323,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%324,%struct.$0_Point*) <- call $4_f2
+($50_p,%struct.$0_Point*) store (%324,%struct.$0_Point*)
+(%325,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%326,%struct.$$$_commmon_struct*) <- cast (%325,%struct.$0_Point*)
+ <- call $$$_add_inc,(%326,%struct.$$$_commmon_struct*)
+(%327,i32*) <- cast (%323,%struct.$0_Point*)
+ <- call $_common_destructor,(%327,i32*)
+(%328,i32) load ($49_a,i32)
+(%329,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%330,i32) <- field_access (%329,%struct.$0_Point*),2
+(%331,i32) load (%330,i32)
+branch check_temp_cond_null_289"];
+	"check_temp_cond_null_289" [style=filled, shape=box, label="check_temp_cond_null_289:
+(%332,%struct.$$$_commmon_struct*) <- cast (%329,%struct.$0_Point*)
+(%333,i1) <- ne (%332,%struct.$$$_commmon_struct*),null
+branch (%333,i1) check_temp_cond_count_290,check_temp_merge_292"];
+	"check_temp_cond_count_290" [style=filled, shape=box, label="check_temp_cond_count_290:
+(%334,i32) <- field_access (%332,%struct.$$$_commmon_struct*),0
+(%335,i32) load (%334,i32)
+(%336,i1) <- eq (%335,i32),0
+branch (%336,i1) check_temp_body_291,check_temp_merge_292"];
+	"check_temp_body_291" [style=filled, shape=box, label="check_temp_body_291:
+(%337,i32*) <- cast (%332,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%337,i32*)
+branch check_temp_merge_292"];
+	"check_temp_merge_292" [style=filled, shape=box, label="check_temp_merge_292:
+(%338,i32) <- add (%328,i32),(%331,i32)
+(%339,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%340,i32) <- field_access (%339,%struct.$0_Point*),3
+(%341,i32) load (%340,i32)
+branch check_temp_cond_null_293"];
+	"check_temp_cond_null_293" [style=filled, shape=box, label="check_temp_cond_null_293:
+(%342,%struct.$$$_commmon_struct*) <- cast (%339,%struct.$0_Point*)
+(%343,i1) <- ne (%342,%struct.$$$_commmon_struct*),null
+branch (%343,i1) check_temp_cond_count_294,check_temp_merge_296"];
+	"check_temp_cond_count_294" [style=filled, shape=box, label="check_temp_cond_count_294:
+(%344,i32) <- field_access (%342,%struct.$$$_commmon_struct*),0
+(%345,i32) load (%344,i32)
+(%346,i1) <- eq (%345,i32),0
+branch (%346,i1) check_temp_body_295,check_temp_merge_296"];
+	"check_temp_body_295" [style=filled, shape=box, label="check_temp_body_295:
+(%347,i32*) <- cast (%342,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%347,i32*)
+branch check_temp_merge_296"];
+	"check_temp_merge_296" [style=filled, shape=box, label="check_temp_merge_296:
+(%348,i32) <- add (%338,i32),(%341,i32)
+($49_a,i32) store (%348,i32)
+(%349,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%350,%struct.$0_Point*) <- call $14_f3
+($50_p,%struct.$0_Point*) store (%350,%struct.$0_Point*)
+(%351,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%352,%struct.$$$_commmon_struct*) <- cast (%351,%struct.$0_Point*)
+ <- call $$$_add_inc,(%352,%struct.$$$_commmon_struct*)
+(%353,i32*) <- cast (%349,%struct.$0_Point*)
+ <- call $_common_destructor,(%353,i32*)
+(%354,i32) load ($49_a,i32)
+(%355,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%356,i32) <- field_access (%355,%struct.$0_Point*),2
+(%357,i32) load (%356,i32)
+branch check_temp_cond_null_297"];
+	"check_temp_cond_null_297" [style=filled, shape=box, label="check_temp_cond_null_297:
+(%358,%struct.$$$_commmon_struct*) <- cast (%355,%struct.$0_Point*)
+(%359,i1) <- ne (%358,%struct.$$$_commmon_struct*),null
+branch (%359,i1) check_temp_cond_count_298,check_temp_merge_300"];
+	"check_temp_cond_count_298" [style=filled, shape=box, label="check_temp_cond_count_298:
+(%360,i32) <- field_access (%358,%struct.$$$_commmon_struct*),0
+(%361,i32) load (%360,i32)
+(%362,i1) <- eq (%361,i32),0
+branch (%362,i1) check_temp_body_299,check_temp_merge_300"];
+	"check_temp_body_299" [style=filled, shape=box, label="check_temp_body_299:
+(%363,i32*) <- cast (%358,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%363,i32*)
+branch check_temp_merge_300"];
+	"check_temp_merge_300" [style=filled, shape=box, label="check_temp_merge_300:
+(%364,i32) <- add (%354,i32),(%357,i32)
+(%365,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%366,i32) <- field_access (%365,%struct.$0_Point*),3
+(%367,i32) load (%366,i32)
+branch check_temp_cond_null_301"];
+	"check_temp_cond_null_301" [style=filled, shape=box, label="check_temp_cond_null_301:
+(%368,%struct.$$$_commmon_struct*) <- cast (%365,%struct.$0_Point*)
+(%369,i1) <- ne (%368,%struct.$$$_commmon_struct*),null
+branch (%369,i1) check_temp_cond_count_302,check_temp_merge_304"];
+	"check_temp_cond_count_302" [style=filled, shape=box, label="check_temp_cond_count_302:
+(%370,i32) <- field_access (%368,%struct.$$$_commmon_struct*),0
+(%371,i32) load (%370,i32)
+(%372,i1) <- eq (%371,i32),0
+branch (%372,i1) check_temp_body_303,check_temp_merge_304"];
+	"check_temp_body_303" [style=filled, shape=box, label="check_temp_body_303:
+(%373,i32*) <- cast (%368,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%373,i32*)
+branch check_temp_merge_304"];
+	"check_temp_merge_304" [style=filled, shape=box, label="check_temp_merge_304:
+(%374,i32) <- add (%364,i32),(%367,i32)
+($49_a,i32) store (%374,i32)
+(%375,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%376,%struct.$0_Point*) <- call $5_f4
+($50_p,%struct.$0_Point*) store (%376,%struct.$0_Point*)
+(%377,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%378,%struct.$$$_commmon_struct*) <- cast (%377,%struct.$0_Point*)
+ <- call $$$_add_inc,(%378,%struct.$$$_commmon_struct*)
+(%379,i32*) <- cast (%375,%struct.$0_Point*)
+ <- call $_common_destructor,(%379,i32*)
+(%380,i32) load ($49_a,i32)
+(%381,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%382,i32) <- field_access (%381,%struct.$0_Point*),2
+(%383,i32) load (%382,i32)
+branch check_temp_cond_null_305"];
+	"check_temp_cond_null_305" [style=filled, shape=box, label="check_temp_cond_null_305:
+(%384,%struct.$$$_commmon_struct*) <- cast (%381,%struct.$0_Point*)
+(%385,i1) <- ne (%384,%struct.$$$_commmon_struct*),null
+branch (%385,i1) check_temp_cond_count_306,check_temp_merge_308"];
+	"check_temp_cond_count_306" [style=filled, shape=box, label="check_temp_cond_count_306:
+(%386,i32) <- field_access (%384,%struct.$$$_commmon_struct*),0
+(%387,i32) load (%386,i32)
+(%388,i1) <- eq (%387,i32),0
+branch (%388,i1) check_temp_body_307,check_temp_merge_308"];
+	"check_temp_body_307" [style=filled, shape=box, label="check_temp_body_307:
+(%389,i32*) <- cast (%384,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%389,i32*)
+branch check_temp_merge_308"];
+	"check_temp_merge_308" [style=filled, shape=box, label="check_temp_merge_308:
+(%390,i32) <- add (%380,i32),(%383,i32)
+(%391,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%392,i32) <- field_access (%391,%struct.$0_Point*),3
+(%393,i32) load (%392,i32)
+branch check_temp_cond_null_309"];
+	"check_temp_cond_null_309" [style=filled, shape=box, label="check_temp_cond_null_309:
+(%394,%struct.$$$_commmon_struct*) <- cast (%391,%struct.$0_Point*)
+(%395,i1) <- ne (%394,%struct.$$$_commmon_struct*),null
+branch (%395,i1) check_temp_cond_count_310,check_temp_merge_312"];
+	"check_temp_cond_count_310" [style=filled, shape=box, label="check_temp_cond_count_310:
+(%396,i32) <- field_access (%394,%struct.$$$_commmon_struct*),0
+(%397,i32) load (%396,i32)
+(%398,i1) <- eq (%397,i32),0
+branch (%398,i1) check_temp_body_311,check_temp_merge_312"];
+	"check_temp_body_311" [style=filled, shape=box, label="check_temp_body_311:
+(%399,i32*) <- cast (%394,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%399,i32*)
+branch check_temp_merge_312"];
+	"check_temp_merge_312" [style=filled, shape=box, label="check_temp_merge_312:
+(%400,i32) <- add (%390,i32),(%393,i32)
+($49_a,i32) store (%400,i32)
+(%401,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%402,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%403,%struct.$$$_commmon_struct*) <- cast (%402,%struct.$0_Point*)
+ <- call $$$_add_inc,(%403,%struct.$$$_commmon_struct*)
+(%404,%struct.$0_Point*) <- call $10_f5,(%402,%struct.$0_Point*)
+($50_p,%struct.$0_Point*) store (%404,%struct.$0_Point*)
+(%405,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%406,%struct.$$$_commmon_struct*) <- cast (%405,%struct.$0_Point*)
+ <- call $$$_add_inc,(%406,%struct.$$$_commmon_struct*)
+(%407,i32*) <- cast (%401,%struct.$0_Point*)
+ <- call $_common_destructor,(%407,i32*)
+(%408,i32) load ($49_a,i32)
+(%409,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%410,i32) <- field_access (%409,%struct.$0_Point*),2
+(%411,i32) load (%410,i32)
+branch check_temp_cond_null_313"];
+	"check_temp_cond_null_313" [style=filled, shape=box, label="check_temp_cond_null_313:
+(%412,%struct.$$$_commmon_struct*) <- cast (%409,%struct.$0_Point*)
+(%413,i1) <- ne (%412,%struct.$$$_commmon_struct*),null
+branch (%413,i1) check_temp_cond_count_314,check_temp_merge_316"];
+	"check_temp_cond_count_314" [style=filled, shape=box, label="check_temp_cond_count_314:
+(%414,i32) <- field_access (%412,%struct.$$$_commmon_struct*),0
+(%415,i32) load (%414,i32)
+(%416,i1) <- eq (%415,i32),0
+branch (%416,i1) check_temp_body_315,check_temp_merge_316"];
+	"check_temp_body_315" [style=filled, shape=box, label="check_temp_body_315:
+(%417,i32*) <- cast (%412,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%417,i32*)
+branch check_temp_merge_316"];
+	"check_temp_merge_316" [style=filled, shape=box, label="check_temp_merge_316:
+(%418,i32) <- add (%408,i32),(%411,i32)
+(%419,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%420,i32) <- field_access (%419,%struct.$0_Point*),3
+(%421,i32) load (%420,i32)
+branch check_temp_cond_null_317"];
+	"check_temp_cond_null_317" [style=filled, shape=box, label="check_temp_cond_null_317:
+(%422,%struct.$$$_commmon_struct*) <- cast (%419,%struct.$0_Point*)
+(%423,i1) <- ne (%422,%struct.$$$_commmon_struct*),null
+branch (%423,i1) check_temp_cond_count_318,check_temp_merge_320"];
+	"check_temp_cond_count_318" [style=filled, shape=box, label="check_temp_cond_count_318:
+(%424,i32) <- field_access (%422,%struct.$$$_commmon_struct*),0
+(%425,i32) load (%424,i32)
+(%426,i1) <- eq (%425,i32),0
+branch (%426,i1) check_temp_body_319,check_temp_merge_320"];
+	"check_temp_body_319" [style=filled, shape=box, label="check_temp_body_319:
+(%427,i32*) <- cast (%422,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%427,i32*)
+branch check_temp_merge_320"];
+	"check_temp_merge_320" [style=filled, shape=box, label="check_temp_merge_320:
+(%428,i32) <- add (%418,i32),(%421,i32)
+(%429,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%430,i32) <- field_access (%429,%struct.$0_Point*),2
+(%431,i32) load (%430,i32)
+branch check_temp_cond_null_321"];
+	"check_temp_cond_null_321" [style=filled, shape=box, label="check_temp_cond_null_321:
+(%432,%struct.$$$_commmon_struct*) <- cast (%429,%struct.$0_Point*)
+(%433,i1) <- ne (%432,%struct.$$$_commmon_struct*),null
+branch (%433,i1) check_temp_cond_count_322,check_temp_merge_324"];
+	"check_temp_cond_count_322" [style=filled, shape=box, label="check_temp_cond_count_322:
+(%434,i32) <- field_access (%432,%struct.$$$_commmon_struct*),0
+(%435,i32) load (%434,i32)
+(%436,i1) <- eq (%435,i32),0
+branch (%436,i1) check_temp_body_323,check_temp_merge_324"];
+	"check_temp_body_323" [style=filled, shape=box, label="check_temp_body_323:
+(%437,i32*) <- cast (%432,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%437,i32*)
+branch check_temp_merge_324"];
+	"check_temp_merge_324" [style=filled, shape=box, label="check_temp_merge_324:
+(%438,i32) <- add (%428,i32),(%431,i32)
+($49_a,i32) store (%438,i32)
+(%439,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%440,i32) <- field_access (%439,%struct.$0_Point*),2
+(%441,i32) load (%440,i32)
+branch check_temp_cond_null_325"];
+	"check_temp_cond_null_325" [style=filled, shape=box, label="check_temp_cond_null_325:
+(%442,%struct.$$$_commmon_struct*) <- cast (%439,%struct.$0_Point*)
+(%443,i1) <- ne (%442,%struct.$$$_commmon_struct*),null
+branch (%443,i1) check_temp_cond_count_326,check_temp_merge_328"];
+	"check_temp_cond_count_326" [style=filled, shape=box, label="check_temp_cond_count_326:
+(%444,i32) <- field_access (%442,%struct.$$$_commmon_struct*),0
+(%445,i32) load (%444,i32)
+(%446,i1) <- eq (%445,i32),0
+branch (%446,i1) check_temp_body_327,check_temp_merge_328"];
+	"check_temp_body_327" [style=filled, shape=box, label="check_temp_body_327:
+(%447,i32*) <- cast (%442,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%447,i32*)
+branch check_temp_merge_328"];
+	"check_temp_merge_328" [style=filled, shape=box, label="check_temp_merge_328:
+(%448,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%449,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%450,%struct.$$$_commmon_struct*) <- cast (%449,%struct.$0_Point*)
+ <- call $$$_add_inc,(%450,%struct.$$$_commmon_struct*)
+(%451,%struct.$0_Point*) <- call $13_f6,(%449,%struct.$0_Point*)
+($50_p,%struct.$0_Point*) store (%451,%struct.$0_Point*)
+(%452,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%453,%struct.$$$_commmon_struct*) <- cast (%452,%struct.$0_Point*)
+ <- call $$$_add_inc,(%453,%struct.$$$_commmon_struct*)
+(%454,i32*) <- cast (%448,%struct.$0_Point*)
+ <- call $_common_destructor,(%454,i32*)
+(%455,i32) load ($49_a,i32)
+(%456,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%457,i32) <- field_access (%456,%struct.$0_Point*),2
+(%458,i32) load (%457,i32)
+branch check_temp_cond_null_329"];
+	"check_temp_cond_null_329" [style=filled, shape=box, label="check_temp_cond_null_329:
+(%459,%struct.$$$_commmon_struct*) <- cast (%456,%struct.$0_Point*)
+(%460,i1) <- ne (%459,%struct.$$$_commmon_struct*),null
+branch (%460,i1) check_temp_cond_count_330,check_temp_merge_332"];
+	"check_temp_cond_count_330" [style=filled, shape=box, label="check_temp_cond_count_330:
+(%461,i32) <- field_access (%459,%struct.$$$_commmon_struct*),0
+(%462,i32) load (%461,i32)
+(%463,i1) <- eq (%462,i32),0
+branch (%463,i1) check_temp_body_331,check_temp_merge_332"];
+	"check_temp_body_331" [style=filled, shape=box, label="check_temp_body_331:
+(%464,i32*) <- cast (%459,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%464,i32*)
+branch check_temp_merge_332"];
+	"check_temp_merge_332" [style=filled, shape=box, label="check_temp_merge_332:
+(%465,i32) <- add (%455,i32),(%458,i32)
+(%466,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%467,i32) <- field_access (%466,%struct.$0_Point*),3
+(%468,i32) load (%467,i32)
+branch check_temp_cond_null_333"];
+	"check_temp_cond_null_333" [style=filled, shape=box, label="check_temp_cond_null_333:
+(%469,%struct.$$$_commmon_struct*) <- cast (%466,%struct.$0_Point*)
+(%470,i1) <- ne (%469,%struct.$$$_commmon_struct*),null
+branch (%470,i1) check_temp_cond_count_334,check_temp_merge_336"];
+	"check_temp_cond_count_334" [style=filled, shape=box, label="check_temp_cond_count_334:
+(%471,i32) <- field_access (%469,%struct.$$$_commmon_struct*),0
+(%472,i32) load (%471,i32)
+(%473,i1) <- eq (%472,i32),0
+branch (%473,i1) check_temp_body_335,check_temp_merge_336"];
+	"check_temp_body_335" [style=filled, shape=box, label="check_temp_body_335:
+(%474,i32*) <- cast (%469,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%474,i32*)
+branch check_temp_merge_336"];
+	"check_temp_merge_336" [style=filled, shape=box, label="check_temp_merge_336:
+(%475,i32) <- add (%465,i32),(%468,i32)
+($49_a,i32) store (%475,i32)
+(%476,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%477,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%478,%struct.$$$_commmon_struct*) <- cast (%477,%struct.$0_Point*)
+ <- call $$$_add_inc,(%478,%struct.$$$_commmon_struct*)
+(%479,%struct.$0_Point*) <- call $11_f7,(%477,%struct.$0_Point*)
+($50_p,%struct.$0_Point*) store (%479,%struct.$0_Point*)
+(%480,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%481,%struct.$$$_commmon_struct*) <- cast (%480,%struct.$0_Point*)
+ <- call $$$_add_inc,(%481,%struct.$$$_commmon_struct*)
+(%482,i32*) <- cast (%476,%struct.$0_Point*)
+ <- call $_common_destructor,(%482,i32*)
+(%483,i32) load ($49_a,i32)
+(%484,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%485,i32) <- field_access (%484,%struct.$0_Point*),2
+(%486,i32) load (%485,i32)
+branch check_temp_cond_null_337"];
+	"check_temp_cond_null_337" [style=filled, shape=box, label="check_temp_cond_null_337:
+(%487,%struct.$$$_commmon_struct*) <- cast (%484,%struct.$0_Point*)
+(%488,i1) <- ne (%487,%struct.$$$_commmon_struct*),null
+branch (%488,i1) check_temp_cond_count_338,check_temp_merge_340"];
+	"check_temp_cond_count_338" [style=filled, shape=box, label="check_temp_cond_count_338:
+(%489,i32) <- field_access (%487,%struct.$$$_commmon_struct*),0
+(%490,i32) load (%489,i32)
+(%491,i1) <- eq (%490,i32),0
+branch (%491,i1) check_temp_body_339,check_temp_merge_340"];
+	"check_temp_body_339" [style=filled, shape=box, label="check_temp_body_339:
+(%492,i32*) <- cast (%487,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%492,i32*)
+branch check_temp_merge_340"];
+	"check_temp_merge_340" [style=filled, shape=box, label="check_temp_merge_340:
+(%493,i32) <- add (%483,i32),(%486,i32)
+(%494,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%495,i32) <- field_access (%494,%struct.$0_Point*),3
+(%496,i32) load (%495,i32)
+branch check_temp_cond_null_341"];
+	"check_temp_cond_null_341" [style=filled, shape=box, label="check_temp_cond_null_341:
+(%497,%struct.$$$_commmon_struct*) <- cast (%494,%struct.$0_Point*)
+(%498,i1) <- ne (%497,%struct.$$$_commmon_struct*),null
+branch (%498,i1) check_temp_cond_count_342,check_temp_merge_344"];
+	"check_temp_cond_count_342" [style=filled, shape=box, label="check_temp_cond_count_342:
+(%499,i32) <- field_access (%497,%struct.$$$_commmon_struct*),0
+(%500,i32) load (%499,i32)
+(%501,i1) <- eq (%500,i32),0
+branch (%501,i1) check_temp_body_343,check_temp_merge_344"];
+	"check_temp_body_343" [style=filled, shape=box, label="check_temp_body_343:
+(%502,i32*) <- cast (%497,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%502,i32*)
+branch check_temp_merge_344"];
+	"check_temp_merge_344" [style=filled, shape=box, label="check_temp_merge_344:
+(%503,i32) <- add (%493,i32),(%496,i32)
+($49_a,i32) store (%503,i32)
+(%504,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+($50_p,%struct.$0_Point*) store null
+(%505,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%506,%struct.$$$_commmon_struct*) <- cast (%505,%struct.$0_Point*)
+ <- call $$$_add_inc,(%506,%struct.$$$_commmon_struct*)
+(%507,i32*) <- cast (%504,%struct.$0_Point*)
+ <- call $_common_destructor,(%507,i32*)
+(%508,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%509,%struct.$0_Point*) <- call $_constructor_0,3,4
+($50_p,%struct.$0_Point*) store (%509,%struct.$0_Point*)
+(%510,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%511,%struct.$$$_commmon_struct*) <- cast (%510,%struct.$0_Point*)
+ <- call $$$_add_inc,(%511,%struct.$$$_commmon_struct*)
+(%512,i32*) <- cast (%508,%struct.$0_Point*)
+ <- call $_common_destructor,(%512,i32*)
+(%513,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%514,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%515,%struct.$$$_commmon_struct*) <- cast (%514,%struct.$0_Point*)
+ <- call $$$_add_inc,(%515,%struct.$$$_commmon_struct*)
+(%516,%struct.$0_Point*) <- call $6_f8,(%514,%struct.$0_Point*)
+($50_p,%struct.$0_Point*) store (%516,%struct.$0_Point*)
+(%517,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%518,%struct.$$$_commmon_struct*) <- cast (%517,%struct.$0_Point*)
+ <- call $$$_add_inc,(%518,%struct.$$$_commmon_struct*)
+(%519,i32*) <- cast (%513,%struct.$0_Point*)
+ <- call $_common_destructor,(%519,i32*)
+(%520,i32) load ($49_a,i32)
+(%521,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%522,i32) <- field_access (%521,%struct.$0_Point*),2
+(%523,i32) load (%522,i32)
+branch check_temp_cond_null_345"];
+	"check_temp_cond_null_345" [style=filled, shape=box, label="check_temp_cond_null_345:
+(%524,%struct.$$$_commmon_struct*) <- cast (%521,%struct.$0_Point*)
+(%525,i1) <- ne (%524,%struct.$$$_commmon_struct*),null
+branch (%525,i1) check_temp_cond_count_346,check_temp_merge_348"];
+	"check_temp_cond_count_346" [style=filled, shape=box, label="check_temp_cond_count_346:
+(%526,i32) <- field_access (%524,%struct.$$$_commmon_struct*),0
+(%527,i32) load (%526,i32)
+(%528,i1) <- eq (%527,i32),0
+branch (%528,i1) check_temp_body_347,check_temp_merge_348"];
+	"check_temp_body_347" [style=filled, shape=box, label="check_temp_body_347:
+(%529,i32*) <- cast (%524,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%529,i32*)
+branch check_temp_merge_348"];
+	"check_temp_merge_348" [style=filled, shape=box, label="check_temp_merge_348:
+(%530,i32) <- add (%520,i32),(%523,i32)
+(%531,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%532,i32) <- field_access (%531,%struct.$0_Point*),3
+(%533,i32) load (%532,i32)
+branch check_temp_cond_null_349"];
+	"check_temp_cond_null_349" [style=filled, shape=box, label="check_temp_cond_null_349:
+(%534,%struct.$$$_commmon_struct*) <- cast (%531,%struct.$0_Point*)
+(%535,i1) <- ne (%534,%struct.$$$_commmon_struct*),null
+branch (%535,i1) check_temp_cond_count_350,check_temp_merge_352"];
+	"check_temp_cond_count_350" [style=filled, shape=box, label="check_temp_cond_count_350:
+(%536,i32) <- field_access (%534,%struct.$$$_commmon_struct*),0
+(%537,i32) load (%536,i32)
+(%538,i1) <- eq (%537,i32),0
+branch (%538,i1) check_temp_body_351,check_temp_merge_352"];
+	"check_temp_body_351" [style=filled, shape=box, label="check_temp_body_351:
+(%539,i32*) <- cast (%534,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%539,i32*)
+branch check_temp_merge_352"];
+	"check_temp_merge_352" [style=filled, shape=box, label="check_temp_merge_352:
+(%540,i32) <- add (%530,i32),(%533,i32)
+($49_a,i32) store (%540,i32)
+(%541,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%542,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%543,%struct.$$$_commmon_struct*) <- cast (%542,%struct.$0_Point*)
+ <- call $$$_add_inc,(%543,%struct.$$$_commmon_struct*)
+(%544,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%545,i32) <- field_access (%544,%struct.$0_Point*),2
+(%546,i32) load (%545,i32)
+branch check_temp_cond_null_353"];
+	"check_temp_cond_null_353" [style=filled, shape=box, label="check_temp_cond_null_353:
+(%547,%struct.$$$_commmon_struct*) <- cast (%544,%struct.$0_Point*)
+(%548,i1) <- ne (%547,%struct.$$$_commmon_struct*),null
+branch (%548,i1) check_temp_cond_count_354,check_temp_merge_356"];
+	"check_temp_cond_count_354" [style=filled, shape=box, label="check_temp_cond_count_354:
+(%549,i32) <- field_access (%547,%struct.$$$_commmon_struct*),0
+(%550,i32) load (%549,i32)
+(%551,i1) <- eq (%550,i32),0
+branch (%551,i1) check_temp_body_355,check_temp_merge_356"];
+	"check_temp_body_355" [style=filled, shape=box, label="check_temp_body_355:
+(%552,i32*) <- cast (%547,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%552,i32*)
+branch check_temp_merge_356"];
+	"check_temp_merge_356" [style=filled, shape=box, label="check_temp_merge_356:
+(%553,%struct.$0_Point*) <- call $7_f9,(%542,%struct.$0_Point*),(%546,i32)
+($50_p,%struct.$0_Point*) store (%553,%struct.$0_Point*)
+(%554,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%555,%struct.$$$_commmon_struct*) <- cast (%554,%struct.$0_Point*)
+ <- call $$$_add_inc,(%555,%struct.$$$_commmon_struct*)
+(%556,i32*) <- cast (%541,%struct.$0_Point*)
+ <- call $_common_destructor,(%556,i32*)
+(%557,i32) load ($49_a,i32)
+(%558,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%559,i32) <- field_access (%558,%struct.$0_Point*),2
+(%560,i32) load (%559,i32)
+branch check_temp_cond_null_357"];
+	"check_temp_cond_null_357" [style=filled, shape=box, label="check_temp_cond_null_357:
+(%561,%struct.$$$_commmon_struct*) <- cast (%558,%struct.$0_Point*)
+(%562,i1) <- ne (%561,%struct.$$$_commmon_struct*),null
+branch (%562,i1) check_temp_cond_count_358,check_temp_merge_360"];
+	"check_temp_cond_count_358" [style=filled, shape=box, label="check_temp_cond_count_358:
+(%563,i32) <- field_access (%561,%struct.$$$_commmon_struct*),0
+(%564,i32) load (%563,i32)
+(%565,i1) <- eq (%564,i32),0
+branch (%565,i1) check_temp_body_359,check_temp_merge_360"];
+	"check_temp_body_359" [style=filled, shape=box, label="check_temp_body_359:
+(%566,i32*) <- cast (%561,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%566,i32*)
+branch check_temp_merge_360"];
+	"check_temp_merge_360" [style=filled, shape=box, label="check_temp_merge_360:
+(%567,i32) <- add (%557,i32),(%560,i32)
+(%568,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%569,i32) <- field_access (%568,%struct.$0_Point*),3
+(%570,i32) load (%569,i32)
+branch check_temp_cond_null_361"];
+	"check_temp_cond_null_361" [style=filled, shape=box, label="check_temp_cond_null_361:
+(%571,%struct.$$$_commmon_struct*) <- cast (%568,%struct.$0_Point*)
+(%572,i1) <- ne (%571,%struct.$$$_commmon_struct*),null
+branch (%572,i1) check_temp_cond_count_362,check_temp_merge_364"];
+	"check_temp_cond_count_362" [style=filled, shape=box, label="check_temp_cond_count_362:
+(%573,i32) <- field_access (%571,%struct.$$$_commmon_struct*),0
+(%574,i32) load (%573,i32)
+(%575,i1) <- eq (%574,i32),0
+branch (%575,i1) check_temp_body_363,check_temp_merge_364"];
+	"check_temp_body_363" [style=filled, shape=box, label="check_temp_body_363:
+(%576,i32*) <- cast (%571,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%576,i32*)
+branch check_temp_merge_364"];
+	"check_temp_merge_364" [style=filled, shape=box, label="check_temp_merge_364:
+(%577,i32) <- add (%567,i32),(%570,i32)
+($49_a,i32) store (%577,i32)
+branch conditional_365"];
+	"conditional_365" [style=filled, shape=box, label="conditional_365:
+(%578,i32) alloc 
+(%579,%struct.$0_Point*) <- call $_constructor_0,2,2
+(%580,i1) <- eq (%579,%struct.$0_Point*),null
+branch check_temp_cond_null_366"];
+	"check_temp_cond_null_366" [style=filled, shape=box, label="check_temp_cond_null_366:
+(%581,%struct.$$$_commmon_struct*) <- cast (%579,%struct.$0_Point*)
+(%582,i1) <- ne (%581,%struct.$$$_commmon_struct*),null
+branch (%582,i1) check_temp_cond_count_367,check_temp_cond_null_370"];
+	"check_temp_cond_count_367" [style=filled, shape=box, label="check_temp_cond_count_367:
+(%583,i32) <- field_access (%581,%struct.$$$_commmon_struct*),0
+(%584,i32) load (%583,i32)
+(%585,i1) <- eq (%584,i32),0
+branch (%585,i1) check_temp_body_368,check_temp_cond_null_370"];
+	"check_temp_body_368" [style=filled, shape=box, label="check_temp_body_368:
+(%586,i32*) <- cast (%581,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%586,i32*)
+branch check_temp_cond_null_370"];
+	"check_temp_cond_null_370" [style=filled, shape=box, label="check_temp_cond_null_370:
+(%587,%struct.$$$_commmon_struct*) <- cast null
+(%588,i1) <- ne (%587,%struct.$$$_commmon_struct*),null
+branch (%588,i1) check_temp_cond_count_371,check_temp_merge_373"];
+	"check_temp_cond_count_371" [style=filled, shape=box, label="check_temp_cond_count_371:
+(%589,i32) <- field_access (%587,%struct.$$$_commmon_struct*),0
+(%590,i32) load (%589,i32)
+(%591,i1) <- eq (%590,i32),0
+branch (%591,i1) check_temp_body_372,check_temp_merge_373"];
+	"check_temp_body_372" [style=filled, shape=box, label="check_temp_body_372:
+(%592,i32*) <- cast (%587,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%592,i32*)
+branch check_temp_merge_373"];
+	"check_temp_merge_373" [style=filled, shape=box, label="check_temp_merge_373:
 
-	"header_19" [style=filled, shape=box, label="header_19:
+branch (%580,i1) conditional_then_374,conditional_else_375"];
+	"conditional_then_374" [style=filled, shape=box, label="conditional_then_374:
+(%578,i32) store 1
+branch conditional_result_376"];
+	"conditional_else_375" [style=filled, shape=box, label="conditional_else_375:
+(%578,i32) store 0
+branch conditional_result_376"];
+	"conditional_result_376" [style=filled, shape=box, label="conditional_result_376:
+(%593,i32) load (%578,i32)
+branch conditional_377"];
+	"conditional_377" [style=filled, shape=box, label="conditional_377:
+(%594,i32) alloc 
+(%595,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%596,%struct.$$$_commmon_struct*) <- cast (%595,%struct.$0_Point*)
+ <- call $$$_add_inc,(%596,%struct.$$$_commmon_struct*)
+(%597,%struct.$0_Point*) <- call $6_f8,(%595,%struct.$0_Point*)
+(%598,i1) <- eq (%597,%struct.$0_Point*),null
+branch check_temp_cond_null_378"];
+	"check_temp_cond_null_378" [style=filled, shape=box, label="check_temp_cond_null_378:
+(%599,%struct.$$$_commmon_struct*) <- cast (%597,%struct.$0_Point*)
+(%600,i1) <- ne (%599,%struct.$$$_commmon_struct*),null
+branch (%600,i1) check_temp_cond_count_379,check_temp_cond_null_382"];
+	"check_temp_cond_count_379" [style=filled, shape=box, label="check_temp_cond_count_379:
+(%601,i32) <- field_access (%599,%struct.$$$_commmon_struct*),0
+(%602,i32) load (%601,i32)
+(%603,i1) <- eq (%602,i32),0
+branch (%603,i1) check_temp_body_380,check_temp_cond_null_382"];
+	"check_temp_body_380" [style=filled, shape=box, label="check_temp_body_380:
+(%604,i32*) <- cast (%599,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%604,i32*)
+branch check_temp_cond_null_382"];
+	"check_temp_cond_null_382" [style=filled, shape=box, label="check_temp_cond_null_382:
+(%605,%struct.$$$_commmon_struct*) <- cast null
+(%606,i1) <- ne (%605,%struct.$$$_commmon_struct*),null
+branch (%606,i1) check_temp_cond_count_383,check_temp_merge_385"];
+	"check_temp_cond_count_383" [style=filled, shape=box, label="check_temp_cond_count_383:
+(%607,i32) <- field_access (%605,%struct.$$$_commmon_struct*),0
+(%608,i32) load (%607,i32)
+(%609,i1) <- eq (%608,i32),0
+branch (%609,i1) check_temp_body_384,check_temp_merge_385"];
+	"check_temp_body_384" [style=filled, shape=box, label="check_temp_body_384:
+(%610,i32*) <- cast (%605,%struct.$$$_commmon_struct*)
+ <- call $_common_destructor,(%610,i32*)
+branch check_temp_merge_385"];
+	"check_temp_merge_385" [style=filled, shape=box, label="check_temp_merge_385:
+
+branch (%598,i1) conditional_then_386,conditional_else_387"];
+	"conditional_then_386" [style=filled, shape=box, label="conditional_then_386:
+(%594,i32) store 1
+branch conditional_result_388"];
+	"conditional_else_387" [style=filled, shape=box, label="conditional_else_387:
+(%594,i32) store 0
+branch conditional_result_388"];
+	"conditional_result_388" [style=filled, shape=box, label="conditional_result_388:
+(%611,i32) load (%594,i32)
+branch local_return_389"];
+	"local_return_389" [style=filled, shape=box, label="local_return_389:
+(%612,i32) load ($49_a,i32)
+($$_ret_value_9,i32) store (%612,i32)
+(%613,%struct.$0_Point*) load ($50_p,%struct.$0_Point*)
+(%614,i32*) <- cast (%613,%struct.$0_Point*)
+ <- call $_common_destructor,(%614,i32*)
+branch return_171"];
+
+	subgraph cluster_9 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "main";
+		"header_170" -> "entry_172";
+		"entry_172" -> "check_temp_cond_null_173";
+		"check_temp_cond_null_173" -> "check_temp_cond_count_174";
+		"check_temp_cond_null_173" -> "check_temp_merge_176";
+		"check_temp_cond_count_174" -> "check_temp_body_175";
+		"check_temp_cond_count_174" -> "check_temp_merge_176";
+		"check_temp_body_175" -> "check_temp_merge_176";
+		"check_temp_merge_176" -> "check_temp_cond_null_177";
+		"check_temp_cond_null_177" -> "check_temp_cond_count_178";
+		"check_temp_cond_null_177" -> "check_temp_merge_180";
+		"check_temp_cond_count_178" -> "check_temp_body_179";
+		"check_temp_cond_count_178" -> "check_temp_merge_180";
+		"check_temp_body_179" -> "check_temp_merge_180";
+		"check_temp_merge_180" -> "check_temp_cond_null_181";
+		"check_temp_cond_null_181" -> "check_temp_cond_count_182";
+		"check_temp_cond_null_181" -> "check_temp_merge_184";
+		"check_temp_cond_count_182" -> "check_temp_body_183";
+		"check_temp_cond_count_182" -> "check_temp_merge_184";
+		"check_temp_body_183" -> "check_temp_merge_184";
+		"check_temp_merge_184" -> "check_temp_cond_null_185";
+		"check_temp_cond_null_185" -> "check_temp_cond_count_186";
+		"check_temp_cond_null_185" -> "check_temp_merge_188";
+		"check_temp_cond_count_186" -> "check_temp_body_187";
+		"check_temp_cond_count_186" -> "check_temp_merge_188";
+		"check_temp_body_187" -> "check_temp_merge_188";
+		"check_temp_merge_188" -> "check_temp_cond_null_189";
+		"check_temp_cond_null_189" -> "check_temp_cond_count_190";
+		"check_temp_cond_null_189" -> "check_temp_merge_192";
+		"check_temp_cond_count_190" -> "check_temp_body_191";
+		"check_temp_cond_count_190" -> "check_temp_merge_192";
+		"check_temp_body_191" -> "check_temp_merge_192";
+		"check_temp_merge_192" -> "check_temp_cond_null_193";
+		"check_temp_cond_null_193" -> "check_temp_cond_count_194";
+		"check_temp_cond_null_193" -> "check_temp_merge_196";
+		"check_temp_cond_count_194" -> "check_temp_body_195";
+		"check_temp_cond_count_194" -> "check_temp_merge_196";
+		"check_temp_body_195" -> "check_temp_merge_196";
+		"check_temp_merge_196" -> "check_temp_cond_null_197";
+		"check_temp_cond_null_197" -> "check_temp_cond_count_198";
+		"check_temp_cond_null_197" -> "check_temp_merge_200";
+		"check_temp_cond_count_198" -> "check_temp_body_199";
+		"check_temp_cond_count_198" -> "check_temp_merge_200";
+		"check_temp_body_199" -> "check_temp_merge_200";
+		"check_temp_merge_200" -> "check_temp_cond_null_201";
+		"check_temp_cond_null_201" -> "check_temp_cond_count_202";
+		"check_temp_cond_null_201" -> "check_temp_merge_204";
+		"check_temp_cond_count_202" -> "check_temp_body_203";
+		"check_temp_cond_count_202" -> "check_temp_merge_204";
+		"check_temp_body_203" -> "check_temp_merge_204";
+		"check_temp_merge_204" -> "check_temp_cond_null_205";
+		"check_temp_cond_null_205" -> "check_temp_cond_count_206";
+		"check_temp_cond_null_205" -> "check_temp_merge_208";
+		"check_temp_cond_count_206" -> "check_temp_body_207";
+		"check_temp_cond_count_206" -> "check_temp_merge_208";
+		"check_temp_body_207" -> "check_temp_merge_208";
+		"check_temp_merge_208" -> "check_temp_cond_null_209";
+		"check_temp_cond_null_209" -> "check_temp_cond_count_210";
+		"check_temp_cond_null_209" -> "check_temp_merge_212";
+		"check_temp_cond_count_210" -> "check_temp_body_211";
+		"check_temp_cond_count_210" -> "check_temp_merge_212";
+		"check_temp_body_211" -> "check_temp_merge_212";
+		"check_temp_merge_212" -> "check_temp_cond_null_213";
+		"check_temp_cond_null_213" -> "check_temp_cond_count_214";
+		"check_temp_cond_null_213" -> "check_temp_merge_216";
+		"check_temp_cond_count_214" -> "check_temp_body_215";
+		"check_temp_cond_count_214" -> "check_temp_merge_216";
+		"check_temp_body_215" -> "check_temp_merge_216";
+		"check_temp_merge_216" -> "check_temp_cond_null_217";
+		"check_temp_cond_null_217" -> "check_temp_cond_count_218";
+		"check_temp_cond_null_217" -> "check_temp_merge_220";
+		"check_temp_cond_count_218" -> "check_temp_body_219";
+		"check_temp_cond_count_218" -> "check_temp_merge_220";
+		"check_temp_body_219" -> "check_temp_merge_220";
+		"check_temp_merge_220" -> "check_temp_cond_null_221";
+		"check_temp_cond_null_221" -> "check_temp_cond_count_222";
+		"check_temp_cond_null_221" -> "check_temp_merge_224";
+		"check_temp_cond_count_222" -> "check_temp_body_223";
+		"check_temp_cond_count_222" -> "check_temp_merge_224";
+		"check_temp_body_223" -> "check_temp_merge_224";
+		"check_temp_merge_224" -> "check_temp_cond_null_225";
+		"check_temp_cond_null_225" -> "check_temp_cond_count_226";
+		"check_temp_cond_null_225" -> "check_temp_merge_228";
+		"check_temp_cond_count_226" -> "check_temp_body_227";
+		"check_temp_cond_count_226" -> "check_temp_merge_228";
+		"check_temp_body_227" -> "check_temp_merge_228";
+		"check_temp_merge_228" -> "check_temp_cond_null_229";
+		"check_temp_cond_null_229" -> "check_temp_cond_count_230";
+		"check_temp_cond_null_229" -> "check_temp_merge_232";
+		"check_temp_cond_count_230" -> "check_temp_body_231";
+		"check_temp_cond_count_230" -> "check_temp_merge_232";
+		"check_temp_body_231" -> "check_temp_merge_232";
+		"check_temp_merge_232" -> "check_temp_cond_null_233";
+		"check_temp_cond_null_233" -> "check_temp_cond_count_234";
+		"check_temp_cond_null_233" -> "check_temp_merge_236";
+		"check_temp_cond_count_234" -> "check_temp_body_235";
+		"check_temp_cond_count_234" -> "check_temp_merge_236";
+		"check_temp_body_235" -> "check_temp_merge_236";
+		"check_temp_merge_236" -> "check_temp_cond_null_237";
+		"check_temp_cond_null_237" -> "check_temp_cond_count_238";
+		"check_temp_cond_null_237" -> "check_temp_merge_240";
+		"check_temp_cond_count_238" -> "check_temp_body_239";
+		"check_temp_cond_count_238" -> "check_temp_merge_240";
+		"check_temp_body_239" -> "check_temp_merge_240";
+		"check_temp_merge_240" -> "check_temp_cond_null_241";
+		"check_temp_cond_null_241" -> "check_temp_cond_count_242";
+		"check_temp_cond_null_241" -> "check_temp_merge_244";
+		"check_temp_cond_count_242" -> "check_temp_body_243";
+		"check_temp_cond_count_242" -> "check_temp_merge_244";
+		"check_temp_body_243" -> "check_temp_merge_244";
+		"check_temp_merge_244" -> "check_temp_cond_null_245";
+		"check_temp_cond_null_245" -> "check_temp_cond_count_246";
+		"check_temp_cond_null_245" -> "check_temp_merge_248";
+		"check_temp_cond_count_246" -> "check_temp_body_247";
+		"check_temp_cond_count_246" -> "check_temp_merge_248";
+		"check_temp_body_247" -> "check_temp_merge_248";
+		"check_temp_merge_248" -> "check_temp_cond_null_249";
+		"check_temp_cond_null_249" -> "check_temp_cond_count_250";
+		"check_temp_cond_null_249" -> "check_temp_merge_252";
+		"check_temp_cond_count_250" -> "check_temp_body_251";
+		"check_temp_cond_count_250" -> "check_temp_merge_252";
+		"check_temp_body_251" -> "check_temp_merge_252";
+		"check_temp_merge_252" -> "check_temp_cond_null_253";
+		"check_temp_cond_null_253" -> "check_temp_cond_count_254";
+		"check_temp_cond_null_253" -> "check_temp_merge_256";
+		"check_temp_cond_count_254" -> "check_temp_body_255";
+		"check_temp_cond_count_254" -> "check_temp_merge_256";
+		"check_temp_body_255" -> "check_temp_merge_256";
+		"check_temp_merge_256" -> "check_temp_cond_null_257";
+		"check_temp_cond_null_257" -> "check_temp_cond_count_258";
+		"check_temp_cond_null_257" -> "check_temp_merge_260";
+		"check_temp_cond_count_258" -> "check_temp_body_259";
+		"check_temp_cond_count_258" -> "check_temp_merge_260";
+		"check_temp_body_259" -> "check_temp_merge_260";
+		"check_temp_merge_260" -> "check_temp_cond_null_261";
+		"check_temp_cond_null_261" -> "check_temp_cond_count_262";
+		"check_temp_cond_null_261" -> "check_temp_merge_264";
+		"check_temp_cond_count_262" -> "check_temp_body_263";
+		"check_temp_cond_count_262" -> "check_temp_merge_264";
+		"check_temp_body_263" -> "check_temp_merge_264";
+		"check_temp_merge_264" -> "check_temp_cond_null_265";
+		"check_temp_cond_null_265" -> "check_temp_cond_count_266";
+		"check_temp_cond_null_265" -> "check_temp_merge_268";
+		"check_temp_cond_count_266" -> "check_temp_body_267";
+		"check_temp_cond_count_266" -> "check_temp_merge_268";
+		"check_temp_body_267" -> "check_temp_merge_268";
+		"check_temp_merge_268" -> "check_temp_cond_null_269";
+		"check_temp_cond_null_269" -> "check_temp_cond_count_270";
+		"check_temp_cond_null_269" -> "check_temp_merge_272";
+		"check_temp_cond_count_270" -> "check_temp_body_271";
+		"check_temp_cond_count_270" -> "check_temp_merge_272";
+		"check_temp_body_271" -> "check_temp_merge_272";
+		"check_temp_merge_272" -> "check_temp_cond_null_273";
+		"check_temp_cond_null_273" -> "check_temp_cond_count_274";
+		"check_temp_cond_null_273" -> "check_temp_merge_276";
+		"check_temp_cond_count_274" -> "check_temp_body_275";
+		"check_temp_cond_count_274" -> "check_temp_merge_276";
+		"check_temp_body_275" -> "check_temp_merge_276";
+		"check_temp_merge_276" -> "check_temp_cond_null_277";
+		"check_temp_cond_null_277" -> "check_temp_cond_count_278";
+		"check_temp_cond_null_277" -> "check_temp_merge_280";
+		"check_temp_cond_count_278" -> "check_temp_body_279";
+		"check_temp_cond_count_278" -> "check_temp_merge_280";
+		"check_temp_body_279" -> "check_temp_merge_280";
+		"check_temp_merge_280" -> "check_temp_cond_null_281";
+		"check_temp_cond_null_281" -> "check_temp_cond_count_282";
+		"check_temp_cond_null_281" -> "check_temp_merge_284";
+		"check_temp_cond_count_282" -> "check_temp_body_283";
+		"check_temp_cond_count_282" -> "check_temp_merge_284";
+		"check_temp_body_283" -> "check_temp_merge_284";
+		"check_temp_merge_284" -> "check_temp_cond_null_285";
+		"check_temp_cond_null_285" -> "check_temp_cond_count_286";
+		"check_temp_cond_null_285" -> "check_temp_merge_288";
+		"check_temp_cond_count_286" -> "check_temp_body_287";
+		"check_temp_cond_count_286" -> "check_temp_merge_288";
+		"check_temp_body_287" -> "check_temp_merge_288";
+		"check_temp_merge_288" -> "check_temp_cond_null_289";
+		"check_temp_cond_null_289" -> "check_temp_cond_count_290";
+		"check_temp_cond_null_289" -> "check_temp_merge_292";
+		"check_temp_cond_count_290" -> "check_temp_body_291";
+		"check_temp_cond_count_290" -> "check_temp_merge_292";
+		"check_temp_body_291" -> "check_temp_merge_292";
+		"check_temp_merge_292" -> "check_temp_cond_null_293";
+		"check_temp_cond_null_293" -> "check_temp_cond_count_294";
+		"check_temp_cond_null_293" -> "check_temp_merge_296";
+		"check_temp_cond_count_294" -> "check_temp_body_295";
+		"check_temp_cond_count_294" -> "check_temp_merge_296";
+		"check_temp_body_295" -> "check_temp_merge_296";
+		"check_temp_merge_296" -> "check_temp_cond_null_297";
+		"check_temp_cond_null_297" -> "check_temp_cond_count_298";
+		"check_temp_cond_null_297" -> "check_temp_merge_300";
+		"check_temp_cond_count_298" -> "check_temp_body_299";
+		"check_temp_cond_count_298" -> "check_temp_merge_300";
+		"check_temp_body_299" -> "check_temp_merge_300";
+		"check_temp_merge_300" -> "check_temp_cond_null_301";
+		"check_temp_cond_null_301" -> "check_temp_cond_count_302";
+		"check_temp_cond_null_301" -> "check_temp_merge_304";
+		"check_temp_cond_count_302" -> "check_temp_body_303";
+		"check_temp_cond_count_302" -> "check_temp_merge_304";
+		"check_temp_body_303" -> "check_temp_merge_304";
+		"check_temp_merge_304" -> "check_temp_cond_null_305";
+		"check_temp_cond_null_305" -> "check_temp_cond_count_306";
+		"check_temp_cond_null_305" -> "check_temp_merge_308";
+		"check_temp_cond_count_306" -> "check_temp_body_307";
+		"check_temp_cond_count_306" -> "check_temp_merge_308";
+		"check_temp_body_307" -> "check_temp_merge_308";
+		"check_temp_merge_308" -> "check_temp_cond_null_309";
+		"check_temp_cond_null_309" -> "check_temp_cond_count_310";
+		"check_temp_cond_null_309" -> "check_temp_merge_312";
+		"check_temp_cond_count_310" -> "check_temp_body_311";
+		"check_temp_cond_count_310" -> "check_temp_merge_312";
+		"check_temp_body_311" -> "check_temp_merge_312";
+		"check_temp_merge_312" -> "check_temp_cond_null_313";
+		"check_temp_cond_null_313" -> "check_temp_cond_count_314";
+		"check_temp_cond_null_313" -> "check_temp_merge_316";
+		"check_temp_cond_count_314" -> "check_temp_body_315";
+		"check_temp_cond_count_314" -> "check_temp_merge_316";
+		"check_temp_body_315" -> "check_temp_merge_316";
+		"check_temp_merge_316" -> "check_temp_cond_null_317";
+		"check_temp_cond_null_317" -> "check_temp_cond_count_318";
+		"check_temp_cond_null_317" -> "check_temp_merge_320";
+		"check_temp_cond_count_318" -> "check_temp_body_319";
+		"check_temp_cond_count_318" -> "check_temp_merge_320";
+		"check_temp_body_319" -> "check_temp_merge_320";
+		"check_temp_merge_320" -> "check_temp_cond_null_321";
+		"check_temp_cond_null_321" -> "check_temp_cond_count_322";
+		"check_temp_cond_null_321" -> "check_temp_merge_324";
+		"check_temp_cond_count_322" -> "check_temp_body_323";
+		"check_temp_cond_count_322" -> "check_temp_merge_324";
+		"check_temp_body_323" -> "check_temp_merge_324";
+		"check_temp_merge_324" -> "check_temp_cond_null_325";
+		"check_temp_cond_null_325" -> "check_temp_cond_count_326";
+		"check_temp_cond_null_325" -> "check_temp_merge_328";
+		"check_temp_cond_count_326" -> "check_temp_body_327";
+		"check_temp_cond_count_326" -> "check_temp_merge_328";
+		"check_temp_body_327" -> "check_temp_merge_328";
+		"check_temp_merge_328" -> "check_temp_cond_null_329";
+		"check_temp_cond_null_329" -> "check_temp_cond_count_330";
+		"check_temp_cond_null_329" -> "check_temp_merge_332";
+		"check_temp_cond_count_330" -> "check_temp_body_331";
+		"check_temp_cond_count_330" -> "check_temp_merge_332";
+		"check_temp_body_331" -> "check_temp_merge_332";
+		"check_temp_merge_332" -> "check_temp_cond_null_333";
+		"check_temp_cond_null_333" -> "check_temp_cond_count_334";
+		"check_temp_cond_null_333" -> "check_temp_merge_336";
+		"check_temp_cond_count_334" -> "check_temp_body_335";
+		"check_temp_cond_count_334" -> "check_temp_merge_336";
+		"check_temp_body_335" -> "check_temp_merge_336";
+		"check_temp_merge_336" -> "check_temp_cond_null_337";
+		"check_temp_cond_null_337" -> "check_temp_cond_count_338";
+		"check_temp_cond_null_337" -> "check_temp_merge_340";
+		"check_temp_cond_count_338" -> "check_temp_body_339";
+		"check_temp_cond_count_338" -> "check_temp_merge_340";
+		"check_temp_body_339" -> "check_temp_merge_340";
+		"check_temp_merge_340" -> "check_temp_cond_null_341";
+		"check_temp_cond_null_341" -> "check_temp_cond_count_342";
+		"check_temp_cond_null_341" -> "check_temp_merge_344";
+		"check_temp_cond_count_342" -> "check_temp_body_343";
+		"check_temp_cond_count_342" -> "check_temp_merge_344";
+		"check_temp_body_343" -> "check_temp_merge_344";
+		"check_temp_merge_344" -> "check_temp_cond_null_345";
+		"check_temp_cond_null_345" -> "check_temp_cond_count_346";
+		"check_temp_cond_null_345" -> "check_temp_merge_348";
+		"check_temp_cond_count_346" -> "check_temp_body_347";
+		"check_temp_cond_count_346" -> "check_temp_merge_348";
+		"check_temp_body_347" -> "check_temp_merge_348";
+		"check_temp_merge_348" -> "check_temp_cond_null_349";
+		"check_temp_cond_null_349" -> "check_temp_cond_count_350";
+		"check_temp_cond_null_349" -> "check_temp_merge_352";
+		"check_temp_cond_count_350" -> "check_temp_body_351";
+		"check_temp_cond_count_350" -> "check_temp_merge_352";
+		"check_temp_body_351" -> "check_temp_merge_352";
+		"check_temp_merge_352" -> "check_temp_cond_null_353";
+		"check_temp_cond_null_353" -> "check_temp_cond_count_354";
+		"check_temp_cond_null_353" -> "check_temp_merge_356";
+		"check_temp_cond_count_354" -> "check_temp_body_355";
+		"check_temp_cond_count_354" -> "check_temp_merge_356";
+		"check_temp_body_355" -> "check_temp_merge_356";
+		"check_temp_merge_356" -> "check_temp_cond_null_357";
+		"check_temp_cond_null_357" -> "check_temp_cond_count_358";
+		"check_temp_cond_null_357" -> "check_temp_merge_360";
+		"check_temp_cond_count_358" -> "check_temp_body_359";
+		"check_temp_cond_count_358" -> "check_temp_merge_360";
+		"check_temp_body_359" -> "check_temp_merge_360";
+		"check_temp_merge_360" -> "check_temp_cond_null_361";
+		"check_temp_cond_null_361" -> "check_temp_cond_count_362";
+		"check_temp_cond_null_361" -> "check_temp_merge_364";
+		"check_temp_cond_count_362" -> "check_temp_body_363";
+		"check_temp_cond_count_362" -> "check_temp_merge_364";
+		"check_temp_body_363" -> "check_temp_merge_364";
+		"check_temp_merge_364" -> "conditional_365";
+		"conditional_365" -> "check_temp_cond_null_366";
+		"check_temp_cond_null_366" -> "check_temp_cond_count_367";
+		"check_temp_cond_null_366" -> "check_temp_cond_null_370";
+		"check_temp_cond_count_367" -> "check_temp_body_368";
+		"check_temp_cond_count_367" -> "check_temp_cond_null_370";
+		"check_temp_body_368" -> "check_temp_cond_null_370";
+		"check_temp_cond_null_370" -> "check_temp_cond_count_371";
+		"check_temp_cond_null_370" -> "check_temp_merge_373";
+		"check_temp_cond_count_371" -> "check_temp_body_372";
+		"check_temp_cond_count_371" -> "check_temp_merge_373";
+		"check_temp_body_372" -> "check_temp_merge_373";
+		"check_temp_merge_373" -> "conditional_then_374";
+		"check_temp_merge_373" -> "conditional_else_375";
+		"conditional_then_374" -> "conditional_result_376";
+		"conditional_else_375" -> "conditional_result_376";
+		"conditional_result_376" -> "conditional_377";
+		"conditional_377" -> "check_temp_cond_null_378";
+		"check_temp_cond_null_378" -> "check_temp_cond_count_379";
+		"check_temp_cond_null_378" -> "check_temp_cond_null_382";
+		"check_temp_cond_count_379" -> "check_temp_body_380";
+		"check_temp_cond_count_379" -> "check_temp_cond_null_382";
+		"check_temp_body_380" -> "check_temp_cond_null_382";
+		"check_temp_cond_null_382" -> "check_temp_cond_count_383";
+		"check_temp_cond_null_382" -> "check_temp_merge_385";
+		"check_temp_cond_count_383" -> "check_temp_body_384";
+		"check_temp_cond_count_383" -> "check_temp_merge_385";
+		"check_temp_body_384" -> "check_temp_merge_385";
+		"check_temp_merge_385" -> "conditional_then_386";
+		"check_temp_merge_385" -> "conditional_else_387";
+		"conditional_then_386" -> "conditional_result_388";
+		"conditional_else_387" -> "conditional_result_388";
+		"conditional_result_388" -> "local_return_389";
+		"local_return_389" -> "return_171";
+	}
+	"header_392" [style=filled, shape=box, label="header_392:
+($$_ret_value_10,%struct.$0_Point*) alloc 
+branch entry_397"];
+	"return_393" [style=filled, shape=box, label="return_393:
+(%0,%struct.$0_Point*) load ($$_ret_value_10,%struct.$0_Point*)
+branch start_cond_394"];
+	"start_cond_394" [style=filled, shape=box, label="start_cond_394:
+(%1,i1) <- ne (%0,%struct.$0_Point*),null
+(%2,%struct.$$$_commmon_struct*) <- cast (%0,%struct.$0_Point*)
+(%3,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%4,i32) load (%3,i32)
+(%5,i1) <- ne (%4,i32),0
+(%6,i32) <- field_access (%2,%struct.$$$_commmon_struct*),1
+(%7,i32) load (%6,i32)
+(%8,i1) <- ne (%7,i32),0
+(%9,i1) <- and (%1,i1),(%5,i1)
+(%10,i1) <- and (%9,i1),(%8,i1)
+branch (%10,i1) body_395,temp_merge_396"];
+	"body_395" [style=filled, shape=box, label="body_395:
+(%11,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%12,i32) load (%11,i32)
+(%13,i32) <- sub (%12,i32),1
+(%11,i32) store (%13,i32)
+branch temp_merge_396"];
+	"temp_merge_396" [style=filled, shape=box, label="temp_merge_396:
+
+return (%0,%struct.$0_Point*)"];
+	"entry_397" [style=filled, shape=box, label="entry_397:
+($29_a,%struct.$0_Point*) alloc 
+(%14,%struct.$0_Point*) <- call $9_f
+($29_a,%struct.$0_Point*) store (%14,%struct.$0_Point*)
+(%15,%struct.$$$_commmon_struct*) <- cast (%14,%struct.$0_Point*)
+ <- call $$$_add_inc,(%15,%struct.$$$_commmon_struct*)
+($30_b,%struct.$0_Point*) alloc 
+(%16,%struct.$0_Point*) <- call $_constructor_0,1,1
+($30_b,%struct.$0_Point*) store (%16,%struct.$0_Point*)
+(%17,%struct.$$$_commmon_struct*) <- cast (%16,%struct.$0_Point*)
+ <- call $$$_add_inc,(%17,%struct.$$$_commmon_struct*)
+branch local_return_398"];
+	"local_return_398" [style=filled, shape=box, label="local_return_398:
+(%18,%struct.$0_Point*) <- call $9_f
+branch start_cond_399"];
+	"start_cond_399" [style=filled, shape=box, label="start_cond_399:
+(%19,i1) <- ne (%18,%struct.$0_Point*),null
+(%20,%struct.$$$_commmon_struct*) <- cast (%18,%struct.$0_Point*)
+(%21,i32) <- field_access (%20,%struct.$$$_commmon_struct*),0
+(%22,i32) load (%21,i32)
+(%23,i1) <- ne (%22,i32),0
+(%24,i32) <- field_access (%20,%struct.$$$_commmon_struct*),1
+(%25,i32) load (%24,i32)
+(%26,i1) <- ne (%25,i32),0
+(%27,i1) <- and (%19,i1),(%23,i1)
+(%28,i1) <- and (%27,i1),(%26,i1)
+branch (%28,i1) body_400,temp_merge_401"];
+	"body_400" [style=filled, shape=box, label="body_400:
+(%29,i32) <- field_access (%20,%struct.$$$_commmon_struct*),0
+(%30,i32) load (%29,i32)
+(%31,i32) <- add (%30,i32),1
+(%29,i32) store (%31,i32)
+branch temp_merge_401"];
+	"temp_merge_401" [style=filled, shape=box, label="temp_merge_401:
+($$_ret_value_10,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+(%32,%struct.$0_Point*) load ($29_a,%struct.$0_Point*)
+(%33,i32*) <- cast (%32,%struct.$0_Point*)
+ <- call $_common_destructor,(%33,i32*)
+(%34,%struct.$0_Point*) load ($30_b,%struct.$0_Point*)
+(%35,i32*) <- cast (%34,%struct.$0_Point*)
+ <- call $_common_destructor,(%35,i32*)
+branch return_393"];
+
+	subgraph cluster_10 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$5_f4";
+		"header_392" -> "entry_397";
+		"return_393" -> "start_cond_394";
+		"start_cond_394" -> "body_395";
+		"start_cond_394" -> "temp_merge_396";
+		"body_395" -> "temp_merge_396";
+		"entry_397" -> "local_return_398";
+		"local_return_398" -> "start_cond_399";
+		"start_cond_399" -> "body_400";
+		"start_cond_399" -> "temp_merge_401";
+		"body_400" -> "temp_merge_401";
+		"temp_merge_401" -> "return_393";
+	}
+	"header_404" [style=filled, shape=box, label="header_404:
+($$_ret_value_11,%struct.$0_Point*) alloc 
+branch entry_409"];
+	"return_405" [style=filled, shape=box, label="return_405:
+(%0,%struct.$0_Point*) load ($$_ret_value_11,%struct.$0_Point*)
+branch start_cond_406"];
+	"start_cond_406" [style=filled, shape=box, label="start_cond_406:
+(%1,i1) <- ne (%0,%struct.$0_Point*),null
+(%2,%struct.$$$_commmon_struct*) <- cast (%0,%struct.$0_Point*)
+(%3,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%4,i32) load (%3,i32)
+(%5,i1) <- ne (%4,i32),0
+(%6,i32) <- field_access (%2,%struct.$$$_commmon_struct*),1
+(%7,i32) load (%6,i32)
+(%8,i1) <- ne (%7,i32),0
+(%9,i1) <- and (%1,i1),(%5,i1)
+(%10,i1) <- and (%9,i1),(%8,i1)
+branch (%10,i1) body_407,temp_merge_408"];
+	"body_407" [style=filled, shape=box, label="body_407:
+(%11,i32) <- field_access (%2,%struct.$$$_commmon_struct*),0
+(%12,i32) load (%11,i32)
+(%13,i32) <- sub (%12,i32),1
+(%11,i32) store (%13,i32)
+branch temp_merge_408"];
+	"temp_merge_408" [style=filled, shape=box, label="temp_merge_408:
+
+return (%0,%struct.$0_Point*)"];
+	"entry_409" [style=filled, shape=box, label="entry_409:
+($21_a,%struct.$0_Point*) alloc 
+(%14,%struct.$0_Point*) <- call $_constructor_0,1,1
+($21_a,%struct.$0_Point*) store (%14,%struct.$0_Point*)
+(%15,%struct.$$$_commmon_struct*) <- cast (%14,%struct.$0_Point*)
+ <- call $$$_add_inc,(%15,%struct.$$$_commmon_struct*)
+($22_b,%struct.$0_Point*) alloc 
+(%16,%struct.$0_Point*) <- call $_constructor_0,1,1
+($22_b,%struct.$0_Point*) store (%16,%struct.$0_Point*)
+(%17,%struct.$$$_commmon_struct*) <- cast (%16,%struct.$0_Point*)
+ <- call $$$_add_inc,(%17,%struct.$$$_commmon_struct*)
+branch local_return_410"];
+	"local_return_410" [style=filled, shape=box, label="local_return_410:
+(%18,%struct.$0_Point*) <- call $_constructor_0,1,1
+branch start_cond_411"];
+	"start_cond_411" [style=filled, shape=box, label="start_cond_411:
+(%19,i1) <- ne (%18,%struct.$0_Point*),null
+(%20,%struct.$$$_commmon_struct*) <- cast (%18,%struct.$0_Point*)
+(%21,i32) <- field_access (%20,%struct.$$$_commmon_struct*),0
+(%22,i32) load (%21,i32)
+(%23,i1) <- ne (%22,i32),0
+(%24,i32) <- field_access (%20,%struct.$$$_commmon_struct*),1
+(%25,i32) load (%24,i32)
+(%26,i1) <- ne (%25,i32),0
+(%27,i1) <- and (%19,i1),(%23,i1)
+(%28,i1) <- and (%27,i1),(%26,i1)
+branch (%28,i1) body_412,temp_merge_413"];
+	"body_412" [style=filled, shape=box, label="body_412:
+(%29,i32) <- field_access (%20,%struct.$$$_commmon_struct*),0
+(%30,i32) load (%29,i32)
+(%31,i32) <- add (%30,i32),1
+(%29,i32) store (%31,i32)
+branch temp_merge_413"];
+	"temp_merge_413" [style=filled, shape=box, label="temp_merge_413:
+($$_ret_value_11,%struct.$0_Point*) store (%18,%struct.$0_Point*)
+(%32,%struct.$0_Point*) load ($21_a,%struct.$0_Point*)
+(%33,i32*) <- cast (%32,%struct.$0_Point*)
+ <- call $_common_destructor,(%33,i32*)
+(%34,%struct.$0_Point*) load ($22_b,%struct.$0_Point*)
+(%35,i32*) <- cast (%34,%struct.$0_Point*)
+ <- call $_common_destructor,(%35,i32*)
+branch return_405"];
+
+	subgraph cluster_11 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$9_f";
+		"header_404" -> "entry_409";
+		"return_405" -> "start_cond_406";
+		"start_cond_406" -> "body_407";
+		"start_cond_406" -> "temp_merge_408";
+		"body_407" -> "temp_merge_408";
+		"entry_409" -> "local_return_410";
+		"local_return_410" -> "start_cond_411";
+		"start_cond_411" -> "body_412";
+		"start_cond_411" -> "temp_merge_413";
+		"body_412" -> "temp_merge_413";
+		"temp_merge_413" -> "return_405";
+	}
+	"header_416" [style=filled, shape=box, label="header_416:
+($31_p,%struct.$0_Point*) alloc 
+($31_p,%struct.$0_Point*) store (%0,%struct.$0_Point*)
+($$_ret_value_12,%struct.$0_Point*) alloc 
+branch entry_421"];
+	"return_417" [style=filled, shape=box, label="return_417:
+(%1,%struct.$0_Point*) load ($$_ret_value_12,%struct.$0_Point*)
+branch start_cond_418"];
+	"start_cond_418" [style=filled, shape=box, label="start_cond_418:
+(%2,i1) <- ne (%1,%struct.$0_Point*),null
+(%3,%struct.$$$_commmon_struct*) <- cast (%1,%struct.$0_Point*)
+(%4,i32) <- field_access (%3,%struct.$$$_commmon_struct*),0
+(%5,i32) load (%4,i32)
+(%6,i1) <- ne (%5,i32),0
+(%7,i32) <- field_access (%3,%struct.$$$_commmon_struct*),1
+(%8,i32) load (%7,i32)
+(%9,i1) <- ne (%8,i32),0
+(%10,i1) <- and (%2,i1),(%6,i1)
+(%11,i1) <- and (%10,i1),(%9,i1)
+branch (%11,i1) body_419,temp_merge_420"];
+	"body_419" [style=filled, shape=box, label="body_419:
+(%12,i32) <- field_access (%3,%struct.$$$_commmon_struct*),0
+(%13,i32) load (%12,i32)
+(%14,i32) <- sub (%13,i32),1
+(%12,i32) store (%14,i32)
+branch temp_merge_420"];
+	"temp_merge_420" [style=filled, shape=box, label="temp_merge_420:
+
+return (%1,%struct.$0_Point*)"];
+	"entry_421" [style=filled, shape=box, label="entry_421:
+($32_a,%struct.$0_Point*) alloc 
+(%15,%struct.$0_Point*) <- call $_constructor_0,1,1
+($32_a,%struct.$0_Point*) store (%15,%struct.$0_Point*)
+(%16,%struct.$$$_commmon_struct*) <- cast (%15,%struct.$0_Point*)
+ <- call $$$_add_inc,(%16,%struct.$$$_commmon_struct*)
+($33_b,%struct.$0_Point*) alloc 
+(%17,%struct.$0_Point*) <- call $_constructor_0,1,1
+($33_b,%struct.$0_Point*) store (%17,%struct.$0_Point*)
+(%18,%struct.$$$_commmon_struct*) <- cast (%17,%struct.$0_Point*)
+ <- call $$$_add_inc,(%18,%struct.$$$_commmon_struct*)
+branch local_return_422"];
+	"local_return_422" [style=filled, shape=box, label="local_return_422:
+(%19,%struct.$0_Point*) load ($31_p,%struct.$0_Point*)
+branch start_cond_423"];
+	"start_cond_423" [style=filled, shape=box, label="start_cond_423:
+(%20,i1) <- ne (%19,%struct.$0_Point*),null
+(%21,%struct.$$$_commmon_struct*) <- cast (%19,%struct.$0_Point*)
+(%22,i32) <- field_access (%21,%struct.$$$_commmon_struct*),0
+(%23,i32) load (%22,i32)
+(%24,i1) <- ne (%23,i32),0
+(%25,i32) <- field_access (%21,%struct.$$$_commmon_struct*),1
+(%26,i32) load (%25,i32)
+(%27,i1) <- ne (%26,i32),0
+(%28,i1) <- and (%20,i1),(%24,i1)
+(%29,i1) <- and (%28,i1),(%27,i1)
+branch (%29,i1) body_424,temp_merge_425"];
+	"body_424" [style=filled, shape=box, label="body_424:
+(%30,i32) <- field_access (%21,%struct.$$$_commmon_struct*),0
+(%31,i32) load (%30,i32)
+(%32,i32) <- add (%31,i32),1
+(%30,i32) store (%32,i32)
+branch temp_merge_425"];
+	"temp_merge_425" [style=filled, shape=box, label="temp_merge_425:
+($$_ret_value_12,%struct.$0_Point*) store (%19,%struct.$0_Point*)
+(%33,%struct.$0_Point*) load ($32_a,%struct.$0_Point*)
+(%34,i32*) <- cast (%33,%struct.$0_Point*)
+ <- call $_common_destructor,(%34,i32*)
+(%35,%struct.$0_Point*) load ($33_b,%struct.$0_Point*)
+(%36,i32*) <- cast (%35,%struct.$0_Point*)
+ <- call $_common_destructor,(%36,i32*)
+branch end_function_destructor_427"];
+	"end_function_destructor_427" [style=filled, shape=box, label="end_function_destructor_427:
+(%37,%struct.$0_Point*) load ($31_p,%struct.$0_Point*)
+(%38,i32*) <- cast (%37,%struct.$0_Point*)
+ <- call $_common_destructor,(%38,i32*)
+branch return_417"];
+
+	subgraph cluster_12 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$10_f5";
+		"header_416" -> "entry_421";
+		"return_417" -> "start_cond_418";
+		"start_cond_418" -> "body_419";
+		"start_cond_418" -> "temp_merge_420";
+		"body_419" -> "temp_merge_420";
+		"entry_421" -> "local_return_422";
+		"local_return_422" -> "start_cond_423";
+		"start_cond_423" -> "body_424";
+		"start_cond_423" -> "temp_merge_425";
+		"body_424" -> "temp_merge_425";
+		"temp_merge_425" -> "end_function_destructor_427";
+		"end_function_destructor_427" -> "return_417";
+	}
+	"header_20" [style=filled, shape=box, label="header_20:
 ($$_this_value_4,%struct.$$$_commmon_struct*) alloc 
 (%1,%struct.$$$_commmon_struct*) <- cast (%0,i32*)
 ($$_this_value_4,%struct.$$$_commmon_struct*) store (%1,%struct.$$$_commmon_struct*)
-branch check_null_entry_21"];
-	"return_20" [style=filled, shape=box, label="return_20:
+branch check_null_entry_22"];
+	"return_21" [style=filled, shape=box, label="return_21:
 
 return"];
-	"check_null_entry_21" [style=filled, shape=box, label="check_null_entry_21:
+	"check_null_entry_22" [style=filled, shape=box, label="check_null_entry_22:
 (%2,%struct.$$$_commmon_struct*) load ($$_this_value_4,%struct.$$$_commmon_struct*)
 (%3,i1) <- ne (%2,%struct.$$$_commmon_struct*),null
-branch (%3,i1) check_null_body_22,return_20"];
-	"check_null_body_22" [style=filled, shape=box, label="check_null_body_22:
-(%4,%struct.$$$_commmon_struct*) load ($$_this_value_4,%struct.$$$_commmon_struct*)
-(%5,i32) <- field_access (%4,%struct.$$$_commmon_struct*),0
-(%6,i32) load (%5,i32)
-(%7,i32) <- sub (%6,i32),1
-(%5,i32) store (%7,i32)
-branch destructor_if_cond_23"];
-	"destructor_if_cond_23" [style=filled, shape=box, label="destructor_if_cond_23:
-(%8,i1) <- le (%7,i32),0
-branch (%8,i1) end_function_destructor_25,return_20"];
-	"end_function_destructor_25" [style=filled, shape=box, label="end_function_destructor_25:
-(%9,i32) <- field_access (%4,%struct.$$$_commmon_struct*),1
-(%10,i32) load (%9,i32)
-(%11,void (i32*)*) <- field_access ($$$_destructors_array,[3 x void (i32*)*] *),(%10,i32)
-(%12,void (i32*)*) load (%11,void (i32*)*)
- <- call (%12,void (i32*)*),(%0,i32*)
-branch return_20"];
-"header_19" -> "check_null_entry_21";
-"check_null_entry_21" -> "check_null_body_22";
-"check_null_entry_21" -> "return_20";
-"check_null_body_22" -> "destructor_if_cond_23";
-"destructor_if_cond_23" -> "return_20";
-"destructor_if_cond_23" -> "end_function_destructor_25";
-"end_function_destructor_25" -> "return_20";
+branch (%3,i1) check_deletable_Cond_23,return_21"];
+	"check_deletable_Cond_23" [style=filled, shape=box, label="check_deletable_Cond_23:
+(%4,i32) <- field_access (%2,%struct.$$$_commmon_struct*),1
+(%5,i32) load (%4,i32)
+(%6,i1) <- ne (%5,i32),0
+branch (%6,i1) check_null_body_24,return_21"];
+	"check_null_body_24" [style=filled, shape=box, label="check_null_body_24:
+(%7,%struct.$$$_commmon_struct*) load ($$_this_value_4,%struct.$$$_commmon_struct*)
+(%8,i32) <- field_access (%7,%struct.$$$_commmon_struct*),0
+(%9,i32) load (%8,i32)
+(%10,i32) <- sub (%9,i32),1
+(%8,i32) store (%10,i32)
+branch destructor_if_cond_25"];
+	"destructor_if_cond_25" [style=filled, shape=box, label="destructor_if_cond_25:
+(%11,i1) <- le (%10,i32),0
+branch (%11,i1) end_function_destructor_27,return_21"];
+	"end_function_destructor_27" [style=filled, shape=box, label="end_function_destructor_27:
+(%12,i32) <- field_access (%7,%struct.$$$_commmon_struct*),1
+(%13,i32) load (%12,i32)
+(%14,i32) <- sub (%13,i32),1
+(%15,void (i32*)*) <- field_access ($$$_destructors_array,[3 x void (i32*)*] *),(%14,i32)
+(%16,void (i32*)*) load (%15,void (i32*)*)
+ <- call (%16,void (i32*)*),(%0,i32*)
+branch return_21"];
 
+	subgraph cluster_13 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$_common_destructor";
+		"header_20" -> "check_null_entry_22";
+		"check_null_entry_22" -> "check_deletable_Cond_23";
+		"check_null_entry_22" -> "return_21";
+		"check_deletable_Cond_23" -> "check_null_body_24";
+		"check_deletable_Cond_23" -> "return_21";
+		"check_null_body_24" -> "destructor_if_cond_25";
+		"destructor_if_cond_25" -> "return_21";
+		"destructor_if_cond_25" -> "end_function_destructor_27";
+		"end_function_destructor_27" -> "return_21";
+	}
 
+	subgraph cluster_14 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "puts";
+	}
 
+	subgraph cluster_15 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "putchar";
+	}
 
+	subgraph cluster_16 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "getchar";
+	}
 
+	subgraph cluster_17 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "malloc";
+	}
 
+	subgraph cluster_18 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "free";
+	}
 	"header_6" [style=filled, shape=box, label="header_6:
 ($$_this_value_1,%struct.$$$_commmon_struct*) alloc 
 (%1,%struct.$$$_commmon_struct*) <- cast (%0,i32*)
@@ -765,9 +3034,15 @@ return"];
 	"_common_array_destructor_start__8" [style=filled, shape=box, label="_common_array_destructor_start__8:
  <- struct free (%0,i32*)
 branch return_7"];
-"header_6" -> "_common_array_destructor_start__8";
-"_common_array_destructor_start__8" -> "return_7";
 
+	subgraph cluster_19 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$_common_struct_destructor_";
+		"header_6" -> "_common_array_destructor_start__8";
+		"_common_array_destructor_start__8" -> "return_7";
+	}
 	"header_9" [style=filled, shape=box, label="header_9:
 ($$_this_value_2,%struct.$$$_commmon_array*) alloc 
 (%1,%struct.$$$_commmon_array*) <- cast (%0,i32*)
@@ -802,33 +3077,47 @@ branch array_destructor_cond_12"];
 (%14,i32*) <- cast (%2,%struct.$$$_commmon_array*)
  <- struct free (%14,i32*)
 branch return_10"];
-"header_9" -> "_common_array_destructor_start__11";
-"_common_array_destructor_start__11" -> "array_destructor_cond_12";
-"array_destructor_cond_12" -> "array_destructor_body_1_13";
-"array_destructor_cond_12" -> "array_destructor_merge_1_14";
-"array_destructor_body_1_13" -> "array_destructor_cond_12";
-"array_destructor_merge_1_14" -> "return_10";
 
+	subgraph cluster_20 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$_common_array_destructor_";
+		"header_9" -> "_common_array_destructor_start__11";
+		"_common_array_destructor_start__11" -> "array_destructor_cond_12";
+		"array_destructor_cond_12" -> "array_destructor_body_1_13";
+		"array_destructor_cond_12" -> "array_destructor_merge_1_14";
+		"array_destructor_body_1_13" -> "array_destructor_cond_12";
+		"array_destructor_merge_1_14" -> "return_10";
+	}
 	"header_15" [style=filled, shape=box, label="header_15:
-($$_this_value_3,%struct.$0_A*) alloc 
-(%1,%struct.$0_A*) <- cast (%0,i32*)
-($$_this_value_3,%struct.$0_A*) store (%1,%struct.$0_A*)
+($$_this_value_3,%struct.$0_Point*) alloc 
+(%1,%struct.$0_Point*) <- cast (%0,i32*)
+($$_this_value_3,%struct.$0_Point*) store (%1,%struct.$0_Point*)
 branch check_null_entry_17"];
 	"return_16" [style=filled, shape=box, label="return_16:
 
 return"];
 	"check_null_entry_17" [style=filled, shape=box, label="check_null_entry_17:
-(%2,%struct.$0_A*) load ($$_this_value_3,%struct.$0_A*)
-branch end_function_destructor_18"];
-	"end_function_destructor_18" [style=filled, shape=box, label="end_function_destructor_18:
-(%3,i32) <- field_access (%2,%struct.$0_A*),1
-(%3,i32) store 2
+(%2,%struct.$0_Point*) load ($$_this_value_3,%struct.$0_Point*)
+branch end_function_destructor_if_cond_19"];
+	"end_function_destructor_if_cond_19" [style=filled, shape=box, label="end_function_destructor_if_cond_19:
+(%3,%struct.$0_Point*) <- field_access (%2,%struct.$0_Point*),4
+(%4,%struct.$0_Point*) load (%3,%struct.$0_Point*)
+(%5,i32*) <- cast (%4,%struct.$0_Point*)
+ <- call $_common_destructor,(%5,i32*)
  <- struct free (%0,i32*)
 branch return_16"];
-"header_15" -> "check_null_entry_17";
-"check_null_entry_17" -> "end_function_destructor_18";
-"end_function_destructor_18" -> "return_16";
 
+	subgraph cluster_21 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$_destructor_0";
+		"header_15" -> "check_null_entry_17";
+		"check_null_entry_17" -> "end_function_destructor_if_cond_19";
+		"end_function_destructor_if_cond_19" -> "return_16";
+	}
 	"header_0" [style=filled, shape=box, label="header_0:
 ($$_this_value_0,%struct.$$$_commmon_struct*) alloc 
 ($$_this_value_0,%struct.$$$_commmon_struct*) store (%0,%struct.$$$_commmon_struct*)
@@ -841,17 +3130,27 @@ return"];
 branch assigment_inc_count_if_cond_3"];
 	"assigment_inc_count_if_cond_3" [style=filled, shape=box, label="assigment_inc_count_if_cond_3:
 (%2,i1) <- ne (%1,%struct.$$$_commmon_struct*),null
-branch (%2,i1) assigment_inc_count_if_body_4,return_1"];
-	"assigment_inc_count_if_body_4" [style=filled, shape=box, label="assigment_inc_count_if_body_4:
-(%3,i32) <- field_access (%1,%struct.$$$_commmon_struct*),0
+(%3,i32) <- field_access (%1,%struct.$$$_commmon_struct*),1
 (%4,i32) load (%3,i32)
-(%5,i32) <- add (%4,i32),1
-(%3,i32) store (%5,i32)
+(%5,i1) <- ne (%4,i32),0
+(%6,i1) <- and (%2,i1),(%5,i1)
+branch (%6,i1) assigment_inc_count_if_body_4,return_1"];
+	"assigment_inc_count_if_body_4" [style=filled, shape=box, label="assigment_inc_count_if_body_4:
+(%7,i32) <- field_access (%1,%struct.$$$_commmon_struct*),0
+(%8,i32) load (%7,i32)
+(%9,i32) <- add (%8,i32),1
+(%7,i32) store (%9,i32)
 branch return_1"];
-"header_0" -> "common_entry_2";
-"common_entry_2" -> "assigment_inc_count_if_cond_3";
-"assigment_inc_count_if_cond_3" -> "assigment_inc_count_if_body_4";
-"assigment_inc_count_if_cond_3" -> "return_1";
-"assigment_inc_count_if_body_4" -> "return_1";
 
+	subgraph cluster_22 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+		label = "$$$_add_inc";
+		"header_0" -> "common_entry_2";
+		"common_entry_2" -> "assigment_inc_count_if_cond_3";
+		"assigment_inc_count_if_cond_3" -> "assigment_inc_count_if_body_4";
+		"assigment_inc_count_if_cond_3" -> "return_1";
+		"assigment_inc_count_if_body_4" -> "return_1";
+	}
 }
