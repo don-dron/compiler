@@ -1,3 +1,22 @@
+import lang.lib
+
+() void runnable ->
+    int i = 100
+
+    while (i > 0)
+        i--
+        println(concat("Test", toString(i))
+
+    return
+
+
 () int main ->
+    int j  = 0
+    println(concat("Test", toString(2))
+
+    while j < 10
+        Thread t = new Thread(runnable)
+        j++
+
     return 0
 

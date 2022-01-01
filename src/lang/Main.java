@@ -1,5 +1,20 @@
 package lang;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lang.ast.FileNode;
 import lang.ir.Module;
 import lang.ir.translate.Translator;
@@ -8,15 +23,13 @@ import lang.lr.LLVMTranslator;
 import lang.opt.Optimizer;
 import lang.parser.Parser;
 import lang.semantic.SemanticAnalysis;
-import org.apache.commons.cli.*;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class Main {
 
@@ -71,7 +84,10 @@ public class Main {
         List<FileNode> files = new ArrayList<>();
         File root = new File(cmd.getOptionValue(INPUT));
 
-        for (File childFile : getFiles(root)) {
+        List<File> raws = getFiles(root);
+        raws.add(new File("./lang/lib"));
+
+        for (File childFile : raws) {
             Reader reader = new FileReader(childFile);
             Lexer lexer = new Lexer(reader);
 
@@ -129,6 +145,8 @@ public class Main {
         fileWriter.write(dump);
         fileWriter.flush();
 
+        buildLibrary();
+
         runLLVM(llFile);
         runClang(binaryFile, executableFile);
 
@@ -165,13 +183,52 @@ public class Main {
         return files;
     }
 
+    private static void buildLibrary() throws IOException, InterruptedException {
+        if (!new File("./build").exists()) {
+            ProcessBuilder mkdirBuilder = new ProcessBuilder("mkdir", "build", "-p");
+            runProcess(mkdirBuilder);
+        }
+
+        List<File> sources =
+                getFiles(new File("./lib"));
+        List<String> outputs = new ArrayList<>();
+        for (File file : sources) {
+            String output = "./build/" + file.getName().replaceAll("\\.c", ".o");
+            outputs.add(output);
+            String[] params =
+                    Stream.of(
+                                    "gcc",
+                                    "-O3",
+                                    "-c",
+                                    "-Wall",
+                                    "-I",
+                                    "./include",
+                                    "-fPIE",
+                                    "-o",
+                                    output,
+                                    file.getPath())
+                            .toArray(String[]::new);
+            ProcessBuilder procBuilder = new ProcessBuilder(params);
+            runProcess(procBuilder);
+        }
+
+        String[] llvmParams = Stream.concat(Stream.of(
+                        "llvm-ar",
+                        "rc",
+                        "lib.a"),
+                outputs.stream()).toArray(String[]::new);
+        ProcessBuilder llvmProcBuilder = new ProcessBuilder(llvmParams);
+        runProcess(llvmProcBuilder);
+    }
+
     private static void runGraphViz(File file) throws IOException, InterruptedException {
         ProcessBuilder procBuilder = new ProcessBuilder("dot", "-Tpng", file.getName(), "-o", "IRGraph.png");
         runProcess(procBuilder);
     }
 
     private static void runClang(File bf, File prog) throws IOException, InterruptedException {
-        ProcessBuilder procBuilder = new ProcessBuilder("clang", bf.getName(), "-o", prog.getName());
+        ProcessBuilder procBuilder = new ProcessBuilder("gcc",
+                bf.getName(), "lib.a", "-lpthread", "-o", prog.getName());
         runProcess(procBuilder);
     }
 

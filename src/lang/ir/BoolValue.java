@@ -23,6 +23,6 @@ public class BoolValue implements Value {
 
     @Override
     public Type getType() {
-        return Type.INT_8;
+        return Type.INT_1;
     }
 }

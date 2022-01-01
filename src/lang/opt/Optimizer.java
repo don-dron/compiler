@@ -14,8 +14,8 @@ public class Optimizer {
     }
 
     public void optimize() {
-        module.getFunctions()
-                .forEach(this::optimizeFunction);
+//        module.getFunctions()
+//                .forEach(this::optimizeFunction);
     }
 
     private void optimizeFunction(Function function) {

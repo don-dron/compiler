@@ -2,6 +2,7 @@ package lang.ir;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Function extends Type implements Value {
     private final List<BasicBlock> blocks;
@@ -86,7 +87,9 @@ public class Function extends Type implements Value {
 
     @Override
     public String toLLVM() {
-        return name;
+        return (resultType == VOID ? "void" : resultType.toLLVM()) +
+                " (" + parameterTypes.stream().map(Type::toLLVM).collect(Collectors.joining(",")) + ")* @"
+                + name;
     }
 
     public void setParameterTypes(List<Type> parameterTypes) {

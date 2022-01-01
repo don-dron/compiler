@@ -26,3 +26,9 @@ hs_err_pid*
 /.idea
 *.ll
 *.o
+build
+lib.a
+out.ll
+out.o
+program
+cmake-build-debug

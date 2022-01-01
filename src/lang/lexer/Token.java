@@ -135,6 +135,11 @@ public class Token {
         INT("int","int"),
 
         /**
+         * long
+         */
+        LONG("long","long"),
+
+        /**
          * char
          */
         CHAR("char","char"),

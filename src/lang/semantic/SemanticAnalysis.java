@@ -115,7 +115,7 @@ public class SemanticAnalysis {
         String absolutePath = Paths.get(rootPath, path.toArray(String[]::new)).toString();
 
         return fileNodes.stream()
-                .filter(f -> f.getPath().equals(absolutePath))
+                .filter(f -> f.getPath().endsWith(String.join("/", path)))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find file"));
     }
@@ -414,7 +414,7 @@ public class SemanticAnalysis {
             TypeNode typeNode = node.getExpressionNode().getResultType();
             node.getExpressionNode().resultType = node.getTypeNode();
 
-            if ((node.getTypeNode() instanceof ObjectTypeNode || node.getTypeNode() instanceof ArrayTypeNode ) &&
+            if ((node.getTypeNode() instanceof ObjectTypeNode || node.getTypeNode() instanceof ArrayTypeNode) &&
                     node.getExpressionNode() instanceof NullConstantExpressionNode) {
                 node.getExpressionNode().resultType = node.getTypeNode();
                 return;
@@ -480,6 +480,13 @@ public class SemanticAnalysis {
     private void analyseFunctionInGlobalStart(FunctionDefinitionNode function, Scope parentScope) {
         function.setScope(parentScope);
         parentScope.addDeclaration(function);
+        function.getFunctionNode().getParametersNode().getParameters()
+                .forEach(p -> {
+                    analyseType(p.getTypeNode(), parentScope);
+                });
+        if (function.getFunctionNode().getTypeNode() != null) {
+            analyseType(function.getFunctionNode().getTypeNode(), parentScope);
+        }
     }
 
     private void analyseFunctionInGlobalEnd(FunctionDefinitionNode function, Scope parentScope) {
@@ -488,13 +495,7 @@ public class SemanticAnalysis {
             Scope scope = new Scope(parentScope);
             scope.setOwner(function);
             function.getFunctionNode().getParametersNode().getParameters()
-                    .forEach(p -> {
-                        analyseType(p.getTypeNode(), parentScope);
-                        scope.addDeclaration(p);
-                    });
-            if (function.getFunctionNode().getTypeNode() != null) {
-                analyseType(function.getFunctionNode().getTypeNode(), parentScope);
-            }
+                    .forEach(scope::addDeclaration);
 
             analyseStatement(function.getStatementNode(), scope);
         }
@@ -916,6 +917,7 @@ public class SemanticAnalysis {
                 ExpressionNode node = expressions.get(i);
                 ParameterNode parameterNode = parameterNodes.get(i);
 
+//                analyseType(parameterNode.getTypeNode(), parentScope);
                 analyseExpression(node, parentScope);
 
                 if (node instanceof NullConstantExpressionNode &&

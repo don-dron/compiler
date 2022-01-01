@@ -1,18 +1,18 @@
 #include <stdlib.h>
 
-static void dest1(void* p) {
-}
-static void dest2(void* p) {
-}
-static void dest3(void* p) {
-}
-static void dest4(void* p){
+static void dest4(void (*p)(void)){
 }
 
-void (*c[4])(void*) = {dest1, dest2, dest3, dest4};
+static void t(void){
+}
 
 
 int main() {
-    c[1](0);
+    dest4(t);
+    int i = 0;
+    while(i - 1)
+   {
+   break;
+   }
     return 0;
 }

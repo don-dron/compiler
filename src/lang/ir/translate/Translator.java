@@ -128,12 +128,44 @@ public class Translator {
         return function;
     }
 
+    private Function getYieldFunction() {
+        Function function = new Function("__yield", true);
+        function.setParameterTypes(List.of());
+        function.setResultType(VOID);
+        return function;
+    }
+
+    private Function getSleepFunction() {
+        Function function = new Function("__sleep", true);
+        function.setParameterTypes(List.of(INT_32));
+        function.setResultType(VOID);
+        return function;
+    }
+
+    private Function getJoinFunction() {
+        Function function = new Function("__join", true);
+        function.setParameterTypes(List.of(INT_64));
+        function.setResultType(VOID);
+        return function;
+    }
+
+    private Function getCreateFiberFunction() {
+        Function function = new Function("__create_fiber", true);
+        function.setParameterTypes(List.of(new PointerType(new FunctionType(VOID, List.of(VOID)))));
+        function.setResultType(INT_64);
+        return function;
+    }
+
     public Module translate() {
         predefinedFunctions.add(getPutStringFunction());
         predefinedFunctions.add(getPutcharFunction());
         predefinedFunctions.add(getGetcharFunction());
         predefinedFunctions.add(getMallocFunction());
         predefinedFunctions.add(getFreeFunction());
+        predefinedFunctions.add(getJoinFunction());
+        predefinedFunctions.add(getCreateFiberFunction());
+        predefinedFunctions.add(getSleepFunction());
+        predefinedFunctions.add(getYieldFunction());
 
         predefinedFunctions
                 .forEach(f -> {
@@ -194,7 +226,7 @@ public class Translator {
 
                             if (program.getMainFunction().getIdentifierNode().getName()
                                     .equals(functionDefinitionNode.getIdentifierNode().getName())) {
-                                name = "main";
+                                name = "lang_main";
                             }
 
                             Function function = new Function(name);
@@ -821,7 +853,7 @@ public class Translator {
 
         StructType structType = classes.get(classStatementNode.getIdentifierNode().getName());
         for (VariableValue allocated : structType.getTypes()) {
-            if (allocated.getType() instanceof PointerType) {
+            if (allocated.getType() instanceof PointerType && !(allocated.getType().getType() instanceof  FunctionType)) {
                 PointerType pointerType = (PointerType) allocated.getType();
 
                 BasicBlock last = function.getCurrentBlock();
@@ -868,6 +900,17 @@ public class Translator {
         TEMP_VARIABLE_COUNT = 0;
     }
 
+    private Value getDefaultValue(Type type) {
+        if (type == INT_1 || type == INT_8) {
+            return new CharValue((char) 0);
+        } else if (type == INT_32) {
+            return new IntValue(0);
+        } else if (type == INT_64) {
+            return new LongValue(0L);
+        } else {
+            return new LongValue(0L);
+        }
+    }
 
     private Function translateFunction(Function function, FunctionDefinitionNode functionDefinitionNode) {
         BasicBlock header = function.appendBlock("header");
@@ -1031,7 +1074,7 @@ public class Translator {
                         Command writeCommand = new Command(
                                 fieldAccess.getResult(),
                                 STORE,
-                                List.of(fieldAccess.getResult().getType() == INT_8 ? new CharValue((char) 0) : new IntValue(0))
+                                List.of(getDefaultValue(fieldAccess.getResult().getType()))
                         );
                         function.getCurrentBlock().addCommand(writeCommand);
                     }
@@ -1107,7 +1150,8 @@ public class Translator {
 
     private void addDestructorsList(Function function, List<VariableValue> destructors) {
         for (VariableValue allocated : destructors) {
-            if (allocated.getType() instanceof PointerType) {
+            if (allocated.getType() instanceof PointerType
+            && !(allocated.getType().getType() instanceof  FunctionType)) {
                 Command forDelete = new Command(
                         createTempVariable(allocated.getType()),
                         LOAD,
@@ -1308,7 +1352,8 @@ public class Translator {
                         .map(exp -> {
                             Value v = translateExpression(function, exp);
 
-                            if (v.getType() instanceof PointerType) {
+                            if (v.getType() instanceof PointerType &&
+                                    !(v.getType().getType() instanceof FunctionType)) {
                                 Command castCommand = new Command(
                                         createTempVariable(new PointerType(commonStruct)),
                                         CAST,
@@ -1776,7 +1821,8 @@ public class Translator {
             BasicBlock current = function.getCurrentBlock();
             current.addCommand(new Command(variableValue, STORE, List.of(value)));
 
-            if (variableValue.getType() instanceof PointerType) {
+            if (variableValue.getType() instanceof PointerType
+                    && !(variableValue.getType().getType() instanceof FunctionType)) {
                 Command castToCommon = new Command(
                         createTempVariable(new PointerType(commonStruct)),
                         CAST,
@@ -1841,6 +1887,15 @@ public class Translator {
 
                 return new PointerType(structType);
             }
+        } else if (typeNode instanceof FunctionNode) {
+            FunctionNode functionNode = (FunctionNode) typeNode;
+            return new PointerType(new FunctionType(matchType(functionNode.getTypeNode()),
+                    functionNode.getParametersNode()
+                            .getParameters()
+                            .stream()
+                            .map(ParameterNode::getTypeNode)
+                            .map(this::matchType)
+                            .collect(Collectors.toList())));
         } else {
             throw new IllegalArgumentException("");
         }
@@ -2259,7 +2314,8 @@ public class Translator {
                             .map(exp -> {
                                 Value v = translateExpression(function, exp);
 
-                                if (v.getType() instanceof PointerType) {
+                                if (v.getType() instanceof PointerType
+                                        && !(v.getType().getType() instanceof FunctionType)) {
                                     Command castCommand = new Command(
                                             createTempVariable(new PointerType(commonStruct)),
                                             CAST,
@@ -2302,7 +2358,8 @@ public class Translator {
                             .map(exp -> {
                                 Value v = translateExpression(function, exp);
 
-                                if (v.getType() instanceof PointerType) {
+                                if (v.getType() instanceof PointerType
+                                        && !(v.getType().getType() instanceof FunctionType)) {
                                     Command castCommand = new Command(
                                             createTempVariable(new PointerType(commonStruct)),
                                             CAST,
@@ -2780,7 +2837,7 @@ public class Translator {
         Command storeSize = new Command(
                 structSize.getResult(),
                 STORE,
-                List.of(new IntValue(value.getType().getSize())));
+                List.of(new IntValue(expressionNode.getValue().length())));
         function.getCurrentBlock().addCommand(storeSize);
 
         Command structType = new Command(
@@ -2827,6 +2884,7 @@ public class Translator {
         }
 
         if (value instanceof Function) {
+
             return value;
         } else {
             Command command = new Command(createTempVariable(matchType(
@@ -3017,7 +3075,8 @@ public class Translator {
         BasicBlock current = function.getCurrentBlock();
         current.addCommand(command);
 
-        if (mt instanceof PointerType) {
+        if (mt instanceof PointerType &&
+                !(mt.getType().getType() instanceof FunctionType)) {
             PointerType pointerType = (PointerType) mt;
 
             Value fieldAccess = translateLeftValue(function, expressionNode.getLeft());
@@ -3045,7 +3104,7 @@ public class Translator {
             function.getCurrentBlock().addCommand(copyCall);
         }
 
-        if (mt instanceof PointerType) {
+        if (mt instanceof PointerType  && !(mt.getType() instanceof  FunctionType)) {
             addDestructorCall(function, (PointerType) saveLeft.getType(), saveLeft);
         }
 
