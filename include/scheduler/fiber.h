@@ -45,9 +45,13 @@ typedef struct history_save {
     history_node *tail;
 } history_save;
 
-list history;
+extern list history;
 
 void create_history(void);
+
+void print_history(void);
+
+void free_history(void);
 
 #if FIBER_STAT
 void update_fiber_history(fiber *fiber);
@@ -58,10 +62,6 @@ void save_fiber_history(fiber *fiber);
 void update_thread_history(thread_state state);
 void save_thread_history(scheduler* sched);
 #endif
-
-void print_history(void);
-
-void free_history(void);
 
 typedef struct history_node history_node;
 

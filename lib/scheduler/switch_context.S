@@ -1,8 +1,6 @@
-#define FUNCTION_NAME(name) name
+.global _switch_from_to
 
-.global FUNCTION_NAME(switch_from_to)
-
-FUNCTION_NAME(switch_from_to):
+_switch_from_to:
     
     // For example: call from fiber code
 

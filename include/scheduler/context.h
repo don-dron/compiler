@@ -51,6 +51,8 @@ typedef struct statistic
   unsigned long interrupt_failed_count;
 } statistic;
 
+extern void switch_from_to(execution_context *from, execution_context *to);
+
 void switch_context(execution_context *from, execution_context *to);
 
 void align_next_push(stack_builder *builder, size_t alignment);

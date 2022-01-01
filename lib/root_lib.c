@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <scheduler/context.h>
 #include <structures/list.h>
-#include <scheduler/splay_tree_scheduler.h>
+#include <scheduler/rb_tree_scheduler.h>
 #include <root.h>
 
 scheduler* sched;
@@ -26,10 +26,6 @@ void __join(long fib) {
 
 void __yield(void) {
     yield();
-}
-
-void lang_main() {
-    printf("DEBUG\n");
 }
 
 int main() {

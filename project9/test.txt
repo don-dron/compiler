@@ -14,7 +14,7 @@ import lang.lib
     int j  = 0
     println(concat("Test", toString(2))
 
-    while j < 10
+    while j < 100
         Thread t = new Thread(runnable)
         j++
 

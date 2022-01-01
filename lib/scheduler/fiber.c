@@ -1,7 +1,7 @@
 #include <scheduler/fiber.h>
 
 //thread_local fiber *volatile current_fiber = NULL;
-
+list history;
 unsigned long volatile id = 0;
 
 static unsigned long generate_id() {
@@ -77,12 +77,12 @@ fiber *create_fiber(fiber_routine routine, void *args) {
 
     setup_trampoline(new_fiber);
 
-    asm volatile("mfence":::"memory");
+    asm volatile("mfence":: :"memory");
     return new_fiber;
 }
 
 void free_fiber(fiber *fiber) {
-    munmap(fiber->context.stack, STACK_SIZE);
+    free(fiber->context.stack);
 
 #if FIBER_STAT
     save_fiber_history(fiber);
@@ -143,7 +143,7 @@ void setup_trampoline(fiber *new_fiber) {
     new_fiber->context.stack = start;
 }
 
-void save_current_fiber(fiber * fib) {
+void save_current_fiber(fiber *fib) {
     struct pthread_node *next = (struct pthread_node *) malloc(sizeof(struct pthread_node));
     next->ptr = fib;
     next->thread_id = get_current_thread_id();
