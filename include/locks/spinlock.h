@@ -2,8 +2,7 @@
 
 #include <unistd.h>
 
-typedef struct spinlock
-{
+typedef struct spinlock {
     volatile unsigned long lock;
 } spinlock;
 

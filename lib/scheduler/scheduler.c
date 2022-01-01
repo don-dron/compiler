@@ -173,10 +173,13 @@ static void run_task(fiber *routine) {
             delete_current_fiber();
             inc((unsigned long *) &current_scheduler->end_count);
 
-            free_node *node = (free_node *) malloc(sizeof(free_node));
-            node->fib = temp;
-            list_push_front(&current_scheduler->garbage, (list_node *) node);
+//            free_node *node = (free_node *) malloc(sizeof(free_node));
+//            node->fib = temp;
+//            list_push_front(&current_scheduler->garbage, (list_node *) node);
             unlock_spinlock(&temp->lock);
+
+            free_fiber(temp);
+            free(temp);
         }
     } else {
         printf("[ERROR] Run task wrong state  %d\n", current_fiber->state);
@@ -331,7 +334,7 @@ static void handler(int signo)
 
 static void *run_fibers_handler(void *arg) {
     unsigned long thread_number = ((unsigned long *) arg)[0];
-    scheduler *sched = (scheduler * )((unsigned long *) arg)[1];
+    scheduler *sched = (scheduler *) ((unsigned long *) arg)[1];
 
     // Setting params to TLS
 
@@ -575,6 +578,7 @@ int terminate_scheduler(scheduler *sched) {
     shutdown(sched);
 
     sched->terminate = 1;
+    delete_current_scheduler();
 
 #if INTERRUPT_ENABLED
     // Join threads
@@ -689,7 +693,7 @@ void print_history() {
     int count = 0;
     while (head) {
         print_item_history(count, head->tail);
-        head = (history_save * )(head->node.next);
+        head = (history_save *) (head->node.next);
         count++;
     }
 }
@@ -710,4 +714,18 @@ static void free_callback(list_node *node) {
 
 void free_history() {
     free_list(&history, free_callback);
+}
+
+void delete_current_scheduler() {
+    struct pthread_node next;
+    next.thread_id = get_current_thread_id();
+
+    struct hash_map_node *node = hash_map_remove(
+            &fpl_manager.current_scheduler,
+            &next.core
+    );
+
+    if (node != NULL) {
+        free(node);
+    }
 }

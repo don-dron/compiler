@@ -124,3 +124,32 @@ int free_coroutine(coroutine *coroutine_) {
     munmap(coroutine_->routine_context.stack, STACK_SIZE);
     return 0;
 }
+
+void save_current_coroutine(coroutine *coro) {
+    struct pthread_node *next = (struct pthread_node *) malloc(sizeof(struct pthread_node));
+    next->ptr = coro;
+    next->thread_id = get_current_thread_id();
+
+    struct hash_map_node *node = hash_map_insert(
+            &fpl_manager.current_coroutine,
+            &next->core
+    );
+
+    if (node != NULL) {
+        free(node);
+    }
+}
+
+void delete_current_coroutine() {
+    struct pthread_node next;
+    next.thread_id = get_current_thread_id();
+
+    struct hash_map_node *node = hash_map_remove(
+            &fpl_manager.current_coroutine,
+            &next.core
+    );
+
+    if (node != NULL) {
+        free(node);
+    }
+}

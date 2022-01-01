@@ -9,11 +9,10 @@
 #include <scheduler/rb_tree_scheduler.h>
 #include <root.h>
 
-scheduler* sched;
+scheduler *sched;
 
-long __create_fiber(void (*fiber_routine)(void))
-{
-    return (long)spawn(sched, (void(*)(void*))fiber_routine, NULL);
+long __create_fiber(void (*fiber_routine)(void)) {
+    return (long) spawn(sched, (void (*)(void *)) fiber_routine, NULL);
 }
 
 void __sleep(unsigned int millis) {
@@ -21,7 +20,7 @@ void __sleep(unsigned int millis) {
 }
 
 void __join(long fib) {
-    join((fiber *)fib);
+    join((fiber *) fib);
 }
 
 void __yield(void) {
@@ -29,7 +28,7 @@ void __yield(void) {
 }
 
 int main() {
-    sched = (scheduler *)malloc(sizeof(scheduler));
+    sched = (scheduler *) malloc(sizeof(scheduler));
     new_scheduler(sched, 4);
     run_scheduler(sched);
 

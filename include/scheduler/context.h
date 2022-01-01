@@ -5,50 +5,45 @@
 #include <sys/mman.h>
 
 // Fiber , coroutine stack size = 64 Kbytes
-static const size_t STACK_SIZE = 64 * 1024;
+static const size_t STACK_SIZE = 128 * 1024;
 
 extern unsigned long switch_count_atom;
 extern unsigned long switch_count;
 extern unsigned long interrupt_count;
 extern unsigned long interrupt_failed_count;
 
-typedef struct execution_context
-{
-  void *rsp;
-  void *stack;
+typedef struct execution_context {
+    void *rsp;
+    void *stack;
 } execution_context;
 
-typedef struct stack_saved_context
-{
-  void *rbp;
-  void *rbx;
+typedef struct stack_saved_context {
+    void *rbp;
+    void *rbx;
 
-  void *r12;
-  void *r13;
-  void *r14;
-  void *r15;
+    void *r12;
+    void *r13;
+    void *r14;
+    void *r15;
 
-  void *rip;
+    void *rip;
 } stack_saved_context;
 
-typedef struct stack
-{
-  void *memory;
-  size_t size;
+typedef struct stack {
+    void *memory;
+    size_t size;
 } stack;
 
-typedef struct stack_builder
-{
-  int word_size;
-  char *top;
+typedef struct stack_builder {
+    int word_size;
+    char *top;
 } stack_builder;
 
-typedef struct statistic
-{
-  unsigned long switch_count_atom;
-  unsigned long switch_count;
-  unsigned long interrupt_count;
-  unsigned long interrupt_failed_count;
+typedef struct statistic {
+    unsigned long switch_count_atom;
+    unsigned long switch_count;
+    unsigned long interrupt_count;
+    unsigned long interrupt_failed_count;
 } statistic;
 
 extern void switch_from_to(execution_context *from, execution_context *to);

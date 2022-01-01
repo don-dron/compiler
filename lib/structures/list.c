@@ -1,7 +1,6 @@
 #include <structures/list.h>
 
-int create_list(list *lst)
-{
+int create_list(list *lst) {
     lst->start = 0;
     lst->end = 0;
     lst->size = 0;
@@ -13,12 +12,10 @@ int create_list(list *lst)
     return 0;
 }
 
-void list_push_back(list *lst, list_node *node)
-{
+void list_push_back(list *lst, list_node *node) {
     lock_spinlock(&lst->lock);
 
-    if (lst->size == 0)
-    {
+    if (lst->size == 0) {
         node->next = 0;
         node->prev = 0;
 
@@ -26,9 +23,7 @@ void list_push_back(list *lst, list_node *node)
         lst->end = node;
 
         lst->size++;
-    }
-    else
-    {
+    } else {
         lst->end->next = node;
         node->prev = lst->end;
         lst->end = node;
@@ -40,11 +35,9 @@ void list_push_back(list *lst, list_node *node)
     unlock_spinlock(&lst->lock);
 }
 
-void list_push_front(list *lst, list_node *node)
-{
+void list_push_front(list *lst, list_node *node) {
     lock_spinlock(&lst->lock);
-    if (lst->size == 0)
-    {
+    if (lst->size == 0) {
         node->next = 0;
         node->prev = 0;
 
@@ -52,9 +45,7 @@ void list_push_front(list *lst, list_node *node)
         lst->end = node;
 
         lst->size++;
-    }
-    else
-    {
+    } else {
         lst->start->prev = node;
         node->next = lst->start;
         lst->start = node;
@@ -65,25 +56,18 @@ void list_push_front(list *lst, list_node *node)
     unlock_spinlock(&lst->lock);
 }
 
-list_node *list_pop_back(list *lst)
-{
+list_node *list_pop_back(list *lst) {
     lock_spinlock(&lst->lock);
-    if (lst->size == 0)
-    {
+    if (lst->size == 0) {
         unlock_spinlock(&lst->lock);
         return 0;
-    }
-    else
-    {
+    } else {
         list_node *result = lst->end;
         lst->end = result->prev;
 
-        if (lst->end != 0)
-        {
+        if (lst->end != 0) {
             lst->end->next = 0;
-        }
-        else
-        {
+        } else {
             lst->start = 0;
         }
 
@@ -93,25 +77,18 @@ list_node *list_pop_back(list *lst)
     }
 }
 
-list_node *list_pop_front(list *lst)
-{
+list_node *list_pop_front(list *lst) {
     lock_spinlock(&lst->lock);
-    if (lst->size == 0)
-    {
+    if (lst->size == 0) {
         unlock_spinlock(&lst->lock);
         return 0;
-    }
-    else
-    {
+    } else {
         list_node *result = lst->start;
         lst->start = result->next;
 
-        if (lst->start != 0)
-        {
+        if (lst->start != 0) {
             lst->start->prev = 0;
-        }
-        else
-        {
+        } else {
             lst->end = 0;
         }
 
@@ -121,14 +98,12 @@ list_node *list_pop_front(list *lst)
     }
 }
 
-int free_list(list *lst, void (*free_callback)(list_node *))
-{
+int free_list(list *lst, void (*free_callback)(list_node *)) {
     lock_spinlock(&lst->lock);
 
     list_node *current = lst->start;
 
-    while (current != 0)
-    {
+    while (current != 0) {
         list_node *tmp = current->next;
         free_callback(current);
         free(current);

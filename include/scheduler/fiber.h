@@ -100,4 +100,5 @@ void setup_trampoline(fiber *fiber);
 fiber *get_current_fiber();
 
 void save_current_fiber(fiber *fib);
+
 void delete_current_fiber();

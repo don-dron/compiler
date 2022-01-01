@@ -18,7 +18,7 @@ int pthread_cmp_node(struct hash_map_node *a, struct hash_map_node *b);
 
 int pthread_hash_node(struct hash_map_node *node);
 
-struct fibers_pool_manager{
+struct fibers_pool_manager {
     struct hash_map current_fiber;
     struct hash_map current_coroutine;
     struct hash_map current_scheduler;

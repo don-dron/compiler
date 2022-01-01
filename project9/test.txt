@@ -1,20 +1,27 @@
 import lang.lib
 
 () void runnable ->
-    int i = 100
+    int i = 25
 
     while (i > 0)
         i--
-        println(concat("Test", toString(i))
+        yield()
+        yield()
+        yield()
+        //println(concat("Test", toString(i))
+        yield()
+        yield()
+        yield()
+        yield()
 
     return
 
 
 () int main ->
     int j  = 0
-    println(concat("Test", toString(2))
+    //println(concat("Test", toString(2))
 
-    while j < 100
+    while j < 6000
         Thread t = new Thread(runnable)
         j++
 

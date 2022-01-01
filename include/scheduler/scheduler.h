@@ -17,7 +17,9 @@
 
 typedef struct history_node history_node;
 typedef struct fiber fiber;
+
 typedef void (*fiber_routine)(void *);
+
 typedef struct scheduler_manager scheduler_manager;
 typedef struct scheduler scheduler;
 
@@ -34,13 +36,13 @@ void save_thread_history(scheduler* sched);
 #endif
 
 void print_history(void);
+
 void free_history(void);
 
 /**
  *  Scheduler structure.
  */
-struct scheduler
-{
+struct scheduler {
 #if INTERRUPT_ENABLED
     /** Signals preferences **/
     struct sigaction sigact;
@@ -159,6 +161,8 @@ int free_fibers(scheduler *sched);
  */
 int terminate_scheduler(scheduler *sched);
 
-scheduler * get_current_scheduler();
+scheduler *get_current_scheduler();
 
-void save_current_scheduler(scheduler* sched);
+void save_current_scheduler(scheduler *sched);
+
+void delete_current_scheduler();

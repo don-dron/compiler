@@ -31,7 +31,7 @@ inline void switch_context(execution_context *from, execution_context *to) {
 
 
 void align_next_push(stack_builder *builder, size_t alignment) {
-    size_t shift = (size_t) (builder->top - builder->word_size) % alignment;
+    size_t shift = (size_t)(builder->top - builder->word_size) % alignment;
     builder->top -= shift;
 }
 

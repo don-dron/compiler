@@ -3,13 +3,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct fib_heap_data
-{
+struct fib_heap_data {
     int key;
 };
 
-struct fib_heap_node
-{
+struct fib_heap_node {
     struct fib_heap_data *data;
     unsigned int degree;
     char marked;
@@ -19,11 +17,12 @@ struct fib_heap_node
     struct fib_heap_node *right;
 };
 
-struct fib_heap
-{
+struct fib_heap {
     struct fib_heap_node *the_one;
     struct fib_heap_node **cons_array;
+
     int (*compr)(struct fib_heap_data *, struct fib_heap_data *);
+
     unsigned int total_nodes;
 };
 

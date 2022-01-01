@@ -6,21 +6,19 @@
 
 struct list_node;
 
-typedef struct list_node
-{
+typedef struct list_node {
     struct list_node *prev;
     struct list_node *next;
 } list_node;
 
-typedef struct list
-{
+typedef struct list {
     list_node *start;
     list_node *end;
     spinlock lock;
     size_t size;
 } list;
 
-int create_list(list* lst);
+int create_list(list *lst);
 
 void list_push_back(list *lst, list_node *node);
 

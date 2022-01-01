@@ -184,11 +184,14 @@ public class Main {
     }
 
     private static void buildLibrary() throws IOException, InterruptedException {
-        if (!new File("./build").exists()) {
-            ProcessBuilder mkdirBuilder = new ProcessBuilder("mkdir", "build");
-            runProcess(mkdirBuilder);
+
+        if (new File("./build").exists()) {
+            ProcessBuilder deleteBuilder = new ProcessBuilder("rm", "-rf", "build");
+            runProcess(deleteBuilder);
         }
 
+        ProcessBuilder mkdirBuilder = new ProcessBuilder("mkdir", "build");
+        runProcess(mkdirBuilder);
         List<File> sources =
                 getFiles(new File("./lib"));
         List<String> outputs = new ArrayList<>();
@@ -197,7 +200,7 @@ public class Main {
             outputs.add(output);
             String[] params =
                     Stream.of(
-                                    "clang",
+                                    "gcc",
                                     "-O3",
                                     "-c",
                                     "-Wall",
@@ -227,7 +230,7 @@ public class Main {
     }
 
     private static void runClang(File bf, File prog) throws IOException, InterruptedException {
-        ProcessBuilder procBuilder = new ProcessBuilder("clang",
+        ProcessBuilder procBuilder = new ProcessBuilder("gcc",
                 bf.getName(), "lib.a", "-lpthread", "-o", prog.getName());
         runProcess(procBuilder);
     }

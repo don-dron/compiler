@@ -2,21 +2,23 @@
 
 /* The single most important utility function. */
 static void rotate(splay_node *child);
+
 /* And a few more. */
 static splay_node *leftmost(splay_node *node);
+
 static splay_node *rightmost(splay_node *node);
 
 /* The meat: splay the node x. */
 static void zig(splay_node *x, splay_node *p);
+
 static void zigzig(splay_node *x, splay_node *p);
+
 static void zigzag(splay_node *x, splay_node *p);
-static void splay(splay_tree *tree, splay_node *x)
-{
-    while (1)
-    {
+
+static void splay(splay_tree *tree, splay_node *x) {
+    while (1) {
         splay_node *p = x->parent;
-        if (p == NULL)
-        {
+        if (p == NULL) {
             tree->root = x;
             return;
         }
@@ -32,16 +34,14 @@ static void splay(splay_tree *tree, splay_node *x)
 }
 
 /* When p is root, rotate on the edge between x and p.*/
-void zig(splay_node *x, splay_node *p)
-{
+void zig(splay_node *x, splay_node *p) {
     rotate(x);
 }
 
 /* When both x and p are left (or both right) children,
  * rotate on edge between p and g, then on edge between x and p.
  */
-void zigzig(splay_node *x, splay_node *p)
-{
+void zigzig(splay_node *x, splay_node *p) {
     rotate(p);
     rotate(x);
 }
@@ -49,15 +49,13 @@ void zigzig(splay_node *x, splay_node *p)
 /* When one of x and p is a left child and the other a right child,
  * rotate on the edge between x and p, then on the new edge between x and g.
  */
-void zigzag(splay_node *x, splay_node *p)
-{
+void zigzag(splay_node *x, splay_node *p) {
     rotate(x);
     rotate(x);
 }
 
 /* Return an empty tree, storing the comparator. */
-splay_tree *splay_tree_new_tree(splay_tree_cmp comp)
-{
+splay_tree *splay_tree_new_tree(splay_tree_cmp comp) {
     splay_tree *new = malloc(sizeof(splay_tree));
     new->comp = comp;
     new->root = NULL;
@@ -68,32 +66,24 @@ splay_tree *splay_tree_new_tree(splay_tree_cmp comp)
 /* Insert and return a new node with the given value, splaying the tree. 
  * The insertion is essentially a generic BST insertion.
  */
-splay_node *splay_tree_insert(splay_tree *tree, void *value)
-{
+splay_node *splay_tree_insert(splay_tree *tree, void *value) {
     splay_node *new = malloc(sizeof(splay_node));
     new->value = value;
     new->left = NULL;
     new->right = NULL;
-    if (tree->root == NULL)
-    {
+    if (tree->root == NULL) {
         tree->root = new;
         new->parent = NULL;
-    }
-    else
-    {
+    } else {
         splay_node *curr = tree->root;
         splay_node *parent;
         int left;
-        while (curr != NULL)
-        {
+        while (curr != NULL) {
             parent = curr;
-            if (tree->comp(new->value, curr->value) < 0)
-            {
+            if (tree->comp(new->value, curr->value) < 0) {
                 left = 1;
                 curr = curr->left;
-            }
-            else
-            {
+            } else {
                 left = 0;
                 curr = curr->right;
             }
@@ -110,23 +100,16 @@ splay_node *splay_tree_insert(splay_tree *tree, void *value)
 }
 
 /* Find a node with the given value, splaying the tree. */
-splay_node *splay_tree_find(splay_tree *tree, void *value)
-{
+splay_node *splay_tree_find(splay_tree *tree, void *value) {
     splay_node *curr = tree->root;
     int found = 0;
-    while (curr != NULL && !found)
-    {
+    while (curr != NULL && !found) {
         int relation = tree->comp(value, curr->value);
-        if (relation == 0)
-        {
+        if (relation == 0) {
             found = 1;
-        }
-        else if (relation < 0)
-        {
+        } else if (relation < 0) {
             curr = curr->left;
-        }
-        else
-        {
+        } else {
             curr = curr->right;
         }
     }
@@ -136,34 +119,26 @@ splay_node *splay_tree_find(splay_tree *tree, void *value)
 }
 
 /* Remove a node with the given value, splaying the tree. */
-void splay_tree_delete (splay_tree *tree, void *value)
-{
+void splay_tree_delete(splay_tree *tree, void *value) {
     splay_node *node = splay_tree_find(tree, value);
     splay_tree_delete_hint(tree, node);
 }
 
 /* Remove the node given by the pointer, splaying the tree. */
-void splay_tree_delete_hint(splay_tree *tree, splay_node *node)
-{
+void splay_tree_delete_hint(splay_tree *tree, splay_node *node) {
     if (node == NULL)
         return;
     splay(tree, node); /* Now node is tree's root. */
-    if (node->left == NULL)
-    {
+    if (node->left == NULL) {
         tree->root = node->right;
         if (tree->root != NULL)
             tree->root->parent = NULL;
-    }
-    else if (node->right == NULL)
-    {
+    } else if (node->right == NULL) {
         tree->root = node->left;
         tree->root->parent = NULL;
-    }
-    else
-    {
+    } else {
         splay_node *x = leftmost(node->right);
-        if (x->parent != node)
-        {
+        if (x->parent != node) {
             x->parent->left = x->right;
             if (x->right != NULL)
                 x->right->parent = x->parent;
@@ -182,8 +157,7 @@ void splay_tree_delete_hint(splay_tree *tree, splay_node *node)
 #endif
 }
 
-splay_node *splay_tree_first(splay_tree *tree)
-{
+splay_node *splay_tree_first(splay_tree *tree) {
     return leftmost(tree->root);
 }
 
@@ -192,8 +166,7 @@ splay_node *splay_tree_first(splay_tree *tree)
  *  - leftmost child in the right subtree
  *  - closest ascendant for which given node is in left subtree
  */
-splay_node *splay_tree_next(splay_node *node)
-{
+splay_node *splay_tree_next(splay_node *node) {
     if (node->right != NULL)
         return leftmost(node->right);
     while (node->parent != NULL && node == node->parent->right)
@@ -201,25 +174,23 @@ splay_node *splay_tree_next(splay_node *node)
     return node->parent;
 }
 
-splay_node *splay_tree_last(splay_tree *tree)
-{
+splay_node *splay_tree_last(splay_tree *tree) {
     return rightmost(tree->root);
 }
 
 /* An in-order traversal of the tree. */
 void store(splay_node *node, void ***out);
-void *splay_tree_contents(splay_tree *tree)
-{
+
+void *splay_tree_contents(splay_tree *tree) {
     if (tree->size == 0)
         return NULL;
-    void **out = malloc((size_t)tree->size * sizeof(void *));
+    void **out = malloc((size_t) tree->size * sizeof(void *));
     void ***tmp = &out;
     store(tree->root, tmp);
     return out - tree->size;
 }
 
-void store(splay_node *node, void ***out)
-{
+void store(splay_node *node, void ***out) {
     if (node->left != NULL)
         store(node->left, out);
     **out = node->value;
@@ -227,24 +198,21 @@ void store(splay_node *node, void ***out)
     if (node->right != NULL)
         store(node->right, out);
 }
+
 /* This mutates the parental relationships, copy pointer to old parent. */
 void mark_gp(splay_node *child);
 
 /* Rotate to make the given child take its parent's place in the tree. */
-void rotate(splay_node *child)
-{
+void rotate(splay_node *child) {
     splay_node *parent = child->parent;
     assert(parent != NULL);
-    if (parent->left == child)
-    { /* A left child given. */
+    if (parent->left == child) { /* A left child given. */
         mark_gp(child);
         parent->left = child->right;
         if (child->right != NULL)
             child->right->parent = parent;
         child->right = parent;
-    }
-    else
-    { /* A right child given. */
+    } else { /* A right child given. */
         mark_gp(child);
         parent->right = child->left;
         if (child->left != NULL)
@@ -253,8 +221,7 @@ void rotate(splay_node *child)
     }
 }
 
-void mark_gp(splay_node *child)
-{
+void mark_gp(splay_node *child) {
     splay_node *parent = child->parent;
     splay_node *grand = parent->parent;
     child->parent = grand;
@@ -267,22 +234,18 @@ void mark_gp(splay_node *child)
         grand->right = child;
 }
 
-splay_node *leftmost(splay_node *node)
-{
+splay_node *leftmost(splay_node *node) {
     splay_node *parent = NULL;
-    while (node != NULL)
-    {
+    while (node != NULL) {
         parent = node;
         node = node->left;
     }
     return parent;
 }
 
-splay_node *rightmost(splay_node *node)
-{
+splay_node *rightmost(splay_node *node) {
     splay_node *parent = NULL;
-    while (node != NULL)
-    {
+    while (node != NULL) {
         parent = node;
         node = node->right;
     }

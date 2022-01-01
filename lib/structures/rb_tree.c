@@ -1,9 +1,9 @@
 #include <structures/rb_tree.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 static void
-rbtree_node_init(struct rbnode *node)
-{
+rbtree_node_init(struct rbnode *node) {
     node->left = NULL;
     node->right = NULL;
     node->parent = NULL;
@@ -12,8 +12,7 @@ rbtree_node_init(struct rbnode *node)
     /* color is left uninitialized */
 }
 
-void rbtree_init(struct rbtree *tree, struct rbnode *node, int (*cmp)(const void *lhs, const void *rhs))
-{
+void rbtree_init(struct rbtree *tree, struct rbnode *node, int (*cmp)(const void *lhs, const void *rhs)) {
     rbtree_node_init(node);
     rbtree_black(node);
     tree->root = node;
@@ -22,10 +21,8 @@ void rbtree_init(struct rbtree *tree, struct rbnode *node, int (*cmp)(const void
 }
 
 static struct rbnode *
-rbtree_node_min(struct rbnode *node, struct rbnode *sentinel)
-{
-    while (node->left != sentinel)
-    {
+rbtree_node_min(struct rbnode *node, struct rbnode *sentinel) {
+    while (node->left != sentinel) {
         node = node->left;
     }
     return node;
@@ -115,23 +112,16 @@ rbtree_node_min(struct rbnode *node, struct rbnode *sentinel)
 // }
 
 struct rbnode *
-rbtree_search(struct rbtree *tree, void *key)
-{
+rbtree_search(struct rbtree *tree, void *key) {
     struct rbnode *node = tree->root;
     struct rbnode *sentinel = tree->sentinel;
 
-    while (node != sentinel)
-    {
-        if (tree->cmp(key, node->key) < 0)
-        {
+    while (node != sentinel) {
+        if (tree->cmp(key, node->key) < 0) {
             node = node->left;
-        }
-        else if (tree->cmp(key, node->key) > 0)
-        {
+        } else if (tree->cmp(key, node->key) > 0) {
             node = node->right;
-        }
-        else
-        {
+        } else {
             return node;
         }
     }
@@ -140,28 +130,21 @@ rbtree_search(struct rbtree *tree, void *key)
 
 static void
 rbtree_left_rotate(struct rbnode **root, struct rbnode *sentinel,
-                   struct rbnode *node)
-{
+                   struct rbnode *node) {
     struct rbnode *right = node->right;
     node->right = right->left;
 
-    if (right->left != sentinel)
-    {
+    if (right->left != sentinel) {
         right->left->parent = node;
     }
 
     right->parent = node->parent;
 
-    if (node == *root)
-    {
+    if (node == *root) {
         *root = right;
-    }
-    else if (node == node->parent->left)
-    {
+    } else if (node == node->parent->left) {
         node->parent->left = right;
-    }
-    else
-    {
+    } else {
         node->parent->right = right;
     }
 
@@ -171,28 +154,21 @@ rbtree_left_rotate(struct rbnode **root, struct rbnode *sentinel,
 
 static void
 rbtree_right_rotate(struct rbnode **root, struct rbnode *sentinel,
-                    struct rbnode *node)
-{
+                    struct rbnode *node) {
     struct rbnode *left = node->left;
     node->left = left->right;
 
-    if (left->right != sentinel)
-    {
+    if (left->right != sentinel) {
         left->right->parent = node;
     }
 
     left->parent = node->parent;
 
-    if (node == *root)
-    {
+    if (node == *root) {
         *root = left;
-    }
-    else if (node == node->parent->right)
-    {
+    } else if (node == node->parent->right) {
         node->parent->right = left;
-    }
-    else
-    {
+    } else {
         node->parent->left = left;
     }
 
@@ -200,15 +176,13 @@ rbtree_right_rotate(struct rbnode **root, struct rbnode *sentinel,
     node->parent = left;
 }
 
-void rbtree_insert(struct rbtree *tree, struct rbnode *node)
-{
+void rbtree_insert(struct rbtree *tree, struct rbnode *node) {
     struct rbnode **root = &tree->root;
     struct rbnode *sentinel = tree->sentinel;
     struct rbnode *parent, *uncle, **p;
 
     /* empty tree */
-    if (*root == sentinel)
-    {
+    if (*root == sentinel) {
         node->parent = NULL;
         node->left = sentinel;
         node->right = sentinel;
@@ -219,11 +193,9 @@ void rbtree_insert(struct rbtree *tree, struct rbnode *node)
 
     /* a binary tree insert */
     parent = *root;
-    for (;;)
-    {
+    for (;;) {
         p = (tree->cmp(node->key, parent->key) < 0 ? &parent->left : &parent->right);
-        if (*p == sentinel)
-        {
+        if (*p == sentinel) {
             break;
         }
         parent = *p;
@@ -235,25 +207,19 @@ void rbtree_insert(struct rbtree *tree, struct rbnode *node)
     rbtree_red(node);
 
     /* re-balance tree */
-    while (node != *root && rbtree_is_red(node->parent))
-    {
+    while (node != *root && rbtree_is_red(node->parent)) {
 
-        if (node->parent == node->parent->parent->left)
-        {
+        if (node->parent == node->parent->parent->left) {
             uncle = node->parent->parent->right;
 
-            if (rbtree_is_red(uncle))
-            {
+            if (rbtree_is_red(uncle)) {
                 /* no need to rotate */
                 rbtree_black(node->parent);
                 rbtree_black(uncle);
                 rbtree_red(node->parent->parent);
                 node = node->parent->parent;
-            }
-            else
-            {
-                if (node == node->parent->right)
-                {
+            } else {
+                if (node == node->parent->right) {
                     /* inside insert left rotate */
                     node = node->parent;
                     rbtree_left_rotate(root, sentinel, node);
@@ -263,23 +229,17 @@ void rbtree_insert(struct rbtree *tree, struct rbnode *node)
                 rbtree_red(node->parent->parent);
                 rbtree_right_rotate(root, sentinel, node->parent->parent);
             }
-        }
-        else
-        {
+        } else {
             uncle = node->parent->parent->left;
 
-            if (rbtree_is_red(uncle))
-            {
+            if (rbtree_is_red(uncle)) {
                 /* no need to rotate */
                 rbtree_black(node->parent);
                 rbtree_black(uncle);
                 rbtree_red(node->parent->parent);
                 node = node->parent->parent;
-            }
-            else
-            {
-                if (node == node->parent->left)
-                {
+            } else {
+                if (node == node->parent->left) {
                     /* inside insert right rotate */
                     node = node->parent;
                     rbtree_right_rotate(root, sentinel, node);
@@ -295,36 +255,27 @@ void rbtree_insert(struct rbtree *tree, struct rbnode *node)
     rbtree_black(*root);
 }
 
-void rbtree_delete(struct rbtree *tree, struct rbnode *node)
-{
+void rbtree_delete(struct rbtree *tree, struct rbnode *node) {
     int red;
     struct rbnode **root = &tree->root;
     struct rbnode *sentinel = tree->sentinel;
     struct rbnode *subst, *temp, *w;
 
     /* a binary tree delete */
-    if (node == sentinel)
-    {
+    if (node == sentinel) {
         return;
-    }
-    else if (node->left == sentinel)
-    {
+    } else if (node->left == sentinel) {
         temp = node->right;
         subst = node;
-    }
-    else if (node->right == sentinel)
-    {
+    } else if (node->right == sentinel) {
         temp = node->left;
         subst = node;
-    }
-    else
-    {
+    } else {
         subst = rbtree_node_min(node->right, sentinel);
         temp = subst->right;
     }
 
-    if (subst == *root)
-    {
+    if (subst == *root) {
         /* node == subst == *root */
         *root = temp;
         rbtree_black(temp);
@@ -334,27 +285,18 @@ void rbtree_delete(struct rbtree *tree, struct rbnode *node)
 
     red = rbtree_is_red(subst);
 
-    if (subst == subst->parent->left)
-    {
+    if (subst == subst->parent->left) {
         subst->parent->left = temp;
-    }
-    else
-    {
+    } else {
         subst->parent->right = temp;
     }
 
-    if (subst == node)
-    {
+    if (subst == node) {
         temp->parent = subst->parent;
-    }
-    else
-    {
-        if (subst->parent == node)
-        {
+    } else {
+        if (subst->parent == node) {
             temp->parent = subst;
-        }
-        else
-        {
+        } else {
             temp->parent = subst->parent;
         }
 
@@ -363,65 +305,49 @@ void rbtree_delete(struct rbtree *tree, struct rbnode *node)
         subst->parent = node->parent;
         rbtree_copy_color(subst, node);
 
-        if (node == *root)
-        {
+        if (node == *root) {
             *root = subst;
-        }
-        else
-        {
-            if (node == node->parent->left)
-            {
+        } else {
+            if (node == node->parent->left) {
                 node->parent->left = subst;
-            }
-            else
-            {
+            } else {
                 node->parent->right = subst;
             }
         }
 
-        if (subst->left != sentinel)
-        {
+        if (subst->left != sentinel) {
             subst->left->parent = subst;
         }
 
-        if (subst->right != sentinel)
-        {
+        if (subst->right != sentinel) {
             subst->right->parent = subst;
         }
     }
 
     rbtree_node_init(node);
 
-    if (red)
-    {
+    if (red) {
         return;
     }
 
     /* a delete fixup */
-    while (temp != *root && rbtree_is_black(temp))
-    {
+    while (temp != *root && rbtree_is_black(temp)) {
 
-        if (temp == temp->parent->left)
-        {
+        if (temp == temp->parent->left) {
             w = temp->parent->right;
 
-            if (rbtree_is_red(w))
-            {
+            if (rbtree_is_red(w)) {
                 rbtree_black(w);
                 rbtree_red(temp->parent);
                 rbtree_left_rotate(root, sentinel, temp->parent);
                 w = temp->parent->right;
             }
 
-            if (rbtree_is_black(w->left) && rbtree_is_black(w->right))
-            {
+            if (rbtree_is_black(w->left) && rbtree_is_black(w->right)) {
                 rbtree_red(w);
                 temp = temp->parent;
-            }
-            else
-            {
-                if (rbtree_is_black(w->right))
-                {
+            } else {
+                if (rbtree_is_black(w->right)) {
                     rbtree_black(w->left);
                     rbtree_red(w);
                     rbtree_right_rotate(root, sentinel, w);
@@ -434,28 +360,21 @@ void rbtree_delete(struct rbtree *tree, struct rbnode *node)
                 rbtree_left_rotate(root, sentinel, temp->parent);
                 temp = *root;
             }
-        }
-        else
-        {
+        } else {
             w = temp->parent->left;
 
-            if (rbtree_is_red(w))
-            {
+            if (rbtree_is_red(w)) {
                 rbtree_black(w);
                 rbtree_red(temp->parent);
                 rbtree_right_rotate(root, sentinel, temp->parent);
                 w = temp->parent->left;
             }
 
-            if (rbtree_is_black(w->left) && rbtree_is_black(w->right))
-            {
+            if (rbtree_is_black(w->left) && rbtree_is_black(w->right)) {
                 rbtree_red(w);
                 temp = temp->parent;
-            }
-            else
-            {
-                if (rbtree_is_black(w->left))
-                {
+            } else {
+                if (rbtree_is_black(w->left)) {
                     rbtree_black(w->right);
                     rbtree_red(w);
                     rbtree_left_rotate(root, sentinel, w);
@@ -475,18 +394,28 @@ void rbtree_delete(struct rbtree *tree, struct rbnode *node)
 }
 
 struct rbnode *
-rbtree_min(struct rbtree *tree)
-{
+rbtree_min(struct rbtree *tree) {
     struct rbnode *node = tree->root;
     struct rbnode *sentinel = tree->sentinel;
 
-    if (node == sentinel)
-    {
+    if (node == sentinel) {
         /* empty tree */
         return NULL;
-    }
-    else
-    {
+    } else {
         return rbtree_node_min(node, sentinel);
+    }
+}
+
+void rbtree_destroy(struct rbtree *tree) {
+    while (1) {
+        struct rbnode *node = rbtree_min(tree);
+
+        if (node == NULL) {
+            free(tree->root);
+            return;
+        } else {
+            rbtree_delete(tree, node);
+            free(node);
+        }
     }
 }

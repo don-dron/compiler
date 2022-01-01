@@ -5,8 +5,7 @@
 
 #define NOT_IN_HEAP UINT_MAX
 
-struct thin_heap_node
-{
+struct thin_heap_node {
     struct thin_heap_node *parent;
     struct thin_heap_node *next;
     struct thin_heap_node *child;
@@ -16,10 +15,10 @@ struct thin_heap_node
 };
 
 typedef int (*heap_prio_t)(struct thin_heap_node *a, struct thin_heap_node *b);
+
 typedef void (*swap_f)(struct thin_heap_node *a, struct thin_heap_node *b);
 
-struct thin_heap
-{
+struct thin_heap {
     struct thin_heap_node *head;
     struct thin_heap_node *min;
     heap_prio_t prio;

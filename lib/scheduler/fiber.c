@@ -56,7 +56,6 @@ fiber *create_fiber(fiber_routine routine, void *args) {
     fiber *new_fiber = (fiber *) malloc(sizeof(fiber));
 
     new_fiber->id = generate_id();
-    printf("DEBUG\n");
     new_fiber->routine = routine;
     new_fiber->state = STARTING;
     new_fiber->parent = get_current_fiber();
