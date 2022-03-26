@@ -2,7 +2,7 @@
 #ifdef IS_LINUX
 #define FUNCTION_NAME(name) name
 #else
-#define FUNCTION_NAME(name) _name
+#define FUNCTION_NAME(name) _##name
 #endif
 
 .global FUNCTION_NAME(switch_from_to)
