@@ -1,20 +1,5 @@
 package lang;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import lang.ast.FileNode;
 import lang.ir.Module;
 import lang.ir.translate.Translator;
@@ -23,13 +8,15 @@ import lang.lr.LLVMTranslator;
 import lang.opt.Optimizer;
 import lang.parser.Parser;
 import lang.semantic.SemanticAnalysis;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -203,10 +190,10 @@ public class Main {
                                     "gcc",
                                     "-O3",
                                     "-c",
+                                    "-pthread",
                                     "-Wall",
                                     "-I",
                                     "./include",
-                                    "-fPIE",
                                     "-o",
                                     output,
                                     file.getPath())
@@ -216,8 +203,8 @@ public class Main {
         }
 
         String[] llvmParams = Stream.concat(Stream.of(
-                        "llvm-ar",
-                        "rc",
+                        "ar",
+                        "rcs",
                         "lib.a"),
                 outputs.stream()).toArray(String[]::new);
         ProcessBuilder llvmProcBuilder = new ProcessBuilder(llvmParams);
@@ -230,13 +217,15 @@ public class Main {
     }
 
     private static void runClang(File bf, File prog) throws IOException, InterruptedException {
-        ProcessBuilder procBuilder = new ProcessBuilder("gcc",
-                bf.getName(), "lib.a", "-lpthread", "-o", prog.getName());
+        ProcessBuilder procBuilder = new ProcessBuilder("clang",
+                bf.getName(), "lib.a","-I",
+                "./include",
+                "-pthread",  "-o", prog.getName());
         runProcess(procBuilder);
     }
 
     private static void runLLVM(File file) throws IOException, InterruptedException {
-        ProcessBuilder procBuilder = new ProcessBuilder("llc", "-filetype=obj", file.getName());
+        ProcessBuilder procBuilder = new ProcessBuilder("llc", "-filetype=obj", "--relocation-model=pic",file.getName());
         runProcess(procBuilder);
     }
 

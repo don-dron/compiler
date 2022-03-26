@@ -1,5 +1,6 @@
 #include <scheduler/manager.h>
-
+#include <stdint.h>
+#include <pthread.h>
 struct fibers_pool_manager fpl_manager = {
         .current_fiber={
                 .size=0,
@@ -35,7 +36,11 @@ struct fibers_pool_manager fpl_manager = {
 
 int get_current_thread_id() {
     uint64_t tid;
+    #ifdef __linux__
+    tid = gettid();
+    #else
     pthread_threadid_np(NULL, &tid);
+    #endif
     return tid;
 }
 

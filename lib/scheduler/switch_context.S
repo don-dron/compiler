@@ -1,7 +1,14 @@
-.global _switch_from_to
 
-_switch_from_to:
-    
+#ifdef __linux__
+#define FUNCTION_NAME(name) name
+#else
+#define FUNCTION_NAME(name) _name
+#endif
+
+.global FUNCTION_NAME(switch_from_to)
+
+FUNCTION_NAME(switch_from_to):
+
     // For example: call from fiber code
 
     // Save registers on stack
@@ -13,12 +20,12 @@ _switch_from_to:
 
     pushq %rbx
     pushq %rbp
-    
+
     // Change stack pointer switch run -------------------------------->    For example: to scheduler code
     movq %rsp, (%rdi)
-                                                                                   
+
     // Return after switch             <--------------------------------    For example: from scheduler code
-    movq (%rsi), %rsp 
+    movq (%rsi), %rsp
 
     // Load registers from stack
     popq %rbp
