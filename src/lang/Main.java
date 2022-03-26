@@ -9,6 +9,7 @@ import lang.opt.Optimizer;
 import lang.parser.Parser;
 import lang.semantic.SemanticAnalysis;
 import org.apache.commons.cli.*;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -194,6 +195,7 @@ public class Main {
                                     "-Wall",
                                     "-I",
                                     "./include",
+                                    SystemUtils.IS_OS_LINUX ? "-D IS_LINUX" : "",
                                     "-o",
                                     output,
                                     file.getPath())
@@ -217,10 +219,11 @@ public class Main {
     }
 
     private static void runClang(File bf, File prog) throws IOException, InterruptedException {
-        ProcessBuilder procBuilder = new ProcessBuilder("clang",
-                bf.getName(), "lib.a","-I",
-                "./include",
-                "-pthread",  "-o", prog.getName());
+        ProcessBuilder procBuilder = new ProcessBuilder("gcc",
+                bf.getName(), "lib.a",
+                SystemUtils.IS_OS_LINUX ? "-lpthread" : "",
+                SystemUtils.IS_OS_LINUX ? "-D IS_LINUX" : "",
+                "-o", prog.getName());
         runProcess(procBuilder);
     }
 

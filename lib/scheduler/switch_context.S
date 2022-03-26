@@ -1,5 +1,5 @@
 
-#ifdef __linux__
+#ifdef IS_LINUX
 #define FUNCTION_NAME(name) name
 #else
 #define FUNCTION_NAME(name) _name
