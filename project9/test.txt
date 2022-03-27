@@ -18,18 +18,23 @@ import lang.lib
 
 
 () int main ->
+    int i = 0
     int j  = 0
     println(concat("Test", toString(2))
 
     Thread[] threads = new Thread[32]
-    while j < 32
-        Thread t = new Thread(runnable)
-        threads[j] = t
-        j++
-    j = 0
-    while j < 32
-        threads[j].join()
-        j++
+
+    while i < 4
+        j = 0
+        while j < 8
+            Thread t = new Thread(runnable)
+            threads[j] = t
+            j++
+        j = 0
+        while j < 8
+            threads[j].join()
+            j++
+        i++
 
 
     return 0
