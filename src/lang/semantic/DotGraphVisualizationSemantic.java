@@ -18,10 +18,7 @@ import lang.ast.expression.binary.LogicalAndExpressionNode;
 import lang.ast.expression.binary.LogicalOrExpressionNode;
 import lang.ast.expression.binary.MultiplicativeExpressionNode;
 import lang.ast.expression.binary.RelationalExpressionNode;
-import lang.ast.expression.consts.BoolConstantExpressionNode;
-import lang.ast.expression.consts.FloatConstantExpressionNode;
-import lang.ast.expression.consts.IntConstantExpressionNode;
-import lang.ast.expression.consts.NullConstantExpressionNode;
+import lang.ast.expression.consts.*;
 import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
 import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
@@ -403,6 +400,13 @@ public class DotGraphVisualizationSemantic {
             } else {
                 builder.append(String.valueOf(intConstantExpressionNode.getValue()));
             }
+        } else if (expressionNode instanceof LongConstantExpressionNode) {
+            LongConstantExpressionNode longConstantExpressionNode = (LongConstantExpressionNode) expressionNode;
+            if (style == STRUCT) {
+                builder.append(String.valueOf(longConstantExpressionNode.getValue()));
+            } else {
+                builder.append(String.valueOf(longConstantExpressionNode.getValue()));
+            }
         } else if (expressionNode instanceof FloatConstantExpressionNode) {
             FloatConstantExpressionNode floatConstantExpressionNode = (FloatConstantExpressionNode) expressionNode;
             if (style == STRUCT) {
@@ -423,7 +427,7 @@ public class DotGraphVisualizationSemantic {
             List<ExpressionNode> sizeExpression = arrayConstructorExpressionNode.getSizeExpression();
             if (style == STRUCT) {
                 builder.append("{ARRAY_CONSTRUCT|" + typeNodeVisualization(arrayConstructorExpressionNode.getTypeNode())
-                        + "|" + 
+                        + "|" +
                         sizeExpression.stream()
                                 .map(this::expressionNodeVisualization)
                                 .collect(Collectors.joining("|")) + " }");

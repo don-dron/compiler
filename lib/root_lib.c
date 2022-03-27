@@ -33,6 +33,10 @@ void __delete_fiber(long fib) {
     unpublish_fiber(sched, (fiber *) fib);
 }
 
+int __cas(long addr, long exp, long next) {
+    return __atomic_compare_exchange_n((long*)(addr+8), &exp, next, 0, __ATOMIC_SEQ_CST,  __ATOMIC_SEQ_CST);
+}
+
 
 int main() {
     sched = (scheduler *) malloc(sizeof(scheduler));

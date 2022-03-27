@@ -56,6 +56,11 @@ public class LLVMTranslator {
                     .map(v -> "void (i32*)* @" + v.getName())
                     .collect(Collectors.joining(",")) + "]";
         }
+
+        if(value instanceof GlobalVariableValue) {
+            return "@" + value.getName() + " = global " + value.getType().toLLVM() + " " + ((GlobalVariableValue) value).getValue().toLLVM();
+        }
+
         return "@" + value.getName() + " = global " + value.getType().toLLVM();
     }
 

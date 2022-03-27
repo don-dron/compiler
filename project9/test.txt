@@ -1,37 +1,63 @@
 import lang.lib
 
+Stack global
+
+class Node
+    Node next
+
+    () ->
+        this.next = null
+
+class Stack
+    Node first
+
+    () ->
+        this.first = null
+
+class Spinlock
+    int lock
+
+    () ->
+        this.lock = 0
+
+
+
 () void runnable ->
     int i = 25
-
-    while (i > 0)
-        i--
-        //println(concat("Test", toString(i))
-        yield()
-        yield()
-        yield()
-        yield()
-        yield()
-        yield()
-        yield()
 
     return
 
 
 () int main ->
+    global = new Stack()
+    AtomicLong a = new AtomicLong()
+
+    println(toString(<int>a.value))
+
+    a.cas(0L, 1L)
+
+    println(toString(<int>a.value))
+    a.cas(1L, 2L)
+
+    println(toString(<int>a.value))
+    a.cas(2L, 3L)
+
+    println(toString(<int>a.value))
+
     int i = 0
     int j  = 0
-    println(concat("Test", toString(2))
 
     Thread[] threads = new Thread[32]
 
     while i < 4
         j = 0
-        while j < 8
+        while j < 4
             Thread t = new Thread(runnable)
+            new Thread(runnable)
             threads[j] = t
             j++
         j = 0
-        while j < 8
+        while j < 4
             threads[j].join()
             j++
         i++

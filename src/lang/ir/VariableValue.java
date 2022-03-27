@@ -1,9 +1,9 @@
 package lang.ir;
 
 public class VariableValue implements Value {
-    private final String name;
-    private final Type type;
-    private final boolean global;
+    protected final String name;
+    protected final Type type;
+    protected final boolean global;
 
     public VariableValue(String name, Type type) {
         this(name, type, false);

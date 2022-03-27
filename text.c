@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+int* gg = NULL;
+
 static void dest4(void (*p)(void)){
 }
 

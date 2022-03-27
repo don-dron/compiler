@@ -26,6 +26,7 @@ public class SemanticAnalysis {
     private final List<FunctionDefinitionNode> functions;
     private final List<ClassStatementNode> classes;
     private final List<ConstructorDefinitionNode> constructors;
+    private final List<DeclarationStatementNode> globalVariables;
 
     public SemanticAnalysis(String rootPath, List<FileNode> fileNodes) {
         this.rootPath = rootPath;
@@ -34,6 +35,7 @@ public class SemanticAnalysis {
         this.functions = new ArrayList<>();
         this.classes = new ArrayList<>();
         this.constructors = new ArrayList<>();
+        this.globalVariables = new ArrayList<>();
     }
 
     public Program analyse() {
@@ -64,7 +66,8 @@ public class SemanticAnalysis {
                 new ArrayList<>(classes),
                 new ArrayList<>(constructors),
                 new ArrayList<>(functions),
-                new ArrayList<>(fileNodes));
+                new ArrayList<>(fileNodes),
+                new ArrayList<>(globalVariables));
     }
 
     private void findMainFunction() {
@@ -448,6 +451,10 @@ public class SemanticAnalysis {
 
         node.getTypeNode().setScope(parentScope);
         node.getIdentifierNode().setScope(parentScope);
+
+        if (parentScope.getParentScope() == null) {
+            globalVariables.add(node);
+        }
     }
 
     private void analyseDeclarationInGlobalEnd(DeclarationStatementNode node, Scope parentScope) {
@@ -664,6 +671,8 @@ public class SemanticAnalysis {
             analyseBoolConstantExpression((BoolConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof IntConstantExpressionNode) {
             analyseIntConstantExpression((IntConstantExpressionNode) expressionNode);
+        }else if (expressionNode instanceof LongConstantExpressionNode) {
+            analyseLongConstantExpression((LongConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof CharConstantExpressionNode) {
             analyseCharConstantExpression((CharConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof FloatConstantExpressionNode) {
@@ -979,6 +988,10 @@ public class SemanticAnalysis {
 
     private void analyseIntConstantExpression(IntConstantExpressionNode expressionNode) {
         IntConstantExpressionNode intConstantExpressionNode = expressionNode;
+    }
+
+    private void analyseLongConstantExpression(LongConstantExpressionNode expressionNode) {
+        LongConstantExpressionNode longConstantExpressionNode = expressionNode;
     }
 
     private void analyseBoolConstantExpression(BoolConstantExpressionNode expressionNode) {

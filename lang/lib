@@ -12,6 +12,9 @@
 (long __fiber) void __delete_fiber
 
 (() void runnable) long __create_fiber
+
+(long addr, long exp, long next) int __cas
+
 /////////////////////////////////////////////////////////////
 
 () void yield ->
@@ -31,6 +34,15 @@ class Thread
 
     () void __internal_destruct ->
         __delete_fiber(this.__fiber)
+
+class AtomicLong
+    long value
+
+    () ->
+        this.value = 0L
+
+    (long exp, long next) int cas ->
+        return __cas(<long>this, exp, next)
 
 (String s) void println ->
     char[] bytes = null

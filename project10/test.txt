@@ -1,0 +1,13 @@
+import lang.lib
+
+int a
+
+() void tttt ->
+    println(toString(a))
+
+() int main ->
+    a = 13213
+    tttt()
+
+    return 0
+

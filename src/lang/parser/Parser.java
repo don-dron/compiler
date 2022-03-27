@@ -960,7 +960,10 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.INT_CONSTANT) {
             next();
             return new IntConstantExpressionNode(Integer.parseInt(first.getContent()));
-        } else if (first.getTokenType() == STRING_CONSTANT) {
+        } else if (first.getTokenType() == Token.TokenType.LONG_CONSTANT) {
+            next();
+            return new LongConstantExpressionNode(Long.parseLong(first.getContent().substring(0, first.getContent().length()-1)));
+        }else if (first.getTokenType() == STRING_CONSTANT) {
             next();
             return new StringConstantExpressionNode(first.getContent().substring(1, first.getContent().length() - 1));
         } else if (first.getTokenType() == Token.TokenType.NULL) {

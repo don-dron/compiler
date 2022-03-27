@@ -75,9 +75,15 @@ public class Token {
         CHAR_CONSTANT("cconst", "[0-9]+c"),
 
         /**
+         * long constant
+         */
+        LONG_CONSTANT("lconst", "[0-9]+L"),
+
+        /**
          * int constant
          */
         INT_CONSTANT("iconst", "[0-9]+"),
+
 
         SYMBOL_CONSTANT("sconst", "'(.|[^'])+'"),
 
