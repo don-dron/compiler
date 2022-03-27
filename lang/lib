@@ -9,6 +9,8 @@
 
 (long __fiber) void __join
 
+(long __fiber) void __delete_fiber
+
 (() void runnable) long __create_fiber
 /////////////////////////////////////////////////////////////
 
@@ -26,6 +28,9 @@ class Thread
 
     () void join ->
         __join(this.__fiber)
+
+    () void __internal_destruct ->
+        __delete_fiber(this.__fiber)
 
 (String s) void println ->
     char[] bytes = null

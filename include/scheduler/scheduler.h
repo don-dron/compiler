@@ -1,5 +1,6 @@
 #pragma once
 
+#include <root.h>
 #include <time.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -44,39 +45,41 @@ void free_history(void);
  */
 struct scheduler {
 #if INTERRUPT_ENABLED
-    /** Signals preferences **/
-    struct sigaction sigact;
+  /** Signals preferences **/
+  struct sigaction sigact;
 
-    /** Thread for sends signals **/
-    pthread_t signal_thread;
+  /** Thread for sends signals **/
+  pthread_t signal_thread;
 #endif
 
-    /** Map - thread number to pointer to thread - array **/
+  /** Map - thread number to pointer to thread - array **/
 //    fiber **current_fibers;
 
-    list garbage;
+  list garbage;
 
-    /** Count of handlers-threads **/
-    size_t threads;
+  /** Count of handlers-threads **/
+  size_t threads;
 
-    /** Threads for handles fibers **/
-    pthread_t *threads_pool;
+  /** Threads for handles fibers **/
+  pthread_t *threads_pool;
 
 #if THREAD_STAT
-    history_node **threads_histories;
+  history_node **threads_histories;
 #endif
 
-    /** Flag sets 0 , after call run_scheduler sets to 1, after call shutdown sets to 0 **/
-    volatile int threads_running;
-    /** Flag sets if user wants to terminate scheduler **/
-    volatile int terminate;
+  /** Flag sets 0 , after call run_scheduler sets to 1, after call shutdown sets to 0 **/
+  volatile int threads_running;
+  /** Flag sets if user wants to terminate scheduler **/
+  volatile int terminate;
 
-    /** Count fibers which not terminated **/
-    volatile size_t count;
-    /** Count fibers which terminated **/
-    volatile size_t end_count;
+  /** Count fibers which not terminated **/
+  volatile size_t count;
+  /** Count fibers which terminated **/
+  volatile size_t end_count;
 
-    scheduler_manager *manager;
+  spinlock pf_lock;
+  struct hash_map *pf;
+  scheduler_manager *manager;
 };
 
 /** Handler thread id **/
@@ -166,3 +169,17 @@ scheduler *get_current_scheduler();
 void save_current_scheduler(scheduler *sched);
 
 void delete_current_scheduler();
+
+struct fiber_h_node {
+  struct hash_map_node core;
+  fiber *fib;
+  int count;
+};
+
+int cmp_pf(struct hash_map_node *a, struct hash_map_node *b);
+
+int hash_function_pf(struct hash_map_node *node);
+
+void publish_fiber(scheduler *sched, fiber *fib);
+
+void unpublish_fiber(scheduler *sched, fiber *fib);

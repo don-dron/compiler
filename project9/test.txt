@@ -5,14 +5,14 @@ import lang.lib
 
     while (i > 0)
         i--
-        yield()
-        yield()
-        yield()
         //println(concat("Test", toString(i))
-        yield()
-        yield()
-        yield()
-        yield()
+        //yield()
+        //yield()
+        //yield()
+        //yield()
+        //yield()
+        //yield()
+        //yield()
 
     return
 
@@ -21,9 +21,16 @@ import lang.lib
     int j  = 0
     println(concat("Test", toString(2))
 
-    while j < 2000
+    //Thread[] threads = new Thread[64]
+    while j < 64
         Thread t = new Thread(runnable)
+        //threads[j] = t
         j++
+    //j = 0
+    //while j < 64
+    //    threads[j].join()
+    //    j++
+
 
     return 0
 

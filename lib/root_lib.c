@@ -12,7 +12,9 @@
 scheduler *sched;
 
 long __create_fiber(void (*fiber_routine)(void)) {
-    return (long) spawn(sched, (void (*)(void *)) fiber_routine, NULL);
+    fiber *fib = spawn(sched, (void (*)(void *)) fiber_routine, NULL);
+    publish_fiber(sched, fib);
+    return (long) fib;
 }
 
 void __sleep(unsigned int millis) {
@@ -27,9 +29,14 @@ void __yield(void) {
     yield();
 }
 
+void __delete_fiber(long fib) {
+    unpublish_fiber(sched, (fiber *) fib);
+}
+
+
 int main() {
     sched = (scheduler *) malloc(sizeof(scheduler));
-    new_scheduler(sched, 8);
+    new_scheduler(sched, 64);
     run_scheduler(sched);
 
     spawn(sched, lang_main, NULL);

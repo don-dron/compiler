@@ -1,5 +1,6 @@
 #pragma once
 
+#include <root.h>
 #include <scheduler/manager.h>
 #include <time.h>
 

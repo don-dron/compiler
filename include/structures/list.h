@@ -1,5 +1,6 @@
 #pragma once
 
+#include <root.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <locks/spinlock.h>
@@ -7,15 +8,15 @@
 struct list_node;
 
 typedef struct list_node {
-    struct list_node *prev;
-    struct list_node *next;
+  struct list_node *next;
+  struct list_node *prev;
 } list_node;
 
 typedef struct list {
-    list_node *start;
-    list_node *end;
-    spinlock lock;
-    size_t size;
+  list_node *start;
+  list_node *end;
+  spinlock lock;
+  size_t size;
 } list;
 
 int create_list(list *lst);

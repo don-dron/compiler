@@ -69,6 +69,71 @@ static inline long clock_to_microseconds(long time) {
     return time * 4;
 }
 
+int cmp_pf(struct hash_map_node *a, struct hash_map_node *b) {
+    struct fiber_h_node *first = (struct fiber_h_node *) a;
+    struct fiber_h_node *second = (struct fiber_h_node *) b;
+
+    return first->fib->id - second->fib->id;
+}
+
+int hash_function_pf(struct hash_map_node *node) {
+    return ((struct fiber_h_node *) node)->fib->id;
+}
+
+void publish_fiber(scheduler *sched, fiber *fib) {
+    lock_spinlock(&sched->pf_lock);
+
+    struct fiber_h_node for_find;
+    for_find.fib = fib;
+    for_find.core.next = NULL;
+
+    struct fiber_h_node *current = (struct fiber_h_node *) hash_map_find(sched->pf, &for_find.core);
+
+    struct fiber_h_node *cf = (struct fiber_h_node *) malloc(sizeof(struct fiber_h_node));
+    cf->count = (current == NULL ? 0 : current->count) + 1;
+    cf->fib = fib;
+    cf->core.next = NULL;
+
+    current = (struct fiber_h_node *) hash_map_insert(sched->pf, &cf->core);
+
+    if (current != NULL) {
+        free(current);
+    }
+
+    unlock_spinlock(&sched->pf_lock);
+}
+
+void unpublish_fiber(scheduler *sched, fiber *fib) {
+    lock_spinlock(&sched->pf_lock);
+
+    struct fiber_h_node for_find;
+    for_find.fib = fib;
+    for_find.core.next = NULL;
+
+    struct fiber_h_node *current = (struct fiber_h_node *) hash_map_find(sched->pf, &for_find.core);
+
+    if (current == NULL || current->count <= 1) {
+        current = (struct fiber_h_node *) hash_map_remove(sched->pf, &for_find.core);
+        free_fiber(current->fib);
+        free(current->fib);
+        free(current);
+    } else {
+        struct fiber_h_node *cf = (struct fiber_h_node *) malloc(sizeof(struct fiber_h_node));
+        cf->count = current->count - 1;
+        cf->fib = fib;
+        cf->core.next = NULL;
+
+        printf("FREE %d\n", cf->count);
+        current = (struct fiber_h_node *) hash_map_insert(sched->pf, &cf->core);
+
+        if (current != NULL) {
+            free(current);
+        }
+    }
+
+    unlock_spinlock(&sched->pf_lock);
+}
+
 static inline long sub_time(clock_t end, clock_t start) {
     // Returns time delta
     long delta = clock_to_microseconds((long) (end - start));
@@ -178,8 +243,9 @@ static void run_task(fiber *routine) {
 //            list_push_front(&current_scheduler->garbage, (list_node *) node);
 //            unlock_spinlock(&temp->lock);
 
-            free_fiber(temp);
-            free(temp);
+            unpublish_fiber(current_scheduler, temp);
+//            free_fiber(temp);
+//            free(temp);
         }
     } else {
         printf("[ERROR] Run task wrong state  %d\n", current_fiber->state);
@@ -366,6 +432,10 @@ int new_scheduler(scheduler *sched, unsigned int using_threads) {
     size_t threads = using_threads;
     srand((unsigned int) time(NULL));
 
+    sched->pf_lock.lock = 0;
+    sched->pf = (struct hash_map *) malloc(sizeof(struct hash_map));
+    hash_map_init(sched->pf, cmp_pf, hash_function_pf);
+
     sched->threads_pool = (pthread_t *) malloc(sizeof(pthread_t) * threads);
     sched->count = 0;
     sched->end_count = 0;
@@ -442,6 +512,7 @@ fiber *spawn(scheduler *sched, fiber_routine routine, void *args) {
     fib->sched = sched;
     asm volatile("mfence"::
     : "memory");
+    publish_fiber(sched, fib);
     insert_fiber(sched, fib);
     asm volatile("mfence"::
     : "memory");
@@ -600,6 +671,8 @@ int terminate_scheduler(scheduler *sched) {
 #if THREAD_STAT
     save_thread_history(sched);
 #endif
+
+    free(sched->pf);
 
     // Scheduler manager teminate
     free_scheduler_manager(sched);

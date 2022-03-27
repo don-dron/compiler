@@ -14,19 +14,20 @@ static void trampoline() {
 
 static int setup(coroutine *coroutine_, void (*trampoline)(void *)) {
     // Allocate memory for stack and context
-    void *start = mmap(/*addr=*/0, /*length=*/STACK_SIZE,
-            /*prot=*/PROT_READ | PROT_WRITE,
-            /*flags=*/MAP_PRIVATE | 0x20,
-            /*fd=*/-1, /*offset=*/0);
+    void *start = malloc(STACK_SIZE);
+//    mmap(/*addr=*/0, /*length=*/STACK_SIZE,
+//            /*prot=*/PROT_READ | PROT_WRITE,
+//            /*flags=*/MAP_PRIVATE | 0x20,
+//            /*fd=*/-1, /*offset=*/0);
 
-    int ret = mprotect(/*addr=*/(void *) ((size_t) start + pages_to_bytes(4)),
-            /*len=*/pages_to_bytes(4),
-            /*prot=*/PROT_NONE);
+//    int ret = mprotect(/*addr=*/(void *) ((size_t) start + pages_to_bytes(4)),
+//            /*len=*/pages_to_bytes(4),
+//            /*prot=*/PROT_NONE);
 
-    if (ret) {
-        munmap(start, STACK_SIZE);
-        return ret;
-    }
+//    if (ret) {
+//        munmap(start, STACK_SIZE);
+//        return ret;
+//    }
 
     stack_builder stackBuilder;
     // Set top stack address

@@ -1,6 +1,7 @@
 #include <scheduler/scheduler.h>
 #include <structures/list.h>
 
+#include <root.h>
 struct scheduler_manager {
   list **queues;
 };

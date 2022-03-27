@@ -1,5 +1,6 @@
 #pragma once
 
+#include <root.h>
 #include <structures/hash_map.h>
 #include <pthread.h>
 #include <sys/types.h>

@@ -156,6 +156,13 @@ public class Translator {
         return function;
     }
 
+    private Function getDeleteFiberFunction() {
+        Function function = new Function("__delete_fiber", true);
+        function.setParameterTypes(List.of(INT_64));
+        function.setResultType(VOID);
+        return function;
+    }
+
     public Module translate() {
         predefinedFunctions.add(getPutStringFunction());
         predefinedFunctions.add(getPutcharFunction());
@@ -166,6 +173,7 @@ public class Translator {
         predefinedFunctions.add(getCreateFiberFunction());
         predefinedFunctions.add(getSleepFunction());
         predefinedFunctions.add(getYieldFunction());
+        predefinedFunctions.add(getDeleteFiberFunction());
 
         predefinedFunctions
                 .forEach(f -> {
