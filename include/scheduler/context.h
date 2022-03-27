@@ -6,7 +6,7 @@
 #include <sys/mman.h>
 
 // Fiber , coroutine stack size = 64 Kbytes
-static const size_t STACK_SIZE = 64 * 1024;
+static const size_t STACK_SIZE = 32 * 1024 * 1024;
 
 extern unsigned long switch_count_atom;
 extern unsigned long switch_count;

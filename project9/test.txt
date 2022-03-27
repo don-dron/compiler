@@ -126,6 +126,19 @@ class Spinlock
     println(toString(<int>pushCount.value))
     println(toString(<int>popCount.value))
 
+    j = 0
+    while j < 8
+        Thread t = new Thread(runnable)
+        threads[j] = t
+        j++
+    j = 0
+    while j < 8
+        threads[j].join()
+        j++
+    i++
+
+    println(toString(<int>pushCount.value))
+    println(toString(<int>popCount.value))
 
     return 0
 
