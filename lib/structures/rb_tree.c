@@ -1,7 +1,6 @@
 #include <structures/rb_tree.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 static void
 rbtree_node_init(struct rbnode *node) {
     node->left = NULL;

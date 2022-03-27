@@ -15,6 +15,11 @@ struct rbnode {
     void *data;              /* opaque data */
 };
 
+typedef enum {
+  RED,
+  BLACK
+} rb_node_color_e;
+
 struct rbtree {
     int (*cmp)(const void *lhs, const void *rhs);
 

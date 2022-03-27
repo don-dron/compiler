@@ -7,7 +7,6 @@ set(CMAKE_ASM_NASM_LINK_EXECUTABLE "nasm lib/scheduler/switch_context.S -o switc
 ENABLE_LANGUAGE(ASM)
 
 project(compiler C ASM)
-
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 14)
 
@@ -19,36 +18,24 @@ include_directories(include/structures)
 set(CAN_USE_ASSEMBLER TRUE)
 enable_language(ASM)
 
-if (APPLE)
-    string(APPEND CMAKE_ASM_FLAGS "--prefix _")
-endif (APPLE)
+add_custom_command(
+        OUTPUT ../lib/default.c
+        COMMAND ../compile.sh
+)
+
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb -D IS_LINUX -pthread")
+else ()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -lldb -D -lpthread")
+endif ()
+
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --main-stacksize=223232")
 
 set_property(SOURCE lib/scheduler/switch_context.S PROPERTY LANGUAGE C)
 
 add_executable(compiler
+        out.o
         lib/scheduler/switch_context.S
-        include/locks/atomics.h
-        include/locks/spinlock.h
-        include/locks/wait_group.h
-        include/scheduler/context.h
-        include/scheduler/coroutine.h
-        include/scheduler/fiber.h
-        include/scheduler/fibonacci_heap_scheduler.h
-        include/scheduler/local_queues_scheduler.h
-        include/scheduler/local_queues_with_steal_scheduler.h
-        include/scheduler/manager.h
-        include/scheduler/rb_tree_scheduler.h
-        include/scheduler/scheduler.h
-        include/scheduler/splay_tree_scheduler.h
-        include/scheduler/thin_heap_scheduler.h
-        include/structures/fibonacci_heap.h
-        include/structures/hash_map.h
-        include/structures/lf_stack.h
-        include/structures/list.h
-        include/structures/rb_tree.h
-        include/structures/splay_tree.h
-        include/structures/thin_heap.h
-        include/root.h
         lib/locks/atomics.c
         lib/locks/spinlock.c
         lib/locks/wait_group.c
@@ -67,3 +54,46 @@ add_executable(compiler
         lib/structures/thin_heap.c
         lib/default.c
         lib/root_lib.c)
+
+#SRCS = $(shell find ./lib -type f -name "*.c")
+#HEAD = $(shell find ./include -type f -name "*.h")
+#OBJS = $(SRCS:.c=.o)
+#DEPS = Makefile.depend
+#
+#clean:
+#rm -rf build
+#
+#build:
+#mvn clean install && \
+#mvn exec:java -Dexec.mainClass="lang.Main" -Dexec.args="-i ./project9" && \
+#mkdir build && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/atomics.o ./lib/locks/atomics.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/wait_group.o ./lib/locks/wait_group.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/spinlock.o ./lib/locks/spinlock.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/default.o ./lib/default.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/context.o ./lib/scheduler/context.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/rb_tree_scheduler.o ./lib/scheduler/rb_tree_scheduler.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/switch_context.o ./lib/scheduler/switch_context.S && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/fiber.o ./lib/scheduler/fiber.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/scheduler.o ./lib/scheduler/scheduler.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/coroutine.o ./lib/scheduler/coroutine.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/manager.o ./lib/scheduler/manager.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/root_lib.o ./lib/root_lib.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/lf_stack.o ./lib/structures/lf_stack.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/list.o ./lib/structures/list.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/fibonacci_heap.o ./lib/structures/fibonacci_heap.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/rb_tree.o ./lib/structures/rb_tree.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/hash_map.o ./lib/structures/hash_map.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/thin_heap.o ./lib/structures/thin_heap.c && \
+#gcc -O3 -c -pthread -Wall -I ./include -D IS_LINUX -o ./build/splay_tree.o ./lib/structures/splay_tree.c && \
+#ar rcs lib.a ./build/atomics.o ./build/wait_group.o ./build/spinlock.o ./build/default.o ./build/context.o \
+#./build/rb_tree_scheduler.o ./build/switch_context.o ./build/fiber.o ./build/scheduler.o ./build/coroutine.o \
+#./build/manager.o ./build/root_lib.o ./build/lf_stack.o ./build/list.o ./build/fibonacci_heap.o ./build/rb_tree.o \
+#./build/hash_map.o ./build/thin_heap.o ./build/splay_tree.o && \
+#llc -filetype=obj --relocation-model=pic out.ll && \
+#gcc -g out.o lib.a -lpthread -D IS_LINUX -o program
+#
+#run:
+#./program
+#
+#all: clean build run

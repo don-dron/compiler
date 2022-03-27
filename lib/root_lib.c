@@ -29,7 +29,7 @@ void __yield(void) {
 
 int main() {
     sched = (scheduler *) malloc(sizeof(scheduler));
-    new_scheduler(sched, 4);
+    new_scheduler(sched, 1);
     run_scheduler(sched);
 
     spawn(sched, lang_main, NULL);

@@ -11,9 +11,13 @@ static unsigned long generate_id() {
 fiber *get_current_fiber() {
     struct pthread_node to_find;
     to_find.thread_id = get_current_thread_id();
+    asm volatile("mfence"::
+    : "memory");
 
     struct pthread_node *node = ((struct pthread_node *) hash_map_find(&fpl_manager.current_fiber, &to_find.core));
 
+    asm volatile("mfence"::
+    : "memory");
     if (node == NULL) {
         return NULL;
     }
@@ -53,6 +57,8 @@ static void fiber_trampoline() {
 }
 
 fiber *create_fiber(fiber_routine routine, void *args) {
+    asm volatile("mfence"::
+    : "memory");
     fiber *new_fiber = (fiber *) malloc(sizeof(fiber));
 
     new_fiber->id = generate_id();

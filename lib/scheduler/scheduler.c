@@ -54,8 +54,8 @@
 //
 
 typedef struct free_node {
-    list_node node;
-    fiber *fib;
+  list_node node;
+  fiber *fib;
 } free_node;
 
 static void delete_fiber(list_node *node) {
@@ -81,8 +81,8 @@ void save_current_scheduler(scheduler *sched) {
     next->thread_id = get_current_thread_id();
 
     struct hash_map_node *node = hash_map_insert(
-            &fpl_manager.current_scheduler,
-            &next->core
+        &fpl_manager.current_scheduler,
+        &next->core
     );
 
     if (node != NULL) {
@@ -546,6 +546,12 @@ void shutdown(scheduler *sched) {
 
 void yield() {
     fiber *current_fiber = get_current_fiber();
+
+    if (current_fiber == NULL) {
+        printf("ERROR current fiber is NULL\n");
+        return;
+    }
+
     // This lock will be unlocked in run_task function after switch context
     lock_spinlock(&current_fiber->lock);
     fiber *temp = current_fiber;
@@ -721,8 +727,8 @@ void delete_current_scheduler() {
     next.thread_id = get_current_thread_id();
 
     struct hash_map_node *node = hash_map_remove(
-            &fpl_manager.current_scheduler,
-            &next.core
+        &fpl_manager.current_scheduler,
+        &next.core
     );
 
     if (node != NULL) {

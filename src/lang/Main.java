@@ -132,20 +132,20 @@ public class Main {
         FileWriter fileWriter = new FileWriter(llFile);
         fileWriter.write(dump);
         fileWriter.flush();
-
-        buildLibrary();
-
-        runLLVM(llFile);
-        runClang(binaryFile, executableFile);
-
-        if (!cmd.hasOption(MODE)
-                || cmd.getOptionValue(MODE) == null
-                || cmd.getOptionValue(MODE).equals("buildAndRun")) {
-            runProgram(executableFile);
-        } else if (cmd.hasOption(MODE) &&
-                Optional.ofNullable(cmd.getOptionValue(MODE)).orElse("buildAndRun").equals("valgrindDebug")) {
-            runWithValgrind(executableFile);
-        }
+//
+//         buildLibrary();
+//
+//         runLLVM(llFile);
+//         runClang(binaryFile, executableFile);
+//
+//         if (!cmd.hasOption(MODE)
+//                 || cmd.getOptionValue(MODE) == null
+//                 || cmd.getOptionValue(MODE).equals("buildAndRun")) {
+//             runProgram(executableFile);
+//         } else if (cmd.hasOption(MODE) &&
+//                 Optional.ofNullable(cmd.getOptionValue(MODE)).orElse("buildAndRun").equals("valgrindDebug")) {
+//             runWithValgrind(executableFile);
+//         }
     }
 
     private static void createAndWrite(String path, String content) throws IOException {

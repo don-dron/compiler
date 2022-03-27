@@ -27,9 +27,9 @@ void hash_map_print(struct hash_map *map, void (*print_node)(struct hash_map_nod
 }
 
 void hash_map_init(
-        struct hash_map *map,
-        int (*cmp)(struct hash_map_node *a, struct hash_map_node *b),
-        int (*hash_function)(struct hash_map_node *node)) {
+    struct hash_map *map,
+    int (*cmp)(struct hash_map_node *a, struct hash_map_node *b),
+    int (*hash_function)(struct hash_map_node *node)) {
     map->cmp = cmp;
     map->hash_function = hash_function;
     map->size = 0;
@@ -37,8 +37,13 @@ void hash_map_init(
 }
 
 struct hash_map_node *hash_map_insert(
-        struct hash_map *map,
-        struct hash_map_node *node) {
+    struct hash_map *map,
+    struct hash_map_node *node) {
+
+    if ((unsigned long) node == 0x20010) {
+        return NULL;
+    }
+
     int hash = map->hash_function(node);
     struct hash_map_node *current = map->buckets[hash % 16];
     struct hash_map_node *prev = NULL;
@@ -86,8 +91,8 @@ struct hash_map_node *hash_map_insert(
 }
 
 struct hash_map_node *hash_map_find(
-        struct hash_map *map,
-        struct hash_map_node *node) {
+    struct hash_map *map,
+    struct hash_map_node *node) {
     int hash = map->hash_function(node);
     struct hash_map_node *current = map->buckets[hash % 16];
 
@@ -110,8 +115,8 @@ struct hash_map_node *hash_map_find(
 }
 
 struct hash_map_node *hash_map_remove(
-        struct hash_map *map,
-        struct hash_map_node *node) {
+    struct hash_map *map,
+    struct hash_map_node *node) {
     int hash = map->hash_function(node);
     struct hash_map_node *current = map->buckets[hash % 16];
     struct hash_map_node *prev = NULL;
