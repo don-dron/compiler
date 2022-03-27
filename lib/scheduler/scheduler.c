@@ -108,7 +108,7 @@ static void run_task(fiber *routine) {
     // If not locking, a context switch can be called during another
     // context switch in the same thread - it's ub and crushed stack frame
     // This lock will unlocked in fiber body.
-    lock_spinlock(&routine->lock);
+//    lock_spinlock(&routine->lock);
 
     fiber *current_fiber = routine;
     save_current_fiber(current_fiber);
@@ -121,7 +121,7 @@ static void run_task(fiber *routine) {
             return_to_pool(current_scheduler, current_fiber);
             delete_current_fiber();
 //            current_fiber = NULL;
-            unlock_spinlock(&temp->lock);
+//            unlock_spinlock(&temp->lock);
             return;
         } else {
             // Wake up success, run
@@ -166,7 +166,7 @@ static void run_task(fiber *routine) {
             delete_current_fiber();
 
             // This unlock is unlocked fiber body lock
-            unlock_spinlock(&temp->lock);
+//            unlock_spinlock(&temp->lock);
         } else {
 //            current_fiber = NULL;
 
@@ -176,7 +176,7 @@ static void run_task(fiber *routine) {
 //            free_node *node = (free_node *) malloc(sizeof(free_node));
 //            node->fib = temp;
 //            list_push_front(&current_scheduler->garbage, (list_node *) node);
-            unlock_spinlock(&temp->lock);
+//            unlock_spinlock(&temp->lock);
 
             free_fiber(temp);
             free(temp);
@@ -457,7 +457,7 @@ void sleep_for(unsigned long duration) {
 
     // This lock will be unlocked in run_task function after switch context
 
-    lock_spinlock(&current_fiber->lock);
+//    lock_spinlock(&current_fiber->lock);
 
     fiber *temp = current_fiber;
 
@@ -476,7 +476,7 @@ void sleep_for(unsigned long duration) {
         switch_context(&temp->context, &temp->external_context);
 
         // This unlock unlocking lock locked in run_task function
-        unlock_spinlock(&temp->lock);
+//        unlock_spinlock(&temp->lock);
     } else {
         printf("[ERROR] Sleep wrong state %d\n", temp->state);
         exit(1);
@@ -495,7 +495,7 @@ fiber *submit(fiber_routine routine, void *args) {
     }
 
     // Lock for create new fiber - block context switching
-    lock_spinlock(&temp->lock);
+//    lock_spinlock(&temp->lock);
     fiber *fib = create_fiber(routine, args);
     fib->external_context = temp->context;
     fib->sched = current_scheduler;
@@ -503,7 +503,7 @@ fiber *submit(fiber_routine routine, void *args) {
     asm volatile("mfence"::
     : "memory");
     insert_fiber(current_scheduler, fib);
-    unlock_spinlock(&temp->lock);
+//    unlock_spinlock(&temp->lock);
     asm volatile("mfence"::
     : "memory");
 
@@ -553,7 +553,7 @@ void yield() {
     }
 
     // This lock will be unlocked in run_task function after switch context
-    lock_spinlock(&current_fiber->lock);
+//    lock_spinlock(&current_fiber->lock);
     fiber *temp = current_fiber;
 
     if (temp->state == RUNNING) {
@@ -566,7 +566,7 @@ void yield() {
         switch_context(&temp->context, &temp->external_context);
 
         // This unlock unlock lock locked in run_task function before switch context
-        unlock_spinlock(&temp->lock);
+//        unlock_spinlock(&temp->lock);
     } else {
         printf("[ERROR] Yield wrong state %d\n", temp->state);
         exit(1);

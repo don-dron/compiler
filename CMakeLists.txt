@@ -44,7 +44,7 @@ add_executable(compiler
         lib/scheduler/fiber.c
         lib/scheduler/manager.c
         lib/scheduler/scheduler.c
-        lib/scheduler/rb_tree_scheduler.c
+        lib/scheduler/local_queues_with_steal_scheduler.c
         lib/structures/fibonacci_heap.c
         lib/structures/hash_map.c
         lib/structures/lf_stack.c

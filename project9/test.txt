@@ -8,7 +8,7 @@ import lang.lib
         yield()
         yield()
         yield()
-        println(concat("Test", toString(i))
+        //println(concat("Test", toString(i))
         yield()
         yield()
         yield()
@@ -21,7 +21,7 @@ import lang.lib
     int j  = 0
     println(concat("Test", toString(2))
 
-    while j < 300000
+    while j < 2000
         Thread t = new Thread(runnable)
         j++
 

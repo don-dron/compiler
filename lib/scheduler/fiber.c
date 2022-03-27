@@ -31,12 +31,12 @@ static void fiber_trampoline() {
     temp->state = RUNNING;
 
     // Unlock after lock in run_task
-    unlock_spinlock(&temp->lock);
+//    unlock_spinlock(&temp->lock);
 
     temp->routine(temp->args);
 
     // Lock for swtich context, unlocked in run_task
-    lock_spinlock(&temp->lock);
+//    lock_spinlock(&temp->lock);
 
     if (temp->state == RUNNING) {
         temp->state = TERMINATED;
@@ -78,7 +78,7 @@ fiber *create_fiber(fiber_routine routine, void *args) {
 
     new_fiber->vruntime = 0;
 
-    init_spinlock(&new_fiber->lock);
+//    init_spinlock(&new_fiber->lock);
 
     setup_trampoline(new_fiber);
 

@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <scheduler/context.h>
 #include <structures/list.h>
-#include <scheduler/rb_tree_scheduler.h>
+#include <scheduler/local_queues_with_steal_scheduler.h>
 #include <root.h>
 
 scheduler *sched;
@@ -29,7 +29,7 @@ void __yield(void) {
 
 int main() {
     sched = (scheduler *) malloc(sizeof(scheduler));
-    new_scheduler(sched, 1);
+    new_scheduler(sched, 8);
     run_scheduler(sched);
 
     spawn(sched, lang_main, NULL);

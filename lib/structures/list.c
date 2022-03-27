@@ -4,10 +4,7 @@ int create_list(list *lst) {
     lst->start = 0;
     lst->end = 0;
     lst->size = 0;
-
-    spinlock lock;
-    lock.lock = 0;
-    lst->lock = lock;
+    lst->lock.lock=0;
 
     return 0;
 }

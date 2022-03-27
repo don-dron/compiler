@@ -40,10 +40,6 @@ struct hash_map_node *hash_map_insert(
     struct hash_map *map,
     struct hash_map_node *node) {
 
-    if ((unsigned long) node == 0x20010) {
-        return NULL;
-    }
-
     int hash = map->hash_function(node);
     struct hash_map_node *current = map->buckets[hash % 16];
     struct hash_map_node *prev = NULL;
