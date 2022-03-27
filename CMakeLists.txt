@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_ASM_NASM_SOURCE_FILE_EXTENSIONS nasm asm S)
 set(CMAKE_ASM_NASM_OBJECT_FORMAT bin)
