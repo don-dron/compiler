@@ -440,7 +440,7 @@ public class SemanticAnalysis {
             if (!typeNode.equals(node.getTypeNode())) {
                 throw new IllegalArgumentException("Wrong types " + node.getTypeNode().toString() + " " +
                         node.getExpressionNode().toString() + " : " +
-                        node.getTypeNode() + " and " + node.getExpressionNode().getResultType().toString());
+                        node.getTypeNode() + " and " + typeNode.toString());
             }
         }
     }

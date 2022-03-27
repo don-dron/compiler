@@ -29,6 +29,7 @@ class Stack
         this.first = this.first.next
         return res
 
+
 class Spinlock
     AtomicLong shared
 
@@ -37,7 +38,7 @@ class Spinlock
 
     () void lock ->
         while this.shared.exchange(1L) != 0L
-            sleep(3)
+            sleep(10)
 
 
     () void unlock ->
@@ -47,17 +48,18 @@ class Spinlock
 () void runnable ->
     int i = 0
 
-    while i < 100000
+    while i < 1000
         Node next = new Node(i)
         pushCount.value = pushCount.value + 1
         spinlock.lock()
         global.push(next)
         spinlock.unlock()
+
         i++
 
     i = 0
 
-    while i < 100000
+    while i < 1000
         popCount.value = popCount.value + 1
         spinlock.lock()
         Node n = global.pop()
@@ -69,7 +71,6 @@ class Spinlock
 
 () int main ->
     global = new Stack()
-    AtomicLong a = new AtomicLong()
     pushCount = new AtomicLong()
     popCount = new AtomicLong()
 
@@ -77,48 +78,21 @@ class Spinlock
     spinlock.lock()
     spinlock.unlock()
 
-    println(toString(<int>a.value))
-
-    a.cas(0L, 1L)
-    println(toString(<int>a.value))
-
-    a.cas(1L, 2L)
-    println(toString(<int>a.value))
-
-    a.cas(2L, 3L)
-    println(toString(<int>a.value))
-
-    println(toString(<int>a.value))
-
-    a.exchange(4L)
-    println(toString(<int>a.value))
-
-    println(toString(<int>a.load())
-
-    println(toString(<int>a.value))
-
-    a.store(6L)
-    println(toString(<int>a.value))
-
-    println(toString(<int>a.load())
-
-    println(toString(<int>a.value))
-
     int i = 0
     int j  = 0
 
-    Thread[] threads = new Thread[8]
+    Thread[] threads = new Thread[16]
 
     pushCount.value = 0L
     popCount.value = 0L
 
     j = 0
-    while j < 8
+    while j < 16
         Thread t = new Thread(runnable)
         threads[j] = t
         j++
     j = 0
-    while j < 8
+    while j < 16
         threads[j].join()
         j++
     i++
@@ -127,12 +101,12 @@ class Spinlock
     println(toString(<int>popCount.value))
 
     j = 0
-    while j < 8
+    while j < 16
         Thread t = new Thread(runnable)
         threads[j] = t
         j++
     j = 0
-    while j < 8
+    while j < 16
         threads[j].join()
         j++
     i++

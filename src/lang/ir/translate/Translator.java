@@ -2054,11 +2054,11 @@ public class Translator {
         Type type = matchType(expressionNode.getTypeNode());
         Value value = translateExpression(function, expressionNode.getExpressionNode());
 
-        if(value.getType() instanceof PointerType && !(type.getType() instanceof PointerType)) {
+        if(value.getType() instanceof PointerType && !(type instanceof PointerType)) {
             Command command = new Command(createTempVariable(type), PTRTOINT, List.of(value));
             function.getCurrentBlock().addCommand(command);
             return command.getResult();
-        }else if(!(value.getType() instanceof PointerType) && type.getType() instanceof PointerType) {
+        }else if(!(value.getType() instanceof PointerType) && type instanceof PointerType) {
             Command command = new Command(createTempVariable(type), INTTOPTR, List.of(value));
             function.getCurrentBlock().addCommand(command);
             return command.getResult();
@@ -2990,6 +2990,9 @@ public class Translator {
 
             return value;
         } else {
+            if(value == null) {
+                int a =1;
+            }
             Command command = new Command(createTempVariable(matchType(
                     expressionNode.getResultType())),
                     LOAD,
