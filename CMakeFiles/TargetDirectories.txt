@@ -1,3 +1,0 @@
-/home/dron/Рабочий стол/bachelor/compiler/CMakeFiles/rebuild_cache.dir
-/home/dron/Рабочий стол/bachelor/compiler/CMakeFiles/edit_cache.dir
-/home/dron/Рабочий стол/bachelor/compiler/CMakeFiles/compiler.dir

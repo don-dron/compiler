@@ -6,7 +6,7 @@ set(CMAKE_ASM_NASM_FLAGS "-e")
 set(CMAKE_ASM_NASM_LINK_EXECUTABLE "nasm lib/scheduler/switch_context.S -o switch_context.o")
 ENABLE_LANGUAGE(ASM)
 
-project(compiler C ASM)
+project(compiler_target C ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 14)
 
@@ -24,16 +24,18 @@ add_custom_command(
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb -D IS_LINUX -pthread")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb -D IS_LINUX")
 else ()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -lldb -D -lpthread")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -lldb")
 endif ()
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --main-stacksize=223232")
 
 set_property(SOURCE lib/scheduler/switch_context.S PROPERTY LANGUAGE C)
 
-add_executable(compiler
+
+find_package(Threads REQUIRED)
+add_executable(compiler_target
         out.o
         lib/scheduler/switch_context.S
         lib/locks/atomics.c
@@ -54,6 +56,8 @@ add_executable(compiler
         lib/structures/thin_heap.c
         lib/default.c
         lib/root_lib.c)
+
+target_link_libraries (compiler_target ${CMAKE_THREAD_LIBS_INIT})
 
 #SRCS = $(shell find ./lib -type f -name "*.c")
 #HEAD = $(shell find ./include -type f -name "*.h")

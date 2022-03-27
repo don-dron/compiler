@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named compiler
+# Target rules for targets named compiler_target
 
 # Build rule for target.
-compiler: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 compiler
-.PHONY : compiler
+compiler_target: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 compiler_target
+.PHONY : compiler_target
 
 # fast build rule for target.
-compiler/fast:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/build
-.PHONY : compiler/fast
+compiler_target/fast:
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/build
+.PHONY : compiler_target/fast
 
 lib/default.o: lib/default.c.o
 
@@ -129,7 +129,7 @@ lib/default.o: lib/default.c.o
 
 # target to build an object file
 lib/default.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/default.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/default.c.o
 .PHONY : lib/default.c.o
 
 lib/default.i: lib/default.c.i
@@ -138,7 +138,7 @@ lib/default.i: lib/default.c.i
 
 # target to preprocess a source file
 lib/default.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/default.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/default.c.i
 .PHONY : lib/default.c.i
 
 lib/default.s: lib/default.c.s
@@ -147,7 +147,7 @@ lib/default.s: lib/default.c.s
 
 # target to generate assembly for a file
 lib/default.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/default.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/default.c.s
 .PHONY : lib/default.c.s
 
 lib/locks/atomics.o: lib/locks/atomics.c.o
@@ -156,7 +156,7 @@ lib/locks/atomics.o: lib/locks/atomics.c.o
 
 # target to build an object file
 lib/locks/atomics.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/atomics.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/atomics.c.o
 .PHONY : lib/locks/atomics.c.o
 
 lib/locks/atomics.i: lib/locks/atomics.c.i
@@ -165,7 +165,7 @@ lib/locks/atomics.i: lib/locks/atomics.c.i
 
 # target to preprocess a source file
 lib/locks/atomics.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/atomics.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/atomics.c.i
 .PHONY : lib/locks/atomics.c.i
 
 lib/locks/atomics.s: lib/locks/atomics.c.s
@@ -174,7 +174,7 @@ lib/locks/atomics.s: lib/locks/atomics.c.s
 
 # target to generate assembly for a file
 lib/locks/atomics.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/atomics.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/atomics.c.s
 .PHONY : lib/locks/atomics.c.s
 
 lib/locks/spinlock.o: lib/locks/spinlock.c.o
@@ -183,7 +183,7 @@ lib/locks/spinlock.o: lib/locks/spinlock.c.o
 
 # target to build an object file
 lib/locks/spinlock.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/spinlock.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/spinlock.c.o
 .PHONY : lib/locks/spinlock.c.o
 
 lib/locks/spinlock.i: lib/locks/spinlock.c.i
@@ -192,7 +192,7 @@ lib/locks/spinlock.i: lib/locks/spinlock.c.i
 
 # target to preprocess a source file
 lib/locks/spinlock.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/spinlock.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/spinlock.c.i
 .PHONY : lib/locks/spinlock.c.i
 
 lib/locks/spinlock.s: lib/locks/spinlock.c.s
@@ -201,7 +201,7 @@ lib/locks/spinlock.s: lib/locks/spinlock.c.s
 
 # target to generate assembly for a file
 lib/locks/spinlock.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/spinlock.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/spinlock.c.s
 .PHONY : lib/locks/spinlock.c.s
 
 lib/locks/wait_group.o: lib/locks/wait_group.c.o
@@ -210,7 +210,7 @@ lib/locks/wait_group.o: lib/locks/wait_group.c.o
 
 # target to build an object file
 lib/locks/wait_group.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/wait_group.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/wait_group.c.o
 .PHONY : lib/locks/wait_group.c.o
 
 lib/locks/wait_group.i: lib/locks/wait_group.c.i
@@ -219,7 +219,7 @@ lib/locks/wait_group.i: lib/locks/wait_group.c.i
 
 # target to preprocess a source file
 lib/locks/wait_group.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/wait_group.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/wait_group.c.i
 .PHONY : lib/locks/wait_group.c.i
 
 lib/locks/wait_group.s: lib/locks/wait_group.c.s
@@ -228,7 +228,7 @@ lib/locks/wait_group.s: lib/locks/wait_group.c.s
 
 # target to generate assembly for a file
 lib/locks/wait_group.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/locks/wait_group.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/locks/wait_group.c.s
 .PHONY : lib/locks/wait_group.c.s
 
 lib/root_lib.o: lib/root_lib.c.o
@@ -237,7 +237,7 @@ lib/root_lib.o: lib/root_lib.c.o
 
 # target to build an object file
 lib/root_lib.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/root_lib.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/root_lib.c.o
 .PHONY : lib/root_lib.c.o
 
 lib/root_lib.i: lib/root_lib.c.i
@@ -246,7 +246,7 @@ lib/root_lib.i: lib/root_lib.c.i
 
 # target to preprocess a source file
 lib/root_lib.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/root_lib.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/root_lib.c.i
 .PHONY : lib/root_lib.c.i
 
 lib/root_lib.s: lib/root_lib.c.s
@@ -255,7 +255,7 @@ lib/root_lib.s: lib/root_lib.c.s
 
 # target to generate assembly for a file
 lib/root_lib.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/root_lib.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/root_lib.c.s
 .PHONY : lib/root_lib.c.s
 
 lib/scheduler/context.o: lib/scheduler/context.c.o
@@ -264,7 +264,7 @@ lib/scheduler/context.o: lib/scheduler/context.c.o
 
 # target to build an object file
 lib/scheduler/context.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/context.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/context.c.o
 .PHONY : lib/scheduler/context.c.o
 
 lib/scheduler/context.i: lib/scheduler/context.c.i
@@ -273,7 +273,7 @@ lib/scheduler/context.i: lib/scheduler/context.c.i
 
 # target to preprocess a source file
 lib/scheduler/context.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/context.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/context.c.i
 .PHONY : lib/scheduler/context.c.i
 
 lib/scheduler/context.s: lib/scheduler/context.c.s
@@ -282,7 +282,7 @@ lib/scheduler/context.s: lib/scheduler/context.c.s
 
 # target to generate assembly for a file
 lib/scheduler/context.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/context.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/context.c.s
 .PHONY : lib/scheduler/context.c.s
 
 lib/scheduler/coroutine.o: lib/scheduler/coroutine.c.o
@@ -291,7 +291,7 @@ lib/scheduler/coroutine.o: lib/scheduler/coroutine.c.o
 
 # target to build an object file
 lib/scheduler/coroutine.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/coroutine.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/coroutine.c.o
 .PHONY : lib/scheduler/coroutine.c.o
 
 lib/scheduler/coroutine.i: lib/scheduler/coroutine.c.i
@@ -300,7 +300,7 @@ lib/scheduler/coroutine.i: lib/scheduler/coroutine.c.i
 
 # target to preprocess a source file
 lib/scheduler/coroutine.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/coroutine.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/coroutine.c.i
 .PHONY : lib/scheduler/coroutine.c.i
 
 lib/scheduler/coroutine.s: lib/scheduler/coroutine.c.s
@@ -309,7 +309,7 @@ lib/scheduler/coroutine.s: lib/scheduler/coroutine.c.s
 
 # target to generate assembly for a file
 lib/scheduler/coroutine.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/coroutine.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/coroutine.c.s
 .PHONY : lib/scheduler/coroutine.c.s
 
 lib/scheduler/fiber.o: lib/scheduler/fiber.c.o
@@ -318,7 +318,7 @@ lib/scheduler/fiber.o: lib/scheduler/fiber.c.o
 
 # target to build an object file
 lib/scheduler/fiber.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/fiber.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/fiber.c.o
 .PHONY : lib/scheduler/fiber.c.o
 
 lib/scheduler/fiber.i: lib/scheduler/fiber.c.i
@@ -327,7 +327,7 @@ lib/scheduler/fiber.i: lib/scheduler/fiber.c.i
 
 # target to preprocess a source file
 lib/scheduler/fiber.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/fiber.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/fiber.c.i
 .PHONY : lib/scheduler/fiber.c.i
 
 lib/scheduler/fiber.s: lib/scheduler/fiber.c.s
@@ -336,7 +336,7 @@ lib/scheduler/fiber.s: lib/scheduler/fiber.c.s
 
 # target to generate assembly for a file
 lib/scheduler/fiber.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/fiber.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/fiber.c.s
 .PHONY : lib/scheduler/fiber.c.s
 
 lib/scheduler/local_queues_with_steal_scheduler.o: lib/scheduler/local_queues_with_steal_scheduler.c.o
@@ -345,7 +345,7 @@ lib/scheduler/local_queues_with_steal_scheduler.o: lib/scheduler/local_queues_wi
 
 # target to build an object file
 lib/scheduler/local_queues_with_steal_scheduler.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/local_queues_with_steal_scheduler.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/local_queues_with_steal_scheduler.c.o
 .PHONY : lib/scheduler/local_queues_with_steal_scheduler.c.o
 
 lib/scheduler/local_queues_with_steal_scheduler.i: lib/scheduler/local_queues_with_steal_scheduler.c.i
@@ -354,7 +354,7 @@ lib/scheduler/local_queues_with_steal_scheduler.i: lib/scheduler/local_queues_wi
 
 # target to preprocess a source file
 lib/scheduler/local_queues_with_steal_scheduler.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/local_queues_with_steal_scheduler.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/local_queues_with_steal_scheduler.c.i
 .PHONY : lib/scheduler/local_queues_with_steal_scheduler.c.i
 
 lib/scheduler/local_queues_with_steal_scheduler.s: lib/scheduler/local_queues_with_steal_scheduler.c.s
@@ -363,7 +363,7 @@ lib/scheduler/local_queues_with_steal_scheduler.s: lib/scheduler/local_queues_wi
 
 # target to generate assembly for a file
 lib/scheduler/local_queues_with_steal_scheduler.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/local_queues_with_steal_scheduler.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/local_queues_with_steal_scheduler.c.s
 .PHONY : lib/scheduler/local_queues_with_steal_scheduler.c.s
 
 lib/scheduler/manager.o: lib/scheduler/manager.c.o
@@ -372,7 +372,7 @@ lib/scheduler/manager.o: lib/scheduler/manager.c.o
 
 # target to build an object file
 lib/scheduler/manager.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/manager.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/manager.c.o
 .PHONY : lib/scheduler/manager.c.o
 
 lib/scheduler/manager.i: lib/scheduler/manager.c.i
@@ -381,7 +381,7 @@ lib/scheduler/manager.i: lib/scheduler/manager.c.i
 
 # target to preprocess a source file
 lib/scheduler/manager.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/manager.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/manager.c.i
 .PHONY : lib/scheduler/manager.c.i
 
 lib/scheduler/manager.s: lib/scheduler/manager.c.s
@@ -390,7 +390,7 @@ lib/scheduler/manager.s: lib/scheduler/manager.c.s
 
 # target to generate assembly for a file
 lib/scheduler/manager.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/manager.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/manager.c.s
 .PHONY : lib/scheduler/manager.c.s
 
 lib/scheduler/scheduler.o: lib/scheduler/scheduler.c.o
@@ -399,7 +399,7 @@ lib/scheduler/scheduler.o: lib/scheduler/scheduler.c.o
 
 # target to build an object file
 lib/scheduler/scheduler.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/scheduler.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/scheduler.c.o
 .PHONY : lib/scheduler/scheduler.c.o
 
 lib/scheduler/scheduler.i: lib/scheduler/scheduler.c.i
@@ -408,7 +408,7 @@ lib/scheduler/scheduler.i: lib/scheduler/scheduler.c.i
 
 # target to preprocess a source file
 lib/scheduler/scheduler.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/scheduler.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/scheduler.c.i
 .PHONY : lib/scheduler/scheduler.c.i
 
 lib/scheduler/scheduler.s: lib/scheduler/scheduler.c.s
@@ -417,7 +417,7 @@ lib/scheduler/scheduler.s: lib/scheduler/scheduler.c.s
 
 # target to generate assembly for a file
 lib/scheduler/scheduler.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/scheduler.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/scheduler.c.s
 .PHONY : lib/scheduler/scheduler.c.s
 
 lib/scheduler/switch_context.o: lib/scheduler/switch_context.S.o
@@ -426,7 +426,7 @@ lib/scheduler/switch_context.o: lib/scheduler/switch_context.S.o
 
 # target to build an object file
 lib/scheduler/switch_context.S.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/switch_context.S.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/switch_context.S.o
 .PHONY : lib/scheduler/switch_context.S.o
 
 lib/scheduler/switch_context.i: lib/scheduler/switch_context.S.i
@@ -435,7 +435,7 @@ lib/scheduler/switch_context.i: lib/scheduler/switch_context.S.i
 
 # target to preprocess a source file
 lib/scheduler/switch_context.S.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/switch_context.S.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/switch_context.S.i
 .PHONY : lib/scheduler/switch_context.S.i
 
 lib/scheduler/switch_context.s: lib/scheduler/switch_context.S.s
@@ -444,7 +444,7 @@ lib/scheduler/switch_context.s: lib/scheduler/switch_context.S.s
 
 # target to generate assembly for a file
 lib/scheduler/switch_context.S.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/scheduler/switch_context.S.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/scheduler/switch_context.S.s
 .PHONY : lib/scheduler/switch_context.S.s
 
 lib/structures/fibonacci_heap.o: lib/structures/fibonacci_heap.c.o
@@ -453,7 +453,7 @@ lib/structures/fibonacci_heap.o: lib/structures/fibonacci_heap.c.o
 
 # target to build an object file
 lib/structures/fibonacci_heap.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/fibonacci_heap.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/fibonacci_heap.c.o
 .PHONY : lib/structures/fibonacci_heap.c.o
 
 lib/structures/fibonacci_heap.i: lib/structures/fibonacci_heap.c.i
@@ -462,7 +462,7 @@ lib/structures/fibonacci_heap.i: lib/structures/fibonacci_heap.c.i
 
 # target to preprocess a source file
 lib/structures/fibonacci_heap.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/fibonacci_heap.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/fibonacci_heap.c.i
 .PHONY : lib/structures/fibonacci_heap.c.i
 
 lib/structures/fibonacci_heap.s: lib/structures/fibonacci_heap.c.s
@@ -471,7 +471,7 @@ lib/structures/fibonacci_heap.s: lib/structures/fibonacci_heap.c.s
 
 # target to generate assembly for a file
 lib/structures/fibonacci_heap.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/fibonacci_heap.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/fibonacci_heap.c.s
 .PHONY : lib/structures/fibonacci_heap.c.s
 
 lib/structures/hash_map.o: lib/structures/hash_map.c.o
@@ -480,7 +480,7 @@ lib/structures/hash_map.o: lib/structures/hash_map.c.o
 
 # target to build an object file
 lib/structures/hash_map.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/hash_map.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/hash_map.c.o
 .PHONY : lib/structures/hash_map.c.o
 
 lib/structures/hash_map.i: lib/structures/hash_map.c.i
@@ -489,7 +489,7 @@ lib/structures/hash_map.i: lib/structures/hash_map.c.i
 
 # target to preprocess a source file
 lib/structures/hash_map.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/hash_map.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/hash_map.c.i
 .PHONY : lib/structures/hash_map.c.i
 
 lib/structures/hash_map.s: lib/structures/hash_map.c.s
@@ -498,7 +498,7 @@ lib/structures/hash_map.s: lib/structures/hash_map.c.s
 
 # target to generate assembly for a file
 lib/structures/hash_map.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/hash_map.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/hash_map.c.s
 .PHONY : lib/structures/hash_map.c.s
 
 lib/structures/lf_stack.o: lib/structures/lf_stack.c.o
@@ -507,7 +507,7 @@ lib/structures/lf_stack.o: lib/structures/lf_stack.c.o
 
 # target to build an object file
 lib/structures/lf_stack.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/lf_stack.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/lf_stack.c.o
 .PHONY : lib/structures/lf_stack.c.o
 
 lib/structures/lf_stack.i: lib/structures/lf_stack.c.i
@@ -516,7 +516,7 @@ lib/structures/lf_stack.i: lib/structures/lf_stack.c.i
 
 # target to preprocess a source file
 lib/structures/lf_stack.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/lf_stack.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/lf_stack.c.i
 .PHONY : lib/structures/lf_stack.c.i
 
 lib/structures/lf_stack.s: lib/structures/lf_stack.c.s
@@ -525,7 +525,7 @@ lib/structures/lf_stack.s: lib/structures/lf_stack.c.s
 
 # target to generate assembly for a file
 lib/structures/lf_stack.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/lf_stack.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/lf_stack.c.s
 .PHONY : lib/structures/lf_stack.c.s
 
 lib/structures/list.o: lib/structures/list.c.o
@@ -534,7 +534,7 @@ lib/structures/list.o: lib/structures/list.c.o
 
 # target to build an object file
 lib/structures/list.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/list.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/list.c.o
 .PHONY : lib/structures/list.c.o
 
 lib/structures/list.i: lib/structures/list.c.i
@@ -543,7 +543,7 @@ lib/structures/list.i: lib/structures/list.c.i
 
 # target to preprocess a source file
 lib/structures/list.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/list.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/list.c.i
 .PHONY : lib/structures/list.c.i
 
 lib/structures/list.s: lib/structures/list.c.s
@@ -552,7 +552,7 @@ lib/structures/list.s: lib/structures/list.c.s
 
 # target to generate assembly for a file
 lib/structures/list.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/list.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/list.c.s
 .PHONY : lib/structures/list.c.s
 
 lib/structures/rb_tree.o: lib/structures/rb_tree.c.o
@@ -561,7 +561,7 @@ lib/structures/rb_tree.o: lib/structures/rb_tree.c.o
 
 # target to build an object file
 lib/structures/rb_tree.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/rb_tree.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/rb_tree.c.o
 .PHONY : lib/structures/rb_tree.c.o
 
 lib/structures/rb_tree.i: lib/structures/rb_tree.c.i
@@ -570,7 +570,7 @@ lib/structures/rb_tree.i: lib/structures/rb_tree.c.i
 
 # target to preprocess a source file
 lib/structures/rb_tree.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/rb_tree.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/rb_tree.c.i
 .PHONY : lib/structures/rb_tree.c.i
 
 lib/structures/rb_tree.s: lib/structures/rb_tree.c.s
@@ -579,7 +579,7 @@ lib/structures/rb_tree.s: lib/structures/rb_tree.c.s
 
 # target to generate assembly for a file
 lib/structures/rb_tree.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/rb_tree.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/rb_tree.c.s
 .PHONY : lib/structures/rb_tree.c.s
 
 lib/structures/splay_tree.o: lib/structures/splay_tree.c.o
@@ -588,7 +588,7 @@ lib/structures/splay_tree.o: lib/structures/splay_tree.c.o
 
 # target to build an object file
 lib/structures/splay_tree.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/splay_tree.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/splay_tree.c.o
 .PHONY : lib/structures/splay_tree.c.o
 
 lib/structures/splay_tree.i: lib/structures/splay_tree.c.i
@@ -597,7 +597,7 @@ lib/structures/splay_tree.i: lib/structures/splay_tree.c.i
 
 # target to preprocess a source file
 lib/structures/splay_tree.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/splay_tree.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/splay_tree.c.i
 .PHONY : lib/structures/splay_tree.c.i
 
 lib/structures/splay_tree.s: lib/structures/splay_tree.c.s
@@ -606,7 +606,7 @@ lib/structures/splay_tree.s: lib/structures/splay_tree.c.s
 
 # target to generate assembly for a file
 lib/structures/splay_tree.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/splay_tree.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/splay_tree.c.s
 .PHONY : lib/structures/splay_tree.c.s
 
 lib/structures/thin_heap.o: lib/structures/thin_heap.c.o
@@ -615,7 +615,7 @@ lib/structures/thin_heap.o: lib/structures/thin_heap.c.o
 
 # target to build an object file
 lib/structures/thin_heap.c.o:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/thin_heap.c.o
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/thin_heap.c.o
 .PHONY : lib/structures/thin_heap.c.o
 
 lib/structures/thin_heap.i: lib/structures/thin_heap.c.i
@@ -624,7 +624,7 @@ lib/structures/thin_heap.i: lib/structures/thin_heap.c.i
 
 # target to preprocess a source file
 lib/structures/thin_heap.c.i:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/thin_heap.c.i
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/thin_heap.c.i
 .PHONY : lib/structures/thin_heap.c.i
 
 lib/structures/thin_heap.s: lib/structures/thin_heap.c.s
@@ -633,7 +633,7 @@ lib/structures/thin_heap.s: lib/structures/thin_heap.c.s
 
 # target to generate assembly for a file
 lib/structures/thin_heap.c.s:
-	$(MAKE) -f CMakeFiles/compiler.dir/build.make CMakeFiles/compiler.dir/lib/structures/thin_heap.c.s
+	$(MAKE) -f CMakeFiles/compiler_target.dir/build.make CMakeFiles/compiler_target.dir/lib/structures/thin_heap.c.s
 .PHONY : lib/structures/thin_heap.c.s
 
 # Help Target
@@ -644,7 +644,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... compiler"
+	@echo "... compiler_target"
 	@echo "... lib/default.o"
 	@echo "... lib/default.i"
 	@echo "... lib/default.s"
