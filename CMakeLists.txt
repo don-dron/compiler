@@ -26,7 +26,7 @@ add_custom_command(
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb -D IS_LINUX")
 else ()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -lldb")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
 endif ()
 
 #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --main-stacksize=223232")
@@ -34,7 +34,7 @@ endif ()
 set_property(SOURCE lib/scheduler/switch_context.S PROPERTY LANGUAGE C)
 
 
-find_package(Threads REQUIRED)
+find_package(Threads)
 add_executable(compiler_target
         out.o
         lib/scheduler/switch_context.S
