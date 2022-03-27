@@ -24,8 +24,9 @@ add_custom_command(
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb -D IS_LINUX")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0 -ggdb -D IS_LINUX -pthread")
 else ()
+    find_package(Threads)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
 endif ()
 
@@ -34,7 +35,7 @@ endif ()
 set_property(SOURCE lib/scheduler/switch_context.S PROPERTY LANGUAGE C)
 
 
-find_package(Threads)
+
 add_executable(compiler_target
         out.o
         lib/scheduler/switch_context.S
@@ -57,7 +58,10 @@ add_executable(compiler_target
         lib/default.c
         lib/root_lib.c)
 
-target_link_libraries (compiler_target ${CMAKE_THREAD_LIBS_INIT})
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+else ()
+    target_link_libraries (compiler_target ${CMAKE_THREAD_LIBS_INIT})
+endif ()
 
 #SRCS = $(shell find ./lib -type f -name "*.c")
 #HEAD = $(shell find ./include -type f -name "*.h")
