@@ -192,6 +192,23 @@ public class Translator {
                 .forEach(this::translateClassDefinition);
 
 
+        Map<Function, FunctionDefinitionNode> functionToStatement = program.getFunctions()
+                .stream()
+                .collect(Collectors.toMap(
+                        functionDefinitionNode -> {
+                            String name = functionDefinitionNode.getIdentifierNode().getName();
+
+                            if (program.getMainFunction().getIdentifierNode().getName()
+                                    .equals(functionDefinitionNode.getIdentifierNode().getName())) {
+                                name = "lang_main";
+                            }
+
+                            Function function = new Function(name);
+                            variables.put(name, function);
+                            return function;
+                        },
+                        java.util.function.Function.identity()));
+
         // array with pointer
 
         // array with primitive
@@ -225,23 +242,6 @@ public class Translator {
         globalVars.add(destructorsArray);
 
         translateCommonDestructorDefinition();
-
-        Map<Function, FunctionDefinitionNode> functionToStatement = program.getFunctions()
-                .stream()
-                .collect(Collectors.toMap(
-                        functionDefinitionNode -> {
-                            String name = functionDefinitionNode.getIdentifierNode().getName();
-
-                            if (program.getMainFunction().getIdentifierNode().getName()
-                                    .equals(functionDefinitionNode.getIdentifierNode().getName())) {
-                                name = "lang_main";
-                            }
-
-                            Function function = new Function(name);
-                            variables.put(name, function);
-                            return function;
-                        },
-                        java.util.function.Function.identity()));
 
 
         constructors = program.getConstructors()
@@ -848,6 +848,7 @@ public class Translator {
         BasicBlock entry = function.appendBlock("check_null_entry");
         createBranch(header, entry);
 
+
         Command loadObject = new Command(
                 createTempVariable(targetType),
                 LOAD,
@@ -859,6 +860,43 @@ public class Translator {
         BasicBlock destructBlock = function.appendBlock("end_function_destructor");
         createBranch(prev, destructBlock);
 
+
+        String internalDestructor = classStatementNode.getTranslationNode().getStatements()
+                .stream()
+                .filter(it -> it instanceof FunctionDefinitionNode)
+                .filter(it -> ((FunctionDefinitionNode) it).getIdentifierNode()
+                        .getName().endsWith("__internal_destruct"))
+                .map(it -> ((FunctionDefinitionNode) it).getIdentifierNode()
+                        .getName())
+                .findFirst()
+                .orElse(null);
+
+        if(internalDestructor != null) {
+            Value functionValue = variables.get(internalDestructor);
+
+            Command loadObjectt = new Command(
+                    createTempVariable(targetType),
+                    LOAD,
+                    List.of(thisValue)
+            );
+            function.getCurrentBlock().addCommand(loadObjectt);
+
+            Command castCommand = new Command(
+                    createTempVariable(new PointerType(commonStruct)),
+                    CAST,
+                    List.of(loadObjectt.getResult())
+            );
+            function.getCurrentBlock().addCommand(castCommand);
+
+            Command copyCall = new Command(
+                    null,
+                    CALL,
+                    List.of(addInc, castCommand.getResult())
+            );
+            function.getCurrentBlock().addCommand(copyCall);
+            Command commandt = new Command(null, CALL, List.of(functionValue, loadObjectt.getResult()));
+            function.getCurrentBlock().addCommand(commandt);
+        }
         StructType structType = classes.get(classStatementNode.getIdentifierNode().getName());
         for (VariableValue allocated : structType.getTypes()) {
             if (allocated.getType() instanceof PointerType && !(allocated.getType().getType() instanceof  FunctionType)) {

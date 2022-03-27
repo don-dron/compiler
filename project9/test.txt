@@ -6,13 +6,13 @@ import lang.lib
     while (i > 0)
         i--
         //println(concat("Test", toString(i))
-        //yield()
-        //yield()
-        //yield()
-        //yield()
-        //yield()
-        //yield()
-        //yield()
+        yield()
+        yield()
+        yield()
+        yield()
+        yield()
+        yield()
+        yield()
 
     return
 
@@ -21,15 +21,15 @@ import lang.lib
     int j  = 0
     println(concat("Test", toString(2))
 
-    //Thread[] threads = new Thread[64]
-    while j < 64
+    Thread[] threads = new Thread[32]
+    while j < 32
         Thread t = new Thread(runnable)
-        //threads[j] = t
+        threads[j] = t
         j++
-    //j = 0
-    //while j < 64
-    //    threads[j].join()
-    //    j++
+    j = 0
+    while j < 32
+        threads[j].join()
+        j++
 
 
     return 0

@@ -36,7 +36,7 @@ void __delete_fiber(long fib) {
 
 int main() {
     sched = (scheduler *) malloc(sizeof(scheduler));
-    new_scheduler(sched, 64);
+    new_scheduler(sched, 8);
     run_scheduler(sched);
 
     spawn(sched, lang_main, NULL);

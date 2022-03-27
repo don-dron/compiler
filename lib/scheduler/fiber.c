@@ -33,7 +33,7 @@ static void fiber_trampoline() {
     // Unlock after lock in run_task
 //    unlock_spinlock(&temp->lock);
 
-    temp->routine(temp->args);
+     temp->routine(temp->args);
 
     // Lock for swtich context, unlocked in run_task
 //    lock_spinlock(&temp->lock);

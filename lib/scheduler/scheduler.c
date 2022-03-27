@@ -123,7 +123,6 @@ void unpublish_fiber(scheduler *sched, fiber *fib) {
         cf->fib = fib;
         cf->core.next = NULL;
 
-        printf("FREE %d\n", cf->count);
         current = (struct fiber_h_node *) hash_map_insert(sched->pf, &cf->core);
 
         if (current != NULL) {
