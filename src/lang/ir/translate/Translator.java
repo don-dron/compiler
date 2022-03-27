@@ -171,6 +171,27 @@ public class Translator {
         return function;
     }
 
+    private Function getExchangeFunction() {
+        Function function = new Function("__exchange", true);
+        function.setParameterTypes(List.of(INT_64, INT_64));
+        function.setResultType(INT_64);
+        return function;
+    }
+
+    private Function getLoadFunction() {
+        Function function = new Function("__load", true);
+        function.setParameterTypes(List.of(INT_64));
+        function.setResultType(INT_64);
+        return function;
+    }
+
+    private Function getStoreFunction() {
+        Function function = new Function("__store", true);
+        function.setParameterTypes(List.of(INT_64, INT_64));
+        function.setResultType(VOID);
+        return function;
+    }
+
     public Module translate() {
         predefinedFunctions.add(getPutStringFunction());
         predefinedFunctions.add(getPutcharFunction());
@@ -183,6 +204,9 @@ public class Translator {
         predefinedFunctions.add(getYieldFunction());
         predefinedFunctions.add(getDeleteFiberFunction());
         predefinedFunctions.add(getCasFunction());
+        predefinedFunctions.add(getExchangeFunction());
+        predefinedFunctions.add(getLoadFunction());
+        predefinedFunctions.add(getStoreFunction());
 
 
         predefinedFunctions

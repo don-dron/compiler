@@ -853,7 +853,8 @@ public class SemanticAnalysis {
         analyseExpression(node, parentScope);
 
         expressionNode.setResultType(node.getResultType());
-        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE) &&
+                !node.getResultType().equals(GlobalBasicType.LONG_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }
     }
@@ -866,7 +867,8 @@ public class SemanticAnalysis {
         analyseExpression(node, parentScope);
 
         expressionNode.setResultType(node.getResultType());
-        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)) {
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)&&
+                !node.getResultType().equals(GlobalBasicType.LONG_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }
     }

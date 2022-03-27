@@ -37,6 +37,18 @@ int __cas(long addr, long exp, long next) {
     return __atomic_compare_exchange_n((long*)(addr+8), &exp, next, 0, __ATOMIC_SEQ_CST,  __ATOMIC_SEQ_CST);
 }
 
+long __exchange(long addr, long next) {
+    return __atomic_exchange_n((long*)(addr+8), next,  __ATOMIC_SEQ_CST);
+}
+
+long __load(long addr) {
+    return __atomic_load_n((long*)(addr+8),  __ATOMIC_SEQ_CST);
+}
+
+void __store(long addr, long next) {
+    __atomic_store_n((long*)(addr+8), next,  __ATOMIC_SEQ_CST);
+}
+
 
 int main() {
     sched = (scheduler *) malloc(sizeof(scheduler));

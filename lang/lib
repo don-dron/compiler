@@ -15,6 +15,12 @@
 
 (long addr, long exp, long next) int __cas
 
+(long addr, long next) long __exchange
+
+(long addr) long __load
+
+(long addr, long next) void __store
+
 /////////////////////////////////////////////////////////////
 
 () void yield ->
@@ -43,6 +49,15 @@ class AtomicLong
 
     (long exp, long next) int cas ->
         return __cas(<long>this, exp, next)
+
+    (long next) long exchange ->
+        return __exchange(<long>this, next)
+
+    () long load ->
+        return __load(<long>this)
+
+    (long next) void store ->
+        __store(<long>this, next)
 
 (String s) void println ->
     char[] bytes = null
