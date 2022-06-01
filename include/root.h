@@ -4,5 +4,5 @@
 
 //#define free(name) printf("free %s\n", #name)
 
-
-void lang_main();
+//
+//void lang_main();

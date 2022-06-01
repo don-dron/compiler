@@ -99,7 +99,7 @@ endif ()
 #./build/manager.o ./build/root_lib.o ./build/lf_stack.o ./build/list.o ./build/fibonacci_heap.o ./build/rb_tree.o \
 #./build/hash_map.o ./build/thin_heap.o ./build/splay_tree.o && \
 #llc -filetype=obj --relocation-model=pic out.ll && \
-#gcc -g out.o lib.a -lpthread -D IS_LINUX -o program
+#gcc -g out.o lib.a -lpthread  -o program
 #
 #run:
 #./program

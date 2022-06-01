@@ -103,9 +103,9 @@ void setup_trampoline(fiber *new_fiber) {
 //            /*fd=*/-1, /*offset=*/0);
 
     //int ret =
-    mprotect(/*addr=*/(void *) ((size_t) start + pages_to_bytes(4)),
-            /*len=*/pages_to_bytes(4),
-            /*prot=*/PROT_NONE);
+//    mprotect(/*addr=*/(void *) ((size_t) start + pages_to_bytes(4)),
+//            /*len=*/pages_to_bytes(4),
+//            /*prot=*/PROT_NONE);
 
     stack_builder stackBuilder;
     // Set top stack address

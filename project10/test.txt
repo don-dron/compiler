@@ -1,13 +1,32 @@
 import lang.lib
 
-int a
+() void runnable ->
+    int i = 0
 
-() void tttt ->
-    println(toString(a))
+    while i < 1000
+        yield()
+        println("Hello world")
+
+        i++
+    return
+
 
 () int main ->
-    a = 13213
-    tttt()
+    int i = 0
+    int j  = 0
+
+    Thread[] threads = new Thread[16]
+
+    j = 0
+    while j < 16
+        Thread t = new Thread(runnable)
+        threads[j] = t
+        j++
+    j = 0
+    while j < 16
+        threads[j].join()
+        j++
+    i++
 
     return 0
 

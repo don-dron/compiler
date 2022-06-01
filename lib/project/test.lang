@@ -1,0 +1,105 @@
+import lang.lib
+
+Stack global
+Spinlock spinlock
+
+AtomicLong pushCount
+AtomicLong popCount
+
+class Node
+    Node next
+    int value
+
+    (int v) ->
+        this.next = null
+        this.value = v
+
+class Stack
+    Node first
+
+    () ->
+        this.first = null
+
+    (Node n) void push ->
+        n.next = this.first
+        this.first = n
+
+    () Node pop ->
+        Node res = this.first.next
+        this.first = this.first.next
+        return res
+
+
+class Spinlock
+    AtomicLong shared
+
+    () ->
+        this.shared = new AtomicLong()
+
+    () void lock ->
+        while this.shared.exchange(1L) != 0L
+            sleep(10)
+
+
+    () void unlock ->
+        this.shared.store(0L)
+
+
+() void runnable ->
+    int i = 0
+
+    while i < 100
+        Node next = new Node(i)
+        spinlock.lock()
+        pushCount.value = pushCount.value + 1
+        global.push(next)
+        spinlock.unlock()
+
+        i++
+
+    i = 0
+
+    while i < 100
+        spinlock.lock()
+        Node n = global.pop()
+        if n != null
+            popCount.value = popCount.value + 1
+        spinlock.unlock()
+        i++
+
+    return
+
+
+() int main ->
+    global = new Stack()
+    pushCount = new AtomicLong()
+    popCount = new AtomicLong()
+
+    spinlock = new Spinlock()
+    spinlock.lock()
+    spinlock.unlock()
+
+    int i = 0
+    int j  = 0
+
+    Thread[] threads = new Thread[16]
+
+    pushCount.value = 0L
+    popCount.value = 0L
+
+    j = 0
+    while j < 16
+        Thread t = new Thread(runnable)
+        threads[j] = t
+        j++
+    j = 0
+    while j < 16
+        threads[j].join()
+        j++
+    i++
+
+    println(toString(<int>pushCount.value))
+    println(toString(<int>popCount.value))
+
+    return 0
+

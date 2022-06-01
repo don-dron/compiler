@@ -48,10 +48,10 @@ class Spinlock
 () void runnable ->
     int i = 0
 
-    while i < 1000
+    while i < 100
         Node next = new Node(i)
-        pushCount.value = pushCount.value + 1
         spinlock.lock()
+        pushCount.value = pushCount.value + 1
         global.push(next)
         spinlock.unlock()
 
@@ -59,10 +59,11 @@ class Spinlock
 
     i = 0
 
-    while i < 1000
-        popCount.value = popCount.value + 1
+    while i < 100
         spinlock.lock()
         Node n = global.pop()
+        if n != null
+            popCount.value = popCount.value + 1
         spinlock.unlock()
         i++
 
@@ -85,20 +86,6 @@ class Spinlock
 
     pushCount.value = 0L
     popCount.value = 0L
-
-    j = 0
-    while j < 16
-        Thread t = new Thread(runnable)
-        threads[j] = t
-        j++
-    j = 0
-    while j < 16
-        threads[j].join()
-        j++
-    i++
-
-    println(toString(<int>pushCount.value))
-    println(toString(<int>popCount.value))
 
     j = 0
     while j < 16

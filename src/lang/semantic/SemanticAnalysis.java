@@ -1,19 +1,71 @@
 package lang.semantic;
 
-import lang.ast.*;
-import lang.ast.expression.*;
-import lang.ast.expression.binary.*;
-import lang.ast.expression.consts.*;
-import lang.ast.expression.unary.postfix.*;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import lang.ast.ArrayTypeNode;
+import lang.ast.AstNode;
+import lang.ast.BasicTypeNode;
+import lang.ast.FileNode;
+import lang.ast.FunctionNode;
+import lang.ast.GlobalBasicType;
+import lang.ast.ImportNode;
+import lang.ast.ObjectTypeNode;
+import lang.ast.ParameterNode;
+import lang.ast.Program;
+import lang.ast.TypeNode;
+import lang.ast.expression.ArrayConstructorExpressionNode;
+import lang.ast.expression.ConditionalExpressionNode;
+import lang.ast.expression.ExpressionNode;
+import lang.ast.expression.ObjectConstructorExpressionNode;
+import lang.ast.expression.ThisExpressionNode;
+import lang.ast.expression.VariableExpressionNode;
+import lang.ast.expression.binary.AdditiveExpressionNode;
+import lang.ast.expression.binary.AssigmentExpressionNode;
+import lang.ast.expression.binary.EqualityExpressionNode;
+import lang.ast.expression.binary.LogicalAndExpressionNode;
+import lang.ast.expression.binary.LogicalOrExpressionNode;
+import lang.ast.expression.binary.MultiplicativeExpressionNode;
+import lang.ast.expression.binary.RelationalExpressionNode;
+import lang.ast.expression.consts.BoolConstantExpressionNode;
+import lang.ast.expression.consts.CharConstantExpressionNode;
+import lang.ast.expression.consts.FloatConstantExpressionNode;
+import lang.ast.expression.consts.IntConstantExpressionNode;
+import lang.ast.expression.consts.LongConstantExpressionNode;
+import lang.ast.expression.consts.NullConstantExpressionNode;
+import lang.ast.expression.consts.StringConstantExpressionNode;
+import lang.ast.expression.unary.postfix.ArrayAccessExpressionNode;
+import lang.ast.expression.unary.postfix.FieldAccessExpressionNode;
+import lang.ast.expression.unary.postfix.FunctionCallExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixDecrementSubtractionExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixIncrementAdditiveExpressionNode;
+import lang.ast.expression.unary.postfix.PostfixIncrementMultiplicativeExpressionNode;
 import lang.ast.expression.unary.prefix.CastExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixDecrementSubtractionExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementAdditiveExpressionNode;
 import lang.ast.expression.unary.prefix.PrefixIncrementMultiplicativeExpressionNode;
-import lang.ast.statement.*;
-
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
+import lang.ast.statement.BreakStatementNode;
+import lang.ast.statement.ClassStatementNode;
+import lang.ast.statement.CompoundStatementNode;
+import lang.ast.statement.ConstructorDefinitionNode;
+import lang.ast.statement.ContinueStatementNode;
+import lang.ast.statement.DeclarationStatementNode;
+import lang.ast.statement.ElifStatementNode;
+import lang.ast.statement.ElseStatementNode;
+import lang.ast.statement.EmptyStatementNode;
+import lang.ast.statement.ExpressionStatementNode;
+import lang.ast.statement.FunctionDefinitionNode;
+import lang.ast.statement.IfElseStatementNode;
+import lang.ast.statement.IfStatementNode;
+import lang.ast.statement.InterfaceStatementNode;
+import lang.ast.statement.ReturnStatementNode;
+import lang.ast.statement.StatementNode;
+import lang.ast.statement.WhileStatementNode;
 
 import static lang.ast.GlobalBasicType.REF_TYPE;
 
@@ -117,10 +169,13 @@ public class SemanticAnalysis {
         Collections.reverse(path);
         String absolutePath = Paths.get(rootPath, path.toArray(String[]::new)).toString();
 
+        System.out.println("Touched files: " + fileNodes.stream()
+                .map(FileNode::getPath)
+                .collect(Collectors.joining("\n")));
         return fileNodes.stream()
                 .filter(f -> f.getPath().endsWith(String.join("/", path)))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find file"));
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find file " + path));
     }
 
     private int compareNode(AstNode n1, AstNode n2) {
@@ -671,7 +726,7 @@ public class SemanticAnalysis {
             analyseBoolConstantExpression((BoolConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof IntConstantExpressionNode) {
             analyseIntConstantExpression((IntConstantExpressionNode) expressionNode);
-        }else if (expressionNode instanceof LongConstantExpressionNode) {
+        } else if (expressionNode instanceof LongConstantExpressionNode) {
             analyseLongConstantExpression((LongConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof CharConstantExpressionNode) {
             analyseCharConstantExpression((CharConstantExpressionNode) expressionNode);
@@ -793,7 +848,8 @@ public class SemanticAnalysis {
         castExpressionNode.setResultType(castExpressionNode.getTypeNode());
     }
 
-    private void analysePrefixMultiplicative(PrefixIncrementMultiplicativeExpressionNode expressionNode, Scope parentScope) {
+    private void analysePrefixMultiplicative(PrefixIncrementMultiplicativeExpressionNode expressionNode,
+                                             Scope parentScope) {
         PrefixIncrementMultiplicativeExpressionNode prefixIncrementMultiplicativeExpressionNode =
                 expressionNode;
 
@@ -832,7 +888,8 @@ public class SemanticAnalysis {
         }
     }
 
-    private void analysePostfixMultiplicative(PostfixIncrementMultiplicativeExpressionNode expressionNode, Scope parentScope) {
+    private void analysePostfixMultiplicative(PostfixIncrementMultiplicativeExpressionNode expressionNode,
+                                              Scope parentScope) {
         PostfixIncrementMultiplicativeExpressionNode postfixIncrementMultiplicativeExpressionNode =
                 expressionNode;
 
@@ -845,7 +902,8 @@ public class SemanticAnalysis {
         }
     }
 
-    private void analysePostfixIncrementExpression(PostfixIncrementAdditiveExpressionNode expressionNode, Scope parentScope) {
+    private void analysePostfixIncrementExpression(PostfixIncrementAdditiveExpressionNode expressionNode,
+                                                   Scope parentScope) {
         PostfixIncrementAdditiveExpressionNode postfixIncrementAdditiveExpressionNode =
                 expressionNode;
 
@@ -859,7 +917,8 @@ public class SemanticAnalysis {
         }
     }
 
-    private void analysePostfixDecrementExpression(PostfixDecrementSubtractionExpressionNode expressionNode, Scope parentScope) {
+    private void analysePostfixDecrementExpression(PostfixDecrementSubtractionExpressionNode expressionNode,
+                                                   Scope parentScope) {
         PostfixDecrementSubtractionExpressionNode postfixDecrementSubtractionExpressionNode =
                 expressionNode;
 
@@ -867,7 +926,7 @@ public class SemanticAnalysis {
         analyseExpression(node, parentScope);
 
         expressionNode.setResultType(node.getResultType());
-        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE)&&
+        if (!node.getResultType().equals(GlobalBasicType.INT_TYPE) &&
                 !node.getResultType().equals(GlobalBasicType.LONG_TYPE)) {
             throw new IllegalArgumentException("Wrong types " + node.toString());
         }
@@ -1244,7 +1303,8 @@ public class SemanticAnalysis {
         }
     }
 
-    private TypeNode defineBinaryOperationType(ExpressionNode expressionNode, ExpressionNode left, ExpressionNode right) {
+    private TypeNode defineBinaryOperationType(ExpressionNode expressionNode, ExpressionNode left,
+                                               ExpressionNode right) {
         BasicTypeNode leftType = (BasicTypeNode) left.getResultType();
         BasicTypeNode rightType = (BasicTypeNode) right.getResultType();
 

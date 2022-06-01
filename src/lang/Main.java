@@ -73,7 +73,7 @@ public class Main {
         File root = new File(cmd.getOptionValue(INPUT));
 
         List<File> raws = getFiles(root);
-        raws.add(new File("./lang/lib"));
+        raws.add(new File("lang/lang/lib"));
 
         for (File childFile : raws) {
             Reader reader = new FileReader(childFile);
@@ -89,7 +89,7 @@ public class Main {
         }
 
         SemanticAnalysis semanticAnalysis = new SemanticAnalysis(
-                root.getAbsolutePath(),
+                root.getPath(),
                 files);
 
         Translator translator = new Translator(semanticAnalysis.analyse());
@@ -160,7 +160,8 @@ public class Main {
         List<File> files = new ArrayList<>();
 
         if (!root.isDirectory()) {
-            return List.of(root);
+            files.add(root);
+            return files;
         } else {
             for (File file : Stream.ofNullable(root.listFiles())
                     .flatMap(Stream::of)
