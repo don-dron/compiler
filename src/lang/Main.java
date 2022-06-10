@@ -73,7 +73,7 @@ public class Main {
         File root = new File(cmd.getOptionValue(INPUT));
 
         List<File> raws = getFiles(root);
-        raws.add(new File("lang/lang/lib"));
+        raws.add(new File("lang/lib"));
 
         for (File childFile : raws) {
             Reader reader = new FileReader(childFile);

@@ -4,6 +4,8 @@
 # Log file
 *.log
 
+lang
+*.dSYM
 # BlueJ files
 *.ctxt
 
