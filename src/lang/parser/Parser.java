@@ -31,6 +31,7 @@ public class Parser {
         this.path = path;
         this.pack = pack;
 
+
         while (true) {
             Token token = lexer.nextToken();
 
@@ -141,6 +142,7 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.INTERFACE) {
             return parseInterfaceStatement();
         } else if (first.getTokenType() == Token.TokenType.INT
+                || first.getTokenType() == Token.TokenType.LONG
                 || first.getTokenType() == Token.TokenType.FLOAT
                 || first.getTokenType() == CHAR
                 || first.getTokenType() == Token.TokenType.L_PAREN) {
@@ -187,6 +189,7 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.CONTINUE) {
             return parseContinueStatement();
         } else if (first.getTokenType() == Token.TokenType.INT
+                || first.getTokenType() == Token.TokenType.LONG
                 || first.getTokenType() == Token.TokenType.FLOAT
                 || first.getTokenType() == CHAR
                 || first.getTokenType() == Token.TokenType.L_PAREN) {
@@ -597,6 +600,9 @@ public class Parser {
             case CHAR:
                 typeNode = new BasicTypeNode(TypeNode.Type.CHAR, type);
                 break;
+            case LONG:
+                typeNode = new BasicTypeNode(TypeNode.Type.LONG, type);
+                break;
             default:
                 typeNode = null;
         }
@@ -954,7 +960,10 @@ public class Parser {
         } else if (first.getTokenType() == Token.TokenType.INT_CONSTANT) {
             next();
             return new IntConstantExpressionNode(Integer.parseInt(first.getContent()));
-        } else if (first.getTokenType() == STRING_CONSTANT) {
+        } else if (first.getTokenType() == Token.TokenType.LONG_CONSTANT) {
+            next();
+            return new LongConstantExpressionNode(Long.parseLong(first.getContent().substring(0, first.getContent().length()-1)));
+        }else if (first.getTokenType() == STRING_CONSTANT) {
             next();
             return new StringConstantExpressionNode(first.getContent().substring(1, first.getContent().length() - 1));
         } else if (first.getTokenType() == Token.TokenType.NULL) {
@@ -981,6 +990,7 @@ public class Parser {
                 token = peek();
                 if (token.getTokenType() == IDENTIFIER
                         || token.getTokenType() == INT
+                        || token.getTokenType() == Token.TokenType.LONG
                         || token.getTokenType() == FLOAT
                         || token.getTokenType() == CHAR) {
                     if (token.getTokenType() == IDENTIFIER) {

@@ -15,6 +15,7 @@ import lang.ir.*;
 
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -128,12 +129,85 @@ public class Translator {
         return function;
     }
 
+    private Function getYieldFunction() {
+        Function function = new Function("__yield", true);
+        function.setParameterTypes(List.of());
+        function.setResultType(VOID);
+        return function;
+    }
+
+    private Function getSleepFunction() {
+        Function function = new Function("__sleep", true);
+        function.setParameterTypes(List.of(INT_32));
+        function.setResultType(VOID);
+        return function;
+    }
+
+    private Function getJoinFunction() {
+        Function function = new Function("__join", true);
+        function.setParameterTypes(List.of(INT_64));
+        function.setResultType(VOID);
+        return function;
+    }
+
+    private Function getCreateFiberFunction() {
+        Function function = new Function("__create_fiber", true);
+        function.setParameterTypes(List.of(new PointerType(new FunctionType(VOID, List.of(VOID)))));
+        function.setResultType(INT_64);
+        return function;
+    }
+
+    private Function getDeleteFiberFunction() {
+        Function function = new Function("__delete_fiber", true);
+        function.setParameterTypes(List.of(INT_64));
+        function.setResultType(VOID);
+        return function;
+    }
+
+    private Function getCasFunction() {
+        Function function = new Function("__cas", true);
+        function.setParameterTypes(List.of(INT_64, INT_64, INT_64));
+        function.setResultType(INT_32);
+        return function;
+    }
+
+    private Function getExchangeFunction() {
+        Function function = new Function("__exchange", true);
+        function.setParameterTypes(List.of(INT_64, INT_64));
+        function.setResultType(INT_64);
+        return function;
+    }
+
+    private Function getLoadFunction() {
+        Function function = new Function("__load", true);
+        function.setParameterTypes(List.of(INT_64));
+        function.setResultType(INT_64);
+        return function;
+    }
+
+    private Function getStoreFunction() {
+        Function function = new Function("__store", true);
+        function.setParameterTypes(List.of(INT_64, INT_64));
+        function.setResultType(VOID);
+        return function;
+    }
+
     public Module translate() {
         predefinedFunctions.add(getPutStringFunction());
         predefinedFunctions.add(getPutcharFunction());
         predefinedFunctions.add(getGetcharFunction());
         predefinedFunctions.add(getMallocFunction());
         predefinedFunctions.add(getFreeFunction());
+        predefinedFunctions.add(getJoinFunction());
+        predefinedFunctions.add(getCreateFiberFunction());
+        predefinedFunctions.add(getSleepFunction());
+        predefinedFunctions.add(getYieldFunction());
+        predefinedFunctions.add(getDeleteFiberFunction());
+        predefinedFunctions.add(getCasFunction());
+        predefinedFunctions.add(getExchangeFunction());
+        predefinedFunctions.add(getLoadFunction());
+        predefinedFunctions.add(getStoreFunction());
+
 
         predefinedFunctions
                 .forEach(f -> {
@@ -151,6 +225,34 @@ public class Translator {
         program.getClasses()
                 .forEach(this::translateClassDefinition);
 
+        program.getGlobalVariables()
+                .forEach(declarationStatementNode -> {
+                    GlobalVariableValue globalVariableValue = new GlobalVariableValue(
+                            declarationStatementNode.getIdentifierNode().getName(),
+                            matchType(declarationStatementNode.getTypeNode()),
+                            getDefaultValue(matchType(declarationStatementNode.getTypeNode()))
+                    );
+                    variables.put(declarationStatementNode.getIdentifierNode().getName(), globalVariableValue);
+                    globalVars.add(globalVariableValue);
+                });
+
+
+        Map<Function, FunctionDefinitionNode> functionToStatement = program.getFunctions()
+                .stream()
+                .collect(Collectors.toMap(
+                        functionDefinitionNode -> {
+                            String name = functionDefinitionNode.getIdentifierNode().getName();
+
+                            if (program.getMainFunction().getIdentifierNode().getName()
+                                    .equals(functionDefinitionNode.getIdentifierNode().getName())) {
+                                name = "lang_main";
+                            }
+
+                            Function function = new Function(name);
+                            variables.put(name, function);
+                            return function;
+                        },
+                        java.util.function.Function.identity()));
 
         // array with pointer
 
@@ -185,23 +287,6 @@ public class Translator {
         globalVars.add(destructorsArray);
 
         translateCommonDestructorDefinition();
-
-        Map<Function, FunctionDefinitionNode> functionToStatement = program.getFunctions()
-                .stream()
-                .collect(Collectors.toMap(
-                        functionDefinitionNode -> {
-                            String name = functionDefinitionNode.getIdentifierNode().getName();
-
-                            if (program.getMainFunction().getIdentifierNode().getName()
-                                    .equals(functionDefinitionNode.getIdentifierNode().getName())) {
-                                name = "main";
-                            }
-
-                            Function function = new Function(name);
-                            variables.put(name, function);
-                            return function;
-                        },
-                        java.util.function.Function.identity()));
 
 
         constructors = program.getConstructors()
@@ -808,6 +893,7 @@ public class Translator {
         BasicBlock entry = function.appendBlock("check_null_entry");
         createBranch(header, entry);
 
+
         Command loadObject = new Command(
                 createTempVariable(targetType),
                 LOAD,
@@ -819,9 +905,40 @@ public class Translator {
         BasicBlock destructBlock = function.appendBlock("end_function_destructor");
         createBranch(prev, destructBlock);
 
+
+        String internalDestructor = classStatementNode.getTranslationNode().getStatements()
+                .stream()
+                .filter(it -> it instanceof FunctionDefinitionNode)
+                .filter(it -> ((FunctionDefinitionNode) it).getIdentifierNode()
+                        .getName().endsWith("__internal_destruct"))
+                .map(it -> ((FunctionDefinitionNode) it).getIdentifierNode()
+                        .getName())
+                .findFirst()
+                .orElse(null);
+
+        if (internalDestructor != null) {
+            Value functionValue = variables.get(internalDestructor);
+
+            Command loadObjectt = new Command(
+                    createTempVariable(targetType),
+                    LOAD,
+                    List.of(thisValue)
+            );
+            function.getCurrentBlock().addCommand(loadObjectt);
+
+            Command castCommand = new Command(
+                    createTempVariable(new PointerType(commonStruct)),
+                    CAST,
+                    List.of(loadObjectt.getResult())
+            );
+            function.getCurrentBlock().addCommand(castCommand);
+
+            Command commandt = new Command(null, CALL, List.of(functionValue, loadObjectt.getResult()));
+            function.getCurrentBlock().addCommand(commandt);
+        }
         StructType structType = classes.get(classStatementNode.getIdentifierNode().getName());
         for (VariableValue allocated : structType.getTypes()) {
-            if (allocated.getType() instanceof PointerType) {
+            if (allocated.getType() instanceof PointerType && !(allocated.getType().getType() instanceof FunctionType)) {
                 PointerType pointerType = (PointerType) allocated.getType();
 
                 BasicBlock last = function.getCurrentBlock();
@@ -864,10 +981,20 @@ public class Translator {
         function.getCurrentBlock().addCommand(freeCommand);
 
         createBranch(function.getCurrentBlock(), returnBlock);
-
         TEMP_VARIABLE_COUNT = 0;
     }
 
+    private Value getDefaultValue(Type type) {
+        if (type == INT_1 || type == INT_8) {
+            return new CharValue((char) 0);
+        } else if (type == INT_32) {
+            return new IntValue(0);
+        } else if (type == INT_64) {
+            return new LongValue(0L);
+        } else {
+            return new NullValue(type);
+        }
+    }
 
     private Function translateFunction(Function function, FunctionDefinitionNode functionDefinitionNode) {
         BasicBlock header = function.appendBlock("header");
@@ -1031,7 +1158,7 @@ public class Translator {
                         Command writeCommand = new Command(
                                 fieldAccess.getResult(),
                                 STORE,
-                                List.of(fieldAccess.getResult().getType() == INT_8 ? new CharValue((char) 0) : new IntValue(0))
+                                List.of(getDefaultValue(fieldAccess.getResult().getType()))
                         );
                         function.getCurrentBlock().addCommand(writeCommand);
                     }
@@ -1107,7 +1234,8 @@ public class Translator {
 
     private void addDestructorsList(Function function, List<VariableValue> destructors) {
         for (VariableValue allocated : destructors) {
-            if (allocated.getType() instanceof PointerType) {
+            if (allocated.getType() instanceof PointerType
+            && !(allocated.getType().getType() instanceof  FunctionType)) {
                 Command forDelete = new Command(
                         createTempVariable(allocated.getType()),
                         LOAD,
@@ -1243,6 +1371,8 @@ public class Translator {
             return translateBoolConstantExpression(function, (BoolConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof IntConstantExpressionNode) {
             return translateIntConstantExpression(function, (IntConstantExpressionNode) expressionNode);
+        } else if (expressionNode instanceof LongConstantExpressionNode) {
+            return translateLongConstantExpression(function, (LongConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof CharConstantExpressionNode) {
             return translateCharConstantExpression(function, (CharConstantExpressionNode) expressionNode);
         } else if (expressionNode instanceof StringConstantExpressionNode) {
@@ -1308,7 +1438,8 @@ public class Translator {
                         .map(exp -> {
                             Value v = translateExpression(function, exp);
 
-                            if (v.getType() instanceof PointerType) {
+                            if (v.getType() instanceof PointerType &&
+                                    !(v.getType().getType() instanceof FunctionType)) {
                                 Command castCommand = new Command(
                                         createTempVariable(new PointerType(commonStruct)),
                                         CAST,
@@ -1606,7 +1737,6 @@ public class Translator {
 
         BasicBlock nextBody = function.appendBlock("check_temp_body");
         addDestructorCall(function, (PointerType) fieldAccess.getType(), castToCommonStruct.getResult());
-
         BasicBlock ifMerge = function.appendBlock("check_temp_merge");
 
         createBranch(nextBody, ifMerge);
@@ -1729,6 +1859,10 @@ public class Translator {
 
 
     private void addDestructorCall(Function function, PointerType pointerType, Value value) {
+        if (function.getName().endsWith("__internal_destruct")) {
+            return;
+        }
+
         Command castTo32 = new Command(
                 createTempVariable(new PointerType(INT_32)),
                 CAST,
@@ -1776,7 +1910,8 @@ public class Translator {
             BasicBlock current = function.getCurrentBlock();
             current.addCommand(new Command(variableValue, STORE, List.of(value)));
 
-            if (variableValue.getType() instanceof PointerType) {
+            if (variableValue.getType() instanceof PointerType
+                    && !(variableValue.getType().getType() instanceof FunctionType)) {
                 Command castToCommon = new Command(
                         createTempVariable(new PointerType(commonStruct)),
                         CAST,
@@ -1841,6 +1976,15 @@ public class Translator {
 
                 return new PointerType(structType);
             }
+        } else if (typeNode instanceof FunctionNode) {
+            FunctionNode functionNode = (FunctionNode) typeNode;
+            return new PointerType(new FunctionType(matchType(functionNode.getTypeNode()),
+                    functionNode.getParametersNode()
+                            .getParameters()
+                            .stream()
+                            .map(ParameterNode::getTypeNode)
+                            .map(this::matchType)
+                            .collect(Collectors.toList())));
         } else {
             throw new IllegalArgumentException("");
         }
@@ -1909,6 +2053,16 @@ public class Translator {
     private Value translateCastExpression(Function function, CastExpressionNode expressionNode) {
         Type type = matchType(expressionNode.getTypeNode());
         Value value = translateExpression(function, expressionNode.getExpressionNode());
+
+        if(value.getType() instanceof PointerType && !(type instanceof PointerType)) {
+            Command command = new Command(createTempVariable(type), PTRTOINT, List.of(value));
+            function.getCurrentBlock().addCommand(command);
+            return command.getResult();
+        }else if(!(value.getType() instanceof PointerType) && type instanceof PointerType) {
+            Command command = new Command(createTempVariable(type), INTTOPTR, List.of(value));
+            function.getCurrentBlock().addCommand(command);
+            return command.getResult();
+        }
 
         if (value.getType().getSize() < type.getSize()) {
             Command command = new Command(createTempVariable(type), SEXT, List.of(value));
@@ -2259,7 +2413,8 @@ public class Translator {
                             .map(exp -> {
                                 Value v = translateExpression(function, exp);
 
-                                if (v.getType() instanceof PointerType) {
+                                if (v.getType() instanceof PointerType
+                                        && !(v.getType().getType() instanceof FunctionType)) {
                                     Command castCommand = new Command(
                                             createTempVariable(new PointerType(commonStruct)),
                                             CAST,
@@ -2302,7 +2457,8 @@ public class Translator {
                             .map(exp -> {
                                 Value v = translateExpression(function, exp);
 
-                                if (v.getType() instanceof PointerType) {
+                                if (v.getType() instanceof PointerType
+                                        && !(v.getType().getType() instanceof FunctionType)) {
                                     Command castCommand = new Command(
                                             createTempVariable(new PointerType(commonStruct)),
                                             CAST,
@@ -2698,6 +2854,10 @@ public class Translator {
         return new CharValue(expressionNode.getValue());
     }
 
+    private Value translateLongConstantExpression(Function function, LongConstantExpressionNode expressionNode) {
+        return new LongValue(expressionNode.getValue());
+    }
+
     private Value translateIntConstantExpression(Function function, IntConstantExpressionNode expressionNode) {
         return new IntValue(expressionNode.getValue());
     }
@@ -2780,7 +2940,7 @@ public class Translator {
         Command storeSize = new Command(
                 structSize.getResult(),
                 STORE,
-                List.of(new IntValue(value.getType().getSize())));
+                List.of(new IntValue(expressionNode.getValue().length())));
         function.getCurrentBlock().addCommand(storeSize);
 
         Command structType = new Command(
@@ -2827,8 +2987,12 @@ public class Translator {
         }
 
         if (value instanceof Function) {
+
             return value;
         } else {
+            if(value == null) {
+                int a =1;
+            }
             Command command = new Command(createTempVariable(matchType(
                     expressionNode.getResultType())),
                     LOAD,
@@ -3017,7 +3181,8 @@ public class Translator {
         BasicBlock current = function.getCurrentBlock();
         current.addCommand(command);
 
-        if (mt instanceof PointerType) {
+        if (mt instanceof PointerType &&
+                !(mt.getType().getType() instanceof FunctionType)) {
             PointerType pointerType = (PointerType) mt;
 
             Value fieldAccess = translateLeftValue(function, expressionNode.getLeft());
@@ -3045,7 +3210,7 @@ public class Translator {
             function.getCurrentBlock().addCommand(copyCall);
         }
 
-        if (mt instanceof PointerType) {
+        if (mt instanceof PointerType && !(mt.getType() instanceof FunctionType)) {
             addDestructorCall(function, (PointerType) saveLeft.getType(), saveLeft);
         }
 

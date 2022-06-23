@@ -9,6 +9,7 @@ import lang.opt.Optimizer;
 import lang.parser.Parser;
 import lang.semantic.SemanticAnalysis;
 import org.apache.commons.cli.*;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -71,7 +72,10 @@ public class Main {
         List<FileNode> files = new ArrayList<>();
         File root = new File(cmd.getOptionValue(INPUT));
 
-        for (File childFile : getFiles(root)) {
+        List<File> raws = getFiles(root);
+        raws.add(new File("lang/lib"));
+
+        for (File childFile : raws) {
             Reader reader = new FileReader(childFile);
             Lexer lexer = new Lexer(reader);
 
@@ -85,7 +89,7 @@ public class Main {
         }
 
         SemanticAnalysis semanticAnalysis = new SemanticAnalysis(
-                root.getAbsolutePath(),
+                root.getPath(),
                 files);
 
         Translator translator = new Translator(semanticAnalysis.analyse());
@@ -128,18 +132,20 @@ public class Main {
         FileWriter fileWriter = new FileWriter(llFile);
         fileWriter.write(dump);
         fileWriter.flush();
-
-        runLLVM(llFile);
-        runClang(binaryFile, executableFile);
-
-        if (!cmd.hasOption(MODE)
-                || cmd.getOptionValue(MODE) == null
-                || cmd.getOptionValue(MODE).equals("buildAndRun")) {
-            runProgram(executableFile);
-        } else if (cmd.hasOption(MODE) &&
-                Optional.ofNullable(cmd.getOptionValue(MODE)).orElse("buildAndRun").equals("valgrindDebug")) {
-            runWithValgrind(executableFile);
-        }
+//
+//         buildLibrary();
+//
+//         runLLVM(llFile);
+//         runClang(binaryFile, executableFile);
+//
+//         if (!cmd.hasOption(MODE)
+//                 || cmd.getOptionValue(MODE) == null
+//                 || cmd.getOptionValue(MODE).equals("buildAndRun")) {
+//             runProgram(executableFile);
+//         } else if (cmd.hasOption(MODE) &&
+//                 Optional.ofNullable(cmd.getOptionValue(MODE)).orElse("buildAndRun").equals("valgrindDebug")) {
+//             runWithValgrind(executableFile);
+//         }
     }
 
     private static void createAndWrite(String path, String content) throws IOException {
@@ -154,7 +160,8 @@ public class Main {
         List<File> files = new ArrayList<>();
 
         if (!root.isDirectory()) {
-            return List.of(root);
+            files.add(root);
+            return files;
         } else {
             for (File file : Stream.ofNullable(root.listFiles())
                     .flatMap(Stream::of)
@@ -165,18 +172,64 @@ public class Main {
         return files;
     }
 
+    private static void buildLibrary() throws IOException, InterruptedException {
+
+        if (new File("./build").exists()) {
+            ProcessBuilder deleteBuilder = new ProcessBuilder("rm", "-rf", "build");
+            runProcess(deleteBuilder);
+        }
+
+        ProcessBuilder mkdirBuilder = new ProcessBuilder("mkdir", "build");
+        runProcess(mkdirBuilder);
+        List<File> sources =
+                getFiles(new File("./lib"));
+        List<String> outputs = new ArrayList<>();
+        for (File file : sources) {
+            String output = "./build/" + file.getName().replaceAll("\\.c|\\.S", ".o");
+            outputs.add(output);
+            String[] params =
+                    Stream.of(
+                                    "gcc",
+                                    "-O3",
+                                    "-c",
+                                    "-pthread",
+                                    "-Wall",
+                                    "-I",
+                                    "./include",
+                                    SystemUtils.IS_OS_LINUX ? "-D IS_LINUX" : "",
+                                    "-o",
+                                    output,
+                                    file.getPath())
+                            .toArray(String[]::new);
+            ProcessBuilder procBuilder = new ProcessBuilder(params);
+            runProcess(procBuilder);
+        }
+
+        String[] llvmParams = Stream.concat(Stream.of(
+                        "ar",
+                        "rcs",
+                        "lib.a"),
+                outputs.stream()).toArray(String[]::new);
+        ProcessBuilder llvmProcBuilder = new ProcessBuilder(llvmParams);
+        runProcess(llvmProcBuilder);
+    }
+
     private static void runGraphViz(File file) throws IOException, InterruptedException {
         ProcessBuilder procBuilder = new ProcessBuilder("dot", "-Tpng", file.getName(), "-o", "IRGraph.png");
         runProcess(procBuilder);
     }
 
     private static void runClang(File bf, File prog) throws IOException, InterruptedException {
-        ProcessBuilder procBuilder = new ProcessBuilder("clang", bf.getName(), "-o", prog.getName());
+        ProcessBuilder procBuilder = new ProcessBuilder("gcc",
+                bf.getName(), "lib.a",
+                SystemUtils.IS_OS_LINUX ? "-lpthread" : "",
+                SystemUtils.IS_OS_LINUX ? "-D IS_LINUX" : "",
+                "-o", prog.getName());
         runProcess(procBuilder);
     }
 
     private static void runLLVM(File file) throws IOException, InterruptedException {
-        ProcessBuilder procBuilder = new ProcessBuilder("llc", "-filetype=obj", file.getName());
+        ProcessBuilder procBuilder = new ProcessBuilder("llc", "-filetype=obj", "--relocation-model=pic",file.getName());
         runProcess(procBuilder);
     }
 

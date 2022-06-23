@@ -4,6 +4,8 @@
 # Log file
 *.log
 
+lang
+*.dSYM
 # BlueJ files
 *.ctxt
 
@@ -26,3 +28,15 @@ hs_err_pid*
 /.idea
 *.ll
 *.o
+build
+lib.a
+out.ll
+out.o
+program
+cmake-build-debug
+cmake_install.cmake
+CMakeCache.txt
+compiler_target
+CMakeFiles
+lang.iml
+Makefile

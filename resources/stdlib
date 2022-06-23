@@ -1,0 +1,146 @@
+//////////////////////////////////////////////////////////////
+(int c) void putchar
+
+(char[] s) int puts
+
+() void __yield
+
+(int millis) void __sleep
+
+(long __fiber) void __join
+
+(long __fiber) void __delete_fiber
+
+(() void runnable) long __create_fiber
+
+(long addr, long exp, long next) int __cas
+
+(long addr, long next) long __exchange
+
+(long addr) long __load
+
+(long addr, long next) void __store
+
+/////////////////////////////////////////////////////////////
+
+() void yield ->
+    __yield()
+
+(int millis) void sleep ->
+    __sleep(millis)
+
+class Thread
+    long __fiber
+
+    (() void runnable) ->
+        this.__fiber = __create_fiber(runnable)
+
+    () void join ->
+        __join(this.__fiber)
+
+    () void __internal_destruct ->
+        __delete_fiber(this.__fiber)
+
+class AtomicLong
+    long value
+
+    () ->
+        this.value = 0L
+
+    (long exp, long next) int cas ->
+        return __cas(<long>this, exp, next)
+
+    (long next) long exchange ->
+        return __exchange(<long>this, next)
+
+    () long load ->
+        return __load(<long>this)
+
+    (long next) void store ->
+        __store(<long>this, next)
+
+(String s) void println ->
+    char[] bytes = null
+
+    if s == null
+        println("null")
+        return
+
+    int i = 0
+    int l = s.getLength()
+    bytes = s.getBytes()
+
+    while i < l
+        int c = <int>bytes[i]
+        putchar(c)
+        i++
+    putchar(10)
+
+
+(String s1, String s2) String concat ->
+    int l1 = s1.getLength()
+    int l2 = s2.getLength()
+
+    char[] buff = new char[l1 + l2]
+
+    char[] b1 = s1.getBytes()
+    char[] b2 = s2.getBytes()
+
+    int i = 0
+    int i1 = 0
+    int i2 = 0
+
+    while i1 < l1
+        buff[i] = b1[i1]
+        i++
+        i1++
+
+    while i2 < l2
+        buff[i] = b2[i2]
+        i++
+        i2++
+
+
+    return new String(buff, i)
+
+(char[] arr, int length) void reverseArray ->
+    int index = 0
+
+    while index < length/2
+        char c = arr[index]
+        arr[index] = arr[length - index - 1]
+        arr[length - index - 1] = c
+
+        index++
+
+(int num) String toString ->
+    char[] buffer = new char[16]
+
+    if num == 0
+        return "0"
+
+    int i = 0
+    int cur = num
+
+    while cur != 0
+        buffer[i] = <char> (cur % 10 + 48)
+        cur = cur / 10
+        i++
+
+    reverseArray(buffer, i)
+
+    return new String(buffer, i)
+
+class String
+    char[] bytes
+    int length
+
+    (char [] bytes, int length) ->
+        this.bytes = bytes
+        this.length = length
+
+    () char[] getBytes ->
+        return this.bytes
+
+    () int getLength ->
+        return this.length

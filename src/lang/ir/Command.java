@@ -134,7 +134,7 @@ public class Command implements Value {
                 Function function = (Function) parameters.get(0);
                 return (result == null ? "" : (result.toLLVM() + " = ")) + "call " +
                         (function.getType() == Type.VOID ? "void" : function.getType().toLLVM())
-                        + " @" + parameters.get(0).toLLVM() + "(" +
+                        + " @" + ((Function)parameters.get(0)).getName() + "(" +
                         parameters.stream().skip(1).map(p -> p.getType().toLLVM() + " "
                                 + p.toLLVM()).collect(Collectors.joining(",")) + ")";
             } else {

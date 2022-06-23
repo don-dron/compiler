@@ -18,8 +18,8 @@ public class LLVMTranslator {
 
     public String translate() {
         StringBuilder builder = new StringBuilder();
-        builder.append("; ModuleID = 'main'\n" +
-                "source_filename = \"main\"\n");
+        builder.append("; ModuleID = 'lang_main'\n" +
+                "source_filename = \"lang_main\"\n");
         builder.append(module.getClasses()
                 .stream()
                 .map(this::translateStruct)
@@ -56,6 +56,11 @@ public class LLVMTranslator {
                     .map(v -> "void (i32*)* @" + v.getName())
                     .collect(Collectors.joining(",")) + "]";
         }
+
+        if(value instanceof GlobalVariableValue) {
+            return "@" + value.getName() + " = global " + value.getType().toLLVM() + " " + ((GlobalVariableValue) value).getValue().toLLVM();
+        }
+
         return "@" + value.getName() + " = global " + value.getType().toLLVM();
     }
 
