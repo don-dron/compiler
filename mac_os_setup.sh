@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exec 1>/dev/null
+exec 2>/dev/null
 cwd=$(pwd)
 setup='./lang_test'
 
@@ -15,13 +17,13 @@ esac
 shift
 done
 
-absScriptPath=$(cd "$(dirname "$SCRIPTPATH")"; pwd -P)/$(basename "$SCRIPTPATH")
-absSetupPath=$(cd "$(dirname "$setup")"; pwd -P)/$(basename "$setup")
+absScriptPath="$(cd "$(dirname "$SCRIPTPATH")"; pwd -P)/$(basename "$SCRIPTPATH")"
+absSetupPath="$(cd "$(dirname "$setup")"; pwd -P)/$(basename "$setup")"
 
-mkdir $absSetupPath
-cd $absScriptPath
+mkdir -p "$absSetupPath"
+cd "$absScriptPath"
 
-mkdir build
+mkdir -p build
 
 gcc -O3 -c -pthread -Wall -I ./include  -o ./build/atomics.o ./lib/locks/atomics.c && \
 gcc -O3 -c -pthread -Wall -I ./include  -o ./build/wait_group.o ./lib/locks/wait_group.c && \
@@ -41,20 +43,20 @@ gcc -O3 -c -pthread -Wall -I ./include  -o ./build/rb_tree.o ./lib/structures/rb
 gcc -O3 -c -pthread -Wall -I ./include  -o ./build/hash_map.o ./lib/structures/hash_map.c && \
 gcc -O3 -c -pthread -Wall -I ./include  -o ./build/thin_heap.o ./lib/structures/thin_heap.c && \
 gcc -O3 -c -pthread -Wall -I ./include  -o ./build/splay_tree.o ./lib/structures/splay_tree.c && \
-ar rcs $absSetupPath/core_lib.a ./build/atomics.o ./build/wait_group.o ./build/spinlock.o ./build/default.o ./build/context.o \
+ar rcs "$absSetupPath/core_lib.a" ./build/atomics.o ./build/wait_group.o ./build/spinlock.o ./build/default.o ./build/context.o \
 ./build/local_queues_with_steal_scheduler.o ./build/switch_context.o ./build/fiber.o ./build/scheduler.o ./build/coroutine.o \
 ./build/manager.o  ./build/lf_stack.o ./build/list.o ./build/fibonacci_heap.o ./build/rb_tree.o \
 ./build/hash_map.o ./build/thin_heap.o ./build/splay_tree.o
 
 mvn clean install
 
-cp $absScriptPath/target/lang-1.0-SNAPSHOT-jar-with-dependencies.jar $absSetupPath/langc.jar
-cp $absScriptPath/lib/root_lib.c $absSetupPath/root_lib.c
-mkdir $absSetupPath/lang
-cp $absScriptPath/resources/stdlib $absSetupPath/lang/lib
-cp -R $absScriptPath/include $absSetupPath/include
-cp $absScriptPath/resources/run.sh $absSetupPath/run.sh
-cp $absScriptPath/resources/root.h $absSetupPath/include/root.h
+cp "$absScriptPath/target/lang-1.0-SNAPSHOT-jar-with-dependencies.jar" "$absSetupPath/langc.jar"
+cp "$absScriptPath/lib/root_lib.c" "$absSetupPath/root_lib.c"
+mkdir -p "$absSetupPath/lang"
+cp "$absScriptPath/resources/stdlib" "$absSetupPath/lang/lib"
+cp -R "$absScriptPath/include" "$absSetupPath/include"
+cp "$absScriptPath/resources/run.sh" "$absSetupPath/run.sh"
+cp "$absScriptPath/resources/root.h" "$absSetupPath/include/root.h"
 
 rm -r build
 rm -r target

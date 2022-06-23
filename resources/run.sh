@@ -21,24 +21,24 @@ SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 echo 'Compile Lang code to LLVM'
 
-absIPath=$(cd "$(dirname "$input")"; pwd -P)/$(basename "$input")
-absOPath=$(cd "$(dirname "$output")"; pwd -P)/$(basename "$output")
+absIPath="$(cd "$(dirname "$input")"; pwd -P)/$(basename "$input")"
+absOPath="$(cd "$(dirname "$output")"; pwd -P)/$(basename "$output")"
 
-echo input: $absIPath
-echo output: $absOPath
+echo input: "$absIPath"
+echo output: "$absOPath"
 
 cd $SCRIPTPATH
 echo $SCRIPTPATH
 
-java -jar ./langc.jar -i $absIPath -o $absOPath
+java -jar ./langc.jar -i "$absIPath" -o "$absOPath"
 
 echo 'Compile LLVM to object file'
 llc -filetype=obj --relocation-model=pic out.ll
 
 echo 'Build execution file'
-gcc -g out.o core_lib.a root_lib.c -I include -lpthread  -o $absOPath
+gcc -g out.o root_lib.c core_lib.a core_lib.a -I include -lpthread  -o "$absOPath"
 
 rm out.ll
 rm out.o
 
-cd $cwd
+cd "$cwd"
